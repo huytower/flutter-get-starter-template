@@ -69,8 +69,8 @@ class CurrencyConversionService {
 
     final rateResult = result.tryGetSuccess()!;
     final allowed = switch (use) {
-      ConversionUse.display => rateResult.isUsableForDisplay,
-      ConversionUse.persist => rateResult.isSafeForPersistedConversion,
+      ConversionUse.display => rateResult.hasUsableForDisplay,
+      ConversionUse.persist => rateResult.hasSafeForPersistedConversion,
     };
     if (!allowed) {
       return const Error(
@@ -97,7 +97,7 @@ class CurrencyConversionService {
   Future<Result<Map<String, int>, CcFailure>> convertAll({
     required String baseCurrency,
     required List<String> targetCurrencies,
-    bool isBaseVnd = false,
+    bool hasBaseVnd = false,
     DateTime? date,
     ConversionUse use = ConversionUse.display,
   }) async {
@@ -115,8 +115,8 @@ class CurrencyConversionService {
     }
 
     // If base is VND, fetch rates with USD base and convert quote-to-VND in batch
-    final effectiveBase = isBaseVnd ? 'USD' : baseDef.code;
-    final effectiveQuotes = isBaseVnd
+    final effectiveBase = hasBaseVnd ? 'USD' : baseDef.code;
+    final effectiveQuotes = hasBaseVnd
         ? [...uniqueTargets, 'VND'].map((s) => s.toUpperCase()).toSet().toList()
         : uniqueTargets;
 
@@ -137,8 +137,8 @@ class CurrencyConversionService {
 
     final rateResult = result.tryGetSuccess()!;
     final allowed = switch (use) {
-      ConversionUse.display => rateResult.isUsableForDisplay,
-      ConversionUse.persist => rateResult.isSafeForPersistedConversion,
+      ConversionUse.display => rateResult.hasUsableForDisplay,
+      ConversionUse.persist => rateResult.hasSafeForPersistedConversion,
     };
     if (!allowed) {
       return const Error(
@@ -149,7 +149,7 @@ class CurrencyConversionService {
     final table = rateResult.table;
     final converted = <String, int>{};
 
-    if (isBaseVnd) {
+    if (hasBaseVnd) {
       final vndRateAgainstBase = table.rates['VND'] ?? 25982.50;
       for (final target in uniqueTargets) {
         final toDef = CurrencyCatalog.tryGetDefinition(target);
@@ -230,8 +230,8 @@ class CurrencyConversionService {
 
     final rateResult = result.tryGetSuccess()!;
     final allowed = switch (use) {
-      ConversionUse.display => rateResult.isUsableForDisplay,
-      ConversionUse.persist => rateResult.isSafeForPersistedConversion,
+      ConversionUse.display => rateResult.hasUsableForDisplay,
+      ConversionUse.persist => rateResult.hasSafeForPersistedConversion,
     };
     if (!allowed) {
       return const Error(

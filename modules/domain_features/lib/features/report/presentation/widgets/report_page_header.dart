@@ -26,15 +26,15 @@ class ReportPageHeader extends StatelessWidget {
     // base height — the header keeps a correct responsive ratio across screen
     // sizes via flex-based sections instead of a width-scaled respDim() magic
     // number. The Column children resolve against this bounded height.
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = context.ccColorScheme;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+      value: (hasDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
           .copyWith(
             statusBarColor: Colors.transparent,
             systemNavigationBarColor: scheme.background,
-            systemNavigationBarIconBrightness: isDark
+            systemNavigationBarIconBrightness: hasDark
                 ? Brightness.light
                 : Brightness.dark,
           ),
@@ -60,8 +60,8 @@ class ReportPageHeader extends StatelessWidget {
   }
 
   Widget _buildHeroBackground(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final assetPath = isDark
+    final hasDark = Theme.of(context).brightness == Brightness.dark;
+    final assetPath = hasDark
         ? 'assets/bg/bg_header_dark.webp'
         : 'assets/bg/bg_header_light.webp';
     return Positioned.fill(child: Image.asset(assetPath, fit: BoxFit.cover));
@@ -111,23 +111,23 @@ class ReportPageHeader extends StatelessWidget {
       final walletName = controller.filterWalletName.value;
       final type = controller.filterType.value;
 
-      final isWalletActive = walletName != null;
-      final isTypeActive = type != ReportFilterType.all;
-      final isActive = isWalletActive || isTypeActive;
+      final hasWalletActive = walletName != null;
+      final hasTypeActive = type != ReportFilterType.all;
+      final hasActive = hasWalletActive || hasTypeActive;
 
       String label;
-      if (isWalletActive && isTypeActive) {
+      if (hasWalletActive && hasTypeActive) {
         label = '$walletName · ${_typeLabel(type)}';
-      } else if (isWalletActive) {
+      } else if (hasWalletActive) {
         label = walletName;
-      } else if (isTypeActive) {
+      } else if (hasTypeActive) {
         label = _typeLabel(type);
       } else {
         label = el.tr(PrjLocaleKeys.report_filter_all_wallets);
       }
 
       final scheme = context.ccColorScheme;
-      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final hasDark = Theme.of(context).brightness == Brightness.dark;
 
       return Tooltip(
         message: el.tr(PrjLocaleKeys.report_filter_by_wallet),
@@ -141,7 +141,7 @@ class ReportPageHeader extends StatelessWidget {
             ),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                boxShadow: isDark
+                boxShadow: hasDark
                     ? null
                     : [
                         BoxShadow(
@@ -165,7 +165,7 @@ class ReportPageHeader extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
                         color: scheme.onPrimary.withValues(alpha: 0.85),
-                        fontWeight: isActive
+                        fontWeight: hasActive
                             ? CcTypographyParams.bold
                             : CcTypographyParams.regular,
                       ),
@@ -173,7 +173,7 @@ class ReportPageHeader extends StatelessWidget {
                   ),
                   const CcSpaceXS(),
                   Icon(
-                    isActive
+                    hasActive
                         ? Icons.filter_alt_rounded
                         : Icons.filter_alt_outlined,
                     color: scheme.onPrimary,
@@ -231,7 +231,7 @@ class ReportPageHeader extends StatelessWidget {
       () => CcIconButton.bouncing(
         onTap: onBackPressed,
         icon: Icon(
-          controller.isEditMode.value
+          controller.hasEditMode.value
               ? Icons.close_rounded
               : Icons.arrow_back_ios_new_rounded,
           color: context.ccColorScheme.onPrimary,

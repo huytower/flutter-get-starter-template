@@ -55,24 +55,24 @@ class TransactionHeaderBanner extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     final remainingSteps = guideline.remainingGuidelineStep;
-    final isGuidelineComplete = remainingSteps == 0;
+    final hasGuidelineComplete = remainingSteps == 0;
 
     final tabs = controller.visibleTabs;
     final activeTabIndex = controller.selectedTabIndex.value;
     final activeTab = tabs[activeTabIndex.clamp(0, tabs.length - 1)];
 
-    if (isGuidelineComplete) {
+    if (hasGuidelineComplete) {
       return _buildAiComponents(context, activeTab);
     }
 
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
-          guideline.isBannerHidden = true;
+          guideline.hasBannerHidden = true;
         }
         if (details.primaryVelocity != null &&
             details.primaryVelocity! < -300) {
-          guideline.isBannerHidden = false;
+          guideline.hasBannerHidden = false;
         }
       },
       child: TransactionGuidelineBanner(
@@ -109,7 +109,7 @@ class TransactionHeaderBanner extends StatelessWidget {
     final canUseAiSmartEntry =
         getIt<UserLevelProvider>().status.canUseAiSmartEntry;
     final accentColor = _getTabColor(context, activeTab);
-    final isLocked = !canUseAiSmartEntry;
+    final hasLocked = !canUseAiSmartEntry;
 
     return SizedBox(
       width: double.infinity,
@@ -122,9 +122,9 @@ class TransactionHeaderBanner extends StatelessWidget {
                 context,
                 quickEntry.quickEntry,
                 accentColor,
-                isLocked,
+                hasLocked,
               ),
-              if (isLocked) _buildLockOverlay(context),
+              if (hasLocked) _buildLockOverlay(context),
             ],
           ),
           if (canUseAiSmartEntry && suggestionSource != null)
@@ -142,18 +142,18 @@ class TransactionHeaderBanner extends StatelessWidget {
     BuildContext context,
     QuickEntrySession controller,
     Color accentColor,
-    bool isLocked,
+    bool hasLocked,
   ) {
     final suggestion = controller.quickEntrySuggestion.value;
     final errorKey = controller.quickEntryErrorKey.value;
     return QuickEntrySection(
       controller: controller.quickEntryController,
-      isParsing: controller.isParsingQuickEntry.value,
-      isListening: controller.isListeningQuickEntry.value,
+      hasParsing: controller.hasParsingQuickEntry.value,
+      hasListening: controller.hasListeningQuickEntry.value,
       suggestionLabel: suggestion != null
           ? controller.quickEntryResultLabel(suggestion)
           : null,
-      isCategoryMissing: controller.isQuickEntryCategoryInvalid,
+      hasCategoryMissing: controller.hasQuickEntryCategoryInvalid,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
       onSubmitted: (_) => controller.submitQuickEntry(context),
@@ -167,9 +167,9 @@ class TransactionHeaderBanner extends StatelessWidget {
       aiPreferences: controller.handler.parser.aiPreferences,
       onClear: () {
         controller.dismissQuickEntrySuggestion();
-        controller.isParsingQuickEntry.value = false;
+        controller.hasParsingQuickEntry.value = false;
       },
-      isLocked: isLocked,
+      hasLocked: hasLocked,
     );
   }
 

@@ -23,12 +23,12 @@ class LiabilityBalanceEntity extends Equatable {
   }
 
   /// Whether the liability has been fully settled (outstanding balance <= 0)
-  bool get isSettled => outstandingBalance <= 0;
+  bool get hasSettled => outstandingBalance <= 0;
 
   /// What is still owed, for display: 0 once settled. Older data can hold a
   /// negative balance (more repaid / collected than owed), which must not
   /// read as money still due.
-  int get remainingToShow => isSettled ? 0 : outstandingBalance;
+  int get remainingToShow => hasSettled ? 0 : outstandingBalance;
 
   @override
   List<Object?> get props => [liability.id, outstandingBalance, repaidAmount];

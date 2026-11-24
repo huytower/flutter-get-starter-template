@@ -125,7 +125,7 @@ class CreateLiabilityUseCase {
 
     var targetId = params.liabilityId ?? '';
     var updatedPrincipal = finalAmount;
-    var isUpdate = false;
+    var hasUpdate = false;
 
     if (targetId.isNotEmpty) {
       final existingResult = await _LiabilityRepository.findLiability(targetId);
@@ -134,7 +134,7 @@ class CreateLiabilityUseCase {
         if (existing != null) {
           targetId = existing.id;
           updatedPrincipal += existing.principalAmount;
-          isUpdate = true;
+          hasUpdate = true;
         }
       }
     }
@@ -162,7 +162,7 @@ class CreateLiabilityUseCase {
       currencyCode: finalCurrency,
     );
 
-    final createResult = isUpdate
+    final createResult = hasUpdate
         ? await _LiabilityRepository.updateLiability(liability)
         : await _LiabilityRepository.createLiability(liability);
     if (createResult.isError()) {

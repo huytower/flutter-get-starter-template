@@ -255,7 +255,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
     required String label,
     Color? color,
   }) {
-    final isSelected = _currentType == type;
+    final hasSelected = _currentType == type;
     final scheme = context.ccColorScheme;
     final accentColor = color ?? scheme.primary;
 
@@ -268,10 +268,10 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
           vertical: context.respPadding(CcPaddingParams.SPACE_SM),
         ),
         decoration: BoxDecoration(
-          color: accentColor.withValues(alpha: isSelected ? 0.12 : 0.04),
+          color: accentColor.withValues(alpha: hasSelected ? 0.12 : 0.04),
           borderRadius: context.brMd,
           border: Border.all(
-            color: isSelected
+            color: hasSelected
                 ? accentColor.withValues(alpha: 0.2)
                 : Colors.transparent,
             width: 1,
@@ -297,8 +297,8 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
             CcText(
               label,
               textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: isSelected ? accentColor : scheme.onSurface,
-                fontWeight: isSelected
+                color: hasSelected ? accentColor : scheme.onSurface,
+                fontWeight: hasSelected
                     ? CcTypographyParams.bold
                     : CcTypographyParams.medium,
                 fontSize: context.respFontSize(10.5),
@@ -316,7 +316,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
     IconData icon,
     String label,
   ) {
-    final isSelected = _currentWalletId == walletId;
+    final hasSelected = _currentWalletId == walletId;
     final scheme = context.ccColorScheme;
     final accentColor = scheme.primary;
 
@@ -329,10 +329,10 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
           vertical: context.respPadding(CcPaddingParams.SPACE_SM),
         ),
         decoration: BoxDecoration(
-          color: accentColor.withValues(alpha: isSelected ? 0.12 : 0.04),
+          color: accentColor.withValues(alpha: hasSelected ? 0.12 : 0.04),
           borderRadius: context.brMd,
           border: Border.all(
-            color: isSelected
+            color: hasSelected
                 ? accentColor.withValues(alpha: 0.2)
                 : Colors.transparent,
             width: 1,
@@ -346,8 +346,8 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
             CcText(
               label,
               textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: isSelected ? accentColor : scheme.onSurface,
-                fontWeight: isSelected
+                color: hasSelected ? accentColor : scheme.onSurface,
+                fontWeight: hasSelected
                     ? CcTypographyParams.bold
                     : CcTypographyParams.medium,
                 fontSize: context.respFontSize(10.5),

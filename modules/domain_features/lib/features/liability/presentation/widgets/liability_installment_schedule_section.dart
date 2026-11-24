@@ -20,12 +20,12 @@ class LiabilityInstallmentScheduleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isBorrowSide = controller.direction == LiabilityDirection.borrow;
+    final hasBorrowSide = controller.direction == LiabilityDirection.borrow;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcFormLabel(
-          text: isBorrowSide
+          text: hasBorrowSide
               ? el.tr(PrjLocaleKeys.transaction_liability_schedule_label)
               : el.tr(PrjLocaleKeys.transaction_liability_schedule_lend_label),
         ),

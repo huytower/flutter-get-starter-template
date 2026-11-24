@@ -15,7 +15,7 @@ class InvestmentWalletListItem extends StatelessWidget {
   final WalletEntity wallet;
   final int contributed;
   final int returned;
-  final bool isEditMode;
+  final bool hasEditMode;
   final bool canDelete;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -26,7 +26,7 @@ class InvestmentWalletListItem extends StatelessWidget {
     required this.wallet,
     required this.contributed,
     required this.returned,
-    this.isEditMode = false,
+    this.hasEditMode = false,
     this.canDelete = true,
     required this.onEdit,
     required this.onDelete,
@@ -45,7 +45,7 @@ class InvestmentWalletListItem extends StatelessWidget {
 
   BaseAssetListItem _buildMainCard(BuildContext context) {
     return BaseAssetListItem(
-      isEditMode: isEditMode,
+      hasEditMode: hasEditMode,
       canDelete: canDelete,
       onEdit: onEdit,
       onDelete: onDelete,

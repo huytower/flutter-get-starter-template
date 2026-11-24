@@ -38,8 +38,8 @@ class GetLiabilityTrendUseCase {
         .tryGetSuccess()!
         .where(
           (t) =>
-              !t.isDeleted &&
-              t.isDebtActivity &&
+              !t.hasDeleted &&
+              t.hasDebtActivity &&
               (walletId == null || t.walletId == walletId),
         )
         .toList();

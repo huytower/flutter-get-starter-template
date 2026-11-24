@@ -49,9 +49,9 @@ class _BorrowFormState extends State<BorrowForm> {
   Widget build(BuildContext context) {
     // Pre-registered by TransactionController.onInit()
     return Obx(() {
-      final isIncrease =
+      final hasIncrease =
           controller.action.value == LiabilityDirectionForm.increase;
-      final accentColor = isIncrease
+      final accentColor = hasIncrease
           ? context.borrowAccent
           : context.borrowAccent.secondaryShade;
 
@@ -116,7 +116,7 @@ class _BorrowFormState extends State<BorrowForm> {
         ),
       ],
       details: EntryAdditionalDetailsSection(
-        isExpanded: true,
+        hasExpanded: true,
         selectedDate: controller.date.value,
         onDateSelected: controller.setDate,
         onCalendarTap: () => controller.pickDate(context),
@@ -162,7 +162,7 @@ class _BorrowFormState extends State<BorrowForm> {
     BorrowFormController controller,
     Color accentColor,
   ) {
-    final guideline = getIt<GuidelineProvider>().isAvailable
+    final guideline = getIt<GuidelineProvider>().hasAvailable
         ? getIt<GuidelineProvider>()
         : null;
 
@@ -226,7 +226,7 @@ class _BorrowFormState extends State<BorrowForm> {
               const CcSpaceSM(),
               _buildRepaymentMethodSection(controller, accentColor),
               EntryAdditionalDetailsSection(
-                isExpanded: controller.showMoreDetails.value,
+                hasExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,
                 selectedDate: controller.date.value,
                 onDateSelected: controller.setDate,
@@ -255,10 +255,10 @@ class _BorrowFormState extends State<BorrowForm> {
         )
         ?.liability;
 
-    final isRepay = controller.action.value == LiabilityDirectionForm.decrease;
+    final hasRepay = controller.action.value == LiabilityDirectionForm.decrease;
 
     final label =
-        (isRepay || (liability != null && liability.principalAmount > 0))
+        (hasRepay || (liability != null && liability.principalAmount > 0))
         ? el.tr(PrjLocaleKeys.transaction_amount)
         : el.tr(PrjLocaleKeys.transaction_liability_amount_borrow_label);
 
@@ -275,8 +275,8 @@ class _BorrowFormState extends State<BorrowForm> {
     BorrowFormController controller,
     Color accentColor,
   ) {
-    final isRepay = controller.action.value == LiabilityDirectionForm.decrease;
-    final text = isRepay
+    final hasRepay = controller.action.value == LiabilityDirectionForm.decrease;
+    final text = hasRepay
         ? el.tr(PrjLocaleKeys.transaction_source_debt)
         : el.tr(PrjLocaleKeys.transaction_liability_wallet_borrow_label);
 
@@ -292,7 +292,7 @@ class _BorrowFormState extends State<BorrowForm> {
     BorrowFormController controller,
     Color accentColor,
   ) {
-    final isRepay = controller.action.value == LiabilityDirectionForm.decrease;
+    final hasRepay = controller.action.value == LiabilityDirectionForm.decrease;
     final liability = controller.mergedItems
         .firstWhereOrNull(
           (b) => b.liability.id == controller.selectedLiabilityId.value,
@@ -302,7 +302,7 @@ class _BorrowFormState extends State<BorrowForm> {
     final String text;
     final IconData icon;
 
-    if (isRepay) {
+    if (hasRepay) {
       text = el.tr(PrjLocaleKeys.transaction_record_repay);
       icon = Icons.arrow_circle_down;
     } else {
@@ -316,8 +316,8 @@ class _BorrowFormState extends State<BorrowForm> {
 
     return EntrySubmitButton(
       text: text,
-      isSubmitting: controller.isSubmitting.value,
-      isEnabled: controller.canSubmit,
+      hasSubmitting: controller.hasSubmitting.value,
+      hasEnabled: controller.canSubmit,
       onTap: () => controller.submitForm(context),
       activeColor: accentColor,
       leadingIcon: icon,

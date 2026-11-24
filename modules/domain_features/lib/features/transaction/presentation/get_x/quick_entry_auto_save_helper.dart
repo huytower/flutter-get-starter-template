@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 class QuickEntryAutoSaveHelper {
   /// Feature flag to temporarily disable auto-save execution.
   /// Set to `true` when re-enabling auto-save in the near future.
-  static const bool isAutoSaveEnabled = false;
+  static const bool hasAutoSaveEnabled = false;
 
   Timer? _timer;
   final RxInt autoSaveCountdown = 0.obs;
@@ -22,7 +22,7 @@ class QuickEntryAutoSaveHelper {
   /// Starts a 2-second countdown timer before executing [onElapsed].
   void startAutoSaveCountdown(VoidCallback onElapsed) {
     cancelAutoSave();
-    if (!isAutoSaveEnabled) return;
+    if (!hasAutoSaveEnabled) return;
 
     autoSaveCountdown.value = 2;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -41,7 +41,7 @@ class QuickEntryAutoSaveHelper {
     required bool hasSelectableCategory,
     required VoidCallback onSave,
   }) {
-    if (!isAutoSaveEnabled) return;
+    if (!hasAutoSaveEnabled) return;
 
     startAutoSaveCountdown(() {
       if (!hasSelectableCategory) return;

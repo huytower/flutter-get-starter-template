@@ -24,7 +24,7 @@ class QuickEditTransactionSheetController extends PrjGetController {
   late final VoidCallback _onCloseSheet;
 
   final RxString amountStr = '0'.obs;
-  final RxBool isSubmitting = false.obs;
+  final RxBool hasSubmitting = false.obs;
   final Rxn<CategoryEntity> selectedCategory = Rxn<CategoryEntity>();
   final TextEditingController noteController = TextEditingController();
 
@@ -40,15 +40,15 @@ class QuickEditTransactionSheetController extends PrjGetController {
     }
   }
 
-  bool get isInvestment => transaction.isInvestmentActivity;
+  bool get hasInvestment => transaction.hasInvestmentActivity;
 
-  bool get isDebt => transaction.isDebtActivity;
+  bool get hasDebt => transaction.hasDebtActivity;
 
-  bool get isLend =>
+  bool get hasLend =>
       transaction.type == TransactionType.debtLend ||
       transaction.type == TransactionType.debtCollect;
 
-  bool get isBorrow =>
+  bool get hasBorrow =>
       transaction.type == TransactionType.debtBorrow ||
       transaction.type == TransactionType.debtRepay;
 
@@ -100,7 +100,7 @@ class QuickEditTransactionSheetController extends PrjGetController {
     noteController.text = tx.note ?? '';
 
     final tag = 'quick_edit_${tx.id}';
-    if (isInvestment) {
+    if (hasInvestment) {
       investmentController = Get.put(
         getIt<InvestmentFormController>(),
         tag: tag,
@@ -113,7 +113,7 @@ class QuickEditTransactionSheetController extends PrjGetController {
           }
         });
       }
-    } else if (isBorrow) {
+    } else if (hasBorrow) {
       liabilityController = Get.put(getIt<BorrowFormController>(), tag: tag);
       if (tx.liabilityId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -122,7 +122,7 @@ class QuickEditTransactionSheetController extends PrjGetController {
           }
         });
       }
-    } else if (isLend) {
+    } else if (hasLend) {
       lendController = Get.put(getIt<LendFormController>(), tag: tag);
       if (tx.liabilityId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -178,8 +178,8 @@ class QuickEditTransactionSheetController extends PrjGetController {
   }
 
   Future<void> save(BuildContext context) async {
-    if (isSubmitting.value) return;
-    isSubmitting.value = true;
+    if (hasSubmitting.value) return;
+    hasSubmitting.value = true;
 
     try {
       final updateUseCase = getIt<UpdateTransactionUseCase>();
@@ -191,7 +191,7 @@ class QuickEditTransactionSheetController extends PrjGetController {
       final int? categoryIconCode;
       final String? categoryIconFamily;
 
-      if (isInvestment && investmentController != null) {
+      if (hasInvestment && investmentController != null) {
         final selectedCat = investmentController!.selectedCategory.value;
         categoryId = selectedCat?.id ?? transaction.categoryId;
         categoryLabel = selectedCat != null
@@ -201,7 +201,7 @@ class QuickEditTransactionSheetController extends PrjGetController {
             selectedCat?.iconCode ?? transaction.categoryIconCode;
         categoryIconFamily =
             selectedCat?.iconFamily ?? transaction.categoryIconFamily;
-      } else if (isBorrow && liabilityController != null) {
+      } else if (hasBorrow && liabilityController != null) {
         final selectedLiabilityId =
             liabilityController!.selectedLiabilityId.value;
         final balance = liabilityController!.mergedItems.firstWhereOrNull(
@@ -219,7 +219,7 @@ class QuickEditTransactionSheetController extends PrjGetController {
         categoryIconFamily =
             balance?.liability.categoryIconFamily ??
             transaction.categoryIconFamily;
-      } else if (isLend && lendController != null) {
+      } else if (hasLend && lendController != null) {
         final selectedLiabilityId = lendController!.selectedLiabilityId.value;
         final balance = lendController!.mergedItems.firstWhereOrNull(
           (b) => b.liability.id == selectedLiabilityId,
@@ -279,7 +279,7 @@ class QuickEditTransactionSheetController extends PrjGetController {
         );
       }
     } finally {
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
     }
   }
 

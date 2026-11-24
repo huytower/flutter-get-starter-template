@@ -70,9 +70,9 @@ class GetLiabilityBalancesUseCase {
 
       // Collect all transactions belonging to any liability in this group (strictly direction-matched)
       final groupTxns = transactions.where((t) {
-        if (!t.isDebtActivity || t.isDeleted) return false;
+        if (!t.hasDebtActivity || t.hasDeleted) return false;
 
-        if (primary.isBorrow) {
+        if (primary.hasBorrow) {
           if (t.type != TransactionType.debtBorrow &&
               t.type != TransactionType.debtRepay) {
             return false;
@@ -154,7 +154,7 @@ class GetLiabilityBalancesUseCase {
 
     // Handle unmatched/orphaned debt transactions
     final unmatchedDebtTxns = transactions.where((t) {
-      if (!t.isDebtActivity || t.isDeleted) return false;
+      if (!t.hasDebtActivity || t.hasDeleted) return false;
       return !matchedTxnIds.contains(t.id);
     }).toList();
 

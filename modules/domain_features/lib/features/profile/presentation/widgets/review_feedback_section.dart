@@ -23,7 +23,7 @@ class ReviewFeedbackSection extends StatefulWidget {
 class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
   final TextEditingController _feedbackController = TextEditingController();
   final Set<String> _selected = <String>{};
-  bool _isSubmitting = false;
+  bool _hasSubmitting = false;
 
   static const _praiseKeys = [
     'profile.feedback_praise_fast',
@@ -64,7 +64,7 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
   }
 
   Future<void> _send(BuildContext context) async {
-    if (_isSubmitting) return;
+    if (_hasSubmitting) return;
 
     if (_selected.isEmpty && _feedbackController.text.trim().isEmpty) {
       CcSnackBarHelper.showErrorSnackBar(
@@ -74,7 +74,7 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
       return;
     }
 
-    setState(() => _isSubmitting = true);
+    setState(() => _hasSubmitting = true);
 
     final praiseLabels = _selected
         .where((key) => _praiseKeys.contains(key))
@@ -111,7 +111,7 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
       Navigator.of(context).pop();
     } finally {
       if (mounted) {
-        setState(() => _isSubmitting = false);
+        setState(() => _hasSubmitting = false);
       }
     }
   }
@@ -166,8 +166,8 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
         CcPadding(
           EntrySubmitButton(
             text: el.tr('profile.feedback_send'),
-            isSubmitting: _isSubmitting,
-            isEnabled: !_isSubmitting,
+            hasSubmitting: _hasSubmitting,
+            hasEnabled: !_hasSubmitting,
             activeColor: context.ccColorScheme.primary,
             onTap: () => _send(context),
             widthFactor: 1.0,

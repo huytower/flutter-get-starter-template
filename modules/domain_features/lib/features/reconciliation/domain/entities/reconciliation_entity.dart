@@ -47,7 +47,7 @@ class ReconciliationEntity extends Equatable {
 
   /// True when book matched reality (no adjustment needed).
   /// Values are integer VND amounts, so an exact 0 difference means balanced.
-  bool get isBalanced => difference == 0;
+  bool get hasBalanced => difference == 0;
 
   @override
   List<Object?> get props => [id, year, week, difference, date, currencyCode];

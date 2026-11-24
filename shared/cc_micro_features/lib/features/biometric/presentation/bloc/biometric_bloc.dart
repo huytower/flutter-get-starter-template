@@ -29,10 +29,10 @@ class BiometricBloc extends Bloc<BiometricEvent, BiometricState> {
     final isAvailableResult = await _repository.isBiometricAvailable();
     final typesResult = await _repository.getAvailableBiometrics();
 
-    isAvailableResult.when((isAvailable) {
+    isAvailableResult.when((hasAvailable) {
       typesResult.when(
         (types) =>
-            emit(BiometricAvailable(isAvailable: isAvailable, types: types)),
+            emit(BiometricAvailable(hasAvailable: hasAvailable, types: types)),
         (error) => emit(BiometricError(message: error.toString())),
       );
     }, (error) => emit(BiometricError(message: error.toString())));

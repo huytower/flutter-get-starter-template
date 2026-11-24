@@ -37,7 +37,7 @@ class BudgetLimitRepositoryImpl
       final uniqueMap = <String, BudgetLimitEntity>{};
       for (final m in models) {
         final entity = m.toEntity();
-        if (activeOnly && entity.isClosed) continue;
+        if (activeOnly && entity.hasClosed) continue;
         final key = entity.categoryId.isNotEmpty
             ? entity.categoryId
             : entity.name.trim().toLowerCase();

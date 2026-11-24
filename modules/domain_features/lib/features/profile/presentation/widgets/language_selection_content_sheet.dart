@@ -134,7 +134,7 @@ class _LanguageSelectionContentSheetState
     Locale locale,
     List<Locale> locales,
   ) {
-    final bool isSelected = locale.languageCode == _selectedLocale.languageCode;
+    final bool hasSelected = locale.languageCode == _selectedLocale.languageCode;
     final String label = _getLanguageLabel(locale);
     final String flag = _getLanguageFlag(locale);
 
@@ -146,10 +146,10 @@ class _LanguageSelectionContentSheetState
         padding: EdgeInsets.symmetric(horizontal: context.respDim(12)),
         alignment: Alignment.centerLeft,
         decoration: BoxDecoration(
-          color: isSelected ? scheme.primary.withOpacity(0.1) : scheme.surface,
+          color: hasSelected ? scheme.primary.withOpacity(0.1) : scheme.surface,
           borderRadius: context.brMd,
           border: Border.all(
-            color: isSelected
+            color: hasSelected
                 ? scheme.primary
                 : scheme.outline.withOpacity(0.1),
           ),
@@ -164,10 +164,10 @@ class _LanguageSelectionContentSheetState
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  fontWeight: isSelected
+                  fontWeight: hasSelected
                       ? CcTypographyParams.bold
                       : CcTypographyParams.medium,
-                  color: isSelected ? scheme.primary : scheme.onSurface,
+                  color: hasSelected ? scheme.primary : scheme.onSurface,
                 ),
               ),
             ),

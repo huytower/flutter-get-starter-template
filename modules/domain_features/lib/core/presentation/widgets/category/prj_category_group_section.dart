@@ -43,7 +43,7 @@ class PrjCategoryGroupSection extends StatelessWidget {
     final primary = accentColor ?? context.ccColorScheme.primary;
 
     // Use watermarkIcon if provided, else fallback to first item's icon or generic category icon
-    final bgIcon =
+    final backgroundIcon =
         watermarkIcon ??
         (items.isNotEmpty
             ? iconDataFromCode(
@@ -56,7 +56,7 @@ class PrjCategoryGroupSection extends StatelessWidget {
       ClipRRect(
         borderRadius: BorderRadius.horizontal(left: context.brMd.topLeft),
         child: CcWatermarkBackground(
-          icon: bgIcon,
+          icon: backgroundIcon,
           activeColor: primary,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: context.respDim(18)),
@@ -77,7 +77,7 @@ class PrjCategoryGroupSection extends StatelessWidget {
                     label: item.label,
                     iconCode: item.iconCode,
                     iconFamily: item.iconFamily,
-                    isEnabled: enabled,
+                    hasEnabled: enabled,
                     onTap: () => onToggle(item),
                     accentColor: accentColor,
                   );

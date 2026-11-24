@@ -3,14 +3,14 @@ import 'package:equatable/equatable.dart';
 /// Update policy supplied by the host app (see `AppUpdateConfigRepository`).
 class AppUpdateConfigEntity extends Equatable {
   const AppUpdateConfigEntity({
-    required this.isForce,
+    required this.hasForce,
     this.minimumVersion,
     this.iosAppStoreId,
     this.androidPackageName,
   });
 
   /// Turns the forced update on. When `false` nothing is ever blocked.
-  final bool isForce;
+  final bool hasForce;
 
   /// Installed versions strictly below this one must update, written as
   /// `x.y.z` or `x.y.z+build`. Empty or invalid means "no minimum".
@@ -24,7 +24,7 @@ class AppUpdateConfigEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    isForce,
+    hasForce,
     minimumVersion,
     iosAppStoreId,
     androidPackageName,

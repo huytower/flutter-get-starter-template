@@ -41,7 +41,7 @@ class _InvestmentListPageState extends State<InvestmentListPage> {
     super.initState();
     controller = Get.find<WalletController>();
     // Ensure edit mode is always off when entering the page.
-    controller.isEditMode.value = false;
+    controller.hasEditMode.value = false;
 
     if (widget.openAddOnStart) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -69,7 +69,7 @@ class _InvestmentListView extends PrjGetView<WalletController> {
       leading: Obx(
         () => CcIconButton.bouncing(
           icon: Icon(
-            controller.isEditMode.value
+            controller.hasEditMode.value
                 ? Icons.close_rounded
                 : Icons.arrow_back_ios_new_rounded,
             color: context.ccColorScheme.onPrimary,
@@ -95,20 +95,20 @@ class _InvestmentListView extends PrjGetView<WalletController> {
           onTap: () => _openAddInvestment(context),
         ),
         Obx(() {
-          if (!controller.isVip.value) return const SizedBox.shrink();
+          if (!controller.hasVip.value) return const SizedBox.shrink();
 
           return CcIconButton.bouncing(
             onTap: controller.toggleEditMode,
-            tooltip: controller.isEditMode.value
+            tooltip: controller.hasEditMode.value
                 ? el.tr(PrjLocaleKeys.common_done)
                 : el.tr(PrjLocaleKeys.common_edit),
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: Icon(
-                controller.isEditMode.value
+                controller.hasEditMode.value
                     ? Icons.check_circle_outline_rounded
                     : Icons.tune_rounded,
-                key: ValueKey(controller.isEditMode.value),
+                key: ValueKey(controller.hasEditMode.value),
                 color: context.ccColorScheme.onPrimary,
                 size: context.respIconSize(baseSize: 24),
               ),
@@ -124,7 +124,7 @@ class _InvestmentListView extends PrjGetView<WalletController> {
   Widget buildContent(BuildContext context) {
     return Obx(() {
       final wallets = controller.investmentWallets;
-      final isEdit = controller.isEditMode.value;
+      final hasEdit = controller.hasEditMode.value;
 
       if (wallets.isEmpty) {
         return CcText(
@@ -138,14 +138,14 @@ class _InvestmentListView extends PrjGetView<WalletController> {
       }
 
       return PopScope(
-        canPop: !controller.isEditMode.value,
+        canPop: !controller.hasEditMode.value,
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
-            controller.isEditMode.value = false;
+            controller.hasEditMode.value = false;
             return;
           }
-          if (controller.isEditMode.value) {
-            controller.isEditMode.value = false;
+          if (controller.hasEditMode.value) {
+            controller.hasEditMode.value = false;
           }
         },
         child: ReorderableListView.builder(
@@ -172,11 +172,11 @@ class _InvestmentListView extends PrjGetView<WalletController> {
                   wallet: wallet,
                   contributed: stats.contributed,
                   returned: stats.returned,
-                  isEditMode: isEdit,
+                  hasEditMode: hasEdit,
                   canDelete: controller.canDeleteWallet(wallet),
                   onEdit: () => _openAddInvestment(context, wallet: wallet),
                   onDelete: () => controller.confirmDelete(context, wallet),
-                  dragHandle: isEdit
+                  dragHandle: hasEdit
                       ? ReorderableDragStartListener(
                           index: index,
                           child: CcEditBadge(

@@ -43,15 +43,15 @@ class AddInvestmentSheetController extends PrjGetController {
 
   final RxList<CategoryEntity> investmentCategories = <CategoryEntity>[].obs;
   final Rxn<CategoryEntity> selectedInvestmentCategory = Rxn<CategoryEntity>();
-  final RxBool isNameValid = false.obs;
+  final RxBool hasNameValid = false.obs;
   final RxnString nameError = RxnString();
-  final RxBool isVip = false.obs;
+  final RxBool hasVip = false.obs;
 
-  bool get isEditing => _wallet != null;
+  bool get hasEditing => _wallet != null;
 
   /// Opening balance is locked once the asset has any transaction.
   bool get balanceLocked =>
-      isEditing &&
+      hasEditing &&
       _walletController.walletHasTransactions(_wallet!.id) &&
       _wallet!.balance != 0;
 
@@ -62,7 +62,7 @@ class AddInvestmentSheetController extends PrjGetController {
     nameController.addListener(_onNameChanged);
     _onNameChanged();
 
-    if (isEditing) {
+    if (hasEditing) {
       amountStr.value = _walletController.bookBalanceOf(wallet!.id).toString();
     }
 
@@ -72,14 +72,14 @@ class AddInvestmentSheetController extends PrjGetController {
 
   Future<void> _loadVipStatus() async {
     final settings = await _getProfileSettings();
-    isVip.value = settings.isVip;
+    hasVip.value = settings.hasVip;
   }
 
   Future<void> _loadInvestmentCategories({CategoryEntity? preSelected}) async {
     final result = await _getCategories.call();
     result.when((categories) {
       final enabledInvestment = categories
-          .where((c) => c.type == CategoryType.investment && c.isEnabled)
+          .where((c) => c.type == CategoryType.investment && c.hasEnabled)
           .toList();
 
       // Create index map to preserve seed order (mirroring CategorySettingsController)
@@ -107,7 +107,7 @@ class AddInvestmentSheetController extends PrjGetController {
   }
 
   void _onNameChanged() {
-    isNameValid.value = nameController.text.trim().isNotEmpty;
+    hasNameValid.value = nameController.text.trim().isNotEmpty;
     if (nameError.value != null) {
       nameError.value = null;
     }
@@ -160,12 +160,12 @@ class AddInvestmentSheetController extends PrjGetController {
 
     // Check for duplicate name OR duplicate category type
     // (excluding the wallet currently being edited).
-    final isDuplicate = _walletController.wallets.any((w) {
+    final hasDuplicate = _walletController.wallets.any((w) {
       if (w.id == wallet?.id) return false;
       return w.name.trim().toLowerCase() == name.toLowerCase();
     });
 
-    if (isDuplicate) {
+    if (hasDuplicate) {
       nameError.value = el.tr(PrjLocaleKeys.wallet_name_duplicate_error);
       return;
     }
@@ -210,7 +210,7 @@ class AddInvestmentSheetController extends PrjGetController {
       Navigator.pop(context);
       CcSnackBarHelper.showSuccessSnackBar(
         context: context,
-        message: isEditing
+        message: hasEditing
             ? el.tr(PrjLocaleKeys.wallet_updated_success)
             : el.tr(PrjLocaleKeys.wallet_added_success),
       );

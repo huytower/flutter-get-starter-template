@@ -61,7 +61,7 @@ class BudgetLimitStatsEntity extends Equatable {
 
   /// True only once spending exceeds the limit ("tiêu quá hạn mức");
   /// spending exactly the limit stays safe.
-  bool get isOver => spent > budget.limit;
+  bool get hasOver => spent > budget.limit;
 
   /// Spent as a fraction of the limit, uncapped (can exceed 1.0) — the raw
   /// input for [status]/[penaltyTier], unlike [progress] which is clamped
@@ -72,12 +72,12 @@ class BudgetLimitStatsEntity extends Equatable {
   }
 
   /// True from 80% up to (not including) the limit — "sắp chạm hạn mức".
-  bool get isNearLimit => !isOver && percentUsed >= nearLimitThreshold;
+  bool get hasNearLimit => !hasOver && percentUsed >= nearLimitThreshold;
 
   /// Discrete state for the UI (card color/warning row).
   BudgetLimitStatus get status {
-    if (isOver) return BudgetLimitStatus.over;
-    if (isNearLimit) return BudgetLimitStatus.nearLimit;
+    if (hasOver) return BudgetLimitStatus.over;
+    if (hasNearLimit) return BudgetLimitStatus.nearLimit;
     return BudgetLimitStatus.safe;
   }
 

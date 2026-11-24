@@ -50,12 +50,12 @@ class WalletController extends PrjGetController {
   CurrencyConversionService get conversionService => _ledger.conversionService;
 
   final RxInt currentNavIndex = 1.obs;
-  final RxBool isBalanceVisible = true.obs;
+  final RxBool hasBalanceVisible = true.obs;
 
   /// When true, the wallet list shows edit/delete affordances on each item.
-  final RxBool isEditMode = false.obs;
+  final RxBool hasEditMode = false.obs;
 
-  final RxBool isVip = false.obs;
+  final RxBool hasVip = false.obs;
   final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
   final RxMap<String, int> displayBalances = <String, int>{}.obs;
 
@@ -99,7 +99,7 @@ class WalletController extends PrjGetController {
   final RxMap<String, InvestmentStats> _monthlyInvestmentStats =
       <String, InvestmentStats>{}.obs;
 
-  bool _isTransactionDataDirty = true;
+  bool _hasTransactionDataDirty = true;
 
   /// The load in progress, if any.
   Future<void>? _loading;
@@ -122,9 +122,9 @@ class WalletController extends PrjGetController {
     loadWallets();
   }
 
-  void toggleEditMode() => isEditMode.toggle();
+  void toggleEditMode() => hasEditMode.toggle();
 
-  void toggleBalanceVisibility() => isBalanceVisible.toggle();
+  void toggleBalanceVisibility() => hasBalanceVisible.toggle();
 
   void setNavIndex(int index) => currentNavIndex.value = index;
 
@@ -162,7 +162,7 @@ class WalletController extends PrjGetController {
     '[WalletController] 🧹 Wallet transaction data marked dirty'.Log(
       'WalletController',
     );
-    _isTransactionDataDirty = true;
+    _hasTransactionDataDirty = true;
   }
 
   /// Reloads wallets and their derived book balances.
@@ -210,19 +210,19 @@ class WalletController extends PrjGetController {
       return;
     }
     final (:settings, wallets: list) = result.tryGetSuccess()!;
-    isVip.value = settings.isVip;
+    hasVip.value = settings.hasVip;
     final currencyChanged = currencyCode.value != settings.currencyCode;
     currencyCode.value = settings.currencyCode;
 
-    if (_isTransactionDataDirty ||
+    if (_hasTransactionDataDirty ||
         forceRefresh ||
         currencyChanged ||
         wallets.isEmpty) {
-      '[WalletController] 🔄 Rebuilding derived balances | dirty=$_isTransactionDataDirty | force=$forceRefresh | currencyChanged=$currencyChanged | empty=${wallets.isEmpty}'
+      '[WalletController] 🔄 Rebuilding derived balances | dirty=$_hasTransactionDataDirty | force=$forceRefresh | currencyChanged=$currencyChanged | empty=${wallets.isEmpty}'
           .Log('WalletController');
       // Cleared before the ledger reads transactions: a markDirty() from here
       // on means data this build may miss, so the follow-up load rebuilds.
-      _isTransactionDataDirty = false;
+      _hasTransactionDataDirty = false;
       try {
         final snapshot = await _ledger.build(list, currencyCode.value);
         _walletsWithTxns
@@ -232,7 +232,7 @@ class WalletController extends PrjGetController {
         _investmentStats.assignAll(snapshot.investmentStats);
         _monthlyInvestmentStats.assignAll(snapshot.monthlyInvestmentStats);
       } catch (_) {
-        _isTransactionDataDirty = true;
+        _hasTransactionDataDirty = true;
         rethrow;
       }
     }

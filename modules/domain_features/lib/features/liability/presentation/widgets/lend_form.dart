@@ -44,9 +44,9 @@ class _LendFormState extends State<LendForm> {
   Widget build(BuildContext context) {
     // Pre-registered by TransactionController.onInit()
     return Obx(() {
-      final isIncrease =
+      final hasIncrease =
           controller.action.value == LiabilityDirectionForm.increase;
-      final accentColor = isIncrease
+      final accentColor = hasIncrease
           ? context.lendAccent
           : context.lendAccent.secondaryShade;
 
@@ -106,7 +106,7 @@ class _LendFormState extends State<LendForm> {
         LendAssetSelector(controller: controller, activeColor: accentColor),
       ],
       details: EntryAdditionalDetailsSection(
-        isExpanded: true,
+        hasExpanded: true,
         selectedDate: controller.date.value,
         onDateSelected: controller.setDate,
         onCalendarTap: () => controller.pickDate(context),
@@ -151,7 +151,7 @@ class _LendFormState extends State<LendForm> {
               Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
               EntryAdditionalDetailsSection(
-                isExpanded: controller.showMoreDetails.value,
+                hasExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,
                 selectedDate: controller.date.value,
                 onDateSelected: controller.setDate,
@@ -180,11 +180,11 @@ class _LendFormState extends State<LendForm> {
         )
         ?.liability;
 
-    final isCollect =
+    final hasCollect =
         controller.action.value == LiabilityDirectionForm.decrease;
 
     final label =
-        (isCollect || (liability != null && liability.principalAmount > 0))
+        (hasCollect || (liability != null && liability.principalAmount > 0))
         ? el.tr(PrjLocaleKeys.transaction_amount)
         : el.tr(PrjLocaleKeys.transaction_liability_amount_lend_label);
 
@@ -201,9 +201,9 @@ class _LendFormState extends State<LendForm> {
     LendFormController controller,
     Color accentColor,
   ) {
-    final isCollect =
+    final hasCollect =
         controller.action.value == LiabilityDirectionForm.decrease;
-    final text = isCollect
+    final text = hasCollect
         ? el.tr(PrjLocaleKeys.transaction_source_debt)
         : el.tr(PrjLocaleKeys.transaction_liability_wallet_lend_label);
 
@@ -219,7 +219,7 @@ class _LendFormState extends State<LendForm> {
     LendFormController controller,
     Color accentColor,
   ) {
-    final isCollect =
+    final hasCollect =
         controller.action.value == LiabilityDirectionForm.decrease;
     final liability = controller.mergedItems
         .firstWhereOrNull(
@@ -230,7 +230,7 @@ class _LendFormState extends State<LendForm> {
     final String text;
     final IconData icon;
 
-    if (isCollect) {
+    if (hasCollect) {
       text = el.tr(PrjLocaleKeys.transaction_record_collect);
       icon = Icons.arrow_circle_up;
     } else {
@@ -242,8 +242,8 @@ class _LendFormState extends State<LendForm> {
 
     return EntrySubmitButton(
       text: text,
-      isSubmitting: controller.isSubmitting.value,
-      isEnabled: controller.canSubmit,
+      hasSubmitting: controller.hasSubmitting.value,
+      hasEnabled: controller.canSubmit,
       onTap: () => controller.submitForm(context),
       activeColor: accentColor,
       leadingIcon: icon,

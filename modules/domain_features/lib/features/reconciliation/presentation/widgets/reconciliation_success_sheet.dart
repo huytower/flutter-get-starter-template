@@ -139,7 +139,7 @@ class ReconciliationUndoSheet extends StatelessWidget {
                 Expanded(
                   child: CcBaseButton(
                     title: el.tr(PrjLocaleKeys.common_cancel),
-                    bgColor: [
+                    backgroundColor: [
                       scheme.surfaceContainerHighest,
                       scheme.surfaceContainerHighest,
                     ],
@@ -151,10 +151,10 @@ class ReconciliationUndoSheet extends StatelessWidget {
                 Expanded(
                   child: CcBaseButton(
                     title: el.tr(PrjLocaleKeys.reconciliation_undo),
-                    bgColor: [scheme.primary, scheme.primaryContainer],
+                    backgroundColor: [scheme.primary, scheme.primaryContainer],
                     textColor: scheme.onPrimary,
                     onTap: () async {
-                      if (controller.isSubmitting.value) return;
+                      if (controller.hasSubmitting.value) return;
                       Navigator.of(context).pop();
                       final error = await controller.undoLast();
                       if (!context.mounted) return;

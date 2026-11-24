@@ -6,10 +6,10 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 /// authentication status without depending on the Auth or Data modules.
 abstract interface class SessionContract {
   /// Whether the user is currently authenticated.
-  bool get isAuthenticated;
+  bool get hasAuthenticated;
 
   /// Whether the current session is an anonymous guest user.
-  bool get isAnonymous;
+  bool get hasAnonymous;
 
   /// Returns the current user information, or null if not logged in.
   CcUserEntity? get currentUser;

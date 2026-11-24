@@ -113,7 +113,7 @@ void main() {
       create,
     ).call([_params(100), _params(200), _params(300)]);
 
-    expect(result.isSuccess, isTrue);
+    expect(result.hasSuccess, isTrue);
     expect(result.saved, 3);
     expect(create.received.map((p) => p.amount), [100, 200, 300]);
   });
@@ -127,7 +127,7 @@ void main() {
         create,
       ).call([_params(600), _params(300), _params(200)]);
 
-      expect(result.isSuccess, isFalse);
+      expect(result.hasSuccess, isFalse);
       expect(result.saved, 0);
       expect(result.failedAt, 2);
       expect(create.received, isEmpty);
@@ -141,7 +141,7 @@ void main() {
       create,
     ).call([_params(5000, type: TransactionType.income), _params(900)]);
 
-    expect(result.isSuccess, isTrue);
+    expect(result.hasSuccess, isTrue);
     expect(result.saved, 2);
   });
 
@@ -154,7 +154,7 @@ void main() {
       wallets: [_wallet('w1'), _wallet('w2')],
     ).call([_params(400), _params(400, walletId: 'w2')]);
 
-    expect(result.isSuccess, isTrue);
+    expect(result.hasSuccess, isTrue);
   });
 
   test('skips the pre-check for a wallet in another currency', () async {
@@ -166,7 +166,7 @@ void main() {
       wallets: [_wallet('w1', currency: 'XXX')],
     ).call([_params(500)]);
 
-    expect(result.isSuccess, isTrue);
+    expect(result.hasSuccess, isTrue);
   });
 
   test('stops at the first failure and reports how far it got', () async {
@@ -176,7 +176,7 @@ void main() {
       create,
     ).call([_params(100), _params(100), _params(100)]);
 
-    expect(result.isSuccess, isFalse);
+    expect(result.hasSuccess, isFalse);
     expect(result.saved, 1);
     expect(result.failedAt, 1);
     expect(create.received.length, 2);

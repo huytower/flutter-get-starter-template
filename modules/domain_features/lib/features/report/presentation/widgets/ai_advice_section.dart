@@ -17,13 +17,13 @@ class AiAdviceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (!controller.userLevel.status.isVip ||
+      if (!controller.userLevel.status.hasVip ||
           !controller.hasDailyTransactions) {
         return const SizedBox.shrink();
       }
 
       final advice = controller.aiAdvice.value;
-      final isGenerating = controller.isGeneratingAdvice.value;
+      final hasGenerating = controller.hasGeneratingAdvice.value;
       final errorKey = controller.aiAdviceErrorKey.value;
 
       return Container(
@@ -37,7 +37,7 @@ class AiAdviceSection extends StatelessWidget {
           children: [
             _buildTitleRow(context),
             const CcSpaceSM(),
-            if (isGenerating)
+            if (hasGenerating)
               _buildLoadingBody(context)
             else if (advice != null)
               _buildAdviceBody(context, advice)

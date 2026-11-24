@@ -18,20 +18,20 @@ Future<T?> showAdaptiveBottomSheet<T>({
   double tabletMaxWidth = 480,
   Color? backgroundColor = Colors.transparent,
   ShapeBorder? shape,
-  bool isScrollControlled = true,
-  bool isDismissible = true,
+  bool hasScrollControlled = true,
+  bool hasDismissible = true,
 }) {
-  final isTablet = CcWindowSizeClass.of(
+  final hasTablet = CcWindowSizeClass.of(
     context,
   ).isAtLeast(CcWindowSizeClass.medium);
   return showModalBottomSheet<T>(
     context: context,
-    isScrollControlled: isScrollControlled,
+    isScrollControlled: hasScrollControlled,
     useSafeArea: true,
-    isDismissible: isDismissible,
+    isDismissible: hasDismissible,
     backgroundColor: backgroundColor,
     shape: shape,
-    constraints: isTablet ? BoxConstraints(maxWidth: tabletMaxWidth) : null,
+    constraints: hasTablet ? BoxConstraints(maxWidth: tabletMaxWidth) : null,
     builder: builder,
   );
 }

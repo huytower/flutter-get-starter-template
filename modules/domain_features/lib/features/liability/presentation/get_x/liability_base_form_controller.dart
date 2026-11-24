@@ -28,7 +28,7 @@ abstract class LiabilityBaseFormController extends TransactionFormController {
 
   RxList<LiabilityBalanceEntity> get mergedItems;
 
-  RxBool get isLoadingMerged;
+  RxBool get hasLoadingMerged;
 
   RxnString get selectedLiabilityId;
 
@@ -73,7 +73,7 @@ abstract class LiabilityBaseFormController extends TransactionFormController {
     }
     final amount = int.tryParse(amountStr.value) ?? 0;
     if (amount <= 0) return false;
-    if (balance.isSettled) return true;
+    if (balance.hasSettled) return true;
     if (balance.liability.currencyCode.toUpperCase() !=
         CurrencyConstants.currentPrimaryCurrency.toUpperCase()) {
       return false;

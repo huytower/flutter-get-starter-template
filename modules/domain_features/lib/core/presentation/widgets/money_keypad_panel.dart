@@ -45,11 +45,11 @@ class MoneyKeypadPanel extends StatelessWidget {
     });
 
     final scheme = context.ccColorScheme;
-    final isTablet = context.windowSizeClass.isAtLeast(
+    final hasTablet = context.windowSizeClass.isAtLeast(
       CcWindowSizeClass.medium,
     );
 
-    if (!isTablet) {
+    if (!hasTablet) {
       // Phone: full-width, edge-to-edge panel docked to the bottom.
       return DecoratedBox(
         decoration: BoxDecoration(

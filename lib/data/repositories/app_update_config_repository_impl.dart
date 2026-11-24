@@ -35,7 +35,7 @@ class AppUpdateConfigRepositoryImpl implements AppUpdateConfigRepository {
     final env = HttpClientConfig.httpConfig;
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setDefaults({
-      isForceKey: env.isForceUpdate,
+      isForceKey: env.hasForceUpdate,
       minimumVersionKey: env.minimumOsVersionHasForce ?? '',
     });
     await remoteConfig.setConfigSettings(
@@ -65,7 +65,7 @@ class AppUpdateConfigRepositoryImpl implements AppUpdateConfigRepository {
       final minimum = remoteConfig.getString(minimumVersionKey).trim();
       return Success(
         AppUpdateConfigEntity(
-          isForce: remoteConfig.getBool(isForceKey),
+          hasForce: remoteConfig.getBool(isForceKey),
           minimumVersion: minimum.isEmpty ? null : minimum,
           iosAppStoreId: _iosAppStoreId,
         ),
@@ -83,7 +83,7 @@ class AppUpdateConfigRepositoryImpl implements AppUpdateConfigRepository {
       final env = HttpClientConfig.httpConfig;
       return Success(
         AppUpdateConfigEntity(
-          isForce: env.isForceUpdate,
+          hasForce: env.hasForceUpdate,
           minimumVersion: env.minimumOsVersionHasForce,
           iosAppStoreId: _iosAppStoreId,
         ),

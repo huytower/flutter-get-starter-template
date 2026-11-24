@@ -109,24 +109,24 @@ class ReportController extends PrjGetController {
   final GlobalKey dailyDetailKey = GlobalKey();
   bool _pendingScrollToDaily = false;
 
-  final RxBool isHeaderHidden = false.obs;
-  final RxBool isEditMode = false.obs;
+  final RxBool hasHeaderHidden = false.obs;
+  final RxBool hasEditMode = false.obs;
 
   void toggleEditMode() {
-    isEditMode.toggle();
+    hasEditMode.toggle();
   }
 
   final ScrollController scrollController = ScrollController();
 
   void onScroll(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
-      isHeaderHidden.value = notification.metrics.pixels > 8;
+      hasHeaderHidden.value = notification.metrics.pixels > 8;
     }
   }
 
   void onBack(BuildContext context) {
-    if (isEditMode.value) {
-      isEditMode.value = false;
+    if (hasEditMode.value) {
+      hasEditMode.value = false;
     } else {
       Navigator.of(context).pop();
     }
@@ -140,7 +140,7 @@ class ReportController extends PrjGetController {
   final Rx<TrendDataEntity?> liabilityTrend = Rx<TrendDataEntity?>(null);
 
   final Rx<AiAdviceEntity?> aiAdvice = Rx<AiAdviceEntity?>(null);
-  final RxBool isGeneratingAdvice = false.obs;
+  final RxBool hasGeneratingAdvice = false.obs;
   final RxnString aiAdviceErrorKey = RxnString();
 
   int get rangeExpense => spending.fold<int>(0, (sum, s) => sum + s.amount);
@@ -160,7 +160,7 @@ class ReportController extends PrjGetController {
           case ReportFilterType.income:
             return t.type == TransactionType.income;
           case ReportFilterType.investment:
-            return t.isInvestmentActivity;
+            return t.hasInvestmentActivity;
           case ReportFilterType.liability:
             return t.type == TransactionType.debtBorrow ||
                 t.type == TransactionType.debtRepay;
@@ -192,24 +192,24 @@ class ReportController extends PrjGetController {
   @override
   void onReady() {
     super.onReady();
-    isEditMode.value = false;
+    hasEditMode.value = false;
     load();
     loadWallets();
   }
 
   @override
   void onClose() {
-    isEditMode.value = false;
+    hasEditMode.value = false;
     scrollController.dispose();
     super.onClose();
   }
 
   Future<void> generateAiAdvice(BuildContext context) async {
     _analytics.logEvent(name: 'click_generate_ai_advice');
-    if (!userLevel.status.isVip) return;
+    if (!userLevel.status.hasVip) return;
 
-    if (isGeneratingAdvice.value) return;
-    isGeneratingAdvice.value = true;
+    if (hasGeneratingAdvice.value) return;
+    hasGeneratingAdvice.value = true;
     aiAdviceErrorKey.value = null;
 
     final targetCurrency = CurrencyConstants.currentPrimaryCurrency;
@@ -224,7 +224,7 @@ class ReportController extends PrjGetController {
     );
     if (cachedResult != null) {
       if (isClosed) return;
-      isGeneratingAdvice.value = false;
+      hasGeneratingAdvice.value = false;
       aiAdvice.value = cachedResult;
       scrollToAiAdvice();
       return;
@@ -234,13 +234,13 @@ class ReportController extends PrjGetController {
     if (!context.mounted ||
         !await AiConsentSheet.ensure(context, _aiPreferences)) {
       if (isClosed) return;
-      isGeneratingAdvice.value = false;
+      hasGeneratingAdvice.value = false;
       aiAdviceErrorKey.value = PrjLocaleKeys.report_ai_advice_gemini_disabled;
       return;
     }
     if (!await _aiPreferences.tryConsumeDailyCall()) {
       if (isClosed) return;
-      isGeneratingAdvice.value = false;
+      hasGeneratingAdvice.value = false;
       aiAdviceErrorKey.value =
           PrjLocaleKeys.report_ai_advice_daily_limit_reached;
       final previousCached = await cacheDs.getLastCachedAdvice(
@@ -258,7 +258,7 @@ class ReportController extends PrjGetController {
       languageCode: languageCode,
     );
     if (isClosed) return;
-    isGeneratingAdvice.value = false;
+    hasGeneratingAdvice.value = false;
 
     final advice = outcome.tryGetSuccess();
     if (advice == null) {
@@ -426,7 +426,7 @@ class ReportController extends PrjGetController {
   }
 
   Future<void> _loadCachedAdviceIfAvailable() async {
-    if (!userLevel.status.isVip) return;
+    if (!userLevel.status.hasVip) return;
     final cacheDs = getIt<AiAdviceCacheDataSource>();
     final fingerprint = cacheDs.computeFingerprint(dailyListTransactions);
     final targetCurrency = CurrencyConstants.currentPrimaryCurrency;

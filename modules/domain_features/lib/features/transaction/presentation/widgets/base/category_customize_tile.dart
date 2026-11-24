@@ -19,7 +19,7 @@ class CategoryCustomizeTile extends StatelessWidget {
 
     return CcInteractionWrapper(
       onTap: onTap,
-      isBouncing: true,
+      hasBouncing: true,
       useDebounce: true,
       child: DecoratedBox(
         decoration: BoxDecoration(

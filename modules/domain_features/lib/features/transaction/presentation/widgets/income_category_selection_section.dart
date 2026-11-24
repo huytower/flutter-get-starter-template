@@ -28,7 +28,7 @@ class IncomeCategorySelectionSection extends StatelessWidget {
       final selectedCategory = controller.selectedCategory.value;
 
       return CategorySelectionLayout(
-        isLoading: controller.isLoadingUnified.value,
+        hasLoading: controller.hasLoadingUnified.value,
         items: items,
         scrollController: controller.categoryScrollController,
         onCustomize: () => CategorySettingsPage.open(
@@ -37,13 +37,13 @@ class IncomeCategorySelectionSection extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           final item = items[index];
-          final isSelected = selectedCategory?.id == item.categoryId;
+          final hasSelected = selectedCategory?.id == item.categoryId;
           final key = ValueKey('income_${item.id}');
 
           return UnifiedCategoryItemWidget(
             key: key,
             item: item,
-            isSelected: isSelected,
+            hasSelected: hasSelected,
             activeColor: activeColor,
             onTap: () {
               final cat = controller.getCachedCategoryById(item.categoryId);

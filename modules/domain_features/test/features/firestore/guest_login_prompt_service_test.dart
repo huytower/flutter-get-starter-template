@@ -9,17 +9,17 @@ class _UnusedAuthCoordinator implements AuthCoordinator {
 
 class _FakeSessionContract implements SessionContract {
   @override
-  final bool isAnonymous;
+  final bool hasAnonymous;
 
   @override
-  final bool isAuthenticated;
+  final bool hasAuthenticated;
 
   @override
   final CcUserEntity? currentUser;
 
   _FakeSessionContract({
-    required this.isAnonymous,
-    required this.isAuthenticated,
+    required this.hasAnonymous,
+    required this.hasAuthenticated,
     required this.currentUser,
   });
 
@@ -36,14 +36,14 @@ void main() {
       'returns null when user is authenticated with real account (not anonymous)',
       () async {
         final session = _FakeSessionContract(
-          isAnonymous: false,
-          isAuthenticated: true,
+          hasAnonymous: false,
+          hasAuthenticated: true,
           currentUser: CcUserEntity(
             id: 'user_123',
             email: 'test@example.com',
             status: CcUserStatus.active,
-            isEmailVerified: true,
-            isPhoneVerified: false,
+            hasEmailVerified: true,
+            hasPhoneVerified: false,
             registeredDeviceIds: const [],
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
@@ -59,14 +59,14 @@ void main() {
 
     test('evaluates anonymous user conditions properly', () {
       final session = _FakeSessionContract(
-        isAnonymous: true,
-        isAuthenticated: true,
+        hasAnonymous: true,
+        hasAuthenticated: true,
         currentUser: CcUserEntity(
           id: 'guest_123',
           email: '',
           status: CcUserStatus.active,
-          isEmailVerified: false,
-          isPhoneVerified: false,
+          hasEmailVerified: false,
+          hasPhoneVerified: false,
           registeredDeviceIds: const [],
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
@@ -74,7 +74,7 @@ void main() {
         ),
       );
 
-      expect(session.isAnonymous, isTrue);
+      expect(session.hasAnonymous, isTrue);
       expect(session.currentUser?.id, equals('guest_123'));
     });
 

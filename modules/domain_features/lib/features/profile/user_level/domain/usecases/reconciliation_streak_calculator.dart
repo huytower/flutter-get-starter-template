@@ -37,7 +37,7 @@ int longestReconciliationStreak(
   for (var i = 1; i < weeks.length; i++) {
     final prev = weeks[i - 1];
     final w = weeks[i];
-    final isConsecutive =
+    final hasConsecutive =
         (w.yearly == prev.yearly && w.week == prev.week + 1) ||
         // Year boundary: last week of prev year -> week 1 of next year.
         // prev.yearly can have 52 or 53 ISO weeks, so compare against the
@@ -45,7 +45,7 @@ int longestReconciliationStreak(
         (w.yearly == prev.yearly + 1 &&
             w.week == 1 &&
             prev.week == lastIsoWeekOfYear(prev.yearly));
-    current = isConsecutive ? current + 1 : 1;
+    current = hasConsecutive ? current + 1 : 1;
     if (current > longest) longest = current;
   }
 

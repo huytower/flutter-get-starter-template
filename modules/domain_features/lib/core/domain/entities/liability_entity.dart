@@ -101,11 +101,11 @@ class LiabilityEntity extends Equatable {
     this.currencyCode = CurrencyConstants.defaultCurrencyCode,
   });
 
-  bool get isBorrow => direction == LiabilityDirection.borrow;
+  bool get hasBorrow => direction == LiabilityDirection.borrow;
 
-  bool get isLend => direction == LiabilityDirection.lend;
+  bool get hasLend => direction == LiabilityDirection.lend;
 
-  bool get isInstallment =>
+  bool get hasInstallment =>
       repaymentMethod == LiabilityRepaymentMethod.installment;
 
   LiabilityEntity copyWith({

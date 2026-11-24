@@ -46,7 +46,7 @@ class _LiabilityGridPageState extends State<LiabilityGridPage> {
     }
     controller = Get.find<LiabilityListController>();
     // Ensure edit mode is always off when entering the page.
-    controller.isEditMode.value = false;
+    controller.hasEditMode.value = false;
 
     if (widget.openAddOnStart) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -74,7 +74,7 @@ class _LiabilityGridView extends PrjGetView<LiabilityListController> {
       leading: Obx(
         () => CcIconButton.bouncing(
           icon: Icon(
-            controller.isEditMode.value
+            controller.hasEditMode.value
                 ? Icons.close_rounded
                 : Icons.arrow_back_ios_new_rounded,
             color: context.ccColorScheme.onPrimary,
@@ -102,16 +102,16 @@ class _LiabilityGridView extends PrjGetView<LiabilityListController> {
         Obx(() {
           return CcIconButton.bouncing(
             onTap: controller.toggleEditMode,
-            tooltip: controller.isEditMode.value
+            tooltip: controller.hasEditMode.value
                 ? el.tr(PrjLocaleKeys.common_done)
                 : el.tr(PrjLocaleKeys.common_edit),
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: Icon(
-                controller.isEditMode.value
+                controller.hasEditMode.value
                     ? Icons.check_circle_outline_rounded
                     : Icons.tune_rounded,
-                key: ValueKey(controller.isEditMode.value),
+                key: ValueKey(controller.hasEditMode.value),
                 color: context.ccColorScheme.onPrimary,
                 size: context.respIconSize(baseSize: 24),
               ),
@@ -127,7 +127,7 @@ class _LiabilityGridView extends PrjGetView<LiabilityListController> {
   Widget buildContent(BuildContext context) {
     return Obx(() {
       final balances = controller.borrowBalances;
-      final isEdit = controller.isEditMode.value;
+      final hasEdit = controller.hasEditMode.value;
 
       if (balances.isEmpty) {
         return CcText(
@@ -141,14 +141,14 @@ class _LiabilityGridView extends PrjGetView<LiabilityListController> {
       }
 
       return PopScope(
-        canPop: !controller.isEditMode.value,
+        canPop: !controller.hasEditMode.value,
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
-            controller.isEditMode.value = false;
+            controller.hasEditMode.value = false;
             return;
           }
-          if (controller.isEditMode.value) {
-            controller.isEditMode.value = false;
+          if (controller.hasEditMode.value) {
+            controller.hasEditMode.value = false;
           }
         },
         // Landscape tablet: three columns, capped at the two-column width.
@@ -170,7 +170,7 @@ class _LiabilityGridView extends PrjGetView<LiabilityListController> {
               return LiabilityWalletGridCard(
                 key: ValueKey(balance.liability.id),
                 balance: balance,
-                isEditMode: isEdit,
+                hasEditMode: hasEdit,
                 canDelete: true,
                 onEdit: () => _openAddLiability(context),
                 onDelete: () => _confirmDelete(context, balance.liability.id),

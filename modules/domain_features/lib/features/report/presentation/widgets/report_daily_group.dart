@@ -19,20 +19,20 @@ class ReportDailyGroup extends StatefulWidget {
     required this.date,
     required this.transactions,
     required this.includeInvestmentAndLiability,
-    required this.isEditMode,
+    required this.hasEditMode,
   });
 
   final DateTime date;
   final List<TransactionEntity> transactions;
   final bool includeInvestmentAndLiability;
-  final bool isEditMode;
+  final bool hasEditMode;
 
   @override
   State<ReportDailyGroup> createState() => _ReportDailyGroupState();
 }
 
 class _ReportDailyGroupState extends State<ReportDailyGroup> {
-  late bool _isExpanded;
+  late bool _hasExpanded;
 
   @override
   void initState() {
@@ -47,12 +47,12 @@ class _ReportDailyGroupState extends State<ReportDailyGroup> {
     final differenceInDays = today.difference(groupDate).inDays;
 
     // Recent 15 days: default expanded, otherwise collapsed
-    _isExpanded = differenceInDays <= 15;
+    _hasExpanded = differenceInDays <= 15;
   }
 
   void _toggleExpand() {
     setState(() {
-      _isExpanded = !_isExpanded;
+      _hasExpanded = !_hasExpanded;
     });
   }
 
@@ -128,7 +128,7 @@ class _ReportDailyGroupState extends State<ReportDailyGroup> {
                           const CcSpaceXS(),
                           CcIconButton.bouncing(
                             icon: Icon(
-                              _isExpanded
+                              _hasExpanded
                                   ? Icons.keyboard_arrow_up_rounded
                                   : Icons.keyboard_arrow_down_rounded,
                               size: context.respIconSize(baseSize: 18),
@@ -164,14 +164,14 @@ class _ReportDailyGroupState extends State<ReportDailyGroup> {
                 ],
               ),
             ),
-            if (_isExpanded) ...[
+            if (_hasExpanded) ...[
               CcDividerLine(
                 color: context.ccColorScheme.outlineVariant.withValues(
                   alpha: 0.1,
                 ),
               ),
               for (final tx in widget.transactions)
-                ReportTransactionTile(transaction: tx, isEditMode: widget.isEditMode),
+                ReportTransactionTile(transaction: tx, hasEditMode: widget.hasEditMode),
             ],
           ],
         ),

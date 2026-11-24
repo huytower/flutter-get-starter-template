@@ -49,10 +49,10 @@ class SessionProviderImpl implements SessionContract {
   }
 
   @override
-  bool get isAuthenticated => _userSubject.value != null;
+  bool get hasAuthenticated => _userSubject.value != null;
 
   @override
-  bool get isAnonymous =>
+  bool get hasAnonymous =>
       _userSubject.value == null ||
       _userSubject.value!.linkedProviderIds.isEmpty;
 

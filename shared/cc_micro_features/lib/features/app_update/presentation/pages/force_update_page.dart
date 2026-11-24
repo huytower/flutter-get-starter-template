@@ -20,13 +20,13 @@ class ForceUpdatePage extends StatefulWidget {
 }
 
 class _ForceUpdatePageState extends State<ForceUpdatePage> {
-  bool _isOpening = false;
+  bool _hasOpening = false;
 
   Future<void> _openStore() async {
-    setState(() => _isOpening = true);
+    setState(() => _hasOpening = true);
     final result = await getIt<OpenAppStoreUseCase>()();
     if (!mounted) return;
-    setState(() => _isOpening = false);
+    setState(() => _hasOpening = false);
     result.whenError((_) {
       CcSnackBarHelper.showErrorSnackBar(
         context: context,
@@ -103,8 +103,8 @@ class _ForceUpdatePageState extends State<ForceUpdatePage> {
         const CcSpaceXL(),
         CcSaveButton(
           label: el.tr(CcMfLocaleKeys.app_update_update_now),
-          isLoading: _isOpening,
-          onPressed: _isOpening ? null : _openStore,
+          hasLoading: _hasOpening,
+          onPressed: _hasOpening ? null : _openStore,
         ),
       ],
     );

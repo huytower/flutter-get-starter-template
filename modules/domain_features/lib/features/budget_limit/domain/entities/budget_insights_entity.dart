@@ -54,26 +54,26 @@ class BudgetPenaltyWarning extends Equatable {
 class BudgetInsightsEntity extends Equatable {
   final List<BudgetPacingWarning> pacingWarnings;
   final List<BudgetPenaltyWarning> penaltyWarnings;
-  final bool isDeficit;
+  final bool hasDeficit;
   final int deficitAmount;
   final int anomalyCount;
-  final bool isInflowDebtDriven;
+  final bool hasInflowDebtDriven;
   final int debtInflowAmount;
   final int debtInflowPercent;
-  final bool isOutflowDebtDriven;
+  final bool hasOutflowDebtDriven;
   final int debtOutflowAmount;
   final int debtOutflowPercent;
 
   const BudgetInsightsEntity({
     required this.pacingWarnings,
     required this.penaltyWarnings,
-    required this.isDeficit,
+    required this.hasDeficit,
     required this.deficitAmount,
     required this.anomalyCount,
-    this.isInflowDebtDriven = false,
+    this.hasInflowDebtDriven = false,
     this.debtInflowAmount = 0,
     this.debtInflowPercent = 0,
-    this.isOutflowDebtDriven = false,
+    this.hasOutflowDebtDriven = false,
     this.debtOutflowAmount = 0,
     this.debtOutflowPercent = 0,
   });
@@ -81,22 +81,22 @@ class BudgetInsightsEntity extends Equatable {
   bool get hasAnything =>
       pacingWarnings.isNotEmpty ||
       penaltyWarnings.isNotEmpty ||
-      isDeficit ||
-      isInflowDebtDriven ||
-      isOutflowDebtDriven ||
+      hasDeficit ||
+      hasInflowDebtDriven ||
+      hasOutflowDebtDriven ||
       anomalyCount > 0;
 
   @override
   List<Object?> get props => [
     pacingWarnings,
     penaltyWarnings,
-    isDeficit,
+    hasDeficit,
     deficitAmount,
     anomalyCount,
-    isInflowDebtDriven,
+    hasInflowDebtDriven,
     debtInflowAmount,
     debtInflowPercent,
-    isOutflowDebtDriven,
+    hasOutflowDebtDriven,
     debtOutflowAmount,
     debtOutflowPercent,
   ];

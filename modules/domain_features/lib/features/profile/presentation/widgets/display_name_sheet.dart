@@ -26,7 +26,7 @@ class DisplayNameSheet extends StatefulWidget {
 class _DisplayNameSheetState extends State<DisplayNameSheet> {
   late final TextEditingController _nameController;
 
-  bool get _isValid => _nameController.text.trim().isNotEmpty;
+  bool get _hasValid => _nameController.text.trim().isNotEmpty;
 
   @override
   void initState() {
@@ -95,7 +95,7 @@ class _DisplayNameSheetState extends State<DisplayNameSheet> {
             ),
             const CcSpaceMD(),
             CcSaveButton(
-              onPressed: _isValid ? _onSave : null,
+              onPressed: _hasValid ? _onSave : null,
               label: el.tr(PrjLocaleKeys.profile_display_name_save),
             ),
           ],

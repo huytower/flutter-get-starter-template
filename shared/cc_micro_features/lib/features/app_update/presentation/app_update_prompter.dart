@@ -18,10 +18,10 @@ class AppUpdatePrompter {
   AppUpdatePrompter(this._checkAppUpdate);
 
   final CheckAppUpdateUseCase _checkAppUpdate;
-  bool _isShowing = false;
+  bool _hasShowing = false;
 
   Future<void> checkAndPrompt(BuildContext context) async {
-    if (_isShowing) return;
+    if (_hasShowing) return;
     final result = await _checkAppUpdate();
     switch (result) {
       case Error(:final error):
@@ -29,8 +29,8 @@ class AppUpdatePrompter {
       case Success(success: AppUpdateNotRequired()):
         return;
       case Success(success: final AppUpdateRequired status):
-        if (!context.mounted || _isShowing) return;
-        _isShowing = true;
+        if (!context.mounted || _hasShowing) return;
+        _hasShowing = true;
         'Forced update: ${status.currentVersion} < ${status.minimumVersion}'
             .Log('AppUpdate');
         await Navigator.of(context, rootNavigator: true).push(
@@ -39,7 +39,7 @@ class AppUpdatePrompter {
             builder: (_) => ForceUpdatePage(status: status),
           ),
         );
-        _isShowing = false;
+        _hasShowing = false;
     }
   }
 }

@@ -15,7 +15,7 @@ class GuidelineBadgeView extends StatefulWidget {
     this.onTap,
     this.onLabelTap,
     this.growRight = false,
-    this.isDescriptionHidden = false,
+    this.hasDescriptionHidden = false,
     this.forceHideLabel = false,
     this.labelAbove = true,
     this.icon,
@@ -34,7 +34,7 @@ class GuidelineBadgeView extends StatefulWidget {
   final bool growRight;
 
   /// Whether the descriptive text labels on guideline badges are hidden.
-  final bool isDescriptionHidden;
+  final bool hasDescriptionHidden;
 
   /// Overrides everything to never show the label text bubble.
   final bool forceHideLabel;
@@ -208,7 +208,7 @@ class _GuidelineBadgeViewState extends State<GuidelineBadgeView>
 
   Widget? _buildLabel(BuildContext context) {
     if (widget.label == null ||
-        widget.isDescriptionHidden ||
+        widget.hasDescriptionHidden ||
         widget.forceHideLabel) {
       return null;
     }

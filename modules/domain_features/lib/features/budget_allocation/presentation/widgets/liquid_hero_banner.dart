@@ -84,7 +84,7 @@ class LiquidHeroBanner extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      walletController.isBalanceVisible.value
+                      walletController.hasBalanceVisible.value
                           ? Icons.visibility_rounded
                           : Icons.visibility_off_rounded,
                       color: scheme.onPrimary,
@@ -114,7 +114,7 @@ class LiquidHeroBanner extends StatelessWidget {
                             const SizedBox(width: 4),
                           ],
                           CcText(
-                            walletController.isBalanceVisible.value
+                            walletController.hasBalanceVisible.value
                                 ? TransactionFormHelpers.formatShortWithSymbol(
                                     balance.value,
                                     currencyCode:

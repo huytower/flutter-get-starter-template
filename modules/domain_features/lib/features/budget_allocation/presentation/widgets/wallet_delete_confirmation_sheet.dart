@@ -24,7 +24,7 @@ class WalletDeleteConfirmationSheet extends StatelessWidget {
   }) {
     return showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: false,
+      hasScrollControlled: false,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -87,7 +87,7 @@ class WalletDeleteConfirmationSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.common_cancel),
-                      bgColor: [
+                      backgroundColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
                       ],
@@ -99,7 +99,7 @@ class WalletDeleteConfirmationSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.common_delete),
-                      bgColor: [scheme.error, scheme.error],
+                      backgroundColor: [scheme.error, scheme.error],
                       textColor: scheme.onError,
                       onTap: () {
                         Navigator.of(context).pop();

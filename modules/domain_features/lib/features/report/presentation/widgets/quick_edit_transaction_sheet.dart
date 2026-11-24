@@ -83,8 +83,8 @@ class QuickEditTransactionSheet
                       const CcSpaceSM(),
                       EntrySubmitButton(
                         text: el.tr(PrjLocaleKeys.common_save),
-                        isSubmitting: controller.isSubmitting.value,
-                        isEnabled: true,
+                        hasSubmitting: controller.hasSubmitting.value,
+                        hasEnabled: true,
                         onTap: () => controller.save(context),
                         activeColor: accentColor,
                       ),
@@ -117,21 +117,21 @@ class QuickEditTransactionSheet
     BuildContext context,
     Color accentColor,
   ) {
-    if (controller.isInvestment && controller.investmentController != null) {
+    if (controller.hasInvestment && controller.investmentController != null) {
       return InvestmentAssetSelector(
         controller: controller.investmentController!,
         activeColor: accentColor,
       );
     }
 
-    if (controller.isBorrow && controller.liabilityController != null) {
+    if (controller.hasBorrow && controller.liabilityController != null) {
       return BorrowAssetSelector(
         controller: controller.liabilityController!,
         activeColor: accentColor,
       );
     }
 
-    if (controller.isLend && controller.lendController != null) {
+    if (controller.hasLend && controller.lendController != null) {
       return LendAssetSelector(
         controller: controller.lendController!,
         activeColor: accentColor,
@@ -187,7 +187,7 @@ class QuickEditTransactionSheet
           quickAmounts: MoneyConstants.getQuickAmounts(
             currencyCode: controller.currencyCode,
           ),
-          isKeypadVisible: controller.showKeypad.value,
+          hasKeypadVisible: controller.showKeypad.value,
           activeColor: accentColor,
           currencyCode: controller.currencyCode,
           onTap: controller.toggleKeypad,

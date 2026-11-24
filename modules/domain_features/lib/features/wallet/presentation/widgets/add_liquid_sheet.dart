@@ -83,7 +83,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       children: [
         _buildTitle(context, controller),
         const CcSpaceSM(),
-        if (!controller.isEditing) ...[
+        if (!controller.hasEditing) ...[
           _buildTypeSelector(context, controller),
           if (controller.showEmergencyFundLockedHint.value) ...[
             const CcSpaceXS(),
@@ -108,7 +108,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     AddLiquidSheetController controller,
   ) {
     return CcFormLabel(
-      text: controller.isEditing
+      text: controller.hasEditing
           ? el.tr(PrjLocaleKeys.wallet_edit_title)
           : el.tr(PrjLocaleKeys.wallet_add_title),
       color: context.ccColorScheme.primary,
@@ -131,12 +131,12 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
           namedArgs: {'count': '15'},
         ),
         onClear: () {
-          controller.isNameValid.value = false;
+          controller.hasNameValid.value = false;
           controller.selectedInvestmentCategory.value = null;
           controller.nameError.value = null;
         },
       );
-      if (!controller.isNameLocked) return field;
+      if (!controller.hasNameLocked) return field;
       // Built-in Cash / Bank wallets keep their localized name.
       return Opacity(
         opacity: 0.6,
@@ -160,7 +160,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
             quickAmounts: MoneyConstants.getWalletQuickAmounts(
               currencyCode: controller.currencyCode.value,
             ),
-            isKeypadVisible: controller.showKeypad.value,
+            hasKeypadVisible: controller.showKeypad.value,
             activeColor: context.ccColorScheme.primary,
             currencyCode: controller.currencyCode.value,
             fieldKey: controller.amountFieldKey,
@@ -171,11 +171,11 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                 CcStringHelper.copyToClipboard(controller.amountStr.value),
           ),
         ),
-        if (controller.guideline.isAvailable)
+        if (controller.guideline.hasAvailable)
           Obx(() {
             final guideline = controller.guideline;
             final showing =
-                guideline.isTaskActive('wallet_balance') && controller.isCash;
+                guideline.isTaskActive('wallet_balance') && controller.hasCash;
             return Positioned(
               bottom: context.respDim(-10),
               right: context.respDim(-10),
@@ -198,8 +198,8 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
   ) {
     return Obx(() {
       final bool canSave =
-          controller.isNameValid.value &&
-          controller.isAmountValid.value &&
+          controller.hasNameValid.value &&
+          controller.hasAmountValid.value &&
           (controller.newType.value != WalletType.investment ||
               controller.selectedInvestmentCategory.value != null);
 
@@ -318,12 +318,12 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     // itemBuilder would be missed during the initial build phase.
     controller.newType.value;
 
-    final isEmergencyFundVisible = controller.isEmergencyFundOffered;
+    final hasEmergencyFundVisible = controller.hasEmergencyFundOffered;
 
     final options = [
       (WalletType.bank, el.tr(PrjLocaleKeys.wallet_bank)),
       (WalletType.ewallet, el.tr(PrjLocaleKeys.wallet_ewallet)),
-      if (isEmergencyFundVisible)
+      if (hasEmergencyFundVisible)
         (WalletType.emergencyFund, el.tr(PrjLocaleKeys.wallet_emergency_fund)),
     ];
     return CcHorizontalFadeScrollView(
@@ -335,7 +335,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
         itemCount: options.length,
         itemBuilder: (context, index) {
           final (type, label) = options[index];
-          final isSelected = controller.newType.value == type;
+          final hasSelected = controller.newType.value == type;
           return Padding(
             padding: EdgeInsets.only(right: context.respDim(8)),
             child: CcBouncing(
@@ -348,7 +348,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                   vertical: context.respDim(10),
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected
+                  color: hasSelected
                       ? context.ccColorScheme.primary
                       : context.ccColorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(20),
@@ -359,7 +359,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                     Icon(
                       walletIconFor(type),
                       size: context.respIconSize(baseSize: 16),
-                      color: isSelected
+                      color: hasSelected
                           ? context.ccColorScheme.onPrimary
                           : context.ccColorScheme.onSurfaceVariant,
                     ),
@@ -367,10 +367,10 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                     CcText(
                       label,
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                        color: isSelected
+                        color: hasSelected
                             ? context.ccColorScheme.onPrimary
                             : context.ccColorScheme.onSurfaceVariant,
-                        fontWeight: isSelected
+                        fontWeight: hasSelected
                             ? CcTypographyParams.bold
                             : FontWeight.normal,
                       ),

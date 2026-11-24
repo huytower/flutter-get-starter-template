@@ -18,7 +18,7 @@ class ProfileInfoCard extends StatelessWidget {
   final VoidCallback? onLinkAccount;
   final VoidCallback? onAvatarTap;
   final VoidCallback? onLinkPhone;
-  final bool isImmersive;
+  final bool hasImmersive;
 
   const ProfileInfoCard({
     super.key,
@@ -32,7 +32,7 @@ class ProfileInfoCard extends StatelessWidget {
     this.onLinkAccount,
     this.onAvatarTap,
     this.onLinkPhone,
-    this.isImmersive = false,
+    this.hasImmersive = false,
   });
 
   @override
@@ -46,7 +46,7 @@ class ProfileInfoCard extends StatelessWidget {
       borderRadius: context.brLg,
       child: Container(
         width: double.infinity,
-        decoration: isImmersive
+        decoration: hasImmersive
             ? null
             : BoxDecoration(
                 gradient: LinearGradient(
@@ -223,8 +223,8 @@ class ProfileInfoCard extends StatelessWidget {
   Widget _buildSyncStatusIcon(BuildContext context) {
     return Obx(() {
       final service = syncService;
-      final online = service.isOnline.value;
-      final syncing = service.isSyncing.value;
+      final online = service.hasOnline.value;
+      final syncing = service.hasSyncing.value;
       final pending = service.pendingCount.value;
 
       final iconColor = context.ccColorScheme.onPrimary.withOpacity(0.8);
@@ -322,9 +322,9 @@ class ProfileInfoCard extends StatelessWidget {
     required String label,
     required String value,
     required Color valueColor,
-    bool isLocked = false,
+    bool hasLocked = false,
   }) {
-    final iconColor = isLocked
+    final iconColor = hasLocked
         ? context.ccColorScheme.onPrimary.withOpacity(0.5)
         : context.ccColorScheme.onPrimary;
     return Row(
@@ -356,8 +356,8 @@ class ProfileInfoCard extends StatelessWidget {
   }
 
   Widget _buildLevelBadge(BuildContext context) {
-    final isVip = levelStatus.isVip;
-    final assetPath = isVip
+    final hasVip = levelStatus.hasVip;
+    final assetPath = hasVip
         ? 'assets/icon/ic_yellow.webp'
         : 'assets/icon/ic_green.webp';
 
@@ -441,27 +441,27 @@ class ProfileInfoCard extends StatelessWidget {
     required String email,
     VoidCallback? onLink,
   }) {
-    final isEmpty = email.isEmpty;
+    final hasEmpty = email.isEmpty;
     return CcBouncing(
-      onTap: isEmpty ? onLink : null,
+      onTap: hasEmpty ? onLink : null,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           CcText(
-            isEmpty
+            hasEmpty
                 ? 'Email'
                 : _isApplePrivateRelay(email)
                 ? el.tr(PrjLocaleKeys.profile_apple_private_email)
                 : email,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(
-                isEmpty ? 0.5 : 0.85,
+                hasEmpty ? 0.5 : 0.85,
               ),
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          if (onLink != null && isEmpty) ...[
+          if (onLink != null && hasEmpty) ...[
             const CcSpaceXS(),
             Icon(
               Icons.link_rounded,
@@ -479,23 +479,23 @@ class ProfileInfoCard extends StatelessWidget {
     required String phoneNumber,
     VoidCallback? onLink,
   }) {
-    final isEmpty = phoneNumber.isEmpty;
+    final hasEmpty = phoneNumber.isEmpty;
     return CcBouncing(
-      onTap: isEmpty ? onLink : null,
+      onTap: hasEmpty ? onLink : null,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           CcText(
-            isEmpty ? el.tr(PrjLocaleKeys.auth_phone_number) : phoneNumber,
+            hasEmpty ? el.tr(PrjLocaleKeys.auth_phone_number) : phoneNumber,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(
-                isEmpty ? 0.5 : 0.85,
+                hasEmpty ? 0.5 : 0.85,
               ),
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          if (onLink != null && isEmpty) ...[
+          if (onLink != null && hasEmpty) ...[
             const CcSpaceXS(),
             Icon(
               Icons.link_rounded,

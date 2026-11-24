@@ -25,7 +25,7 @@ abstract class TransactionFormController extends PrjGetController {
 
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
   final Rx<DateTime> date = DateTime.now().obs;
-  final RxBool isSubmitting = false.obs;
+  final RxBool hasSubmitting = false.obs;
   final RxBool showKeypad = false.obs;
   final RxBool showMoreDetails = false.obs;
   final RxBool hasNoteText = false.obs;
@@ -39,7 +39,7 @@ abstract class TransactionFormController extends PrjGetController {
   /// existing transaction rather than recording a new one.
   TransactionEntity? editingTransaction;
 
-  bool get isEditing => editingTransaction != null;
+  bool get hasEditing => editingTransaction != null;
 
   /// Called by [submitForm] after a successful edit — the edit sheet uses
   /// this to close itself instead of the create flow's reset-and-stay.
@@ -189,7 +189,7 @@ abstract class TransactionFormController extends PrjGetController {
 
   void _notifyParentKeypad(bool open) {
     if (Get.isRegistered<TransactionController>()) {
-      Get.find<TransactionController>().isKeypadOpen.value = open;
+      Get.find<TransactionController>().hasKeypadOpen.value = open;
     }
   }
 

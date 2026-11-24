@@ -33,13 +33,13 @@ class LiabilityListController extends PrjGetController {
       <LiabilityBalanceEntity>[].obs;
 
   List<LiabilityBalanceEntity> get borrowBalances =>
-      liabilities.where((b) => b.liability.isBorrow).toList();
+      liabilities.where((b) => b.liability.hasBorrow).toList();
 
   List<LiabilityBalanceEntity> get lendBalances =>
-      liabilities.where((b) => b.liability.isLend).toList();
+      liabilities.where((b) => b.liability.hasLend).toList();
 
-  final RxBool isEditMode = false.obs;
-  final RxBool isVip = false.obs;
+  final RxBool hasEditMode = false.obs;
+  final RxBool hasVip = false.obs;
 
   @override
   void onInit() {
@@ -112,12 +112,12 @@ class LiabilityListController extends PrjGetController {
   }
 
   void toggleEditMode() {
-    isEditMode.value = !isEditMode.value;
+    hasEditMode.value = !hasEditMode.value;
   }
 
   void onCloseEditMode(BuildContext context) {
-    if (isEditMode.value) {
-      isEditMode.value = false;
+    if (hasEditMode.value) {
+      hasEditMode.value = false;
     } else {
       Navigator.of(context).pop();
     }

@@ -11,10 +11,10 @@ class GuidelineProviderImpl implements GuidelineProvider {
   GuidelineController get _c => Get.find<GuidelineController>();
 
   GuidelineController? get _mounted =>
-      isAvailable ? Get.find<GuidelineController>() : null;
+      hasAvailable ? Get.find<GuidelineController>() : null;
 
   @override
-  bool get isAvailable => Get.isRegistered<GuidelineController>();
+  bool get hasAvailable => Get.isRegistered<GuidelineController>();
 
   @override
   bool isTaskActive(String taskId) => _c.isTaskActive(taskId);
@@ -47,16 +47,16 @@ class GuidelineProviderImpl implements GuidelineProvider {
   int get bounceTrigger => _c.bounceTrigger.value;
 
   @override
-  bool get isBannerHidden => _c.isBannerHidden.value;
+  bool get hasBannerHidden => _c.hasBannerHidden.value;
 
   @override
-  set isBannerHidden(bool value) => _c.isBannerHidden.value = value;
+  set hasBannerHidden(bool value) => _c.hasBannerHidden.value = value;
 
   @override
-  bool get isDescriptionHidden => _c.isDescriptionHidden.value;
+  bool get hasDescriptionHidden => _c.hasDescriptionHidden.value;
 
   @override
-  set isDescriptionHidden(bool value) => _c.isDescriptionHidden.value = value;
+  set hasDescriptionHidden(bool value) => _c.hasDescriptionHidden.value = value;
 
   @override
   void onCompletedTasksChanged(void Function(List<String> tasks) listener) {

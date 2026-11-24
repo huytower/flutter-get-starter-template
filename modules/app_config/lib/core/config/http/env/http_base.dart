@@ -22,9 +22,9 @@ import '../../app/prj_app_config.dart';
 abstract class HttpBase extends Equatable {
   /// Creates a new immutable configuration instance.
   ///
-  /// [isLogger] - Whether general application logging is enabled
-  /// [isEnableLoggerDio] - Whether Dio HTTP client logging is enabled
-  const HttpBase({required this.isLogger, required this.isEnableLoggerDio});
+  /// [hasLogger] - Whether general application logging is enabled
+  /// [hasEnableLoggerDio] - Whether Dio HTTP client logging is enabled
+  const HttpBase({required this.hasLogger, required this.hasEnableLoggerDio});
 
   /// The current API version.
   ///
@@ -32,10 +32,10 @@ abstract class HttpBase extends Equatable {
   int get versionApi => 0;
 
   /// Whether general application logging is enabled
-  final bool isLogger;
+  final bool hasLogger;
 
   /// Whether Dio HTTP client logging is enabled
-  final bool isEnableLoggerDio;
+  final bool hasEnableLoggerDio;
 
   /// The base URL for all API requests.
   ///
@@ -67,26 +67,26 @@ abstract class HttpBase extends Equatable {
   /// Whether the current env is development.
   ///
   /// Should be `true` only in development environments.
-  bool get isEnvDev => false;
+  bool get hasEnvDev => false;
 
   /// Whether the current env is production.
   ///
   /// Should be `true` only in production environments.
-  bool get isEnvPro => false;
+  bool get hasEnvPro => false;
 
   /// Whether the current env is UAT.
-  bool get isEnvUat => false;
+  bool get hasEnvUat => false;
 
   /// Whether the current env is free tier.
-  bool get isEnvFree => false;
+  bool get hasEnvFree => false;
 
   // App update (force update)
 
   /// Default for the forced app update switch (`IS_FORCE_UPDATE`); the live
   /// value comes from Firebase Remote Config (`isForce`).
-  bool get isForceUpdate => false;
+  bool get hasForceUpdate => false;
 
-  /// Installed versions below this one must update when [isForceUpdate] is
+  /// Installed versions below this one must update when [hasForceUpdate] is
   /// on (`MINIMUM_OS_VERSION_HAS_FORCE`), a semver app version such as
   /// `1.2.0`. Default for Remote Config `minimumOsVersionHasForce`;
   /// `null` when unset.
@@ -99,16 +99,16 @@ abstract class HttpBase extends Equatable {
     PrjAppConfig.VERSION_IOS,
     PrjAppConfig.VERSION_ANDROID,
     versionApi,
-    isLogger,
-    isEnableLoggerDio,
+    hasLogger,
+    hasEnableLoggerDio,
     baseUrl,
     apiTimeoutSeconds,
     maxRetries,
     retryDelayMs,
-    isEnvDev,
-    isEnvPro,
-    isEnvUat,
-    isEnvFree,
+    hasEnvDev,
+    hasEnvPro,
+    hasEnvUat,
+    hasEnvFree,
     environmentName,
   ];
 
@@ -155,7 +155,7 @@ abstract class HttpBase extends Equatable {
     }
 
     // Additional validations for production
-    if (isEnvPro &&
+    if (hasEnvPro &&
         baseUrl.startsWith('http://') &&
         !baseUrl.contains('localhost')) {
       throw const CcSecurityConfigFailure(

@@ -19,20 +19,20 @@ import 'budget_limit_pie_chart.dart';
 /// Edit mode: shows red (−) delete and primary edit badges; drag handle and flip are disabled.
 class BudgetLimitGridCard extends StatefulWidget {
   final BudgetLimitStatsEntity stats;
-  final bool isEditMode;
-  final bool isDragging;
+  final bool hasEditMode;
+  final bool hasDragging;
   final bool showDragHandle;
-  final bool isFlippable;
+  final bool hasFlippable;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
   const BudgetLimitGridCard({
     super.key,
     required this.stats,
-    this.isEditMode = false,
-    this.isDragging = false,
+    this.hasEditMode = false,
+    this.hasDragging = false,
     this.showDragHandle = true,
-    this.isFlippable = true,
+    this.hasFlippable = true,
     this.onEdit,
     this.onDelete,
   });
@@ -45,7 +45,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _animation;
-  bool _isFrontVisible = true;
+  bool _hasFrontVisible = true;
 
   @override
   void initState() {
@@ -67,23 +67,23 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
   }
 
   void _toggleFlip() {
-    if (widget.isEditMode || !widget.isFlippable || _controller.isAnimating) {
+    if (widget.hasEditMode || !widget.hasFlippable || _controller.isAnimating) {
       return;
     }
 
-    if (_isFrontVisible) {
+    if (_hasFrontVisible) {
       _controller.forward();
     } else {
       _controller.reverse();
     }
     setState(() {
-      _isFrontVisible = !_isFrontVisible;
+      _hasFrontVisible = !_hasFrontVisible;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isFlippable) {
+    if (!widget.hasFlippable) {
       return _buildFrontCard(context);
     }
 
@@ -94,20 +94,20 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
         animation: _animation,
         builder: (context, child) {
           final angle = _animation.value * math.pi;
-          final isUnder = angle > (math.pi / 2);
+          final hasUnder = angle > (math.pi / 2);
 
           return Transform(
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.001) // perspective
               ..rotateY(angle),
             alignment: Alignment.center,
-            child: isUnder
+            child: hasUnder
                 ? Transform(
                     transform: Matrix4.identity()..rotateY(math.pi),
                     alignment: Alignment.center,
                     child: BudgetLimitGridCardDetail(
                       stats: widget.stats,
-                      isEditMode: widget.isEditMode,
+                      hasEditMode: widget.hasEditMode,
                       onEdit: widget.onEdit,
                       onDelete: widget.onDelete,
                     ),
@@ -121,7 +121,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
 
   Widget _buildFrontCard(BuildContext context) {
     final stats = widget.stats;
-    final isEditMode = widget.isEditMode;
+    final hasEditMode = widget.hasEditMode;
     final showDragHandle = widget.showDragHandle;
 
     final scheme = context.ccColorScheme;
@@ -147,12 +147,12 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
         // ── Indicator icons ────────────────────────────────────────────────
         _buildIndicatorIcons(
           context,
-          isEditMode: isEditMode,
+          hasEditMode: hasEditMode,
           showDragHandle: showDragHandle,
         ),
 
         // ── Edit mode badges ───────────────────────────────────────────────
-        if (isEditMode) ..._buildEditBadges(context),
+        if (hasEditMode) ..._buildEditBadges(context),
       ],
     );
   }
@@ -287,10 +287,10 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
 
   Widget _buildIndicatorIcons(
     BuildContext context, {
-    required bool isEditMode,
+    required bool hasEditMode,
     required bool showDragHandle,
   }) {
-    final rightOffset = isEditMode
+    final rightOffset = hasEditMode
         ? context.respDim(8) + context.respDim(24) + context.respDim(2)
         : context.respDim(8);
     return Positioned(
@@ -311,7 +311,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
             ),
             const CcSpaceXS(),
           ],
-          if (widget.stats.budget.isFixedPrice) ...[
+          if (widget.stats.budget.hasFixedPrice) ...[
             Icon(
               Icons.bolt_rounded,
               color: context.ccColorScheme.primary,

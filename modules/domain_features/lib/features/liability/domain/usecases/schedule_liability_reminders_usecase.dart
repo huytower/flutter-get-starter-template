@@ -29,7 +29,7 @@ class ScheduleLiabilityRemindersUseCase {
     // Each entry is (the real due date shown in the notification text, how
     // long before it to fire the reminder).
     final List<(DateTime dueDate, Duration leadTime)> plan;
-    if (liability.isInstallment) {
+    if (liability.hasInstallment) {
       plan = (liability.installments ?? const [])
           .map((i) => (i.dueDate, const Duration(days: 1)))
           .toList();

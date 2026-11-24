@@ -7,7 +7,7 @@ class InstalledAppEntity extends Equatable {
   const InstalledAppEntity({
     required this.version,
     required this.packageName,
-    required this.isStoreDistributed,
+    required this.hasStoreDistributed,
   });
 
   final AppVersionEntity version;
@@ -17,8 +17,8 @@ class InstalledAppEntity extends Equatable {
 
   /// Whether this platform updates through a store (Android/iOS, not web or
   /// desktop). A forced update is only shown where there is a store to go to.
-  final bool isStoreDistributed;
+  final bool hasStoreDistributed;
 
   @override
-  List<Object?> get props => [version, packageName, isStoreDistributed];
+  List<Object?> get props => [version, packageName, hasStoreDistributed];
 }

@@ -49,15 +49,15 @@ class PrjGuidelineBadge extends StatelessWidget {
         bounceTrigger: guideline.bounceTrigger.value,
         label: label,
         onTap: () {
-          guideline.isDescriptionHidden.value = true;
+          guideline.hasDescriptionHidden.value = true;
           onTap?.call();
         },
         onLabelTap: () {
-          guideline.isDescriptionHidden.value = true;
+          guideline.hasDescriptionHidden.value = true;
           onLabelTap?.call();
         },
         growRight: growRight,
-        isDescriptionHidden: guideline.isDescriptionHidden.value,
+        hasDescriptionHidden: guideline.hasDescriptionHidden.value,
         forceHideLabel: forceHideLabel,
         labelAbove: labelAbove,
         icon: icon,

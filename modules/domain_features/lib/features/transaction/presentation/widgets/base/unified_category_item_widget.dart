@@ -9,13 +9,13 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
   const UnifiedCategoryItemWidget({
     super.key,
     required this.item,
-    required this.isSelected,
+    required this.hasSelected,
     required this.activeColor,
     required this.onTap,
   });
 
   final UnifiedCategoryItem item;
-  final bool isSelected;
+  final bool hasSelected;
   final Color activeColor;
   final VoidCallback onTap;
 
@@ -25,16 +25,16 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
 
     return CcInteractionWrapper(
       onTap: onTap,
-      isBouncing: true,
+      hasBouncing: true,
       useDebounce: false,
       child: Stack(
         clipBehavior: Clip.none,
         // The grid cell decides the card size.
         fit: StackFit.expand,
         children: [
-          if (isSelected) _buildActiveBackground(context),
+          if (hasSelected) _buildActiveBackground(context),
           _buildItemContainer(context, scheme),
-          if (item.isBudget) _buildBudgetIndicator(context, scheme),
+          if (item.hasBudget) _buildBudgetIndicator(context, scheme),
         ],
       ),
     );
@@ -53,12 +53,12 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color: isSelected
+        color: hasSelected
             ? activeColor.withValues(alpha: 0.02)
             : scheme.onSurface.withValues(alpha: 0.02),
         borderRadius: context.brLg,
         border: Border.all(
-          color: isSelected
+          color: hasSelected
               ? activeColor.withValues(alpha: 0.04)
               : scheme.onSurface.withValues(alpha: 0.02),
           width: context.respDim(1),
@@ -89,8 +89,8 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
       textStyle: context.ccTextTheme.labelSmall?.copyWith(
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        color: isSelected ? activeColor : scheme.onSurfaceVariant,
+        fontWeight: hasSelected ? FontWeight.bold : FontWeight.normal,
+        color: hasSelected ? activeColor : scheme.onSurfaceVariant,
       ),
     );
   }
@@ -102,7 +102,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       child: Icon(
         Icons.bar_chart,
         size: context.respIconSize(baseSize: 14),
-        color: isSelected
+        color: hasSelected
             ? activeColor.withAlpha(50)
             : scheme.onSurfaceVariant.withAlpha(50),
       ),
@@ -116,7 +116,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       width: context.respDim(35),
       height: context.respDim(35),
       decoration: BoxDecoration(
-        color: isSelected
+        color: hasSelected
             ? activeColor.withValues(alpha: 0.04)
             : scheme.onSurface.withValues(alpha: 0.02),
         borderRadius: context.brMd,
@@ -124,7 +124,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (isSelected)
+          if (hasSelected)
             Positioned.fill(
               child: CcGlassyGradientIcon(
                 centerColor: activeColor.withValues(alpha: 0.08),
@@ -134,7 +134,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
           CcIcon(
             icon: iconDataFromCode(item.iconCode, fontFamily: item.iconFamily),
             size: context.respIconSize(baseSize: 18),
-            color: isSelected ? activeColor : scheme.onSurfaceVariant,
+            color: hasSelected ? activeColor : scheme.onSurfaceVariant,
           ),
         ],
       ),

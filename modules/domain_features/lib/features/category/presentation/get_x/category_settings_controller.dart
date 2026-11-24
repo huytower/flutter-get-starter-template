@@ -111,7 +111,7 @@ class CategorySettingsController extends PrjGetController {
     final futures = <Future>[];
     for (final cat in allCategories) {
       final shouldBeEnabled = recommendedKeys.contains(cat.nameKey);
-      if (cat.isEnabled != shouldBeEnabled) {
+      if (cat.hasEnabled != shouldBeEnabled) {
         futures.add(_toggleEnabled(cat.id, shouldBeEnabled));
       }
     }
@@ -154,7 +154,7 @@ class CategorySettingsController extends PrjGetController {
         for (final cat in categories) {
           if (cat.id.startsWith('d') || cat.id.startsWith('inv')) {
             // This triggers an update in CategoryLocalDataSource using the latest seed data
-            await _toggleEnabled(cat.id, cat.isEnabled);
+            await _toggleEnabled(cat.id, cat.hasEnabled);
           }
         }
         await load(); // Recursive reload to pick up fixed data
@@ -167,7 +167,7 @@ class CategorySettingsController extends PrjGetController {
         seedIndexMap[CategorySeed.categories[i].id] = i;
       }
 
-      final bg = <String, List<CategoryEntity>>{};
+      final groupedCategories = <String, List<CategoryEntity>>{};
       final ibg = <String, List<CategoryEntity>>{};
       final dlbg = <String, List<CategoryEntity>>{};
       final invbg = <String, List<CategoryEntity>>{};
@@ -179,12 +179,12 @@ class CategorySettingsController extends PrjGetController {
         } else if (cat.type == CategoryType.investment) {
           invbg.putIfAbsent(cat.groupId, () => []).add(cat);
         } else {
-          bg.putIfAbsent(cat.groupId, () => []).add(cat);
+          groupedCategories.putIfAbsent(cat.groupId, () => []).add(cat);
         }
       }
 
       // Sort each group by seed order to preserve the UX-optimized arrangement
-      for (final group in bg.values) {
+      for (final group in groupedCategories.values) {
         group.sort((a, b) {
           final indexA = seedIndexMap[a.id] ?? 999;
           final indexB = seedIndexMap[b.id] ?? 999;
@@ -213,7 +213,7 @@ class CategorySettingsController extends PrjGetController {
         });
       }
 
-      byGroup.assignAll(bg);
+      byGroup.assignAll(groupedCategories);
       incomeByGroup.assignAll(ibg);
       liabilityByGroup.assignAll(dlbg);
       investmentByGroup.assignAll(invbg);
@@ -228,13 +228,13 @@ class CategorySettingsController extends PrjGetController {
     layoutStatus.value = CcLayoutStatus.success;
 
     // Guideline: Mark task as completed once the settings are reached/loaded.
-    if (_guidelineProvider.isAvailable) {
+    if (_guidelineProvider.hasAvailable) {
       _guidelineProvider.completeTask('categories');
     }
   }
 
   bool isEnabled(CategoryEntity cat) =>
-      pending.containsKey(cat.id) ? pending[cat.id]! : cat.isEnabled;
+      pending.containsKey(cat.id) ? pending[cat.id]! : cat.hasEnabled;
 
   void toggle(CategoryEntity cat) async {
     final current = isEnabled(cat);

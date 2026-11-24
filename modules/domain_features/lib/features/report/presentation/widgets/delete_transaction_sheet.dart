@@ -82,7 +82,7 @@ class DeleteTransactionSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.common_cancel),
-                      bgColor: [
+                      backgroundColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
                       ],
@@ -94,7 +94,7 @@ class DeleteTransactionSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.common_delete),
-                      bgColor: [scheme.error, scheme.error],
+                      backgroundColor: [scheme.error, scheme.error],
                       textColor: scheme.onError,
                       onTap: () async {
                         Navigator.of(context).pop();

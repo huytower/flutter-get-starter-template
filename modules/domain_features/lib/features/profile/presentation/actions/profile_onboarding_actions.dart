@@ -76,6 +76,6 @@ class ProfileOnboardingActions {
   /// Calls [listener] whenever guideline progress changes, if the guideline
   /// is running.
   void onGuidelineProgress(void Function(List<String> tasks) listener) {
-    if (_guideline.isAvailable) _guideline.onCompletedTasksChanged(listener);
+    if (_guideline.hasAvailable) _guideline.onCompletedTasksChanged(listener);
   }
 }

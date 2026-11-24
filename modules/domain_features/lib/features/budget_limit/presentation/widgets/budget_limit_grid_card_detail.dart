@@ -12,14 +12,14 @@ import '../../domain/entities/budget_limit_stats_entity.dart';
 /// [LendWalletListItem] while fitting the exact same bounds as [BudgetLimitGridCard].
 class BudgetLimitGridCardDetail extends StatelessWidget {
   final BudgetLimitStatsEntity stats;
-  final bool isEditMode;
+  final bool hasEditMode;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
   const BudgetLimitGridCardDetail({
     super.key,
     required this.stats,
-    this.isEditMode = false,
+    this.hasEditMode = false,
     this.onEdit,
     this.onDelete,
   });
@@ -38,7 +38,7 @@ class BudgetLimitGridCardDetail extends StatelessWidget {
       children: [
         const Positioned.fill(child: CcGlassyGradientBackground()),
         _buildMainCard(context, iconColor, iconData),
-        if (isEditMode) ..._buildEditBadges(context),
+        if (hasEditMode) ..._buildEditBadges(context),
       ],
     );
   }

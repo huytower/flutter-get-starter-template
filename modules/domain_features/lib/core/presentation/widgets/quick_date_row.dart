@@ -70,7 +70,7 @@ class QuickDateRow extends StatelessWidget {
     String label,
     DateTime date,
   ) {
-    final isSelected = _isSameDay(selectedDate, date);
+    final hasSelected = _isSameDay(selectedDate, date);
     return CcBouncing(
       onTap: () => onDateSelected(date),
       borderRadius: context.brLg,
@@ -81,24 +81,24 @@ class QuickDateRow extends StatelessWidget {
           vertical: context.respPadding(CcPaddingParams.SPACE_XS),
         ),
         decoration: BoxDecoration(
-          color: isSelected
+          color: hasSelected
               ? activeColor.withOpacity(0.15)
               : Colors.transparent,
           borderRadius: context.brLg,
           border: Border.all(
-            color: isSelected
+            color: hasSelected
                 ? activeColor
                 : context.ccColorScheme.outlineVariant,
-            width: isSelected ? 1.5 : 1,
+            width: hasSelected ? 1.5 : 1,
           ),
         ),
         child: CcText(
           label,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: isSelected
+            color: hasSelected
                 ? activeColor
                 : context.ccColorScheme.onSurfaceVariant,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: hasSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),

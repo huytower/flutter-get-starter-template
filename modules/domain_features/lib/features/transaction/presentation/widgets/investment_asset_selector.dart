@@ -42,7 +42,7 @@ class InvestmentAssetSelector extends StatelessWidget {
         ),
         const CcSpaceXS(),
         Obx(() {
-          if (controller.isLoadingMerged.value) {
+          if (controller.hasLoadingMerged.value) {
             return CcContentPadding(
               child: PrjCategoryShimmerList(
                 height: context.respDim(95),
@@ -88,7 +88,7 @@ class InvestmentAssetSelector extends StatelessWidget {
                 final item = items[index];
                 return Obx(() {
                   if (item is WalletEntity) {
-                    final isSelected =
+                    final hasSelected =
                         controller.selectedInvestmentWalletId.value == item.id;
                     final displayName = BudgetNameHelper.getDisplayName(
                       name: item.name,
@@ -98,13 +98,13 @@ class InvestmentAssetSelector extends StatelessWidget {
                       context,
                       label: displayName,
                       icon: iconDataFromCode(item.iconCode),
-                      isSelected: isSelected,
+                      hasSelected: hasSelected,
                       onTap: () => controller.selectInvestmentWallet(item),
                     );
                   } else if (item is CategoryEntity) {
-                    final isSelected =
+                    final hasSelected =
                         controller.selectedCategory.value?.id == item.id &&
-                        controller.isAddingNewItem.value;
+                        controller.hasAddingNewItem.value;
                     final displayName = el.tr(item.nameKey);
                     return _buildItem(
                       context,
@@ -113,7 +113,7 @@ class InvestmentAssetSelector extends StatelessWidget {
                         item.iconCode,
                         fontFamily: item.iconFamily,
                       ),
-                      isSelected: isSelected,
+                      hasSelected: hasSelected,
                       onTap: () => controller.selectInvestmentCategory(item),
                     );
                   }
@@ -131,7 +131,7 @@ class InvestmentAssetSelector extends StatelessWidget {
     BuildContext context, {
     required String label,
     required IconData icon,
-    required bool isSelected,
+    required bool hasSelected,
     required VoidCallback onTap,
   }) {
     final scheme = context.ccColorScheme;
@@ -142,7 +142,7 @@ class InvestmentAssetSelector extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          if (isSelected)
+          if (hasSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
                 centerColor: activeColor.withAlpha(30),
@@ -154,12 +154,12 @@ class InvestmentAssetSelector extends StatelessWidget {
             width: context.respDim(assetCardWidth),
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
-              color: isSelected
+              color: hasSelected
                   ? activeColor.withAlpha(10)
                   : scheme.onSurface.withAlpha(10),
               borderRadius: context.brLg,
               border: Border.all(
-                color: isSelected
+                color: hasSelected
                     ? activeColor.withAlpha(20)
                     : scheme.onSurface.withAlpha(10),
                 width: context.respDim(1),
@@ -168,7 +168,7 @@ class InvestmentAssetSelector extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildIcon(context, icon, isSelected),
+                _buildIcon(context, icon, hasSelected),
                 const CcSpaceXS(),
                 CcText(
                   label,
@@ -177,10 +177,10 @@ class InvestmentAssetSelector extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    fontWeight: isSelected
+                    fontWeight: hasSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
-                    color: isSelected ? activeColor : scheme.onSurfaceVariant,
+                    color: hasSelected ? activeColor : scheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -191,14 +191,14 @@ class InvestmentAssetSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildIcon(BuildContext context, IconData icon, bool isSelected) {
+  Widget _buildIcon(BuildContext context, IconData icon, bool hasSelected) {
     final scheme = context.ccColorScheme;
 
     return Container(
       width: context.respDim(35),
       height: context.respDim(35),
       decoration: BoxDecoration(
-        color: isSelected
+        color: hasSelected
             ? activeColor.withAlpha(20)
             : scheme.onSurface.withAlpha(10),
         borderRadius: context.brMd,
@@ -206,7 +206,7 @@ class InvestmentAssetSelector extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (isSelected)
+          if (hasSelected)
             Positioned.fill(
               child: CcGlassyGradientIcon(
                 centerColor: activeColor.withAlpha(30),
@@ -216,7 +216,7 @@ class InvestmentAssetSelector extends StatelessWidget {
           CcIcon(
             icon: icon,
             size: context.respIconSize(baseSize: 18),
-            color: isSelected ? activeColor : scheme.onSurfaceVariant,
+            color: hasSelected ? activeColor : scheme.onSurfaceVariant,
           ),
         ],
       ),

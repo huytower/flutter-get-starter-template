@@ -11,7 +11,7 @@ class ThemeProvider extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   /// Checks if dark mode is currently active
-  bool get isDarkMode => _themeMode == ThemeMode.dark;
+  bool get hasDarkMode => _themeMode == ThemeMode.dark;
 
   /// Checks if the app is following system theme
   bool get followSystem => _followSystem;
@@ -48,9 +48,9 @@ class ThemeProvider extends ChangeNotifier {
 
   /// Toggles between light and dark theme modes
   /// When manually toggling, it stops following system theme
-  void toggleTheme(bool isOn) {
+  void toggleTheme(bool hasOn) {
     _followSystem = false; // Stop following system when manually toggled
-    _themeMode = isOn ? ThemeMode.dark : ThemeMode.light;
+    _themeMode = hasOn ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
   }
 

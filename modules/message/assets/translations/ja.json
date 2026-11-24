@@ -728,6 +728,8 @@
     "ai_sharing": "AIとのデータ共有",
     "ai_sharing_subtitle": "クイック入力・レシートスキャン・アドバイスのためGoogle Geminiにデータを送信します",
     "delete_account": "アカウントを削除",
+    "delete_apple_note": "このアカウントはAppleでサインインに連携されています。このデバイスのApple IDの場合、削除の前にAppleから確認が求められます。",
+    "delete_success": "アカウントを削除しました。",
     "delete_confirm": "アカウントを削除しますか？",
     "delete_confirm_desc": "アカウントとすべての関連データが永続的に削除されます。この操作は取り消せません。",
     "young_children_message": "幼児がいますか？はいの場合、ミルク、おむつ、おもちゃ関連のカテゴリを自動的に有効にします。",

@@ -5,18 +5,38 @@ import 'package:message/export_message.dart';
 import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 
 class ProfileDeleteConfirmSheet extends StatelessWidget {
-  const ProfileDeleteConfirmSheet({super.key, required this.onConfirm});
+  const ProfileDeleteConfirmSheet({
+    super.key,
+    required this.onConfirm,
+    this.hasAppleSignIn = false,
+    this.accountLabel,
+  });
 
   final VoidCallback onConfirm;
+
+  /// The signed-in account (email, phone or name), so the user can see which
+  /// account is about to be deleted.
+  final String? accountLabel;
+
+  /// The account has Sign in with Apple linked, so deleting it opens the Apple
+  /// sheet to confirm (needed to revoke the Apple token). Said up front so the
+  /// Apple sheet is not mistaken for a sign-in.
+  final bool hasAppleSignIn;
 
   static Future<bool?> show(
     BuildContext context, {
     required VoidCallback onConfirm,
+    bool hasAppleSignIn = false,
+    String? accountLabel,
   }) {
     return showAdaptiveBottomSheet<bool>(
       context: context,
       backgroundColor: null,
-      builder: (_) => ProfileDeleteConfirmSheet(onConfirm: onConfirm),
+      builder: (_) => ProfileDeleteConfirmSheet(
+        onConfirm: onConfirm,
+        hasAppleSignIn: hasAppleSignIn,
+        accountLabel: accountLabel,
+      ),
     );
   }
 
@@ -58,6 +78,18 @@ class ProfileDeleteConfirmSheet extends StatelessWidget {
                   color: scheme.onSurface,
                 ),
               ),
+              if (accountLabel != null && accountLabel!.isNotEmpty) ...[
+                const CcSpaceXS(),
+                CcText(
+                  accountLabel!,
+                  align: Alignment.center,
+                  textAlign: TextAlign.center,
+                  textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: scheme.error,
+                  ),
+                ),
+              ],
               const CcSpaceSM(),
               CcText(
                 el.tr(PrjLocaleKeys.profile_delete_confirm_desc),
@@ -68,13 +100,25 @@ class ProfileDeleteConfirmSheet extends StatelessWidget {
                   color: scheme.onSurfaceVariant,
                 ),
               ),
+              if (hasAppleSignIn) ...[
+                const CcSpaceSM(),
+                CcText(
+                  el.tr(PrjLocaleKeys.profile_delete_apple_note),
+                  align: Alignment.center,
+                  maxLines: 4,
+                  textAlign: TextAlign.center,
+                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
               const CcSpaceLG(),
               Row(
                 children: [
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.common_cancel),
-                      bgColor: [
+                      backgroundColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
                       ],
@@ -86,7 +130,7 @@ class ProfileDeleteConfirmSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.profile_delete_account),
-                      bgColor: [scheme.error, scheme.error],
+                      backgroundColor: [scheme.error, scheme.error],
                       textColor: scheme.onError,
                       onTap: () {
                         Navigator.of(context).pop(true);

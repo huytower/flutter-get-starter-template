@@ -54,7 +54,7 @@ abstract final class PrjEnv {
   static const bool enableVipMode = bool.fromEnvironment('ENABLE_VIP_MODE');
 
   // Force update defaults (live values come from Firebase Remote Config).
-  static const bool isForceUpdate = bool.fromEnvironment('IS_FORCE_UPDATE');
+  static const bool hasForceUpdate = bool.fromEnvironment('IS_FORCE_UPDATE');
   static const String minimumOsVersionHasForce = String.fromEnvironment(
     'MINIMUM_OS_VERSION_HAS_FORCE',
   );

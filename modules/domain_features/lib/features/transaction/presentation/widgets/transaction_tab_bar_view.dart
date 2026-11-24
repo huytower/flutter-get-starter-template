@@ -56,8 +56,8 @@ class TransactionTabBarView extends StatelessWidget {
   }
 
   Widget _buildPage(BuildContext context, TransactionTabKind tab) {
-    final isUnlocked = controller.isTabUnlocked(tab);
-    if (!isUnlocked) {
+    final hasUnlocked = controller.isTabUnlocked(tab);
+    if (!hasUnlocked) {
       return CcContentPadding(child: PrjLevelLockPlaceholder(tab: tab));
     }
 

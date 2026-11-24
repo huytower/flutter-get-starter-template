@@ -48,7 +48,7 @@ void main() {
       );
       expect(flow.operatingNet, 400);
       expect(flow.net, -100);
-      expect(flow.isDeficit, isFalse);
+      expect(flow.hasDeficit, isFalse);
 
       const overspent = CashFlowEntity(
         income: 500,
@@ -57,16 +57,16 @@ void main() {
       );
       expect(overspent.net, 600);
       expect(overspent.operatingNet, -400);
-      expect(overspent.isDeficit, isTrue);
+      expect(overspent.hasDeficit, isTrue);
     });
 
     test('borrowed money masks an operating deficit and is flagged', () {
       const flow = CashFlowEntity(income: 500, expense: 900, debtInflow: 1000);
-      expect(flow.isDeficit, isTrue);
+      expect(flow.hasDeficit, isTrue);
       expect(flow.net, greaterThan(0));
-      expect(flow.isInflowDebtDriven, isTrue);
+      expect(flow.hasInflowDebtDriven, isTrue);
       expect(flow.debtInflowPercent, 67);
-      expect(flow.isOutflowDebtDriven, isFalse);
+      expect(flow.hasOutflowDebtDriven, isFalse);
     });
 
     test('debt repayment dominating outflow is flagged', () {
@@ -75,14 +75,14 @@ void main() {
         expense: 300,
         debtOutflow: 1200,
       );
-      expect(flow.isOutflowDebtDriven, isTrue);
+      expect(flow.hasOutflowDebtDriven, isTrue);
       expect(flow.debtOutflowPercent, 80);
-      expect(flow.isInflowDebtDriven, isFalse);
+      expect(flow.hasInflowDebtDriven, isFalse);
     });
 
     test('small debt share is not flagged', () {
       const flow = CashFlowEntity(income: 2000, expense: 300, debtInflow: 100);
-      expect(flow.isInflowDebtDriven, isFalse);
+      expect(flow.hasInflowDebtDriven, isFalse);
     });
 
     test('exactly 50% debt share is flagged on both sides', () {
@@ -92,14 +92,14 @@ void main() {
         debtInflow: 500,
         debtOutflow: 500,
       );
-      expect(flow.isInflowDebtDriven, isTrue);
-      expect(flow.isOutflowDebtDriven, isTrue);
+      expect(flow.hasInflowDebtDriven, isTrue);
+      expect(flow.hasOutflowDebtDriven, isTrue);
     });
 
     test('zero totals never flag and never divide by zero', () {
       const flow = CashFlowEntity(income: 0, expense: 0);
-      expect(flow.isInflowDebtDriven, isFalse);
-      expect(flow.isOutflowDebtDriven, isFalse);
+      expect(flow.hasInflowDebtDriven, isFalse);
+      expect(flow.hasOutflowDebtDriven, isFalse);
       expect(flow.debtInflowPercent, 0);
       expect(flow.debtOutflowPercent, 0);
     });
@@ -154,11 +154,11 @@ void main() {
         BudgetInsightsEntity(
           pacingWarnings: const [],
           penaltyWarnings: const [],
-          isDeficit: false,
+          hasDeficit: false,
           deficitAmount: 0,
           anomalyCount: 0,
-          isInflowDebtDriven: inflow,
-          isOutflowDebtDriven: outflow,
+          hasInflowDebtDriven: inflow,
+          hasOutflowDebtDriven: outflow,
         );
 
     test('is true when only a debt flag is set', () {

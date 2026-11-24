@@ -728,6 +728,8 @@
     "ai_sharing": "AI와 데이터 공유",
     "ai_sharing_subtitle": "빠른 입력, 영수증 스캔, 조언을 위해 Google Gemini로 데이터를 보냅니다",
     "delete_account": "계정 삭제",
+    "delete_apple_note": "이 계정은 Apple로 로그인에 연결되어 있습니다. 이 기기의 Apple ID인 경우 계정을 삭제하기 전에 Apple이 확인을 요청합니다.",
+    "delete_success": "계정이 삭제되었습니다.",
     "delete_confirm": "계정을 삭제하시겠습니까?",
     "delete_confirm_desc": "계정 및 모든 관련 데이터를 영구적으로 삭제합니다. 이 작업은 취소할 수 없습니다.",
     "young_children_message": "어린 자녀가 있으신가요? 예라면 우유, 기저귀, 장난감 관련 카테고리를 자동으로 활성화합니다.",

@@ -78,7 +78,7 @@ class ExpenseFormController extends TransactionFormController
   final Rx<BudgetLimitEntity?> selectedBudget = Rx<BudgetLimitEntity?>(null);
 
   final RxList<UnifiedCategoryItem> unifiedItems = <UnifiedCategoryItem>[].obs;
-  final RxBool isLoadingUnified = false.obs;
+  final RxBool hasLoadingUnified = false.obs;
 
   final ScrollController categoryScrollController = ScrollController();
 
@@ -86,7 +86,7 @@ class ExpenseFormController extends TransactionFormController
   final RxInt categoryKey = 0.obs;
 
   final RxList<CategoryEntity> _cachedCategories = <CategoryEntity>[].obs;
-  final RxBool isLoadingCategories = false.obs;
+  final RxBool hasLoadingCategories = false.obs;
 
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
@@ -180,7 +180,7 @@ class ExpenseFormController extends TransactionFormController
       if (categoryId != null && categoryId.isNotEmpty) {
         // 1. Try to find a budget for this category first (highest priority)
         final budgetMatch = unifiedItems.firstWhereOrNull(
-          (item) => item.isBudget && item.categoryId == categoryId,
+          (item) => item.hasBudget && item.categoryId == categoryId,
         );
         if (budgetMatch != null) {
           final budget = _findBudgetById(budgetMatch.budgetId!);
@@ -227,7 +227,7 @@ class ExpenseFormController extends TransactionFormController
 
     if (budget != null) {
       final byBudget = unifiedItems.indexWhere(
-        (item) => item.isBudget && item.budgetId == budget.id,
+        (item) => item.hasBudget && item.budgetId == budget.id,
       );
       if (byBudget != -1) return byBudget;
     }
@@ -273,8 +273,8 @@ class ExpenseFormController extends TransactionFormController
   }
 
   Future<void> _loadAll() async {
-    isLoadingCategories.value = true;
-    isLoadingUnified.value = true;
+    hasLoadingCategories.value = true;
+    hasLoadingUnified.value = true;
 
     try {
       await _loadCategories();
@@ -283,21 +283,21 @@ class ExpenseFormController extends TransactionFormController
       await _rebuildUnifiedItems();
     } catch (_) {
     } finally {
-      isLoadingCategories.value = false;
-      isLoadingUnified.value = false;
+      hasLoadingCategories.value = false;
+      hasLoadingUnified.value = false;
     }
 
     refreshTimeBasedSuggestion();
 
-    if (isEditing && editingTransaction != null) {
+    if (hasEditing && editingTransaction != null) {
       _resolveCategoryForEdit(editingTransaction!);
     } else if (unifiedItems.isNotEmpty &&
         selectedBudget.value == null &&
         selectedCategory.value == null &&
-        !isEditing &&
+        !hasEditing &&
         quickEntry.quickEntryController.text.isEmpty) {
       final first = unifiedItems.first;
-      if (first.isBudget) {
+      if (first.hasBudget) {
         final budget = _findBudgetById(first.budgetId!);
         if (budget != null) setBudget(budget);
       } else {
@@ -341,7 +341,7 @@ class ExpenseFormController extends TransactionFormController
     final result = await _getCategories();
     final allCats = result.tryGetSuccess() ?? [];
     final expenseCats = allCats
-        .where((c) => c.type == CategoryType.expense && c.isEnabled)
+        .where((c) => c.type == CategoryType.expense && c.hasEnabled)
         .toList();
 
     List<BudgetLimitStatsEntity> currentBudgets = [];
@@ -468,7 +468,7 @@ class ExpenseFormController extends TransactionFormController
           iconCode: b.iconCode,
           iconFamily: b.iconFamily,
           lastActivityAt: lastActivity,
-          isBudget: true,
+          hasBudget: true,
           initialOrder: seedIndexMap[b.budget.categoryId] ?? 999,
         ),
       );
@@ -487,7 +487,7 @@ class ExpenseFormController extends TransactionFormController
           iconCode: c.iconCode,
           iconFamily: c.iconFamily,
           lastActivityAt: lastActivity,
-          isBudget: false,
+          hasBudget: false,
           initialOrder: seedIndexMap[c.id] ?? 999,
         ),
       );
@@ -512,7 +512,7 @@ class ExpenseFormController extends TransactionFormController
     final currentCategory = selectedCategory.value;
     if (currentCategory != null && selectedBudget.value == null) {
       final budgetMatch = items.firstWhereOrNull(
-        (i) => i.isBudget && i.categoryId == currentCategory.id,
+        (i) => i.hasBudget && i.categoryId == currentCategory.id,
       );
       if (budgetMatch != null) {
         selectedBudget.value = _findBudgetById(budgetMatch.budgetId!);
@@ -565,19 +565,19 @@ class ExpenseFormController extends TransactionFormController
   void applyResolvedCategory(CategoryEntity category) {
     // Determine budget match first before updating Rx values so _scrollToSelected evaluates correctly
     final budgetMatch = unifiedItems.firstWhereOrNull(
-      (item) => item.isBudget && item.categoryId == category.id,
+      (item) => item.hasBudget && item.categoryId == category.id,
     );
     final targetBudget = budgetMatch != null
         ? _findBudgetById(budgetMatch.budgetId!)
         : null;
-    final isCategorySame = selectedCategory.value?.id == category.id;
-    final isBudgetSame = selectedBudget.value?.id == targetBudget?.id;
+    final hasCategorySame = selectedCategory.value?.id == category.id;
+    final hasBudgetSame = selectedBudget.value?.id == targetBudget?.id;
 
     selectedBudget.value = targetBudget;
     selectedCategory.value = category;
 
     // If both values were already identical, everAll will not fire; ensure card visibility
-    if (isCategorySame && isBudgetSame) {
+    if (hasCategorySame && hasBudgetSame) {
       _scrollToSelected();
     }
   }
@@ -605,26 +605,26 @@ class ExpenseFormController extends TransactionFormController
   }
 
   void setCategory(CategoryEntity category) {
-    final isCategorySame = selectedCategory.value?.id == category.id;
+    final hasCategorySame = selectedCategory.value?.id == category.id;
     selectedCategory.value = category;
     selectedBudget.value = null;
 
     // Prefer the most recently used budget for this category if multiple exist
     final budgetMatch = unifiedItems.firstWhereOrNull(
-      (item) => item.isBudget && item.categoryId == category.id,
+      (item) => item.hasBudget && item.categoryId == category.id,
     );
     if (budgetMatch != null) {
       selectedBudget.value = _findBudgetById(budgetMatch.budgetId!);
     }
 
     pendingPrefillCategoryId.value = null;
-    if (isCategorySame && selectedBudget.value == null) {
+    if (hasCategorySame && selectedBudget.value == null) {
       _scrollToSelected();
     }
   }
 
   void setBudget(BudgetLimitEntity budget) {
-    final isBudgetSame = selectedBudget.value?.id == budget.id;
+    final hasBudgetSame = selectedBudget.value?.id == budget.id;
     selectedBudget.value = budget;
     // When a budget is picked, its category is automatically selected
     final category = getCachedCategoryById(budget.categoryId);
@@ -633,7 +633,7 @@ class ExpenseFormController extends TransactionFormController
     }
     pendingPrefillCategoryId.value = null;
     categoryKey.value++;
-    if (isBudgetSame) {
+    if (hasBudgetSame) {
       _scrollToSelected();
     }
   }
@@ -893,8 +893,8 @@ class ExpenseFormController extends TransactionFormController
 
   @override
   Future<void> submitForm(BuildContext context) async {
-    if (isSubmitting.value || !canSubmit) return;
-    isSubmitting.value = true;
+    if (hasSubmitting.value || !canSubmit) return;
+    hasSubmitting.value = true;
 
     final categoryId = selectedCategory.value?.id ?? '';
     final categoryLabel = selectedBudget.value != null
@@ -912,7 +912,7 @@ class ExpenseFormController extends TransactionFormController
       _lastRecordedBudgetTime[selectedBudget.value!.id] = now;
     }
 
-    final result = isEditing
+    final result = hasEditing
         ? await getIt<UpdateTransactionUseCase>().call(
             UpdateTransactionParams(
               original: editingTransaction!,
@@ -943,7 +943,7 @@ class ExpenseFormController extends TransactionFormController
               lng: _currentLng,
             ),
           );
-    isSubmitting.value = false;
+    hasSubmitting.value = false;
 
     result.when(
       (_) async {
@@ -961,7 +961,7 @@ class ExpenseFormController extends TransactionFormController
           overLimit = overResult.tryGetSuccess();
         }
 
-        if (categoryId.isNotEmpty && !isEditing) {
+        if (categoryId.isNotEmpty && !hasEditing) {
           getIt<CheckBudgetThresholdUseCase>().call(
             categoryId: categoryId,
             transactionAmount: amount,
@@ -988,14 +988,14 @@ class ExpenseFormController extends TransactionFormController
           CcSnackBarHelper.showSuccessSnackBar(
             context: context,
             message: el.tr(
-              isEditing
+              hasEditing
                   ? PrjLocaleKeys.transaction_expense_updated
                   : PrjLocaleKeys.transaction_expense_saved,
               namedArgs: {'amount': savedAmount},
             ),
           );
         }
-        if (isEditing) {
+        if (hasEditing) {
           onEditSaved?.call();
         } else {
           await resetForm();
@@ -1015,7 +1015,7 @@ class ExpenseFormController extends TransactionFormController
         await refreshParent();
         // Guideline: first_transaction completed
         _guidelineProvider.completeTask('first_transaction');
-        if (!isEditing && context.mounted) {
+        if (!hasEditing && context.mounted) {
           unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
         }
       },

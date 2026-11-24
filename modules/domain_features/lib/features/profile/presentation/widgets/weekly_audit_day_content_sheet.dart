@@ -113,7 +113,7 @@ class _WeeklyAuditDayContentSheetState
   }
 
   Widget _buildDayChip(BuildContext context, ColorScheme scheme, int day) {
-    final bool isSelected = day == _selectedDay;
+    final bool hasSelected = day == _selectedDay;
 
     return Center(
       child: CcBouncing(
@@ -125,17 +125,17 @@ class _WeeklyAuditDayContentSheetState
           height: context.respDim(40),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? scheme.primary : Colors.transparent,
+            color: hasSelected ? scheme.primary : Colors.transparent,
             borderRadius: context.brLg,
           ),
           child: CcText(
             _getDayName(day),
             align: Alignment.center,
             textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-              fontWeight: isSelected
+              fontWeight: hasSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,
-              color: isSelected ? scheme.onPrimary : scheme.onSurface,
+              color: hasSelected ? scheme.onPrimary : scheme.onSurface,
             ),
           ),
         ),

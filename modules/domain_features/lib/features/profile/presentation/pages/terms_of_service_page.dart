@@ -16,7 +16,7 @@ class TermsOfServicePage extends StatefulWidget {
 
 class _TermsOfServicePageState extends State<TermsOfServicePage> {
   late WebViewController _controller;
-  bool _isLoading = true;
+  bool _hasLoading = true;
 
   @override
   void initState() {
@@ -26,10 +26,10 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
       ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageStarted: (_) => setState(() => _isLoading = true),
+          onPageStarted: (_) => setState(() => _hasLoading = true),
           onPageFinished: (url) {
             if (!mounted) return;
-            setState(() => _isLoading = false);
+            setState(() => _hasLoading = false);
             // Sync language with app locale
             final locale = el.EasyLocalization.of(context)?.locale;
             'Loading Terms of Service with language: ${locale?.languageCode}'
@@ -72,7 +72,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          if (_isLoading) const Center(child: CircularProgressIndicator()),
+          if (_hasLoading) const Center(child: CircularProgressIndicator()),
         ],
       ),
     );

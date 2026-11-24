@@ -176,10 +176,10 @@ void main() {
         const ParsedTransactionEntity(amount: 5, categoryId: 'food'),
       ]);
 
-      state.isCommitting.value = true;
+      state.hasCommitting.value = true;
       expect(state.canConfirm, isFalse);
 
-      state.isCommitting.value = false;
+      state.hasCommitting.value = false;
       state.remove(state.rows.single.id);
       expect(state.canConfirm, isFalse);
     });

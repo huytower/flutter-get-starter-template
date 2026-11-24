@@ -69,7 +69,7 @@ class FinancialRunwayWidget extends StatelessWidget {
         context: context,
         title: el.tr(PrjLocaleKeys.report_safety_index),
         content: text,
-        isOnlyConfirm: true,
+        hasOnlyConfirm: true,
       ),
       borderRadius: context.brSm,
       child: Container(
@@ -131,7 +131,7 @@ class FinancialRunwayWidget extends StatelessWidget {
       case FinancialRunwayStatus.insufficient:
         // outline is a light grey in dark mode: light text on it was
         // unreadable.
-        return context.isDarkMode ? CcBaseColors.gray700 : scheme.outline;
+        return context.hasDarkMode ? CcBaseColors.gray700 : scheme.outline;
     }
   }
 
@@ -140,6 +140,6 @@ class FinancialRunwayWidget extends StatelessWidget {
   /// in a dark grey instead. Other states are unchanged.
   Color? _getEndColor(BuildContext context) {
     final insufficient = runway.status == FinancialRunwayStatus.insufficient;
-    return insufficient && context.isDarkMode ? CcBaseColors.gray600 : null;
+    return insufficient && context.hasDarkMode ? CcBaseColors.gray600 : null;
   }
 }

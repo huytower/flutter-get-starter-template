@@ -31,7 +31,7 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
       final selectedCategory = controller.selectedCategory.value;
 
       return CategorySelectionLayout(
-        isLoading: controller.isLoadingUnified.value,
+        hasLoading: controller.hasLoadingUnified.value,
         items: items,
         scrollController: controller.categoryScrollController,
         onCustomize: () => CategorySettingsPage.open(
@@ -42,7 +42,7 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
           final item = items[index];
           final key = ValueKey('expense_${item.id}');
 
-          final isSelected = _isItemSelected(
+          final hasSelected = _isItemSelected(
             item,
             selectedCategory,
             selectedBudget,
@@ -51,10 +51,10 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
           return UnifiedCategoryItemWidget(
             key: key,
             item: item,
-            isSelected: isSelected,
+            hasSelected: hasSelected,
             activeColor: activeColor,
             onTap: () {
-              if (item.isBudget) {
+              if (item.hasBudget) {
                 final realBudget = controller.budgets
                     .firstWhereOrNull((b) => b.budget.id == item.budgetId)
                     ?.budget;
@@ -84,7 +84,7 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
     BudgetLimitEntity? selectedBudget,
   ) {
     final categoryMatches = selectedCategory?.id == item.categoryId;
-    if (item.isBudget) {
+    if (item.hasBudget) {
       return selectedBudget?.id == item.budgetId ||
           (selectedBudget == null && categoryMatches);
     }

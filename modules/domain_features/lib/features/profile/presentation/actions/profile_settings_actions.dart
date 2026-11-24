@@ -35,8 +35,8 @@ class ProfileSettingsActions {
   Future<bool> requestReminderPermission() =>
       _notificationService.requestPermission();
 
-  void applyTheme({required bool isDarkMode}) =>
-      _themeProvider.toggleTheme(isDarkMode);
+  void applyTheme({required bool hasDarkMode}) =>
+      _themeProvider.toggleTheme(hasDarkMode);
 
   Future<String> appVersion() => _deviceInfo.getAppVersion();
 

@@ -35,7 +35,7 @@ class AppLifecycleProviderImpl implements AppLifecycleProvider {
   Future<void> syncAuthenticatedData() async {
     final session = getIt<SessionContract>();
 
-    if (session.isAuthenticated) {
+    if (session.hasAuthenticated) {
       try {
         await getIt<FinancialDataSyncService>().syncAuthenticatedData();
       } catch (e) {

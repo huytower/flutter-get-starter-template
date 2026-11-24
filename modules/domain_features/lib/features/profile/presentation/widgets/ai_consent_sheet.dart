@@ -101,7 +101,7 @@ class AiConsentSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.profile_ai_consent_decline),
-                      bgColor: [
+                      backgroundColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
                       ],
@@ -113,7 +113,7 @@ class AiConsentSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.profile_ai_consent_allow),
-                      bgColor: [scheme.primary, scheme.primary],
+                      backgroundColor: [scheme.primary, scheme.primary],
                       textColor: scheme.onPrimary,
                       onTap: () => Navigator.of(context).pop(true),
                     ),

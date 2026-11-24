@@ -33,7 +33,7 @@ class GetFinancialRunwayUseCase {
     if (result.isError()) return 0;
     return result
         .tryGetSuccess()!
-        .where((b) => b.isFixedPrice)
+        .where((b) => b.hasFixedPrice)
         .fold<double>(0, (sum, b) => sum + b.limit);
   }
 

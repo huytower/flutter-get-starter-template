@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 class EntrySubmitButton extends StatelessWidget {
   final String text;
-  final bool isSubmitting;
-  final bool isEnabled;
+  final bool hasSubmitting;
+  final bool hasEnabled;
   final VoidCallback onTap;
   final Color activeColor;
   final Widget? badge;
@@ -37,8 +37,8 @@ class EntrySubmitButton extends StatelessWidget {
   const EntrySubmitButton({
     super.key,
     required this.text,
-    required this.isSubmitting,
-    required this.isEnabled,
+    required this.hasSubmitting,
+    required this.hasEnabled,
     required this.onTap,
     required this.activeColor,
     this.badge,
@@ -56,7 +56,7 @@ class EntrySubmitButton extends StatelessWidget {
     final scheme = context.ccColorScheme;
     final baseStyle = textStyle ?? context.ccTextTheme.titleMedium;
     final borderRadius = BorderRadius.circular(12);
-    final useGradient = gradient != null && isEnabled;
+    final useGradient = gradient != null && hasEnabled;
     final foreground = useGradient
         ? gradientForegroundColor ?? scheme.onPrimary
         : scheme.onPrimary;
@@ -76,7 +76,7 @@ class EntrySubmitButton extends StatelessWidget {
                     )
                   : null,
               child: ElevatedButton(
-                onPressed: isEnabled && !isSubmitting ? onTap : null,
+                onPressed: hasEnabled && !hasSubmitting ? onTap : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: useGradient
                       ? Colors.transparent
@@ -90,7 +90,7 @@ class EntrySubmitButton extends StatelessWidget {
                   ),
                   shape: RoundedRectangleBorder(borderRadius: borderRadius),
                 ),
-                child: isSubmitting
+                child: hasSubmitting
                     ? SizedBox(
                         width: context.respDim(20),
                         height: context.respDim(20),

@@ -10,19 +10,19 @@ import '../../bloc/login_bloc.dart';
 import '../../bloc/login_event.dart';
 
 class LoginSocialButtons extends StatelessWidget {
-  const LoginSocialButtons({super.key, this.isLinking = false});
+  const LoginSocialButtons({super.key, this.hasLinking = false});
 
-  final bool isLinking;
+  final bool hasLinking;
 
   @override
   Widget build(BuildContext context) {
-    final bool isDisabled = isLinking;
-    final double opacity = isDisabled ? 0.3 : 1.0;
+    final bool hasDisabled = hasLinking;
+    final double opacity = hasDisabled ? 0.3 : 1.0;
 
     return Opacity(
       opacity: opacity,
       child: IgnorePointer(
-        ignoring: isDisabled,
+        ignoring: hasDisabled,
         child: Column(
           children: [
             CcSocialLoginButton(
@@ -30,7 +30,7 @@ class LoginSocialButtons extends StatelessWidget {
               label: el.tr(CcMfLocaleKeys.auth_login_google),
               onTap: () {
                 context.read<LoginBloc>().add(
-                  isLinking
+                  hasLinking
                       ? const LinkWithGoogleStarted()
                       : const LoginWithGoogleStarted(),
                 );
@@ -44,7 +44,7 @@ class LoginSocialButtons extends StatelessWidget {
                 label: el.tr(CcMfLocaleKeys.auth_login_apple),
                 onTap: () {
                   context.read<LoginBloc>().add(
-                    isLinking
+                    hasLinking
                         ? const LinkWithAppleStarted()
                         : const LoginWithAppleStarted(),
                   );

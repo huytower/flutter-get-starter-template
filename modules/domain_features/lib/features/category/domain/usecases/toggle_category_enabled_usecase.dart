@@ -10,6 +10,6 @@ class ToggleCategoryEnabledUseCase {
 
   final CategoryRepository _repository;
 
-  Future<Result<void, CcFailure>> call(String id, bool isEnabled) =>
-      _repository.updateCategoryEnabled(id, isEnabled);
+  Future<Result<void, CcFailure>> call(String id, bool hasEnabled) =>
+      _repository.updateCategoryEnabled(id, hasEnabled);
 }

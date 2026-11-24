@@ -301,7 +301,7 @@ void main() {
               tier: BudgetPenaltyTier.tier150,
             ),
           ],
-          isDeficit: true,
+          hasDeficit: true,
           deficitAmount: 10,
           anomalyCount: 1,
         ),

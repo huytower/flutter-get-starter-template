@@ -71,7 +71,7 @@ class PrjAppStorage extends HiveObject {
   int? birthYear;
 
   @HiveField(10)
-  bool? isDarkMode;
+  bool? hasDarkMode;
 
   /// Ids of qltc's guideline onboarding tasks (birth_year, categories,
   /// wallet_balance, ...) already completed by the user.
@@ -95,7 +95,7 @@ class PrjAppStorage extends HiveObject {
 
   /// Manual VIP flag (no real IAP/store billing infra exists yet).
   @HiveField(14)
-  bool? isVip;
+  bool? hasVip;
 
   /// Highest LV1-3 user level ever computed. Level is monotonic — never
   /// decreases once reached — so this floor is re-applied on every
@@ -127,7 +127,7 @@ class PrjAppStorage extends HiveObject {
   /// Whether the profile header card is currently showing the back surface
   /// (experience chart). Persisted to last through app restarts.
   @HiveField(21)
-  bool? isProfileHeaderFlipped;
+  bool? hasProfileHeaderFlipped;
 
   /// Whether the user has manually customized their category settings.
   /// When true, age-based recommendations won't override their choices.
@@ -179,17 +179,17 @@ class PrjAppStorage extends HiveObject {
     this.weeklyAuditDayIndex,
     this.currencyCode,
     this.birthYear,
-    this.isDarkMode,
+    this.hasDarkMode,
     this.completedGuidelineTaskIds,
     this.weeklyAuditDayChangedAt,
     this.levelFeatureAnchorAt,
-    this.isVip,
+    this.hasVip,
     this.highestUserLevelReached,
     this.firstLaunchAt,
     this.cloudBackupReminderSentAt,
     this.hasViewedEmergencyFundEbook,
     this.hasSeenTutorial,
-    this.isProfileHeaderFlipped,
+    this.hasProfileHeaderFlipped,
     this.hasCustomizedCategories,
     this.hasInteractedWithTransactionCardStack,
     this.financialDataOwnerId,

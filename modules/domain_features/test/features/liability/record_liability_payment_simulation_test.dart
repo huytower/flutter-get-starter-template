@@ -128,7 +128,7 @@ void main() {
     int? outstanding,
   }) => RecordLiabilityPaymentParams(
     liabilityId: id,
-    isSettlement: settle,
+    hasSettlement: settle,
     walletId: 'cash',
     amount: amount,
     date: DateTime.now().subtract(const Duration(minutes: 1)),

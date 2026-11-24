@@ -27,7 +27,7 @@ class CashFlowEntity {
 
   int get operatingNet => income - expense;
 
-  bool get isDeficit => operatingNet < 0;
+  bool get hasDeficit => operatingNet < 0;
 
   int get debtInflowPercent =>
       totalInflow == 0 ? 0 : (debtInflow * 100 / totalInflow).round();
@@ -35,9 +35,9 @@ class CashFlowEntity {
   int get debtOutflowPercent =>
       totalOutflow == 0 ? 0 : (debtOutflow * 100 / totalOutflow).round();
 
-  bool get isInflowDebtDriven =>
+  bool get hasInflowDebtDriven =>
       debtInflow > 0 && debtInflow >= totalInflow * debtDominanceThreshold;
 
-  bool get isOutflowDebtDriven =>
+  bool get hasOutflowDebtDriven =>
       debtOutflow > 0 && debtOutflow >= totalOutflow * debtDominanceThreshold;
 }

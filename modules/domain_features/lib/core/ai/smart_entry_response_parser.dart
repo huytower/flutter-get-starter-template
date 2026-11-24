@@ -34,7 +34,7 @@ abstract final class SmartEntryResponseParser {
       for (final row in rows) {
         if (row is! Map) continue;
         final item = _resolve(row, context, categoriesById, walletIds);
-        if (item.entity.isEmpty && item.foreignAmount == null) continue;
+        if (item.entity.hasEmpty && item.foreignAmount == null) continue;
         parsed.add(item);
         if (parsed.length == maxTransactions) break;
       }
@@ -54,7 +54,7 @@ abstract final class SmartEntryResponseParser {
     final statedCode = currencyValue is String
         ? currencyValue.trim().toUpperCase()
         : null;
-    final isForeign =
+    final hasForeign =
         statedCode != null &&
         _iso4217Pattern.hasMatch(statedCode) &&
         statedCode != context.currency.code;
@@ -64,7 +64,7 @@ abstract final class SmartEntryResponseParser {
         ? amountValue
         : null;
     final roundedAmount = positiveAmount?.round() ?? 0;
-    final amount = !isForeign && roundedAmount > 0 ? roundedAmount : null;
+    final amount = !hasForeign && roundedAmount > 0 ? roundedAmount : null;
 
     final typeValue = row['type'];
     final categoryValue = row['categoryId'];
@@ -97,15 +97,15 @@ abstract final class SmartEntryResponseParser {
 
     return (
       entity: ParsedTransactionEntity(
-        type: context.isMixed ? type : null,
+        type: context.hasMixed ? type : null,
         amount: amount,
         categoryId: categoryId,
         walletId: walletId,
         date: date,
         note: note,
       ),
-      foreignCurrencyCode: isForeign ? statedCode : null,
-      foreignAmount: isForeign ? positiveAmount : null,
+      foreignCurrencyCode: hasForeign ? statedCode : null,
+      foreignAmount: hasForeign ? positiveAmount : null,
     );
   }
 }

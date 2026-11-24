@@ -47,11 +47,11 @@ class _PieChartPainter extends CustomPainter {
     final rect = Rect.fromCircle(center: center, radius: radius);
 
     // Draw background circle (the "outline")
-    final bgPaint = Paint()
+    final backgroundPaint = Paint()
       ..color = backgroundColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
-    canvas.drawCircle(center, radius, bgPaint);
+    canvas.drawCircle(center, radius, backgroundPaint);
 
     // Draw the progress segment (the "pie slice")
     if (progress > 0) {

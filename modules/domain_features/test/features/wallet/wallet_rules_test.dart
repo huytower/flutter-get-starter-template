@@ -10,7 +10,7 @@ import 'package:domain_features/features/wallet/presentation/helper/wallet_order
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeUserLevel implements UserLevelProvider {
-  _FakeUserLevel({required int level, bool isVip = false})
+  _FakeUserLevel({required int level, bool hasVip = false})
     : status = UserLevelStatusEntity(
         level: level,
         reconciliationStreak: 0,
@@ -18,7 +18,7 @@ class _FakeUserLevel implements UserLevelProvider {
         hasPositiveCashFlow: false,
         fixedBudgetCount: 0,
         completedGuidelineCount: 0,
-        isVip: isVip,
+        hasVip: hasVip,
       );
 
   @override
@@ -69,8 +69,8 @@ void main() {
   group('EmergencyFundAccess', () {
     test('is offered from level 3', () {
       final profile = _FakeProfile(const ProfileSettingsEntity());
-      expect(_access(2, profile).isOffered, isFalse);
-      expect(_access(3, profile).isOffered, isTrue);
+      expect(_access(2, profile).hasOffered, isFalse);
+      expect(_access(3, profile).hasOffered, isTrue);
     });
 
     test('unlocks at level 3 only after the ebook was read', () async {
@@ -83,7 +83,7 @@ void main() {
     });
 
     test('VIP is unlocked at any level', () async {
-      final profile = _FakeProfile(const ProfileSettingsEntity(isVip: true));
+      final profile = _FakeProfile(const ProfileSettingsEntity(hasVip: true));
       expect(await _access(0, profile).isUnlocked(), isTrue);
     });
   });

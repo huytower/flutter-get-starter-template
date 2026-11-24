@@ -37,7 +37,7 @@ abstract final class SmartEntrySchema {
 
   static CcAiSchema _item(SmartEntryContext context) {
     final properties = <String, CcAiSchema>{
-      if (context.isMixed)
+      if (context.hasMixed)
         'type': CcAiSchema.enumString(
           enumValues: context.types,
           description: AiPrompts.fieldType,

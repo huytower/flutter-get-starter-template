@@ -17,9 +17,9 @@ class ParsedTransactionEntity extends Equatable {
   final DateTime? date;
   final String? note;
 
-  bool get isComplete => amount != null || categoryId != null;
+  bool get hasComplete => amount != null || categoryId != null;
 
-  bool get isEmpty => amount == null && categoryId == null;
+  bool get hasEmpty => amount == null && categoryId == null;
 
   ParsedTransactionEntity copyWith({
     String? type,
@@ -46,7 +46,7 @@ class ParsedTransactionEntity extends Equatable {
     'walletId': walletId,
     'date': date?.toIso8601String(),
     'note': note,
-    'isComplete': isComplete,
+    'isComplete': hasComplete,
   };
 
   @override

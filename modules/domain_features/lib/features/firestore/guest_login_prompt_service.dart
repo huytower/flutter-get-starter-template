@@ -44,8 +44,8 @@ class GuestLoginPromptService {
   }
 
   Future<GuestLoginPrompt?> evaluate() async {
-    final hasSignedIn = _session.isAuthenticated;
-    final hasAnonymousSession = _session.isAnonymous;
+    final hasSignedIn = _session.hasAuthenticated;
+    final hasAnonymousSession = _session.hasAnonymous;
     if (hasSignedIn && !hasAnonymousSession) {
       return null;
     }

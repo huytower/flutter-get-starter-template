@@ -151,7 +151,7 @@ class InvestmentFormController extends TransactionFormController {
   /// Merged list of existing investment assets (`WalletEntity`) and
   /// base investment categories (`CategoryEntity`).
   final RxList<dynamic> mergedItems = <dynamic>[].obs;
-  final RxBool isLoadingMerged = true.obs;
+  final RxBool hasLoadingMerged = true.obs;
 
   /// Drives the asset row in `InvestmentAssetSelector` so the selected asset can
   /// be brought into view.
@@ -159,7 +159,7 @@ class InvestmentFormController extends TransactionFormController {
 
   final Rx<String?> selectedInvestmentWalletId = Rx<String?>(null);
 
-  final RxBool isAddingNewItem = false.obs;
+  final RxBool hasAddingNewItem = false.obs;
   final TextEditingController newItemNameController = TextEditingController();
   final RxString newItemName = ''.obs;
 
@@ -185,7 +185,7 @@ class InvestmentFormController extends TransactionFormController {
   bool get canSubmit {
     final amount = amountStr.value;
     final walletId = selectedWalletId.value;
-    final adding = isAddingNewItem.value;
+    final adding = hasAddingNewItem.value;
     final invWalletId = selectedInvestmentWalletId.value;
     final category = selectedCategory.value;
     final wallet = mergedItems.whereType<WalletEntity>().firstWhereOrNull(
@@ -274,13 +274,13 @@ class InvestmentFormController extends TransactionFormController {
   }
 
   Future<void> _loadAll() async {
-    isLoadingMerged.value = true;
+    hasLoadingMerged.value = true;
     final settings = await _getProfileSettings();
-    quickEntry.isVip.value = settings.isVip;
+    quickEntry.hasVip.value = settings.hasVip;
     await loadSuggestions();
     await _loadCategories();
     await _recomputeMergedItems();
-    isLoadingMerged.value = false;
+    hasLoadingMerged.value = false;
   }
 
   Future<void> _loadCategories() async {
@@ -365,7 +365,7 @@ class InvestmentFormController extends TransactionFormController {
 
   void selectInvestmentWallet(WalletEntity wallet) {
     selectedInvestmentWalletId.value = wallet.id;
-    isAddingNewItem.value = false;
+    hasAddingNewItem.value = false;
 
     final categories = _cachedCategories.toList();
     CategoryEntity? matched;
@@ -392,12 +392,12 @@ class InvestmentFormController extends TransactionFormController {
     selectedCategory.value = category;
     selectedInvestmentWalletId.value = null;
 
-    if (quickEntry.isVip.value) {
-      isAddingNewItem.value = true;
+    if (quickEntry.hasVip.value) {
+      hasAddingNewItem.value = true;
       newItemName.value = el.tr(category.nameKey);
       newItemNameController.text = newItemName.value;
     } else {
-      isAddingNewItem.value = true;
+      hasAddingNewItem.value = true;
       newItemName.value = el.tr(category.nameKey);
       newItemNameController.text = newItemName.value;
     }
@@ -417,7 +417,7 @@ class InvestmentFormController extends TransactionFormController {
     _recomputeMergedItems();
     if (value == InvestmentDirection.returnProfit) {
       // Logic for return profit: must pick existing asset if available
-      if (isAddingNewItem.value || selectedInvestmentWalletId.value == null) {
+      if (hasAddingNewItem.value || selectedInvestmentWalletId.value == null) {
         final firstAsset = mergedItems
             .whereType<WalletEntity>()
             .firstWhereOrNull((_) => true);
@@ -443,7 +443,7 @@ class InvestmentFormController extends TransactionFormController {
   void clearCategorySelection() {
     selectedCategory.value = null;
     selectedInvestmentWalletId.value = null;
-    isAddingNewItem.value = false;
+    hasAddingNewItem.value = false;
   }
 
   void setNewItemName(String value) {
@@ -466,7 +466,7 @@ class InvestmentFormController extends TransactionFormController {
     selectedCategory.value = null;
     categoryKey.value++;
     selectedInvestmentWalletId.value = null;
-    isAddingNewItem.value = false;
+    hasAddingNewItem.value = false;
     newItemName.value = '';
     newItemNameController.clear();
     await _recomputeMergedItems();
@@ -475,10 +475,10 @@ class InvestmentFormController extends TransactionFormController {
 
   @override
   Future<void> submitForm(BuildContext context) async {
-    if (isSubmitting.value || !canSubmit) {
+    if (hasSubmitting.value || !canSubmit) {
       return;
     }
-    isSubmitting.value = true;
+    hasSubmitting.value = true;
 
     CategoryEntity? category = selectedCategory.value;
     if (category == null && selectedInvestmentWalletId.value != null) {
@@ -494,7 +494,7 @@ class InvestmentFormController extends TransactionFormController {
     }
 
     if (category == null) {
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
       if (context.mounted) {
         CcSnackBarHelper.showErrorSnackBar(
           context: context,
@@ -507,10 +507,10 @@ class InvestmentFormController extends TransactionFormController {
     final params = CreateInvestmentTransactionParams(
       direction: direction.value,
       liquidWalletId: selectedWalletId.value,
-      investmentWalletId: isAddingNewItem.value
+      investmentWalletId: hasAddingNewItem.value
           ? null
           : selectedInvestmentWalletId.value,
-      newItemName: isAddingNewItem.value ? newItemName.value.trim() : null,
+      newItemName: hasAddingNewItem.value ? newItemName.value.trim() : null,
       categoryId: category.id,
       categoryLabel: el.tr(category.nameKey),
       categoryIconCode: category.iconCode,
@@ -521,7 +521,7 @@ class InvestmentFormController extends TransactionFormController {
     );
 
     final result = await _createInvestmentTransaction.call(params);
-    isSubmitting.value = false;
+    hasSubmitting.value = false;
 
     result.when(
       (investmentWallet) async {
@@ -558,7 +558,7 @@ class InvestmentFormController extends TransactionFormController {
         await refreshParent();
 
         // Complete the investment guideline task
-        if (_guidelineProvider.isAvailable) {
+        if (_guidelineProvider.hasAvailable) {
           _guidelineProvider.completeTask('investment');
         }
         if (context.mounted) {

@@ -112,7 +112,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         _buildOtpInput(),
         const CcSpaceLG(),
         _buildErrorSection(),
-        _buildActionBtn(),
+        _buildActionButton(),
         const CcSpaceLG(),
         _buildResendSection(context),
         const CcSpaceSM(),
@@ -215,19 +215,19 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     );
   }
 
-  Widget _buildActionBtn() {
+  Widget _buildActionButton() {
     return BlocSelector<PhoneAuthBloc, PhoneAuthState, bool>(
       selector: (state) => state is PhoneAuthLoading,
-      builder: (context, isLoading) {
+      builder: (context, hasLoading) {
         return ValueListenableBuilder<TextEditingValue>(
           valueListenable: _codeController,
           builder: (context, value, _) {
-            final bool isOtpFilled = value.text.length == 6;
-            final bool isEnabled = !isLoading && isOtpFilled;
+            final bool hasOtpFilled = value.text.length == 6;
+            final bool hasEnabled = !hasLoading && hasOtpFilled;
 
             return CcNextButton(
               onTap: _handleVerify,
-              isEnable: isEnabled,
+              hasEnable: hasEnabled,
               title: el.tr(CcMfLocaleKeys.auth_verify),
             );
           },
@@ -250,9 +250,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         const CcSpaceXS(),
         CcInteractionWrapper(
           onTap: _handleResend,
-          isEnable: _canResend,
+          hasEnable: _canResend,
           useDebounce: true,
-          isBouncing: false,
+          hasBouncing: false,
           // Maintain simple look
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

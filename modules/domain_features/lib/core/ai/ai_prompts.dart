@@ -103,7 +103,7 @@ abstract final class AiPrompts {
   }
 
   static String categoryOptions(SmartEntryContext context) {
-    if (!context.isMixed) {
+    if (!context.hasMixed) {
       return 'Available categories (id: label): '
           '${_options(context.categories)}.';
     }
@@ -170,7 +170,7 @@ abstract final class AiPrompts {
     _ => type,
   };
 
-  static String _kind(SmartEntryContext context) => context.isMixed
+  static String _kind(SmartEntryContext context) => context.hasMixed
       ? 'personal expense or income'
       : _amountKind(context.defaultType);
 
@@ -179,7 +179,7 @@ abstract final class AiPrompts {
       : 'Return at most $maxTransactions transactions, in the order they '
             'appear.';
 
-  static String _typeSentence(SmartEntryContext context) => context.isMixed
+  static String _typeSentence(SmartEntryContext context) => context.hasMixed
       ? 'Set "type" to "expense" for money spent or paid out (a minus sign, '
             'an outgoing transfer) and "income" for money received (a plus '
             'sign, salary, refunds, an incoming transfer), and pick '
@@ -268,16 +268,16 @@ abstract final class AiPrompts {
         'Investment returns (inflow): $investInflowStr. '
         'Investment capital (outflow): $investOutflowStr. '
         'Income minus spending: $opNetStr '
-        '(${cashFlow.isDeficit ? "deficit" : "surplus"}). '
+        '(${cashFlow.hasDeficit ? "deficit" : "surplus"}). '
         'Total net cash flow: $netStr.',
       );
-      if (cashFlow.isInflowDebtDriven) {
+      if (cashFlow.hasInflowDebtDriven) {
         buffer.writeln(
           '- Note: ${cashFlow.debtInflowPercent}% of the money received this '
           'month comes from debt (borrowing or debt collection), not real income.',
         );
       }
-      if (cashFlow.isOutflowDebtDriven) {
+      if (cashFlow.hasOutflowDebtDriven) {
         buffer.writeln(
           '- Note: ${cashFlow.debtOutflowPercent}% of the money paid out this '
           'month is lending or debt repayment, not regular spending.',

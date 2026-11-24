@@ -48,10 +48,10 @@ class AddLiabilitySheetController extends PrjGetController {
 
   final RxList<CategoryEntity> liabilityCategories = <CategoryEntity>[].obs;
   final Rxn<CategoryEntity> selectedLiabilityCategory = Rxn<CategoryEntity>();
-  final RxBool isNameValid = false.obs;
-  final RxBool isVip = false.obs;
+  final RxBool hasNameValid = false.obs;
+  final RxBool hasVip = false.obs;
   final Rxn<String> nameError = Rxn<String>();
-  final RxBool isSubmitting = false.obs;
+  final RxBool hasSubmitting = false.obs;
 
   final RxBool showDirectionToggle = false.obs;
 
@@ -75,7 +75,7 @@ class AddLiabilitySheetController extends PrjGetController {
   }
 
   void _onNameChanged() {
-    isNameValid.value = nameController.text.trim().isNotEmpty;
+    hasNameValid.value = nameController.text.trim().isNotEmpty;
     if (nameError.value != null) {
       nameError.value = null;
     }
@@ -83,7 +83,7 @@ class AddLiabilitySheetController extends PrjGetController {
 
   Future<void> _loadVipStatus() async {
     final settings = await _getProfileSettings();
-    isVip.value = settings.isVip;
+    hasVip.value = settings.hasVip;
   }
 
   Future<void> _loadLiabilityCategories() async {
@@ -97,7 +97,7 @@ class AddLiabilitySheetController extends PrjGetController {
           .where(
             (c) =>
                 c.type == CategoryType.liability &&
-                c.isEnabled &&
+                c.hasEnabled &&
                 c.groupId == groupId,
           )
           .toList();
@@ -108,10 +108,10 @@ class AddLiabilitySheetController extends PrjGetController {
       }
 
       filtered.sort((a, b) {
-        final isOtherA = a.nameKey.contains('other');
-        final isOtherB = b.nameKey.contains('other');
-        if (isOtherA && !isOtherB) return 1;
-        if (!isOtherA && isOtherB) return -1;
+        final hasOtherA = a.nameKey.contains('other');
+        final hasOtherB = b.nameKey.contains('other');
+        if (hasOtherA && !hasOtherB) return 1;
+        if (!hasOtherA && hasOtherB) return -1;
         final indexA = seedIndexMap[a.id] ?? 999;
         final indexB = seedIndexMap[b.id] ?? 999;
         return indexA.compareTo(indexB);
@@ -141,8 +141,8 @@ class AddLiabilitySheetController extends PrjGetController {
   }
 
   Future<void> save(BuildContext context) async {
-    if (isSubmitting.value) return;
-    isSubmitting.value = true;
+    if (hasSubmitting.value) return;
+    hasSubmitting.value = true;
 
     try {
       final name = nameController.text.trim();
@@ -162,13 +162,13 @@ class AddLiabilitySheetController extends PrjGetController {
 
       final existingResult = await _getLiabilityBalances();
       if (existingResult.isSuccess()) {
-        final isDuplicate = existingResult.tryGetSuccess()!.any(
+        final hasDuplicate = existingResult.tryGetSuccess()!.any(
           (b) =>
               b.liability.direction == direction.value &&
               b.liability.categoryLabel.trim().toLowerCase() ==
                   name.toLowerCase(),
         );
-        if (isDuplicate) {
+        if (hasDuplicate) {
           nameError.value = el.tr(
             PrjLocaleKeys.transaction_liability_name_duplicate_error,
           );
@@ -234,7 +234,7 @@ class AddLiabilitySheetController extends PrjGetController {
         },
       );
     } finally {
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
     }
   }
 

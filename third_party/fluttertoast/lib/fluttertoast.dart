@@ -60,7 +60,7 @@ class FToast {
     ToastGravity? gravity,
     Duration fadeDuration = const Duration(milliseconds: 350),
     bool ignorePointer = false,
-    bool isDismissible = false,
+    bool hasDismissible = false,
   }) {}
 
   void removeCustomToast() {}

@@ -34,7 +34,7 @@ class FormWalletSection extends StatelessWidget {
             wallets: controller.wallets.toList(),
             selectedWalletId: controller.selectedWalletId.value,
             activeColor: activeColor,
-            defaultBgColor: background ?? context.verticalGradient(activeColor),
+            defaultBackgroundColor: background ?? context.verticalGradient(activeColor),
             onWalletSelected: controller.setWalletId,
           ),
         ),

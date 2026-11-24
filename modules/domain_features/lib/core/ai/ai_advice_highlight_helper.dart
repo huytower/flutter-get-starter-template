@@ -7,14 +7,14 @@ List<AiAdviceTextSegment> splitAiAdviceHighlights(
   if (text.isEmpty) return const [];
 
   final folded = text.toLowerCase();
-  final isFoldable = folded.length == text.length;
-  final searchable = isFoldable ? folded : text;
+  final hasFoldable = folded.length == text.length;
+  final searchable = hasFoldable ? folded : text;
 
   final ranges = <(int, int)>[];
   for (final highlight in highlights) {
     final trimmed = highlight.trim();
     if (trimmed.isEmpty) continue;
-    final needle = isFoldable ? trimmed.toLowerCase() : trimmed;
+    final needle = hasFoldable ? trimmed.toLowerCase() : trimmed;
     final start = searchable.indexOf(needle);
     if (start < 0) continue;
     ranges.add((start, start + needle.length));

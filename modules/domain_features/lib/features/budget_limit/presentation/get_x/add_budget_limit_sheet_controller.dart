@@ -40,7 +40,7 @@ class AddBudgetLimitSheetController extends PrjGetController {
   final RxString limitStr = '0'.obs;
   final RxnString nameError = RxnString();
   final RxBool showKeypad = false.obs;
-  final RxBool isSubmitting = false.obs;
+  final RxBool hasSubmitting = false.obs;
 
   final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
   final RxList<int> quickAmounts = RxList<int>(
@@ -52,16 +52,16 @@ class AddBudgetLimitSheetController extends PrjGetController {
   final GlobalKey amountFieldKey = GlobalKey();
   ScrollController categoryScrollController = ScrollController();
 
-  final RxBool isFixedPrice = false.obs;
+  final RxBool hasFixedPrice = false.obs;
   final RxnInt estimatedLimit = RxnInt();
 
   BudgetLimitEntity? _editTarget;
 
-  bool get isEdit => _editTarget != null;
+  bool get hasEdit => _editTarget != null;
 
-  bool get limitLocked => isEdit && !UpdateBudgetLimitUseCase.isLimitEditable;
+  bool get limitLocked => hasEdit && !UpdateBudgetLimitUseCase.hasLimitEditable;
 
-  bool get isValid {
+  bool get hasValid {
     final name = nameController.text.trim();
     if (name.isEmpty || selectedCategoryId.value == null) return false;
     if (limitLocked) return true;
@@ -98,10 +98,10 @@ class AddBudgetLimitSheetController extends PrjGetController {
     if (editTarget != null) {
       selectedCategoryId.value = editTarget.categoryId;
       limitStr.value = editTarget.limit.toString();
-      isFixedPrice.value = editTarget.isFixedPrice;
+      hasFixedPrice.value = editTarget.hasFixedPrice;
     }
 
-    if (!isEdit) _loadCategories();
+    if (!hasEdit) _loadCategories();
   }
 
   void _onNameChanged() {
@@ -121,7 +121,7 @@ class AddBudgetLimitSheetController extends PrjGetController {
 
       final enabled =
           cats
-              .where((c) => c.isEnabled && c.type == CategoryType.expense)
+              .where((c) => c.hasEnabled && c.type == CategoryType.expense)
               .toList()
             ..sort((a, b) {
               final indexA = seedIndexMap[a.id] ?? 999;
@@ -185,12 +185,12 @@ class AddBudgetLimitSheetController extends PrjGetController {
   }
 
   Future<void> save(BuildContext context) async {
-    if (isSubmitting.value) return;
-    isSubmitting.value = true;
+    if (hasSubmitting.value) return;
+    hasSubmitting.value = true;
 
     final budgetName = nameController.text.trim();
-    final isDuplicate = _budgetLimitController.budgets.any((b) {
-      if (isEdit && b.budget.id == _editTarget!.id) return false;
+    final hasDuplicate = _budgetLimitController.budgets.any((b) {
+      if (hasEdit && b.budget.id == _editTarget!.id) return false;
       final sameName =
           b.budget.name.trim().toLowerCase() == budgetName.toLowerCase();
       final sameCategory =
@@ -199,61 +199,61 @@ class AddBudgetLimitSheetController extends PrjGetController {
       return sameName || sameCategory;
     });
 
-    if (isDuplicate) {
+    if (hasDuplicate) {
       nameError.value = el.tr(PrjLocaleKeys.budget_name_duplicate_error);
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
       return;
     }
 
     final limit = int.tryParse(limitStr.value.trim()) ?? 0;
 
-    final error = isEdit
+    final error = hasEdit
         ? await _budgetLimitController.updateBudget(
             _editTarget!.id,
             name: nameController.text,
             limit: limitLocked ? null : limit,
-            isFixedPrice: isFixedPrice.value,
+            hasFixedPrice: hasFixedPrice.value,
           )
         : await _budgetLimitController.createBudget(
             CreateBudgetLimitParams(
               categoryId: selectedCategoryId.value ?? '',
               name: nameController.text,
               limit: limit,
-              isFixedPrice: isFixedPrice.value,
+              hasFixedPrice: hasFixedPrice.value,
             ),
           );
 
     if (!context.mounted) {
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
       return;
     }
     if (error != null) {
       CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
       return;
     }
 
-    if (!isEdit) {
+    if (!hasEdit) {
       _guidelineProvider.completeTask('budget_limit');
-      if (isFixedPrice.value) {
+      if (hasFixedPrice.value) {
         _guidelineProvider.completeTask('min_living');
       }
     }
 
     CcSnackBarHelper.showSuccessSnackBar(
       context: context,
-      message: isEdit
+      message: hasEdit
           ? el.tr(PrjLocaleKeys.budget_updated, namedArgs: {'name': budgetName})
           : el.tr(PrjLocaleKeys.budget_added, namedArgs: {'name': budgetName}),
     );
     Navigator.pop(context);
-    if (!isEdit && context.mounted) {
+    if (!hasEdit && context.mounted) {
       unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
     }
   }
 
   void toggleFixedPrice() {
-    isFixedPrice.value = !isFixedPrice.value;
+    hasFixedPrice.value = !hasFixedPrice.value;
   }
 
   void dismissEstimate() {

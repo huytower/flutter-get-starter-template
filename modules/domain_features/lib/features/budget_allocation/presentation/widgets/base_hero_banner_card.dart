@@ -18,7 +18,7 @@ class BaseHeroBannerCard extends StatelessWidget {
     this.bannerIcon,
     this.bannerIconAsset,
     required this.color,
-    required this.isFront,
+    required this.hasFront,
     this.onTap,
     super.key,
   });
@@ -30,7 +30,7 @@ class BaseHeroBannerCard extends StatelessWidget {
   final IconData? bannerIcon;
   final String? bannerIconAsset;
   final Color color;
-  final bool isFront;
+  final bool hasFront;
   final VoidCallback? onTap;
 
   @override
@@ -40,12 +40,12 @@ class BaseHeroBannerCard extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return CcBouncing(
-      onTap: isFront ? onTap : controller.toggleLiabilityCardStack,
+      onTap: hasFront ? onTap : controller.toggleLiabilityCardStack,
       borderRadius: context.brXl,
       child: Stack(
         children: [
           // Only show glassy background for the card behind to keep front card crisp
-          if (!isFront)
+          if (!hasFront)
             const Positioned.fill(child: CcGlassyGradientBackground()),
           Container(
             width: double.infinity,
@@ -55,10 +55,10 @@ class BaseHeroBannerCard extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               // Front card is solid "normal debtloan color", back card is transparent
-              color: isFront ? color : color.withValues(alpha: 0.1),
+              color: hasFront ? color : color.withValues(alpha: 0.1),
               borderRadius: context.brXl,
-              border: isFront ? null : context.borderSubtle,
-              boxShadow: isFront
+              border: hasFront ? null : context.borderSubtle,
+              boxShadow: hasFront
                   ? [
                       BoxShadow(
                         color: color.withValues(alpha: 0.25),
@@ -74,7 +74,7 @@ class BaseHeroBannerCard extends StatelessWidget {
                   child: _buildInfoColumn(context, walletController, scheme),
                 ),
                 const CcSpaceLG(),
-                if (isFront) ...[
+                if (hasFront) ...[
                   _buildSwapAction(context, controller, scheme),
                   const CcSpaceSM(),
                 ],
@@ -132,7 +132,7 @@ class BaseHeroBannerCard extends StatelessWidget {
         const CcSpaceXS(),
         Obx(
           () => CcText(
-            walletController.isBalanceVisible.value
+            walletController.hasBalanceVisible.value
                 ? TransactionFormHelpers.formatShortWithSymbol(
                     balance,
                     currencyCode: walletController.currencyCode.value,

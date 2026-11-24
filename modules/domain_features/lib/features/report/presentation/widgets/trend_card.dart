@@ -15,7 +15,7 @@ class TrendCard extends StatelessWidget {
     required this.points,
     required this.color,
     required this.range,
-    this.isIncome = false,
+    this.hasIncome = false,
     this.icon,
   });
 
@@ -24,20 +24,20 @@ class TrendCard extends StatelessWidget {
   final List<TrendPoint> points;
   final Color color;
   final ReportRange range;
-  final bool isIncome;
+  final bool hasIncome;
   final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
-    final isCurved = range != ReportRange.yearly;
+    final hasCurved = range != ReportRange.yearly;
 
     return SizedBox(
       height: context.respDim(180),
-      child: _buildCard(context, isCurved),
+      child: _buildCard(context, hasCurved),
     );
   }
 
-  Widget _buildCard(BuildContext context, bool isCurved) {
+  Widget _buildCard(BuildContext context, bool hasCurved) {
     return Container(
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
       decoration: BoxDecoration(
@@ -52,7 +52,7 @@ class TrendCard extends StatelessWidget {
         children: [
           _buildHeaderRow(context),
           const CcSpaceXL(),
-          Expanded(child: _buildChart(context, isCurved)),
+          Expanded(child: _buildChart(context, hasCurved)),
           const CcSpaceMD(),
           _buildLabels(context),
         ],
@@ -73,7 +73,7 @@ class TrendCard extends StatelessWidget {
           ),
           child: Icon(
             icon ??
-                (isIncome ? Icons.arrow_circle_up : Icons.arrow_circle_down),
+                (hasIncome ? Icons.arrow_circle_up : Icons.arrow_circle_down),
             color: color,
             size: context.respIconSize(baseSize: 18),
           ),
@@ -98,15 +98,15 @@ class TrendCard extends StatelessWidget {
     );
   }
 
-  Widget _buildChart(BuildContext context, bool isCurved) {
+  Widget _buildChart(BuildContext context, bool hasCurved) {
     return SizedBox(
       height: context.respDim(50),
-      child: LineChart(_buildChartData(context, isCurved)),
+      child: LineChart(_buildChartData(context, hasCurved)),
     );
   }
 
-  LineChartData _buildChartData(BuildContext context, bool isCurved) {
-    final values = points.map((p) => isIncome ? p.income : p.expense).toList();
+  LineChartData _buildChartData(BuildContext context, bool hasCurved) {
+    final values = points.map((p) => hasIncome ? p.income : p.expense).toList();
 
     return LineChartData(
       minX: 0,
@@ -125,10 +125,10 @@ class TrendCard extends StatelessWidget {
             for (int i = 0; i < points.length; i++)
               FlSpot(
                 i.toDouble(),
-                isIncome ? points[i].income : points[i].expense,
+                hasIncome ? points[i].income : points[i].expense,
               ),
           ],
-          isCurved: isCurved,
+          isCurved: hasCurved,
           curveSmoothness: 0.3,
           color: color,
           barWidth: context.respDim(2),

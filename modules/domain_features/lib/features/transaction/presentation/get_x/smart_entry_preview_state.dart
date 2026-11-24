@@ -87,7 +87,7 @@ class SmartEntryPreviewState {
   final DateTime _now;
 
   final RxList<SmartEntryPreviewRow> rows = <SmartEntryPreviewRow>[].obs;
-  final RxBool isCommitting = false.obs;
+  final RxBool hasCommitting = false.obs;
   final Rx<String?> errorText = Rx<String?>(null);
 
   int _nextId = 0;
@@ -175,7 +175,7 @@ class SmartEntryPreviewState {
       (!config.showCategory || row.categoryId.isNotEmpty);
 
   bool get canConfirm =>
-      rows.isNotEmpty && rows.every(isValid) && !isCommitting.value;
+      rows.isNotEmpty && rows.every(isValid) && !hasCommitting.value;
 
   int totalFor(String type) => rows
       .where((row) => row.type == type)

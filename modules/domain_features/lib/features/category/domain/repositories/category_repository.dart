@@ -19,6 +19,6 @@ abstract class CategoryRepository {
 
   Future<Result<void, CcFailure>> updateCategoryEnabled(
     String id,
-    bool isEnabled,
+    bool hasEnabled,
   );
 }

@@ -19,7 +19,7 @@ class DeleteBudgetLimitUseCase {
     }
     final budget = budgetResult.tryGetSuccess()!;
     final updateResult = await _repository.updateBudget(
-      budget.copyWith(isClosed: true),
+      budget.copyWith(hasClosed: true),
     );
     if (updateResult.isError()) {
       return Error(updateResult.tryGetError()!);

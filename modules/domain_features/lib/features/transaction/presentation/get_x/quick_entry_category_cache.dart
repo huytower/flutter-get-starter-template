@@ -17,7 +17,7 @@ class QuickEntryCategoryCache {
 
   List<CategoryEntity> _categories = [];
 
-  bool get isEmpty => _categories.isEmpty;
+  bool get hasEmpty => _categories.isEmpty;
 
   /// Ids of the cached categories; the default for
   /// [TransactionFormController.quickEntryAvailableCategoryIds].
@@ -34,7 +34,7 @@ class QuickEntryCategoryCache {
             .tryGetSuccess()
             ?.where(
               (category) =>
-                  category.isEnabled &&
+                  category.hasEnabled &&
                   category.type == _form.quickEntryCategoryType &&
                   (groupIds == null || groupIds.contains(category.groupId)),
             )
@@ -79,9 +79,9 @@ class QuickEntryCategoryCache {
     if (id == null) return true;
 
     final availableIds = _form.quickEntryAvailableCategoryIds;
-    final isAvailable = availableIds.contains(id);
-    '[AI_PARSING] 🔍 Checking category missing | id=$id | isAvailable=$isAvailable | availableCount=${availableIds.length}'
+    final hasAvailable = availableIds.contains(id);
+    '[AI_PARSING] 🔍 Checking category missing | id=$id | isAvailable=$hasAvailable | availableCount=${availableIds.length}'
         .Log('QuickEntryCategoryCache');
-    return !isAvailable;
+    return !hasAvailable;
   }
 }

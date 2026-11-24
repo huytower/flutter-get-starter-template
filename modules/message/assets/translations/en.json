@@ -728,6 +728,8 @@
     "ai_sharing": "Share data with AI",
     "ai_sharing_subtitle": "Sends data to Google Gemini for quick entry, receipt scan and advice",
     "delete_account": "Delete account",
+    "delete_apple_note": "This account is linked to Sign in with Apple. If it is this device's Apple ID, Apple will ask you to confirm before the account is deleted.",
+    "delete_success": "Your account has been deleted.",
     "delete_confirm": "Delete Account?",
     "delete_confirm_desc": "This will permanently delete your account and all associated data. This action cannot be undone.",
     "young_children_message": "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",

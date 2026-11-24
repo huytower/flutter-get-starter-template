@@ -42,7 +42,7 @@ class ReportInvestmentSection extends StatelessWidget {
                 points: data.points,
                 color: context.investmentAccent,
                 range: controller.range.value,
-                isIncome: false,
+                hasIncome: false,
                 icon: Icons.arrow_circle_down,
               ),
               TrendCard(
@@ -51,7 +51,7 @@ class ReportInvestmentSection extends StatelessWidget {
                 points: data.points,
                 color: context.investmentAccent.secondaryShade,
                 range: controller.range.value,
-                isIncome: true,
+                hasIncome: true,
                 icon: Icons.arrow_circle_up,
               ),
             ],

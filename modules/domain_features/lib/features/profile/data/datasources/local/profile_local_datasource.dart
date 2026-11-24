@@ -102,16 +102,16 @@ class ProfileLocalDataSource {
       currencySelectionSource: storage.currencySelectionSource,
       currencyDetectionCountryCode: storage.currencyDetectionCountryCode,
       birthYear: storage.birthYear,
-      isDarkMode: storage.isDarkMode,
+      hasDarkMode: storage.hasDarkMode,
       weeklyAuditDayChangedAt: storage.weeklyAuditDayChangedAt,
       levelFeatureAnchorAt: storage.levelFeatureAnchorAt,
-      isVip: storage.isVip ?? PrjFeatureFlags.isVipModeEnabled,
+      hasVip: storage.hasVip ?? PrjFeatureFlags.hasVipModeEnabled,
       highestUserLevelReached: storage.highestUserLevelReached ?? 1,
       firstLaunchAt: storage.firstLaunchAt,
       cloudBackupReminderSentAt: storage.cloudBackupReminderSentAt,
       hasViewedEmergencyFundEbook: storage.hasViewedEmergencyFundEbook ?? false,
       hasSeenTutorial: storage.hasSeenTutorial ?? false,
-      isHeaderFlipped: storage.isProfileHeaderFlipped ?? false,
+      hasHeaderFlipped: storage.hasProfileHeaderFlipped ?? false,
       hasCustomizedCategories: storage.hasCustomizedCategories ?? false,
       completedGuidelineTaskIds: storage.completedGuidelineTaskIds ?? const [],
     );
@@ -209,16 +209,16 @@ class ProfileLocalDataSource {
     );
     storage.currencyDetectionCountryCode = entity.currencyDetectionCountryCode;
     storage.birthYear = entity.birthYear;
-    storage.isDarkMode = entity.isDarkMode;
+    storage.hasDarkMode = entity.hasDarkMode;
     storage.weeklyAuditDayChangedAt = entity.weeklyAuditDayChangedAt;
     storage.levelFeatureAnchorAt = entity.levelFeatureAnchorAt;
-    storage.isVip = entity.isVip;
+    storage.hasVip = entity.hasVip;
     storage.highestUserLevelReached = entity.highestUserLevelReached;
     storage.firstLaunchAt = entity.firstLaunchAt;
     storage.cloudBackupReminderSentAt = entity.cloudBackupReminderSentAt;
     storage.hasViewedEmergencyFundEbook = entity.hasViewedEmergencyFundEbook;
     storage.hasSeenTutorial = entity.hasSeenTutorial;
-    storage.isProfileHeaderFlipped = entity.isHeaderFlipped;
+    storage.hasProfileHeaderFlipped = entity.hasHeaderFlipped;
     storage.hasCustomizedCategories = entity.hasCustomizedCategories;
     storage.completedGuidelineTaskIds = entity.completedGuidelineTaskIds;
     await storage.save();

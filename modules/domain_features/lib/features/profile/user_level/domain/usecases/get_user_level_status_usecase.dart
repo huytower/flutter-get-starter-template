@@ -51,7 +51,7 @@ class GetUserLevelStatusUseCase {
     }
     final fixedBudgetCount = budgetsResult
         .tryGetSuccess()!
-        .where((b) => b.isFixedPrice)
+        .where((b) => b.hasFixedPrice)
         .length;
     final hasMinBudgets =
         fixedBudgetCount >= UserLevelStatusEntity.lv3RequiredBudgets;
@@ -103,7 +103,7 @@ class GetUserLevelStatusUseCase {
 
     // 3. Final display level: Milestones OR VIP override
     int level = organicLevel;
-    if (settings.isVip) {
+    if (settings.hasVip) {
       level = 3;
     }
 
@@ -115,7 +115,7 @@ class GetUserLevelStatusUseCase {
         hasPositiveCashFlow: hasPositiveCashFlow,
         fixedBudgetCount: fixedBudgetCount,
         completedGuidelineCount: completedGuidelineCount,
-        isVip: settings.isVip,
+        hasVip: settings.hasVip,
       ),
     );
   }

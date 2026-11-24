@@ -34,7 +34,7 @@ class _ReportPageState extends State<ReportPage> {
     }
     controller = Get.find<ReportController>();
     // Ensure edit mode is always off when entering the page.
-    controller.isEditMode.value = false;
+    controller.hasEditMode.value = false;
   }
 
   @override
@@ -63,14 +63,14 @@ class _ReportView extends PrjGetView<ReportController> {
 
     return Obx(
       () => PopScope(
-        canPop: !controller.isEditMode.value,
+        canPop: !controller.hasEditMode.value,
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
-            controller.isEditMode.value = false;
+            controller.hasEditMode.value = false;
             return;
           }
-          if (controller.isEditMode.value) {
-            controller.isEditMode.value = false;
+          if (controller.hasEditMode.value) {
+            controller.hasEditMode.value = false;
           }
         },
         child: DefaultTabController(
@@ -79,7 +79,7 @@ class _ReportView extends PrjGetView<ReportController> {
             child: Stack(
               children: [
                 Obx(() {
-                  final hidden = controller.isHeaderHidden.value || keyboardUp;
+                  final hidden = controller.hasHeaderHidden.value || keyboardUp;
                   return AnimatedOpacity(
                     opacity: hidden ? 0 : 1,
                     duration: const Duration(milliseconds: 200),
@@ -129,7 +129,7 @@ class _ReportView extends PrjGetView<ReportController> {
           if (data == null) return const SizedBox.shrink();
 
           final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
-          final hidden = controller.isHeaderHidden.value || keyboardUp;
+          final hidden = controller.hasHeaderHidden.value || keyboardUp;
 
           final topPadding = MediaQuery.of(context).padding.top;
 

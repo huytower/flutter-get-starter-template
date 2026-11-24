@@ -92,9 +92,9 @@ class SmartEntryTypeToggle extends StatelessWidget {
 
   Widget _buildOption(BuildContext context, String type) {
     final scheme = context.ccColorScheme;
-    final isIncome = type == CategoryType.income;
-    final accent = isIncome ? context.incomeAccent : context.expenseAccent;
-    final isSelected = type == selected;
+    final hasIncome = type == CategoryType.income;
+    final accent = hasIncome ? context.incomeAccent : context.expenseAccent;
+    final hasSelected = type == selected;
 
     return CcBouncing(
       onTap: () => onChanged(type),
@@ -106,20 +106,20 @@ class SmartEntryTypeToggle extends StatelessWidget {
           vertical: context.respDim(6),
         ),
         decoration: BoxDecoration(
-          color: isSelected
+          color: hasSelected
               ? accent.withValues(alpha: 0.15)
               : scheme.surfaceContainerHighest,
           borderRadius: context.brXl,
         ),
         child: CcText(
           el.tr(
-            isIncome ? PrjLocaleKeys.common_income : PrjLocaleKeys.common_expense,
+            hasIncome ? PrjLocaleKeys.common_income : PrjLocaleKeys.common_expense,
           ),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.titleSmall?.copyWith(
-            color: isSelected ? accent : scheme.onSurfaceVariant,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: hasSelected ? accent : scheme.onSurfaceVariant,
+            fontWeight: hasSelected ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
       ),

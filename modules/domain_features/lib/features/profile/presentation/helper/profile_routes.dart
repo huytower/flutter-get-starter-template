@@ -18,7 +18,7 @@ abstract final class ProfileRoutes {
 
   /// Developer crash-log viewer; no-op unless enabled for this build.
   static void crashLogViewer(BuildContext context) {
-    if (!CrashLogDevOverlay.isViewerEnabled) return;
+    if (!CrashLogDevOverlay.hasViewerEnabled) return;
     final navContext = Catcher2.navigatorKey.currentContext ?? context;
     CcDialogHelper.showModalBottomSheet(navContext, const CrashLogViewerPage());
   }

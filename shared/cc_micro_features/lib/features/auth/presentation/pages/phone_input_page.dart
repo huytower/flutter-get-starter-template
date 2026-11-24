@@ -147,16 +147,16 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
         const CcSpaceMD(),
         BlocSelector<PhoneAuthBloc, PhoneAuthState, bool>(
           selector: (state) => state is PhoneAuthLoading,
-          builder: (context, isLoading) {
+          builder: (context, hasLoading) {
             return ValueListenableBuilder<TextEditingValue>(
               valueListenable: _phoneController,
               builder: (context, value, _) {
-                final bool isNotEmpty = value.text.trim().isNotEmpty;
-                final bool isEnabled = !isLoading && isNotEmpty;
+                final bool hasNotEmpty = value.text.trim().isNotEmpty;
+                final bool hasEnabled = !hasLoading && hasNotEmpty;
 
                 return CcNextButton.bouncing(
                   onTap: _handleContinue,
-                  isEnable: isEnabled,
+                  hasEnable: hasEnabled,
                   title: el.tr(CcMfLocaleKeys.common_continue),
                 );
               },

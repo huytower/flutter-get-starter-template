@@ -20,12 +20,12 @@ class ResponseInterceptor extends Interceptor {
 
     // Determine if this is a "Foreign" response that needs wrapping
     // We check if it is a Map and if it has a BOOLEAN 'status' key.
-    bool isStandardEnvelope =
+    bool hasStandardEnvelope =
         rawData is Map<String, dynamic> &&
         rawData.containsKey(statusKey) &&
         rawData[statusKey] is bool;
 
-    if (!isStandardEnvelope) {
+    if (!hasStandardEnvelope) {
       // FORCE into standard envelope format (Normalization)
       rawData = {
         statusKey: true, // Assume success for raw external data

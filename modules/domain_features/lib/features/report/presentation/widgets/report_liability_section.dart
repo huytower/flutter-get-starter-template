@@ -41,7 +41,7 @@ class ReportLiabilitySection extends StatelessWidget {
             points: data.points,
             color: context.borrowAccent.secondaryShade,
             range: controller.range.value,
-            isIncome: false,
+            hasIncome: false,
             icon: Icons.arrow_circle_down,
           ),
         );
@@ -55,7 +55,7 @@ class ReportLiabilitySection extends StatelessWidget {
             points: data.points,
             color: context.borrowAccent,
             range: controller.range.value,
-            isIncome: true,
+            hasIncome: true,
             icon: Icons.arrow_circle_up,
           ),
         );

@@ -12,7 +12,7 @@ import '../../domain/entities/liability_balance_entity.dart';
 /// Card item for a lending item shown in [LendListPage]'s list view.
 class LendWalletListItem extends StatelessWidget {
   final LiabilityBalanceEntity balance;
-  final bool isEditMode;
+  final bool hasEditMode;
   final bool canDelete;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -20,7 +20,7 @@ class LendWalletListItem extends StatelessWidget {
   const LendWalletListItem({
     super.key,
     required this.balance,
-    this.isEditMode = false,
+    this.hasEditMode = false,
     this.canDelete = true,
     this.onEdit,
     this.onDelete,
@@ -40,7 +40,7 @@ class LendWalletListItem extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         _buildMainCard(context, liability, repaid),
-        if (isEditMode) ..._buildEditBadges(context),
+        if (hasEditMode) ..._buildEditBadges(context),
       ],
     );
   }

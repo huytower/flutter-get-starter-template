@@ -135,7 +135,7 @@ class _NavigationBarState extends State<NavigationBar>
 
   Widget? buildBottomNavigationBar(BuildContext context) {
     final systemBottomPadding = MediaQuery.of(context).padding.bottom;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasDark = Theme.of(context).brightness == Brightness.dark;
 
     return mainShell.watchTabs(() {
       // To support both gesture navigation and 3-button navigation without
@@ -144,12 +144,12 @@ class _NavigationBarState extends State<NavigationBar>
       // so that case is capped to keep the bar compact; a 3-button bar fills
       // its whole inset and keeps the full padding. The background container
       // extends the color behind the system bar.
-      final isGestureInset = systemBottomPadding <= _maxGestureInset;
-      final bottomInset = isGestureInset
+      final hasGestureInset = systemBottomPadding <= _maxGestureInset;
+      final bottomInset = hasGestureInset
           ? math.min(systemBottomPadding, _gestureInsetCap)
           : systemBottomPadding;
       return Container(
-        color: isDark ? Colors.transparent : CcBaseColors.white100,
+        color: hasDark ? Colors.transparent : CcBaseColors.white100,
         child: Padding(
           padding: EdgeInsets.only(bottom: bottomInset),
           child: buildCurvedNavigationBar(),
@@ -205,15 +205,15 @@ class _NavigationBarState extends State<NavigationBar>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = context.ccColorScheme;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+      value: (hasDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
           .copyWith(
             statusBarColor: Colors.transparent,
             systemNavigationBarColor: scheme.background,
-            systemNavigationBarIconBrightness: isDark
+            systemNavigationBarIconBrightness: hasDark
                 ? Brightness.light
                 : Brightness.dark,
           ),

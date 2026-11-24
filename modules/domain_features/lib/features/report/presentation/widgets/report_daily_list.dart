@@ -11,12 +11,12 @@ class ReportDailyList extends StatelessWidget {
     super.key,
     required this.transactions,
     required this.includeInvestmentAndLiability,
-    required this.isEditMode,
+    required this.hasEditMode,
   });
 
   final List<TransactionEntity> transactions;
   final bool includeInvestmentAndLiability;
-  final bool isEditMode;
+  final bool hasEditMode;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class ReportDailyList extends StatelessWidget {
           date: date,
           transactions: groups[date]!,
           includeInvestmentAndLiability: includeInvestmentAndLiability,
-          isEditMode: isEditMode,
+          hasEditMode: hasEditMode,
         ),
     ];
 

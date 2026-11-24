@@ -68,7 +68,7 @@ class _PhoneOtpInputState extends State<PhoneOtpInput> {
                   final char = value.text.length > index
                       ? value.text[index]
                       : '';
-                  final isFocused =
+                  final hasFocused =
                       value.text.length == index ||
                       (value.text.length == widget.length &&
                           index == widget.length - 1);
@@ -81,10 +81,10 @@ class _PhoneOtpInputState extends State<PhoneOtpInput> {
                       color: context.ccColorScheme.surface,
                       borderRadius: context.brInput,
                       border: Border.all(
-                        color: isFocused
+                        color: hasFocused
                             ? context.ccColorScheme.primary
                             : context.ccColorScheme.outline.withAlpha(70),
-                        width: isFocused ? 2 : 0.5,
+                        width: hasFocused ? 2 : 0.5,
                       ),
                     ),
                     alignment: Alignment.center,

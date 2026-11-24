@@ -12,7 +12,7 @@ import '../../domain/entities/liability_balance_entity.dart';
 /// Compact 2-column grid card for a liability (borrowing) item.
 class LiabilityWalletGridCard extends StatelessWidget {
   final LiabilityBalanceEntity balance;
-  final bool isEditMode;
+  final bool hasEditMode;
   final bool canDelete;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -20,7 +20,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
   const LiabilityWalletGridCard({
     super.key,
     required this.balance,
-    this.isEditMode = false,
+    this.hasEditMode = false,
     this.canDelete = true,
     this.onEdit,
     this.onDelete,
@@ -40,7 +40,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         _buildMainCard(context, liability, repaid),
-        if (isEditMode) ..._buildEditBadges(context),
+        if (hasEditMode) ..._buildEditBadges(context),
       ],
     );
   }

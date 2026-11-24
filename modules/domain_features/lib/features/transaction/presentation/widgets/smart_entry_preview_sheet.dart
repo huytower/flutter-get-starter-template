@@ -41,7 +41,7 @@ class SmartEntryPreviewSheet extends StatelessWidget {
 
     return Obx(
       () => PopScope(
-        canPop: !state.isCommitting.value,
+        canPop: !state.hasCommitting.value,
         child: Padding(
           padding: EdgeInsets.only(
             top: topInset,
@@ -85,7 +85,7 @@ class SmartEntryPreviewSheet extends StatelessWidget {
       subtitle: el.tr(PrjLocaleKeys.smart_entry_preview_subtitle),
       trailing: CcCancelButton.bouncing(
         onTap: () {
-          if (!state.isCommitting.value) Navigator.of(context).pop(false);
+          if (!state.hasCommitting.value) Navigator.of(context).pop(false);
         },
         iconColor: context.ccColorScheme.onPrimary,
       ),
@@ -108,12 +108,12 @@ class SmartEntryPreviewSheet extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final row = state.rows[index];
-        final isEven = index.isEven;
+        final hasEven = index.isEven;
         final scheme = context.ccColorScheme;
 
         return Container(
           decoration: BoxDecoration(
-            color: isEven
+            color: hasEven
                 ? scheme.surfaceVariant.withValues(alpha: 0.9)
                 : scheme.surfaceVariant.withValues(alpha: 0.5),
             borderRadius: context.brLg,
@@ -166,8 +166,8 @@ class SmartEntryPreviewSheet extends StatelessWidget {
   Widget _buildConfirmButton(BuildContext context) {
     return EntrySubmitButton(
       text: _confirmLabel(),
-      isSubmitting: state.isCommitting.value,
-      isEnabled: state.canConfirm,
+      hasSubmitting: state.hasCommitting.value,
+      hasEnabled: state.canConfirm,
       onTap: () => _confirm(context),
       activeColor: context.ccColorScheme.primary,
       widthFactor: 0.5,
@@ -192,12 +192,12 @@ class SmartEntryPreviewSheet extends StatelessWidget {
 
   Future<void> _confirm(BuildContext context) async {
     if (!state.canConfirm) return;
-    state.isCommitting.value = true;
+    state.hasCommitting.value = true;
     state.errorText.value = null;
 
     final result = await onConfirm(state.toEntities());
 
-    state.isCommitting.value = false;
+    state.hasCommitting.value = false;
     state.dropSaved(result.saved);
     if (result.error == null || state.rows.isEmpty) {
       if (context.mounted) Navigator.of(context).pop(true);

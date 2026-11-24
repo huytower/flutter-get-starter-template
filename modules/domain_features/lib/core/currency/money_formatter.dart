@@ -91,7 +91,7 @@ class MoneyFormatter {
       }
     } catch (_) {}
 
-    final isVi = lang == 'vi';
+    final hasVi = lang == 'vi';
 
     String format(double val, String unit, {bool useComma = true}) {
       if (val == val.toInt().toDouble()) {
@@ -108,15 +108,15 @@ class MoneyFormatter {
 
     if (code == CurrencyConstants.vnd) {
       if (abs >= 1e9) {
-        return '$sign${format(abs / 1e9, isVi ? (useFullSuffix ? ' tỷ đồng' : 'tỷ') : (useFullSuffix ? ' billions' : 'B'), useComma: isVi)}';
+        return '$sign${format(abs / 1e9, hasVi ? (useFullSuffix ? ' tỷ đồng' : 'tỷ') : (useFullSuffix ? ' billions' : 'B'), useComma: hasVi)}';
       }
       if (abs >= 1e6) {
-        return '$sign${format(abs / 1e6, isVi ? (useFullSuffix ? ' triệu đồng' : 'tr') : (useFullSuffix ? ' millions' : 'M'), useComma: isVi)}';
+        return '$sign${format(abs / 1e6, hasVi ? (useFullSuffix ? ' triệu đồng' : 'tr') : (useFullSuffix ? ' millions' : 'M'), useComma: hasVi)}';
       }
       if (abs >= 1e3) {
-        return '$sign${format(abs / 1e3, isVi ? (useFullSuffix ? ' nghìn đồng' : 'k') : (useFullSuffix ? ' thousands' : 'K'), useComma: isVi)}';
+        return '$sign${format(abs / 1e3, hasVi ? (useFullSuffix ? ' nghìn đồng' : 'k') : (useFullSuffix ? ' thousands' : 'K'), useComma: hasVi)}';
       }
-      return '$sign${abs.toStringAsFixed(0)}${useFullSuffix ? (isVi ? ' đồng' : '') : ''}';
+      return '$sign${abs.toStringAsFixed(0)}${useFullSuffix ? (hasVi ? ' đồng' : '') : ''}';
     } else {
       // Non-VND currencies (USD, EUR, GBP, JPY, etc.)
       if (abs >= 1e9) {

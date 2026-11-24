@@ -94,7 +94,7 @@ class CategoryLocalDataSource {
     await box.put(category.id, category);
   }
 
-  Future<void> updateCategoryEnabled(String id, bool isEnabled) async {
+  Future<void> updateCategoryEnabled(String id, bool hasEnabled) async {
     final box = await _box;
     final existing = box.get(id);
     if (existing == null) return;
@@ -107,7 +107,7 @@ class CategoryLocalDataSource {
         iconFamily: existing.iconFamily,
         colorValue: existing.colorValue,
         groupId: existing.groupId,
-        isEnabled: isEnabled,
+        hasEnabled: hasEnabled,
         type: existing.type,
       ),
     );

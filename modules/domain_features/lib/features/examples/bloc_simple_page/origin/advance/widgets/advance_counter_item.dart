@@ -23,7 +23,7 @@ class AdvanceCounterItem extends StatelessWidget {
           'DebounceWidget'.Log();
         },
         useDebounce: true,
-        isBouncing: true,
+        hasBouncing: true,
         child: CcCloseButton(
           onTap: () {
             'CloseButtonWidget() :'.Log();
@@ -35,7 +35,7 @@ class AdvanceCounterItem extends StatelessWidget {
             size: context.respIconSize(baseSize: 80.0),
           ),
           width: 120,
-          bgColor: context.ccColorScheme.primary,
+          backgroundColor: context.ccColorScheme.primary,
         ),
       ),
     );

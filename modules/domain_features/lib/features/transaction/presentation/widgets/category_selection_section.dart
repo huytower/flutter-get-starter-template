@@ -99,7 +99,7 @@ class CategorySelectionSection extends StatelessWidget {
         children: [
           _buildTitle(context),
           const CcSpaceXS(),
-          controller.isLoading.value
+          controller.hasLoading.value
               ? const PrjCategoryShimmerList()
               : _buildCategoryList(context, controller),
         ],
@@ -159,13 +159,13 @@ class CategorySelectionSection extends StatelessWidget {
           separatorBuilder: (context, index) => const CcSpaceSM(),
           itemBuilder: (context, index) {
             final category = controller.categories[index];
-            final isSelected =
+            final hasSelected =
                 controller.selectedCategoryId.value == category.id;
             return PrjCategoryItem(
               iconCode: category.iconCode,
               iconFamily: category.iconFamily,
               label: el.tr(category.nameKey),
-              isSelected: isSelected,
+              hasSelected: hasSelected,
               activeColor: activeColor,
               onTap: () {
                 controller.selectCategory(category);

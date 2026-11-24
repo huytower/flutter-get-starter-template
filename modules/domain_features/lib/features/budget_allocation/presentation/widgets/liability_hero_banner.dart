@@ -30,19 +30,19 @@ class LiabilityHeroBanner extends StatelessWidget {
     final controller = Get.find<BudgetAllocationController>();
 
     return Obx(() {
-      final isLendFront = controller.isLendSectionFront.value;
+      final hasLendFront = controller.hasLendSectionFront.value;
 
       final borrowCard = BorrowHeroCard(
         walletController: walletController,
         balance: borrowBalance.value,
-        isFront: !isLendFront,
+        hasFront: !hasLendFront,
         onTap: () => controller.navigateToLiabilityList(context),
       );
 
       final lendCard = LendHeroCard(
         walletController: walletController,
         balance: lendBalance.value,
-        isFront: isLendFront,
+        hasFront: hasLendFront,
         onTap: () => controller.navigateToLendList(context),
       );
 
@@ -55,14 +55,14 @@ class LiabilityHeroBanner extends StatelessWidget {
             // Back Card
             _buildAnimatedCard(
               context: context,
-              isFront: false,
-              child: isLendFront ? borrowCard : lendCard,
+              hasFront: false,
+              child: hasLendFront ? borrowCard : lendCard,
             ),
             // Front Card
             _buildAnimatedCard(
               context: context,
-              isFront: true,
-              child: isLendFront ? lendCard : borrowCard,
+              hasFront: true,
+              child: hasLendFront ? lendCard : borrowCard,
             ),
           ],
         ),
@@ -72,13 +72,13 @@ class LiabilityHeroBanner extends StatelessWidget {
 
   Widget _buildAnimatedCard({
     required BuildContext context,
-    required bool isFront,
+    required bool hasFront,
     required Widget child,
   }) {
     // Premium animation values matching TransactionTabBar pattern
-    final double scale = isFront ? 1.0 : 0.94;
-    final double opacity = isFront ? 1.0 : 0.9;
-    final double yOffset = isFront ? 0 : -context.respDim(15);
+    final double scale = hasFront ? 1.0 : 0.94;
+    final double opacity = hasFront ? 1.0 : 0.9;
+    final double yOffset = hasFront ? 0 : -context.respDim(15);
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 400),

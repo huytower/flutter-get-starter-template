@@ -7,7 +7,7 @@ class UserLevelStatusEntity extends Equatable {
   final bool hasPositiveCashFlow;
   final int fixedBudgetCount;
   final int completedGuidelineCount;
-  final bool isVip;
+  final bool hasVip;
 
   const UserLevelStatusEntity({
     required this.level,
@@ -16,7 +16,7 @@ class UserLevelStatusEntity extends Equatable {
     required this.hasPositiveCashFlow,
     required this.fixedBudgetCount,
     required this.completedGuidelineCount,
-    required this.isVip,
+    required this.hasVip,
   });
 
   static const int lv2RequiredStreak = 2;
@@ -24,11 +24,11 @@ class UserLevelStatusEntity extends Equatable {
   static const int lv3RequiredBudgets = 3;
   static const int lv1RequiredGuidelines = 6;
 
-  bool get canUseInvestment => level >= 2 || isVip;
+  bool get canUseInvestment => level >= 2 || hasVip;
 
-  bool get canUseLiability => level >= 3 || isVip;
+  bool get canUseLiability => level >= 3 || hasVip;
 
-  bool get canUseAiSmartEntry => level >= 3 || isVip;
+  bool get canUseAiSmartEntry => level >= 3 || hasVip;
 
   const UserLevelStatusEntity.initial()
     : level = 1,
@@ -37,7 +37,7 @@ class UserLevelStatusEntity extends Equatable {
       hasPositiveCashFlow = false,
       fixedBudgetCount = 0,
       completedGuidelineCount = 0,
-      isVip = false;
+      hasVip = false;
 
   @override
   List<Object?> get props => [
@@ -47,6 +47,6 @@ class UserLevelStatusEntity extends Equatable {
     hasPositiveCashFlow,
     fixedBudgetCount,
     completedGuidelineCount,
-    isVip,
+    hasVip,
   ];
 }

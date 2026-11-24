@@ -15,26 +15,26 @@ class QuickEntryVoiceInput {
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
     if (!_session.handler.parser.canUseAiSmartEntry) return;
 
-    '[VoiceWorkflow] 🟢 toggleVoiceQuickEntry triggered | isListening=${_session.isListeningQuickEntry.value}'
+    '[VoiceWorkflow] 🟢 toggleVoiceQuickEntry triggered | isListening=${_session.hasListeningQuickEntry.value}'
         .Log('QuickEntryInput');
 
     bool voiceSubmitted = false;
 
     void triggerVoiceSubmit(String rawText, String source) {
-      if (voiceSubmitted || _session.isQuickEntryDisposed) return;
+      if (voiceSubmitted || _session.hasQuickEntryDisposed) return;
       voiceSubmitted = true;
-      _session.isListeningQuickEntry.value = false;
+      _session.hasListeningQuickEntry.value = false;
       _session.cancelAutoSaveCountdown();
 
       final text = rawText.trim();
-      if (text.isNotEmpty && !_session.isParsingQuickEntry.value) {
+      if (text.isNotEmpty && !_session.hasParsingQuickEntry.value) {
         '[VoiceWorkflow] 🚀 Submitting voice result via $source | text="$text"'
             .Log('QuickEntryInput');
         _session.submitQuickEntry(context);
       }
     }
 
-    if (_session.isListeningQuickEntry.value) {
+    if (_session.hasListeningQuickEntry.value) {
       '[VoiceWorkflow] 🛑 Manual stop requested'.Log('QuickEntryInput');
       await _session.handler.speech.stopListening();
       triggerVoiceSubmit(_session.quickEntryController.text, 'manualStop');
@@ -54,14 +54,14 @@ class QuickEntryVoiceInput {
 
     _session.host.hideKeypad();
     _session.quickEntryErrorKey.value = null;
-    _session.isListeningQuickEntry.value = true;
+    _session.hasListeningQuickEntry.value = true;
 
     final started = await _session.handler.speech.startListening(
       // Voice entry is tuned for Vietnamese amounts and phrases.
       localeId: 'vi_VN',
-      onResult: (recognizedWords, isFinal) {
-        if (_session.isQuickEntryDisposed) return;
-        '[VoiceWorkflow] 🗣️ Voice recognized words: "$recognizedWords" | isFinal=$isFinal'
+      onResult: (recognizedWords, hasFinal) {
+        if (_session.hasQuickEntryDisposed) return;
+        '[VoiceWorkflow] 🗣️ Voice recognized words: "$recognizedWords" | isFinal=$hasFinal'
             .Log('QuickEntryInput');
 
         _session.quickEntryController.text = recognizedWords;
@@ -70,7 +70,7 @@ class QuickEntryVoiceInput {
         );
       },
       onListeningStopped: () {
-        if (_session.isQuickEntryDisposed) return;
+        if (_session.hasQuickEntryDisposed) return;
         '[VoiceWorkflow] 🏁 Voice listening session completed'.Log(
           'QuickEntryInput',
         );
@@ -81,14 +81,14 @@ class QuickEntryVoiceInput {
       },
     );
 
-    if (_session.isQuickEntryDisposed) return;
+    if (_session.hasQuickEntryDisposed) return;
 
     if (!started) {
-      if (!_session.handler.speech.isListening) {
+      if (!_session.handler.speech.hasListening) {
         '[VoiceWorkflow] ❌ Failed to start speech recognizer'.Log(
           'QuickEntryInput',
         );
-        _session.isListeningQuickEntry.value = false;
+        _session.hasListeningQuickEntry.value = false;
         _session.quickEntryErrorKey.value =
             PrjLocaleKeys.quick_entry_mic_permission_denied;
       }

@@ -151,7 +151,7 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
   }
 
   Widget _buildYearChip(BuildContext context, ColorScheme scheme, int year) {
-    final bool isSelected = year == _selectedYear;
+    final bool hasSelected = year == _selectedYear;
 
     return Center(
       child: CcBouncing(
@@ -163,17 +163,17 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
           height: context.respDim(40),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? scheme.primary : Colors.transparent,
+            color: hasSelected ? scheme.primary : Colors.transparent,
             borderRadius: context.brLg,
           ),
           child: CcText(
             '$year',
             align: Alignment.center,
             textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-              fontWeight: isSelected
+              fontWeight: hasSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,
-              color: isSelected ? scheme.onPrimary : scheme.onSurface,
+              color: hasSelected ? scheme.onPrimary : scheme.onSurface,
             ),
           ),
         ),

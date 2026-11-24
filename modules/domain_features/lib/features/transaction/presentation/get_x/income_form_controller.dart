@@ -60,7 +60,7 @@ class IncomeFormController extends TransactionFormController
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
 
   final RxList<UnifiedCategoryItem> unifiedItems = <UnifiedCategoryItem>[].obs;
-  final RxBool isLoadingUnified = false.obs;
+  final RxBool hasLoadingUnified = false.obs;
 
   final ScrollController categoryScrollController = ScrollController();
 
@@ -81,7 +81,7 @@ class IncomeFormController extends TransactionFormController
   }
 
   final RxList<CategoryEntity> _cachedCategories = <CategoryEntity>[].obs;
-  final RxBool isLoadingCategories = false.obs;
+  final RxBool hasLoadingCategories = false.obs;
 
   /// Set right before [categoryKey] is bumped by
   /// [TransactionFormController.applyQuickEntryCategory], so the remounted
@@ -113,8 +113,8 @@ class IncomeFormController extends TransactionFormController
   }
 
   Future<void> _loadAll() async {
-    isLoadingCategories.value = true;
-    isLoadingUnified.value = true;
+    hasLoadingCategories.value = true;
+    hasLoadingUnified.value = true;
 
     try {
       await _loadCategories();
@@ -123,15 +123,15 @@ class IncomeFormController extends TransactionFormController
       await _rebuildUnifiedItems();
     } catch (_) {
     } finally {
-      isLoadingCategories.value = false;
-      isLoadingUnified.value = false;
+      hasLoadingCategories.value = false;
+      hasLoadingUnified.value = false;
     }
 
-    if (isEditing && editingTransaction != null) {
+    if (hasEditing && editingTransaction != null) {
       _resolveCategoryForEdit(editingTransaction!);
     } else if (unifiedItems.isNotEmpty &&
         selectedCategory.value == null &&
-        !isEditing &&
+        !hasEditing &&
         quickEntry.quickEntryController.text.isEmpty) {
       final first = unifiedItems.first;
       final cat = getCachedCategoryById(first.categoryId);
@@ -190,7 +190,7 @@ class IncomeFormController extends TransactionFormController
   @override
   void applySuggestedCategory(String categoryId) {
     final category = getCachedCategoryById(categoryId);
-    if (category != null && category.isEnabled) {
+    if (category != null && category.hasEnabled) {
       setCategory(category);
     } else {
       clearCategorySelection();
@@ -231,7 +231,7 @@ class IncomeFormController extends TransactionFormController
     final result = await _getCategories();
     final allCats = result.tryGetSuccess() ?? [];
     final incomeCats = allCats
-        .where((c) => c.type == CategoryType.income && c.isEnabled)
+        .where((c) => c.type == CategoryType.income && c.hasEnabled)
         .toList();
 
     // Check if selected category still exists and is enabled
@@ -291,7 +291,7 @@ class IncomeFormController extends TransactionFormController
           iconCode: c.iconCode,
           iconFamily: c.iconFamily,
           lastActivityAt: lastActivity,
-          isBudget: false,
+          hasBudget: false,
           initialOrder: ageIndex >= 0 ? ageIndex : ageOrder.length + i,
         ),
       );
@@ -400,9 +400,9 @@ class IncomeFormController extends TransactionFormController
 
   @override
   void applyResolvedCategory(CategoryEntity category) {
-    final isCategorySame = selectedCategory.value?.id == category.id;
+    final hasCategorySame = selectedCategory.value?.id == category.id;
     selectedCategory.value = category;
-    if (isCategorySame) {
+    if (hasCategorySame) {
       _scrollToSelected();
     }
   }
@@ -422,20 +422,20 @@ class IncomeFormController extends TransactionFormController
   }
 
   void setCategory(CategoryEntity category) {
-    final isCategorySame = selectedCategory.value?.id == category.id;
+    final hasCategorySame = selectedCategory.value?.id == category.id;
     selectedCategory.value = category;
     // Manual selection clears any pending prefill from AI suggestions so it
     // doesn't clobber the user's choice on the next rebuild.
     pendingPrefillCategoryId.value = null;
-    if (isCategorySame) {
+    if (hasCategorySame) {
       _scrollToSelected();
     }
   }
 
   @override
   Future<void> submitForm(BuildContext context) async {
-    if (isSubmitting.value || !canSubmit) return;
-    isSubmitting.value = true;
+    if (hasSubmitting.value || !canSubmit) return;
+    hasSubmitting.value = true;
 
     final categoryId = selectedCategory.value?.id ?? '';
     final categoryLabel = selectedCategory.value != null
@@ -447,7 +447,7 @@ class IncomeFormController extends TransactionFormController
     if (categoryId.isNotEmpty)
       _lastRecordedCatTime[categoryId] = DateTime.now();
 
-    final result = isEditing
+    final result = hasEditing
         ? await getIt<UpdateTransactionUseCase>().call(
             UpdateTransactionParams(
               original: editingTransaction!,
@@ -475,7 +475,7 @@ class IncomeFormController extends TransactionFormController
             ),
           );
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    isSubmitting.value = false;
+    hasSubmitting.value = false;
     if (!context.mounted) return;
 
     final savedAmount = MoneyFormatter.formatWithSymbol(
@@ -483,7 +483,7 @@ class IncomeFormController extends TransactionFormController
       currencyCode: settings.currencyCode,
     );
     final messageText = el.tr(
-      isEditing
+      hasEditing
           ? PrjLocaleKeys.transaction_income_updated
           : PrjLocaleKeys.transaction_income_saved,
       namedArgs: {'amount': savedAmount},
@@ -497,7 +497,7 @@ class IncomeFormController extends TransactionFormController
             message: messageText,
           );
         }
-        if (isEditing) {
+        if (hasEditing) {
           onEditSaved?.call();
         } else {
           await resetForm();
@@ -513,7 +513,7 @@ class IncomeFormController extends TransactionFormController
           }
         }
         await refreshParent();
-        if (!isEditing && context.mounted) {
+        if (!hasEditing && context.mounted) {
           unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
         }
       },

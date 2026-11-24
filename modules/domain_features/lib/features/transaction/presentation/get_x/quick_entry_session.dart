@@ -45,21 +45,21 @@ class QuickEntrySession with WidgetsBindingObserver {
   final TextEditingController quickEntryController = TextEditingController();
   final Rx<ParsedTransactionEntity?> quickEntrySuggestion =
       Rx<ParsedTransactionEntity?>(null);
-  final RxBool isParsingQuickEntry = false.obs;
-  final RxBool isListeningQuickEntry = false.obs;
+  final RxBool hasParsingQuickEntry = false.obs;
+  final RxBool hasListeningQuickEntry = false.obs;
 
   final QuickEntryAutoSaveHelper _autoSaveHelper = QuickEntryAutoSaveHelper();
 
   /// Remaining seconds until auto-save triggers. VIP only.
   RxInt get autoSaveCountdown => _autoSaveHelper.autoSaveCountdown;
-  final RxBool isVip = false.obs;
+  final RxBool hasVip = false.obs;
 
   /// Locale key for an inline status message; null means nothing to show.
   final Rx<String?> quickEntryErrorKey = Rx<String?>(null);
 
   bool _quickEntryDisposed = false;
 
-  bool get isQuickEntryDisposed => _quickEntryDisposed;
+  bool get hasQuickEntryDisposed => _quickEntryDisposed;
 
   /// Bumped by [resetQuickEntry] to invalidate any submission still in
   /// flight, so a stale cloud response can't overwrite a newer entry.
@@ -82,7 +82,7 @@ class QuickEntrySession with WidgetsBindingObserver {
       ..removeListener(_text.onTextChanged)
       ..dispose();
     // Only stop it if this instance holds it — the recognizer is a global singleton.
-    if (isListeningQuickEntry.value) {
+    if (hasListeningQuickEntry.value) {
       unawaited(handler.speech.stopListening());
     }
   }
@@ -104,7 +104,7 @@ class QuickEntrySession with WidgetsBindingObserver {
     quickEntryErrorKey.value = null;
     quickEntryController.clear();
     _quickEntryGeneration++;
-    isParsingQuickEntry.value = false;
+    hasParsingQuickEntry.value = false;
   }
 
   void _cancelAutoSave() {
@@ -154,19 +154,19 @@ class QuickEntrySession with WidgetsBindingObserver {
       _categories.labelFor(result);
 
   /// Whether the published suggestion's category is unusable in this form.
-  bool get isQuickEntryCategoryMissing {
+  bool get hasQuickEntryCategoryMissing {
     final suggestion = quickEntrySuggestion.value;
     if (suggestion == null) return false;
     return isCategoryMissingFor(suggestion);
   }
 
-  /// Like [isQuickEntryCategoryMissing], for a parse not yet published to
+  /// Like [hasQuickEntryCategoryMissing], for a parse not yet published to
   /// [quickEntrySuggestion] (that getter would score the previous keystroke).
   bool isCategoryMissingFor(ParsedTransactionEntity result) =>
       _categories.isMissingFor(result);
 
-  /// Alias of [isQuickEntryCategoryMissing] for the suggestion chip.
-  bool get isQuickEntryCategoryInvalid => isQuickEntryCategoryMissing;
+  /// Alias of [hasQuickEntryCategoryMissing] for the suggestion chip.
+  bool get hasQuickEntryCategoryInvalid => hasQuickEntryCategoryMissing;
 
   /// The default for [TransactionFormController.quickEntryAvailableCategoryIds].
   List<String> get loadedCategoryIds => _categories.ids;
@@ -176,7 +176,7 @@ class QuickEntrySession with WidgetsBindingObserver {
   ///
   /// No snackbar, no error key: the published suggestion chip already renders
   /// [PrjLocaleKeys.quick_entry_category_missing] once this form reports
-  /// [isQuickEntryCategoryInvalid], so the user still gets the message — a
+  /// [hasQuickEntryCategoryInvalid], so the user still gets the message — a
   /// second copy on top of it would just be noise.
   bool _blockAutoSaveWhenNoCategory(String stage) {
     if (host.quickEntryHasSelectableCategory) return false;
@@ -193,13 +193,13 @@ class QuickEntrySession with WidgetsBindingObserver {
 
   /// One submission's generation token: `isCurrent` reports whether
   /// [resetQuickEntry] has since invalidated it; `resetIfCurrent` clears
-  /// [isParsingQuickEntry] only if it's still the active one.
+  /// [hasParsingQuickEntry] only if it's still the active one.
   (bool Function(), VoidCallback) trackQuickEntryGeneration() {
     final generation = _quickEntryGeneration;
     bool isCurrent() =>
         !_quickEntryDisposed && generation == _quickEntryGeneration;
     void resetIfCurrent() {
-      if (isCurrent()) isParsingQuickEntry.value = false;
+      if (isCurrent()) hasParsingQuickEntry.value = false;
     }
 
     return (isCurrent, resetIfCurrent);
@@ -334,7 +334,7 @@ class QuickEntrySession with WidgetsBindingObserver {
       parsed: rows,
       categories: [
         for (final category in categories)
-          if (category.isEnabled &&
+          if (category.hasEnabled &&
               types.contains(category.type) &&
               (groupIds == null || groupIds.contains(category.groupId)))
             category,

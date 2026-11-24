@@ -138,7 +138,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           CcText(
-            controller.isBalanceVisible.value
+            controller.hasBalanceVisible.value
                 ? _formatStatValue(value, controller.currencyCode.value)
                 : '*****',
             textStyle: context.ccTextTheme.labelSmall?.copyWith(

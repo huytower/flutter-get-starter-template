@@ -91,7 +91,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
           ],
         ),
         const CcSpaceXS(),
-        if (!controller.isEdit) ...[
+        if (!controller.hasEdit) ...[
           BudgetLimitCategorySelector(
             categories: controller.categories,
             selectedCategoryId: controller.selectedCategoryId.value,
@@ -115,7 +115,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
           },
         ),
         const CcSpaceXS(),
-        if (!controller.isEdit && controller.estimatedLimit.value != null)
+        if (!controller.hasEdit && controller.estimatedLimit.value != null)
           _buildEstimateSuggestion(context, controller),
         if (controller.limitLocked)
           const BudgetLimitLockNotice()
@@ -126,7 +126,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
               amountStr: controller.limitStr.value,
               quickAmounts: controller.quickAmounts,
               currencyCode: controller.currencyCode.value,
-              isKeypadVisible: controller.showKeypad.value,
+              hasKeypadVisible: controller.showKeypad.value,
               fieldKey: controller.amountFieldKey,
               onTap: () {
                 controller.showKeypad.value = true;
@@ -152,11 +152,11 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
         const CcSpaceSM(),
         Obx(
           () => CcSaveButton(
-            onPressed: controller.isValid
+            onPressed: controller.hasValid
                 ? () => controller.save(context)
                 : null,
             label: el.tr(PrjLocaleKeys.common_save),
-            isLoading: controller.isSubmitting.value,
+            hasLoading: controller.hasSubmitting.value,
           ),
         ),
       ],
@@ -168,7 +168,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
     AddBudgetLimitSheetController controller,
   ) {
     return CcFormLabel(
-      text: controller.isEdit
+      text: controller.hasEdit
           ? el.tr(PrjLocaleKeys.budget_edit_title)
           : el.tr(PrjLocaleKeys.budget_add_title),
       color: context.ccColorScheme.primary,
@@ -202,7 +202,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
                     () => CcIconToken(
                       Icons.bolt_rounded,
                       size: 18,
-                      color: controller.isFixedPrice.value
+                      color: controller.hasFixedPrice.value
                           ? scheme.primary
                           : scheme.outline,
                     ),
@@ -211,7 +211,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
                     scale: 0.7,
                     child: Obx(
                       () => CcCheckBox(
-                        isChecked: controller.isFixedPrice.value,
+                        hasChecked: controller.hasFixedPrice.value,
                         onChanged: (_) => controller.toggleFixedPrice(),
                         checkedColor: scheme.primary,
                         uncheckedBorderColor: scheme.outline,

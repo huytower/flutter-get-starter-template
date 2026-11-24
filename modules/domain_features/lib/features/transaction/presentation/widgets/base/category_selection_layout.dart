@@ -209,7 +209,7 @@ class CategorySelectionLayout extends StatelessWidget {
     required this.scrollController,
     required this.itemBuilder,
     required this.onCustomize,
-    this.isLoading = false,
+    this.hasLoading = false,
   });
 
   final List<UnifiedCategoryItem> items;
@@ -220,7 +220,7 @@ class CategorySelectionLayout extends StatelessWidget {
   final VoidCallback onCustomize;
 
   /// Shows a shimmer grid of the same size instead of [items].
-  final bool isLoading;
+  final bool hasLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +229,7 @@ class CategorySelectionLayout extends StatelessWidget {
       children: [
         _buildHeaderLabel(context),
         const CcSpaceXS(),
-        isLoading ? _buildShimmerGrid(context) : _buildGrid(context),
+        hasLoading ? _buildShimmerGrid(context) : _buildGrid(context),
       ],
     );
   }

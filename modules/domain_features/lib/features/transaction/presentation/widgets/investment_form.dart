@@ -122,7 +122,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
       ],
       details: Obx(
         () => EntryAdditionalDetailsSection(
-          isExpanded: true,
+          hasExpanded: true,
           selectedDate: controller.date.value,
           onDateSelected: controller.setDate,
           onCalendarTap: () => controller.pickDate(context),
@@ -198,7 +198,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
           _buildNewItemSection(context, controller, accentColor),
           Obx(
             () => EntryAdditionalDetailsSection(
-              isExpanded: controller.showMoreDetails.value,
+              hasExpanded: controller.showMoreDetails.value,
               onToggle: controller.toggleMoreDetails,
               selectedDate: controller.date.value,
               onDateSelected: controller.setDate,
@@ -221,7 +221,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     Color accentColor,
   ) {
     return Obx(() {
-      if (controller.isAddingNewItem.value) {
+      if (controller.hasAddingNewItem.value) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -246,8 +246,8 @@ class _InvestmentFormState extends State<InvestmentForm> {
               ? PrjLocaleKeys.transaction_record_investment
               : PrjLocaleKeys.transaction_record_investment_return,
         ),
-        isSubmitting: controller.isSubmitting.value,
-        isEnabled: controller.canSubmit,
+        hasSubmitting: controller.hasSubmitting.value,
+        hasEnabled: controller.canSubmit,
         onTap: () => controller.submitForm(context),
         activeColor: accentColor,
         gradient: context.investmentGoldGradient,
@@ -280,7 +280,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
         const CcSpaceXS(),
         TextField(
           controller: controller.newItemNameController,
-          enabled: controller.quickEntry.isVip.value,
+          enabled: controller.quickEntry.hasVip.value,
           onChanged: controller.setNewItemName,
           style: context.ccTextTheme.bodyLarge,
           decoration: InputDecoration(
@@ -290,7 +290,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
               horizontal: context.respDim(12),
               vertical: context.respDim(10),
             ),
-            suffixIcon: !controller.quickEntry.isVip.value
+            suffixIcon: !controller.quickEntry.hasVip.value
                 ? Tooltip(
                     message: el.tr(
                       PrjLocaleKeys.transaction_investment_item_vip_locked,

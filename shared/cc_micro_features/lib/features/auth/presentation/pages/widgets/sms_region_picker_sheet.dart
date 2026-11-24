@@ -159,8 +159,8 @@ class SmsRegionPickerSheet extends StatelessWidget {
     ColorScheme scheme,
     SmsRegion region,
   ) {
-    final isSelected = region.dialCode == selectedDialCode;
-    final textColor = isSelected ? scheme.primary : scheme.onSurface;
+    final hasSelected = region.dialCode == selectedDialCode;
+    final textColor = hasSelected ? scheme.primary : scheme.onSurface;
 
     return CcBouncing(
       onTap: () => Navigator.of(context).pop(region),
@@ -175,7 +175,7 @@ class SmsRegionPickerSheet extends StatelessWidget {
               horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
             ),
             decoration: BoxDecoration(
-              color: isSelected
+              color: hasSelected
                   ? scheme.primary.withValues(alpha: 0.15)
                   : scheme.primaryContainer.withValues(alpha: 0.1),
             ),
@@ -195,7 +195,7 @@ class SmsRegionPickerSheet extends StatelessWidget {
                   textAlign: TextAlign.center,
                   align: Alignment.center,
                   textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                    fontWeight: isSelected
+                    fontWeight: hasSelected
                         ? CcTypographyParams.bold
                         : CcTypographyParams.semiBold,
                     color: textColor,

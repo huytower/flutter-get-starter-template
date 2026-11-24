@@ -11,7 +11,7 @@ import 'wallet_display_name.dart';
 /// Horizontal list card for liquid wallets shown on the Wallet list page.
 class LiquidWalletListItem extends StatelessWidget {
   final WalletEntity wallet;
-  final bool isEditMode;
+  final bool hasEditMode;
   final bool canDelete;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -20,7 +20,7 @@ class LiquidWalletListItem extends StatelessWidget {
   const LiquidWalletListItem({
     super.key,
     required this.wallet,
-    this.isEditMode = false,
+    this.hasEditMode = false,
     this.canDelete = true,
     this.onEdit,
     this.onDelete,
@@ -38,7 +38,7 @@ class LiquidWalletListItem extends StatelessWidget {
         children: [
           const Positioned.fill(child: CcGlassyGradientBackground()),
           _buildMainCard(context),
-          if (isEditMode) ..._buildEditBadges(context),
+          if (hasEditMode) ..._buildEditBadges(context),
         ],
       ),
     );
@@ -110,7 +110,7 @@ class LiquidWalletListItem extends StatelessWidget {
 
     return Obx(() {
       final balance = controller.displayBookBalanceOf(wallet.id);
-      final visible = controller.isBalanceVisible.value;
+      final visible = controller.hasBalanceVisible.value;
       return CcText(
         visible
             ? TransactionFormHelpers.formatShortWithSymbol(

@@ -12,7 +12,7 @@ class PrjAmountInputSection extends StatelessWidget {
   final String label;
   final String amountStr;
   final List<int> quickAmounts;
-  final bool isKeypadVisible;
+  final bool hasKeypadVisible;
   final Color? activeColor;
   final String currencyCode;
   final VoidCallback onTap;
@@ -26,7 +26,7 @@ class PrjAmountInputSection extends StatelessWidget {
     required this.label,
     required this.amountStr,
     required this.quickAmounts,
-    required this.isKeypadVisible,
+    required this.hasKeypadVisible,
     required this.onTap,
     required this.onQuickAmountSelected,
     this.currencyCode = CurrencyConstants.defaultCurrencyCode,
@@ -70,7 +70,7 @@ class PrjAmountInputSection extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.ccColorScheme.surfaceVariant.withAlpha(80),
           borderRadius: context.brMd,
-          border: isKeypadVisible
+          border: hasKeypadVisible
               ? Border.all(color: accent, width: 1)
               : context.borderTextField,
         ),

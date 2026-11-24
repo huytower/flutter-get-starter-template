@@ -20,14 +20,14 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final isBorrowSide = controller.direction == LiabilityDirection.borrow;
+      final hasBorrowSide = controller.direction == LiabilityDirection.borrow;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildMethodRow(
             context,
             label: CcFormLabel(
-              text: isBorrowSide
+              text: hasBorrowSide
                   ? el.tr(
                       PrjLocaleKeys.transaction_liability_repayment_method_label,
                     )
@@ -43,13 +43,13 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
                       LiabilityRepaymentMethod.installment
                   ? 0
                   : 1,
-              firstLabel: isBorrowSide
+              firstLabel: hasBorrowSide
                   ? el.tr(PrjLocaleKeys.transaction_liability_method_installment)
                   : el.tr(
                       PrjLocaleKeys
                           .transaction_liability_method_installment_lend,
                     ),
-              secondLabel: isBorrowSide
+              secondLabel: hasBorrowSide
                   ? el.tr(PrjLocaleKeys.transaction_liability_method_lump_sum)
                   : el.tr(
                       PrjLocaleKeys.transaction_liability_method_lump_sum_lend,

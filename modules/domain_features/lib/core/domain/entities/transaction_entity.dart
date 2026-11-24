@@ -125,15 +125,15 @@ class TransactionEntity extends Equatable {
   });
 
   /// True for either leg of a transfer.
-  bool get isTransfer =>
+  bool get hasTransfer =>
       type == TransactionType.transferOut || type == TransactionType.transferIn;
 
   /// True for any Investment tab leg — Chi ra's two transfer-like legs
   /// ([TransactionType.investmentOut]/[investmentIn]) or a Thu vào
   /// ([TransactionType.investmentReturn]). None of these are real
-  /// income/expense, so — like [isTransfer] — they're excluded from
+  /// income/expense, so — like [hasTransfer] — they're excluded from
   /// income/expense reports and history.
-  bool get isInvestmentActivity =>
+  bool get hasInvestmentActivity =>
       type == TransactionType.investmentOut ||
       type == TransactionType.investmentIn ||
       type == TransactionType.investmentReturn;
@@ -141,16 +141,16 @@ class TransactionEntity extends Equatable {
   /// True for any Loan tab leg — initiation ([TransactionType.debtBorrow]/
   /// [TransactionType.debtLend]) or settlement
   /// ([TransactionType.debtRepay]/[TransactionType.debtCollect]). None of
-  /// these are real income/expense, so — like [isTransfer]/
-  /// [isInvestmentActivity] — they're excluded from income/expense reports
+  /// these are real income/expense, so — like [hasTransfer]/
+  /// [hasInvestmentActivity] — they're excluded from income/expense reports
   /// and history.
-  bool get isDebtActivity =>
+  bool get hasDebtActivity =>
       type == TransactionType.debtBorrow ||
       type == TransactionType.debtLend ||
       type == TransactionType.debtRepay ||
       type == TransactionType.debtCollect;
 
-  bool get isDeleted => deletedAt != null;
+  bool get hasDeleted => deletedAt != null;
 
   /// Returns a numeric value for sorting. Suffixes like `_init`, `_in`,
   /// `_out` are stripped to recover the original microsecond timestamp,

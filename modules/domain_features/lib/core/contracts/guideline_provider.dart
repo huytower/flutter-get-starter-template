@@ -6,7 +6,7 @@ import 'dart:ui' show Color;
 ///
 /// Getters are reactive: read them inside `Obx` and the widget rebuilds when
 /// the guideline moves on. The writes ([completeTask], `set*Created`) are
-/// no-ops while the guideline is not mounted ([isAvailable] is false); the
+/// no-ops while the guideline is not mounted ([hasAvailable] is false); the
 /// reads expect it to be mounted, as the guideline is registered at startup.
 ///
 /// ```dart
@@ -14,7 +14,7 @@ import 'dart:ui' show Color;
 /// getIt<GuidelineProvider>().completeTask('liability');
 /// ```
 abstract class GuidelineProvider {
-  bool get isAvailable;
+  bool get hasAvailable;
 
   bool isTaskActive(String taskId);
 
@@ -37,11 +37,11 @@ abstract class GuidelineProvider {
   /// Bumped to make the active badge bounce.
   int get bounceTrigger;
 
-  bool get isBannerHidden;
-  set isBannerHidden(bool value);
+  bool get hasBannerHidden;
+  set hasBannerHidden(bool value);
 
-  bool get isDescriptionHidden;
-  set isDescriptionHidden(bool value);
+  bool get hasDescriptionHidden;
+  set hasDescriptionHidden(bool value);
 
   /// Calls [listener] every time the completed task list changes.
   void onCompletedTasksChanged(void Function(List<String> tasks) listener);

@@ -48,7 +48,7 @@ class CommentController extends PrjGetController with CcPaginationMixin {
     );
 
     // 4. Update pagination logic (page counter and hasMore)
-    handlePaginationResult(result, isRefresh: refresh);
+    handlePaginationResult(result, hasRefresh: refresh);
 
     // 5. Handle UI State and Data updates
     result.when(

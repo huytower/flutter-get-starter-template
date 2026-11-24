@@ -69,7 +69,7 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
       children: [
         _buildTitle(context, controller),
         const CcSpaceMD(),
-        if (!controller.isVip.value && !controller.isEditing) ...[
+        if (!controller.hasVip.value && !controller.hasEditing) ...[
           const PrjVipLockBanner(),
           const CcSpaceMD(),
         ],
@@ -87,7 +87,7 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
     AddInvestmentSheetController controller,
   ) {
     return CcFormLabel(
-      text: controller.isEditing
+      text: controller.hasEditing
           ? el.tr(PrjLocaleKeys.wallet_investment_edit_title)
           : el.tr(PrjLocaleKeys.transaction_record_investment),
       color: context.ccColorScheme.primary,
@@ -121,14 +121,14 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
               itemBuilder: (context, index) {
                 final category = categories[index];
                 return Obx(() {
-                  final isSelected =
+                  final hasSelected =
                       controller.selectedInvestmentCategory.value?.id ==
                       category.id;
                   return PrjCategoryItem(
                     iconCode: category.iconCode,
                     iconFamily: category.iconFamily,
                     label: el.tr(category.nameKey),
-                    isSelected: isSelected,
+                    hasSelected: hasSelected,
                     onTap: () => controller.selectInvestmentCategory(category),
                   );
                 });
@@ -156,7 +156,7 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
           namedArgs: {'count': '20'},
         ),
         onClear: () {
-          controller.isNameValid.value = false;
+          controller.hasNameValid.value = false;
           controller.selectedInvestmentCategory.value = null;
           controller.nameError.value = null;
         },
@@ -169,9 +169,9 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
     AddInvestmentSheetController controller,
   ) {
     final bool canSave =
-        controller.isNameValid.value &&
+        controller.hasNameValid.value &&
         controller.selectedInvestmentCategory.value != null &&
-        (controller.isVip.value || controller.isEditing);
+        (controller.hasVip.value || controller.hasEditing);
 
     return CcSaveButton(
       onPressed: canSave ? () => controller.save(context) : null,

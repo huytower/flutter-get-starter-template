@@ -41,7 +41,7 @@ class ReportTrendSection extends StatelessWidget {
             points: data.points,
             color: context.expenseAccent,
             range: controller.range.value,
-            isIncome: false,
+            hasIncome: false,
           ),
         );
       }
@@ -54,7 +54,7 @@ class ReportTrendSection extends StatelessWidget {
             points: data.points,
             color: context.incomeAccent,
             range: controller.range.value,
-            isIncome: true,
+            hasIncome: true,
           ),
         );
       }

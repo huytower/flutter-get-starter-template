@@ -53,7 +53,7 @@ class WalletChangeEffects {
   Future<void> afterSheetSaved({required bool created}) async {
     _refresh.refreshBudgetAllocation();
     if (created &&
-        guideline.isAvailable &&
+        guideline.hasAvailable &&
         guideline.isTaskActive(balanceTask)) {
       await guideline.completeTask(balanceTask);
     }

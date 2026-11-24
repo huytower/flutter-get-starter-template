@@ -23,7 +23,7 @@ class ParseQuickEntryUseCase {
             .tryGetSuccess()
             ?.where(
               (c) =>
-                  c.isEnabled &&
+                  c.hasEnabled &&
                   c.type == categoryType &&
                   (groupIds == null || groupIds.contains(c.groupId)),
             )

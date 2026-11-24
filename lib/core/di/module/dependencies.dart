@@ -12,7 +12,7 @@ abstract class Dependencies {
   /// Single [ThemeProvider] instance shared across all routing strategies.
   @lazySingleton
   ThemeProvider provideThemeProvider() =>
-      ThemeProvider(initialDarkMode: PrjAppStorage.instance.isDarkMode);
+      ThemeProvider(initialDarkMode: PrjAppStorage.instance.hasDarkMode);
 
   /// User feedback goes to the team's Slack channel. To send it through a
   /// backend instead, return another [CcFeedbackReporter] here.

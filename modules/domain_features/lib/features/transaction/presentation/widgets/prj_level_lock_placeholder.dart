@@ -37,17 +37,17 @@ class PrjLevelLockPlaceholder extends StatelessWidget {
           _buildTaskItem(
             context,
             label: el.tr(PrjLocaleKeys.level_lock_task_setup_budget),
-            isCompleted: guideline.isTaskCompleted('budget_limit'),
+            hasCompleted: guideline.isTaskCompleted('budget_limit'),
           ),
           _buildTaskItem(
             context,
             label: el.tr(PrjLocaleKeys.level_lock_task_record_transactions),
-            isCompleted: guideline.isTaskCompleted('first_transaction'),
+            hasCompleted: guideline.isTaskCompleted('first_transaction'),
           ),
           _buildTaskItem(
             context,
             label: el.tr(PrjLocaleKeys.level_lock_task_setup_birth_year),
-            isCompleted: guideline.isTaskCompleted('birth_year'),
+            hasCompleted: guideline.isTaskCompleted('birth_year'),
           ),
           _buildTaskItem(
             context,
@@ -55,7 +55,7 @@ class PrjLevelLockPlaceholder extends StatelessWidget {
               PrjLocaleKeys.level_lock_task_reconciliation_streak,
               namedArgs: {'current': streak.toString(), 'total': '2'},
             ),
-            isCompleted: streak >= 2,
+            hasCompleted: streak >= 2,
           ),
         ];
       } else {
@@ -75,7 +75,7 @@ class PrjLevelLockPlaceholder extends StatelessWidget {
               PrjLocaleKeys.level_lock_task_reconciliation_streak,
               namedArgs: {'current': streak.toString(), 'total': '4'},
             ),
-            isCompleted: streak >= 4,
+            hasCompleted: streak >= 4,
           ),
           _buildTaskItem(
             context,
@@ -83,12 +83,12 @@ class PrjLevelLockPlaceholder extends StatelessWidget {
               PrjLocaleKeys.level_lock_task_fixed_budgets,
               namedArgs: {'current': budgets.toString(), 'total': '3'},
             ),
-            isCompleted: budgets >= 3,
+            hasCompleted: budgets >= 3,
           ),
           _buildTaskItem(
             context,
             label: el.tr(PrjLocaleKeys.level_lock_task_positive_cash_flow),
-            isCompleted: cashFlow,
+            hasCompleted: cashFlow,
           ),
         ];
       }
@@ -199,18 +199,18 @@ class PrjLevelLockPlaceholder extends StatelessWidget {
   Widget _buildTaskItem(
     BuildContext context, {
     required String label,
-    required bool isCompleted,
+    required bool hasCompleted,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: context.respPadding(2)),
       child: Row(
         children: [
           Icon(
-            isCompleted
+            hasCompleted
                 ? Icons.check_rounded
                 : Icons.radio_button_unchecked_rounded,
             size: context.respIconSize(baseSize: 14),
-            color: isCompleted
+            color: hasCompleted
                 ? context.ccColorScheme.primary
                 : context.ccColorScheme.onSurfaceVariant.withOpacity(0.4),
           ),
@@ -219,7 +219,7 @@ class PrjLevelLockPlaceholder extends StatelessWidget {
             child: CcText(
               label,
               textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                color: isCompleted
+                color: hasCompleted
                     ? context.ccColorScheme.onSurface.withOpacity(0.8)
                     : context.ccColorScheme.onSurfaceVariant.withOpacity(0.3),
               ),

@@ -30,7 +30,7 @@ class _ReportDailyDetailView extends PrjGetView<ReportController> {
       leading: Obx(
         () => CcIconButton.bouncing(
           icon: Icon(
-            controller.isEditMode.value
+            controller.hasEditMode.value
                 ? Icons.close_rounded
                 : Icons.arrow_back_ios_new_rounded,
             color: context.ccColorScheme.onPrimary,
@@ -50,7 +50,7 @@ class _ReportDailyDetailView extends PrjGetView<ReportController> {
       ),
       actions: [
         Obx(() {
-          if (!controller.userLevel.status.isVip ||
+          if (!controller.userLevel.status.hasVip ||
               !controller.hasDailyTransactions) {
             return const SizedBox.shrink();
           }
@@ -71,16 +71,16 @@ class _ReportDailyDetailView extends PrjGetView<ReportController> {
           }
           return CcIconButton.bouncing(
             onTap: controller.toggleEditMode,
-            tooltip: controller.isEditMode.value
+            tooltip: controller.hasEditMode.value
                 ? el.tr(PrjLocaleKeys.common_done)
                 : el.tr(PrjLocaleKeys.common_edit),
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: Icon(
-                controller.isEditMode.value
+                controller.hasEditMode.value
                     ? Icons.check_circle_outline_rounded
                     : Icons.edit_rounded,
-                key: ValueKey(controller.isEditMode.value),
+                key: ValueKey(controller.hasEditMode.value),
                 color: context.ccColorScheme.onPrimary,
                 size: context.respIconSize(baseSize: 20),
               ),
@@ -95,10 +95,10 @@ class _ReportDailyDetailView extends PrjGetView<ReportController> {
   Widget? buildContent(BuildContext context) {
     return Obx(
       () => PopScope(
-        canPop: !controller.isEditMode.value,
+        canPop: !controller.hasEditMode.value,
         onPopInvokedWithResult: (didPop, result) {
           if (!didPop) {
-            controller.isEditMode.value = false;
+            controller.hasEditMode.value = false;
           }
         },
         child: ListView(

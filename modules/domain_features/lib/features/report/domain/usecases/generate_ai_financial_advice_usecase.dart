@@ -414,15 +414,15 @@ class GenerateAiFinancialAdviceUseCase {
     return BudgetInsightsEntity(
       pacingWarnings: convertedPacingWarnings,
       penaltyWarnings: insights.penaltyWarnings,
-      isDeficit: insights.isDeficit,
+      hasDeficit: insights.hasDeficit,
       deficitAmount:
           deficitAmountResult.tryGetSuccess() ?? insights.deficitAmount,
       anomalyCount: insights.anomalyCount,
-      isInflowDebtDriven: insights.isInflowDebtDriven,
+      hasInflowDebtDriven: insights.hasInflowDebtDriven,
       debtInflowAmount:
           debtInflowAmountResult.tryGetSuccess() ?? insights.debtInflowAmount,
       debtInflowPercent: insights.debtInflowPercent,
-      isOutflowDebtDriven: insights.isOutflowDebtDriven,
+      hasOutflowDebtDriven: insights.hasOutflowDebtDriven,
       debtOutflowAmount:
           debtOutflowAmountResult.tryGetSuccess() ?? insights.debtOutflowAmount,
       debtOutflowPercent: insights.debtOutflowPercent,

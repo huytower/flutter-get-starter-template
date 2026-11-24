@@ -76,7 +76,7 @@ class BorrowFormController extends LiabilityBaseFormController {
       <LiabilityBalanceEntity>[].obs;
   final RxList<LiabilityBalanceEntity> mergedItems =
       <LiabilityBalanceEntity>[].obs;
-  final RxBool isLoadingMerged = true.obs;
+  final RxBool hasLoadingMerged = true.obs;
   final RxnString selectedLiabilityId = RxnString();
 
   @override
@@ -118,12 +118,12 @@ class BorrowFormController extends LiabilityBaseFormController {
   }
 
   Future<void> _loadAll() async {
-    isLoadingMerged.value = true;
+    hasLoadingMerged.value = true;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    quickEntry.isVip.value = settings.isVip;
+    quickEntry.hasVip.value = settings.hasVip;
     await loadSuggestions();
     await loadLiabilities();
-    isLoadingMerged.value = false;
+    hasLoadingMerged.value = false;
     quickEntry.initQuickEntry();
   }
 
@@ -131,7 +131,7 @@ class BorrowFormController extends LiabilityBaseFormController {
     final result = await getIt<GetLiabilityBalancesUseCase>().call();
     result.when((balances) {
       liabilityBalances.assignAll(balances);
-      final filtered = balances.where((b) => b.liability.isBorrow).toList();
+      final filtered = balances.where((b) => b.liability.hasBorrow).toList();
 
       filtered.sort(
         (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
@@ -422,20 +422,20 @@ class BorrowFormController extends LiabilityBaseFormController {
 
   @override
   Future<void> submitForm(BuildContext context) async {
-    if (isSubmitting.value || !canSubmit) return;
-    isSubmitting.value = true;
+    if (hasSubmitting.value || !canSubmit) return;
+    hasSubmitting.value = true;
 
     final liability = mergedItems
         .firstWhereOrNull((b) => b.liability.id == selectedLiabilityId.value)
         ?.liability;
     if (liability == null) {
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
       return;
     }
 
     final params = RecordLiabilityPaymentParams(
       liabilityId: liability.id,
-      isSettlement: action.value == LiabilityDirectionForm.decrease,
+      hasSettlement: action.value == LiabilityDirectionForm.decrease,
       walletId: selectedWalletId.value ?? '',
       amount: int.tryParse(amountStr.value) ?? 0,
       note: composeNote(),
@@ -445,7 +445,7 @@ class BorrowFormController extends LiabilityBaseFormController {
     );
 
     final result = await getIt<RecordLiabilityPaymentUseCase>().call(params);
-    isSubmitting.value = false;
+    hasSubmitting.value = false;
 
     result.when(
       (updatedLiability) async {
@@ -466,7 +466,7 @@ class BorrowFormController extends LiabilityBaseFormController {
         await resetForm();
         await refreshParent();
 
-        if (getIt<GuidelineProvider>().isAvailable) {
+        if (getIt<GuidelineProvider>().hasAvailable) {
           getIt<GuidelineProvider>().completeTask('liability');
         }
       },

@@ -42,7 +42,7 @@ class AddLiquidSheetController extends PrjGetController {
   GuidelineProvider get guideline => _effects.guideline;
 
   /// Whether the emergency-fund type is shown at all.
-  bool get isEmergencyFundOffered => _emergencyFund.isOffered;
+  bool get hasEmergencyFundOffered => _emergencyFund.hasOffered;
 
   WalletEntity? _wallet;
   final TextEditingController nameController = TextEditingController();
@@ -58,24 +58,24 @@ class AddLiquidSheetController extends PrjGetController {
 
   final RxBool emergencyFundUnlocked = false.obs;
   final RxBool showEmergencyFundLockedHint = false.obs;
-  final RxBool isNameValid = false.obs;
-  final RxBool isAmountValid = false.obs;
+  final RxBool hasNameValid = false.obs;
+  final RxBool hasAmountValid = false.obs;
   final RxnString nameError = RxnString();
-  final RxBool isSubmitting = false.obs;
+  final RxBool hasSubmitting = false.obs;
   final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
 
-  bool get isEditing => _wallet != null;
+  bool get hasEditing => _wallet != null;
 
-  bool get isCash => _wallet?.type == WalletType.cash;
+  bool get hasCash => _wallet?.type == WalletType.cash;
 
   /// The built-in Cash and default Bank wallets keep a fixed, localized name:
   /// they are stored with an empty name and labelled at display time, so the
   /// name must not be edited (or overwritten with the translated label).
-  bool get isNameLocked =>
-      isEditing && !_walletController.canDeleteWallet(_wallet!);
+  bool get hasNameLocked =>
+      hasEditing && !_walletController.canDeleteWallet(_wallet!);
 
   bool get balanceLocked =>
-      isEditing && _walletController.walletHasTransactions(_wallet!.id);
+      hasEditing && _walletController.walletHasTransactions(_wallet!.id);
 
   /// The name to prefill when editing [wallet].
   ///
@@ -98,7 +98,7 @@ class AddLiquidSheetController extends PrjGetController {
     nameController.removeListener(_onNameChanged);
     nameController.addListener(_onNameChanged);
     _onNameChanged();
-    if (isEditing) {
+    if (hasEditing) {
       amountStr.value = _walletController
           .displayBookBalanceOf(wallet!.id)
           .toString();
@@ -113,7 +113,7 @@ class AddLiquidSheetController extends PrjGetController {
     final settings = await _getSettings();
     currencyCode.value = settings.currencyCode;
 
-    if (isEditing && _wallet != null) {
+    if (hasEditing && _wallet != null) {
       final rawBook = _walletController.bookBalanceOf(_wallet!.id);
       final result = await _walletController.conversionService.convertAmount(
         amount: rawBook,
@@ -132,7 +132,7 @@ class AddLiquidSheetController extends PrjGetController {
     final result = await _getCategories.call();
     result.when((categories) {
       final enabledInvestment = categories
-          .where((c) => c.type == CategoryType.investment && c.isEnabled)
+          .where((c) => c.type == CategoryType.investment && c.hasEnabled)
           .toList();
       investmentCategories.assignAll(enabledInvestment);
 
@@ -145,7 +145,7 @@ class AddLiquidSheetController extends PrjGetController {
   }
 
   void _onNameChanged() {
-    isNameValid.value = nameController.text.trim().isNotEmpty;
+    hasNameValid.value = nameController.text.trim().isNotEmpty;
     if (nameError.value != null) {
       nameError.value = null;
     }
@@ -196,7 +196,7 @@ class AddLiquidSheetController extends PrjGetController {
 
   void _validateAmount() {
     final amount = int.tryParse(amountStr.value) ?? 0;
-    isAmountValid.value = amount > 0;
+    hasAmountValid.value = amount > 0;
   }
 
   void showKeypadAndScroll(BuildContext context) {
@@ -247,25 +247,25 @@ class AddLiquidSheetController extends PrjGetController {
   }
 
   Future<void> save(BuildContext context) async {
-    if (isSubmitting.value) return;
-    isSubmitting.value = true;
+    if (hasSubmitting.value) return;
+    hasSubmitting.value = true;
 
-    final name = isNameLocked ? _wallet!.name : nameController.text.trim();
+    final name = hasNameLocked ? _wallet!.name : nameController.text.trim();
     final balance = int.tryParse(amountStr.value) ?? 0;
     final wallet = _wallet;
 
     // Check for duplicate names (excluding current wallet if editing)
-    final isDuplicate =
-        !isNameLocked &&
+    final hasDuplicate =
+        !hasNameLocked &&
         _walletController.wallets.any(
           (w) =>
               w.name.trim().toLowerCase() == name.toLowerCase() &&
               w.id != wallet?.id,
         );
 
-    if (isDuplicate) {
+    if (hasDuplicate) {
       nameError.value = el.tr(PrjLocaleKeys.wallet_name_duplicate_error);
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
       return;
     }
 
@@ -338,17 +338,17 @@ class AddLiquidSheetController extends PrjGetController {
       if (context.mounted) {
         // Refresh related controllers immediately to reflect memory changes
         _walletController.loadWallets();
-        await _effects.afterSheetSaved(created: !isEditing);
+        await _effects.afterSheetSaved(created: !hasEditing);
 
         if (!context.mounted) return;
         Navigator.pop(context);
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
-          message: isEditing
+          message: hasEditing
               ? el.tr(PrjLocaleKeys.wallet_updated_success)
               : el.tr(PrjLocaleKeys.wallet_added_success),
         );
-        if (!isEditing && context.mounted) {
+        if (!hasEditing && context.mounted) {
           _effects.promptGuestSignIn(context);
         }
       }
@@ -360,7 +360,7 @@ class AddLiquidSheetController extends PrjGetController {
         );
       }
     } finally {
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
     }
   }
 

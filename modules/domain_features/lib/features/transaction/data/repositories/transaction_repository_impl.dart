@@ -35,7 +35,7 @@ class TransactionRepositoryImpl
     final models = await _local.getAll();
     final entities = models
         .map((m) => m.toEntity())
-        .where((e) => !e.isDeleted)
+        .where((e) => !e.hasDeleted)
         .toList();
 
     // Sort by sortKey descending (latest recorded first).

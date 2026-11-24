@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/smart_entry_preview_state.dart';
 import 'smart_entry_amount_field.dart';
+import 'smart_entry_category_strip.dart';
 import 'smart_entry_preview_fields.dart';
 
 class SmartEntryPreviewRowCard extends StatelessWidget {
@@ -26,8 +26,8 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final config = state.config;
-    final isIncome = row.type == CategoryType.income;
-    final activeColor = isIncome ? context.incomeAccent : context.expenseAccent;
+    final hasIncome = row.type == CategoryType.income;
+    final activeColor = hasIncome ? context.incomeAccent : context.expenseAccent;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,33 +102,14 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
       children: [
         CcFormLabel(text: el.tr(PrjLocaleKeys.transaction_category)),
         const CcSpaceXS(),
-        CcHorizontalFadeScrollView(
-          height: context.respDim(80),
-          builder: (scrollController) => ListView.separated(
-            scrollDirection: Axis.horizontal,
-            controller: scrollController,
-            padding: EdgeInsets.zero,
-            itemCount: categories.length,
-            separatorBuilder: (context, index) => const CcSpaceSM(),
-            itemBuilder: (context, index) {
-              final category = categories[index];
-              final isSelected = row.categoryId == category.id;
-
-              return PrjCategoryItem(
-                key: ValueKey('smart_preview_cat_${row.id}_${category.id}'),
-                iconCode: category.iconCode,
-                iconFamily: category.iconFamily,
-                label: el.tr(category.nameKey),
-                isSelected: isSelected,
-                activeColor: activeColor,
-                onTap: () {
-                  state.edit(
-                    row.id,
-                    (r) => r.copyWith(categoryId: category.id),
-                  );
-                },
-              );
-            },
+        SmartEntryCategoryStrip(
+          categories: categories,
+          selectedCategoryId: row.categoryId,
+          activeColor: activeColor,
+          itemKeyPrefix: 'smart_preview_cat_${row.id}_',
+          onSelected: (category) => state.edit(
+            row.id,
+            (r) => r.copyWith(categoryId: category.id),
           ),
         ),
       ],
@@ -151,7 +132,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
           wallets: state.wallets,
           selectedWalletId: row.walletId,
           activeColor: activeColor,
-          defaultBgColor: context.verticalGradient(activeColor),
+          defaultBackgroundColor: context.verticalGradient(activeColor),
           onWalletSelected: (id) =>
               state.edit(row.id, (r) => r.copyWith(walletId: id)),
         ),
@@ -162,20 +143,20 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
   Widget _buildDateSelectionSection(BuildContext context, Color activeColor) {
     final now = DateTime.now();
     final yesterday = now.subtract(const Duration(days: 1));
-    final isCustomDate =
+    final hasCustomDate =
         !_isSameDay(row.date, now) && !_isSameDay(row.date, yesterday);
 
     return Row(
       children: [
         CcFormLabel(text: el.tr(PrjLocaleKeys.transaction_time)),
         const CcSpaceSM(),
-        if (isCustomDate) ...[
+        if (hasCustomDate) ...[
           _buildDatePill(
             context,
             el.DateFormat('dd/MM/yyyy').format(row.date),
             row.date,
             activeColor,
-            isSelected: false,
+            hasSelected: false,
           ),
         ],
       ],
@@ -187,15 +168,15 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     String label,
     DateTime date,
     Color activeColor, {
-    required bool isSelected,
+    required bool hasSelected,
   }) {
     final scheme = context.ccColorScheme;
 
     return CcText(
       label,
       textStyle: context.ccTextTheme.labelMedium?.copyWith(
-        color: isSelected ? activeColor : scheme.onSurfaceVariant,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        color: hasSelected ? activeColor : scheme.onSurfaceVariant,
+        fontWeight: hasSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );
   }

@@ -15,8 +15,8 @@ class BiometricRepositoryImpl implements BiometricRepository {
   @override
   Future<Result<bool, Exception>> isBiometricAvailable() async {
     try {
-      final isAvailable = await _datasource.isBiometricAvailable();
-      return Success(isAvailable);
+      final hasAvailable = await _datasource.isBiometricAvailable();
+      return Success(hasAvailable);
     } catch (e) {
       return Error(
         e is Exception
@@ -34,13 +34,13 @@ class BiometricRepositoryImpl implements BiometricRepository {
     bool stickyAuth = false,
   }) async {
     try {
-      final isAuthenticated = await _datasource.authenticate(
+      final hasAuthenticated = await _datasource.authenticate(
         localizedReason: localizedReason,
         biometricOnly: true,
         sensitiveTransaction: true,
       );
 
-      if (isAuthenticated) {
+      if (hasAuthenticated) {
         final biometrics = await _datasource.getAvailableBiometrics();
         final authType = biometrics.isNotEmpty
             ? biometrics.first

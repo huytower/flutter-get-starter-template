@@ -12,13 +12,13 @@ class BiometricInitial extends BiometricState {}
 class BiometricLoading extends BiometricState {}
 
 class BiometricAvailable extends BiometricState {
-  final bool isAvailable;
+  final bool hasAvailable;
   final List<BiometricAuthTypeEntity> types;
 
-  const BiometricAvailable({required this.isAvailable, required this.types});
+  const BiometricAvailable({required this.hasAvailable, required this.types});
 
   @override
-  List<Object?> get props => [isAvailable, types];
+  List<Object?> get props => [hasAvailable, types];
 }
 
 class BiometricAuthenticated extends BiometricState {

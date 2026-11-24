@@ -20,7 +20,7 @@ class CurrencySelectionController extends PrjGetController {
   final RxMap<String, bool> isLoadingRates = <String, bool>{}.obs;
   bool _initialized = false;
 
-  bool get isInitialized => _initialized;
+  bool get hasInitialized => _initialized;
 
   void loadInitialCurrency(String initialCurrencyCode) {
     if (_initialized) return;
@@ -50,7 +50,7 @@ class CurrencySelectionController extends PrjGetController {
     _activeRequest = requestId;
     final baseCurrency = requestCurrency;
 
-    final bool isBaseVnd = baseCurrency.toUpperCase() == 'VND';
+    final bool hasBaseVnd = baseCurrency.toUpperCase() == 'VND';
     final otherCodes = CurrencyConstants.supportedCurrencyCodes
         .where((c) => c.toUpperCase() != baseCurrency.toUpperCase())
         .toList();
@@ -62,7 +62,7 @@ class CurrencySelectionController extends PrjGetController {
     final result = await _conversionService.convertAll(
       baseCurrency: baseCurrency,
       targetCurrencies: otherCodes,
-      isBaseVnd: isBaseVnd,
+      hasBaseVnd: hasBaseVnd,
     );
 
     if (!identical(_activeRequest, requestId)) return;

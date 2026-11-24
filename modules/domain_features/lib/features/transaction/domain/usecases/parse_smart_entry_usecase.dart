@@ -122,7 +122,7 @@ class ParseSmartEntryUseCase {
     SmartEntryContext context,
     int maxTransactions,
   ) {
-    final isImages = input is SmartEntryImagesInput;
+    final hasImages = input is SmartEntryImagesInput;
     final prompt = switch (input) {
       SmartEntryTextInput(:final text) => AiPrompts.smartEntryText(
         text: text,
@@ -140,7 +140,7 @@ class ParseSmartEntryUseCase {
     );
     final schema = SmartEntrySchema.build(
       context,
-      withDocumentKind: isImages,
+      withDocumentKind: hasImages,
       maxTransactions: maxTransactions,
     );
     return _ai.generate(
@@ -171,7 +171,7 @@ class ParseSmartEntryUseCase {
       for (var i = 0; i < converted.length; i++)
         _withLocal(converted[i], local, raw[i], defaultType),
     ];
-    return merged.where((entity) => !entity.isEmpty).toList();
+    return merged.where((entity) => !entity.hasEmpty).toList();
   }
 
   Future<ParsedTransactionEntity> _convert(
@@ -245,7 +245,7 @@ class ParseSmartEntryUseCase {
             .tryGetSuccess()
             ?.where(
               (c) =>
-                  c.isEnabled &&
+                  c.hasEnabled &&
                   categoryTypes.contains(c.type) &&
                   (groupIds == null || groupIds.contains(c.groupId)),
             )

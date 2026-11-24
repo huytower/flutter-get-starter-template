@@ -12,10 +12,10 @@ import '../../domain/repositories/app_update_repository.dart';
 
 @LazySingleton(as: AppUpdateRepository)
 class AppUpdateRepositoryImpl implements AppUpdateRepository {
-  bool get _isAndroid =>
+  bool get _hasAndroid =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
-  bool get _isIOS => !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+  bool get _hasIOS => !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
   @override
   Future<Result<InstalledAppEntity, CcFailure>> getInstalledApp() async {
@@ -34,7 +34,7 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
         InstalledAppEntity(
           version: version,
           packageName: info.packageName,
-          isStoreDistributed: _isAndroid || _isIOS,
+          hasStoreDistributed: _hasAndroid || _hasIOS,
         ),
       );
     } catch (e) {
@@ -49,7 +49,7 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
   }) async {
     try {
       final List<Uri> candidates;
-      if (_isIOS) {
+      if (_hasIOS) {
         final id = iosAppStoreId?.trim() ?? '';
         if (id.isEmpty) {
           return const Error(CcValidationFailure('Missing App Store id'));
@@ -58,7 +58,7 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
           Uri.parse('itms-apps://itunes.apple.com/app/id$id'),
           Uri.parse('https://apps.apple.com/app/id$id'),
         ];
-      } else if (_isAndroid) {
+      } else if (_hasAndroid) {
         var package = androidPackageName?.trim() ?? '';
         if (package.isEmpty) {
           package = (await PackageInfo.fromPlatform()).packageName;

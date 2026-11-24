@@ -31,7 +31,7 @@ class EditWalletSheet extends StatelessWidget {
   }) {
     return showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: false,
+      hasScrollControlled: false,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) =>
@@ -57,7 +57,7 @@ class EditWalletSheet extends StatelessWidget {
                   onEdit();
                 },
               ),
-              if (getIt<GuidelineProvider>().isAvailable)
+              if (getIt<GuidelineProvider>().hasAvailable)
                 Obx(() {
                   final guideline = getIt<GuidelineProvider>();
                   final showing =

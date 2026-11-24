@@ -5,7 +5,7 @@ import 'biometric_auth_type_entity.dart';
 /// Represents the result of a biometric authentication attempt
 class BiometricAuthResultEntity extends Equatable {
   /// Whether the authentication was successful
-  final bool isAuthenticated;
+  final bool hasAuthenticated;
 
   /// Optional error message if authentication failed
   final String? errorMessage;
@@ -14,7 +14,7 @@ class BiometricAuthResultEntity extends Equatable {
   final BiometricAuthTypeEntity authType;
 
   const BiometricAuthResultEntity({
-    required this.isAuthenticated,
+    required this.hasAuthenticated,
     this.errorMessage,
     required this.authType,
   });
@@ -22,7 +22,7 @@ class BiometricAuthResultEntity extends Equatable {
   /// Creates a successful authentication result
   const BiometricAuthResultEntity.success({
     required BiometricAuthTypeEntity authType,
-  }) : isAuthenticated = true,
+  }) : hasAuthenticated = true,
        errorMessage = null,
        authType = authType;
 
@@ -30,10 +30,10 @@ class BiometricAuthResultEntity extends Equatable {
   const BiometricAuthResultEntity.failure({
     required String errorMessage,
     required BiometricAuthTypeEntity authType,
-  }) : isAuthenticated = false,
+  }) : hasAuthenticated = false,
        errorMessage = errorMessage,
        authType = authType;
 
   @override
-  List<Object?> get props => [isAuthenticated, errorMessage, authType];
+  List<Object?> get props => [hasAuthenticated, errorMessage, authType];
 }

@@ -30,10 +30,10 @@ class BudgetLimitModel {
   final int order;
 
   @HiveField(7)
-  final bool isClosed;
+  final bool hasClosed;
 
   @HiveField(8)
-  final bool isFixedPrice;
+  final bool hasFixedPrice;
 
   @HiveField(9)
   final String? remoteId;
@@ -56,8 +56,8 @@ class BudgetLimitModel {
     required this.name,
     required this.limit,
     required this.order,
-    required this.isClosed,
-    this.isFixedPrice = false,
+    required this.hasClosed,
+    this.hasFixedPrice = false,
     this.remoteId,
     this.syncStatus,
     this.lastSyncedAt,
@@ -72,8 +72,8 @@ class BudgetLimitModel {
         name: entity.name,
         limit: entity.limit,
         order: entity.order,
-        isClosed: entity.isClosed,
-        isFixedPrice: entity.isFixedPrice,
+        hasClosed: entity.hasClosed,
+        hasFixedPrice: entity.hasFixedPrice,
         currencyCode: entity.currencyCode,
       );
 
@@ -83,8 +83,8 @@ class BudgetLimitModel {
     name: name,
     limit: limit,
     order: order,
-    isClosed: isClosed,
-    isFixedPrice: isFixedPrice,
+    hasClosed: hasClosed,
+    hasFixedPrice: hasFixedPrice,
     currencyCode: currencyCode ?? 'VND',
   );
 
@@ -108,8 +108,8 @@ class BudgetLimitModel {
       name: name,
       limit: limit,
       order: order,
-      isClosed: isClosed,
-      isFixedPrice: isFixedPrice,
+      hasClosed: hasClosed,
+      hasFixedPrice: hasFixedPrice,
       currencyCode: currencyCode,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
@@ -124,8 +124,8 @@ class BudgetLimitModel {
       'name': name,
       'limit': limit,
       'order': order,
-      'isClosed': isClosed,
-      'isFixedPrice': isFixedPrice,
+      'isClosed': hasClosed,
+      'isFixedPrice': hasFixedPrice,
       'currencyCode': currencyCode ?? 'VND',
     };
   }
@@ -145,8 +145,8 @@ class BudgetLimitModel {
       name: data['name'] as String,
       limit: data['limit'] as int,
       order: data['order'] as int,
-      isClosed: data['isClosed'] as bool,
-      isFixedPrice: data['isFixedPrice'] as bool? ?? false,
+      hasClosed: data['isClosed'] as bool,
+      hasFixedPrice: data['isFixedPrice'] as bool? ?? false,
       remoteId: data['remoteId'] as String?,
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: parsedModifiedAt,

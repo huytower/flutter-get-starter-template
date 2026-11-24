@@ -14,8 +14,8 @@ void main() {
       phoneNumber: '+10000001',
       status: CcUserStatus.values.last,
       firstName: 'Ann',
-      isEmailVerified: true,
-      isPhoneVerified: false,
+      hasEmailVerified: true,
+      hasPhoneVerified: false,
       registeredDeviceIds: const ['d1', 'd2'],
       createdAt: created,
       updatedAt: created,
@@ -41,7 +41,7 @@ void main() {
     })!;
 
     expect(user.status, CcUserStatus.active);
-    expect(user.isEmailVerified, isFalse);
+    expect(user.hasEmailVerified, isFalse);
     expect(user.registeredDeviceIds, isEmpty);
     expect(user.lastActiveAt, isNull);
   });

@@ -72,7 +72,7 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (getIt<GuidelineProvider>().isAvailable) {
+      if (getIt<GuidelineProvider>().hasAvailable) {
         getIt<GuidelineProvider>().completeTask('categories');
       }
     });
@@ -90,16 +90,16 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
     final controller = Get.find<CategorySettingsController>();
     // On the very first open the status is not `loading` yet and the list is
     // still empty; scrolling then would be undone by the reload that follows.
-    final isLoading =
+    final hasLoading =
         controller.layoutStatus.value == CcLayoutStatus.loading ||
         controller.groups.isEmpty;
-    final headerContext = isLoading
+    final headerContext = hasLoading
         ? null
         : _sectionKeys[widget.initialSection]?.currentContext;
 
     if (headerContext == null) {
       // While loading, the status worker calls back in once it finishes.
-      if (isLoading || attemptsLeft <= 0) return;
+      if (hasLoading || attemptsLeft <= 0) return;
       Future.delayed(
         const Duration(milliseconds: 50),
         () => _revealInitialSection(attemptsLeft - 1),

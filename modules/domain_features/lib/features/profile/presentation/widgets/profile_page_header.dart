@@ -16,7 +16,7 @@ class ProfilePageHeader extends StatefulWidget {
   final UserLevelStatusEntity levelStatus;
   final FinancialDataSyncService syncService;
   final bool initialFlipped;
-  final Function(bool isFlipped)? onFlip;
+  final Function(bool hasFlipped)? onFlip;
   final VoidCallback? onEditName;
   final VoidCallback? onLinkAccount;
   final VoidCallback? onAvatarTap;
@@ -46,12 +46,12 @@ class _ProfilePageHeaderState extends State<ProfilePageHeader>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  late bool _isFrontVisible;
+  late bool _hasFrontVisible;
 
   @override
   void initState() {
     super.initState();
-    _isFrontVisible = !widget.initialFlipped;
+    _hasFrontVisible = !widget.initialFlipped;
     _controller = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -72,15 +72,15 @@ class _ProfilePageHeaderState extends State<ProfilePageHeader>
   void _toggleCard() {
     if (_controller.isAnimating) return;
 
-    if (_isFrontVisible) {
+    if (_hasFrontVisible) {
       _controller.forward();
     } else {
       _controller.reverse();
     }
     setState(() {
-      _isFrontVisible = !_isFrontVisible;
+      _hasFrontVisible = !_hasFrontVisible;
     });
-    widget.onFlip?.call(!_isFrontVisible);
+    widget.onFlip?.call(!_hasFrontVisible);
   }
 
   @override
@@ -94,14 +94,14 @@ class _ProfilePageHeaderState extends State<ProfilePageHeader>
         animation: _animation,
         builder: (context, child) {
           final angle = _animation.value * pi;
-          final isUnder = angle > pi / 2;
+          final hasUnder = angle > pi / 2;
 
           return Transform(
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.001) // perspective
               ..rotateY(angle),
             alignment: Alignment.center,
-            child: isUnder
+            child: hasUnder
                 ? Transform(
                     transform: Matrix4.identity()..rotateY(pi),
                     alignment: Alignment.center,

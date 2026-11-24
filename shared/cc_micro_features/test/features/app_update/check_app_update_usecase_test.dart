@@ -41,17 +41,17 @@ InstalledAppEntity installed(String version, {bool store = true}) =>
     InstalledAppEntity(
       version: AppVersionEntity.tryParse(version)!,
       packageName: 'com.example.app',
-      isStoreDistributed: store,
+      hasStoreDistributed: store,
     );
 
-AppUpdateConfigEntity config({required bool isForce, String? minimum}) =>
-    AppUpdateConfigEntity(isForce: isForce, minimumVersion: minimum);
+AppUpdateConfigEntity config({required bool hasForce, String? minimum}) =>
+    AppUpdateConfigEntity(hasForce: hasForce, minimumVersion: minimum);
 
 void main() {
   group('CheckAppUpdateUseCase.evaluate', () {
     test('requires an update when forced and installed < minimum', () {
       final status = CheckAppUpdateUseCase.evaluate(
-        config(isForce: true, minimum: '1.2.0'),
+        config(hasForce: true, minimum: '1.2.0'),
         installed('1.1.9+40'),
       );
       expect(status, isA<AppUpdateRequired>());
@@ -64,7 +64,7 @@ void main() {
       for (final current in ['1.2.0+1', '1.2.1', '2.0.0']) {
         expect(
           CheckAppUpdateUseCase.evaluate(
-            config(isForce: true, minimum: '1.2.0'),
+            config(hasForce: true, minimum: '1.2.0'),
             installed(current),
           ),
           const AppUpdateNotRequired(),
@@ -76,7 +76,7 @@ void main() {
     test('isForce false never blocks, even far below the minimum', () {
       expect(
         CheckAppUpdateUseCase.evaluate(
-          config(isForce: false, minimum: '9.0.0'),
+          config(hasForce: false, minimum: '9.0.0'),
           installed('1.0.0+1'),
         ),
         const AppUpdateNotRequired(),
@@ -91,7 +91,7 @@ void main() {
       ]) {
         expect(
           CheckAppUpdateUseCase.evaluate(
-            config(isForce: true, minimum: minimum),
+            config(hasForce: true, minimum: minimum),
             installed('1.0.0+1'),
           ),
           const AppUpdateNotRequired(),
@@ -103,7 +103,7 @@ void main() {
     test('platforms without a store are never blocked', () {
       expect(
         CheckAppUpdateUseCase.evaluate(
-          config(isForce: true, minimum: '9.0.0'),
+          config(hasForce: true, minimum: '9.0.0'),
           installed('1.0.0', store: false),
         ),
         const AppUpdateNotRequired(),
@@ -113,7 +113,7 @@ void main() {
     test('build-number minimum blocks older builds of the same version', () {
       expect(
         CheckAppUpdateUseCase.evaluate(
-          config(isForce: true, minimum: '1.0.0+26'),
+          config(hasForce: true, minimum: '1.0.0+26'),
           installed('1.0.0+25'),
         ),
         isA<AppUpdateRequired>(),
@@ -125,7 +125,7 @@ void main() {
     test('skips the device lookup when force is off', () async {
       final appRepo = _FakeAppRepository(Success(installed('1.0.0')));
       final useCase = CheckAppUpdateUseCase(
-        _FakeConfigRepository(Success(config(isForce: false))),
+        _FakeConfigRepository(Success(config(hasForce: false))),
         appRepo,
       );
 
@@ -138,7 +138,7 @@ void main() {
     test('returns AppUpdateRequired end to end', () async {
       final useCase = CheckAppUpdateUseCase(
         _FakeConfigRepository(
-          Success(config(isForce: true, minimum: '1.1.0')),
+          Success(config(hasForce: true, minimum: '1.1.0')),
         ),
         _FakeAppRepository(Success(installed('1.0.0+25'))),
       );
@@ -156,7 +156,7 @@ void main() {
       );
       final deviceFails = CheckAppUpdateUseCase(
         _FakeConfigRepository(
-          Success(config(isForce: true, minimum: '2.0.0')),
+          Success(config(hasForce: true, minimum: '2.0.0')),
         ),
         _FakeAppRepository(const Error(CcDeviceFailure('no info'))),
       );

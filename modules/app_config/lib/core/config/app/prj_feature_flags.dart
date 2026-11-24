@@ -13,14 +13,14 @@ abstract final class PrjFeatureFlags {
   PrjFeatureFlags._();
 
   /// Whether VIP mode is on by default (`ENABLE_VIP_MODE`, default `false`).
-  static bool get isVipModeEnabled => PrjEnv.enableVipMode;
+  static bool get hasVipModeEnabled => PrjEnv.enableVipMode;
 
   /// Whether analytics collection is announced to the API (always on).
-  static const bool isAnalyticsEnabled = true;
+  static const bool hasAnalyticsEnabled = true;
 
   /// Whether crash reporting is announced to the API (always on).
-  static const bool isCrashReportingEnabled = true;
+  static const bool hasCrashReportingEnabled = true;
 
   /// Whether HTTP requests pin the server certificate (always on).
-  static const bool isCertificatePinningEnabled = true;
+  static const bool hasCertificatePinningEnabled = true;
 }

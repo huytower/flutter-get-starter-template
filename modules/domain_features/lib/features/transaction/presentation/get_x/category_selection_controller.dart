@@ -17,7 +17,7 @@ class CategorySelectionController extends PrjGetController {
 
   final RxList<CategoryEntity> categories = <CategoryEntity>[].obs;
   final RxnString selectedCategoryId = RxnString();
-  final RxBool isLoading = true.obs;
+  final RxBool hasLoading = true.obs;
 
   List<String>? groupIds;
   List<String>? categoryIds;
@@ -44,7 +44,7 @@ class CategorySelectionController extends PrjGetController {
     );
 
     // Ensure auto-selection/pre-selection happens even if categories load async
-    ever(isLoading, (loading) {
+    ever(hasLoading, (loading) {
       if (!loading) {
         _applyInitialSelection();
       }
@@ -92,13 +92,13 @@ class CategorySelectionController extends PrjGetController {
   void refreshSelection({bool reload = false}) {
     if (reload) {
       loadCategories();
-    } else if (!isLoading.value) {
+    } else if (!hasLoading.value) {
       _applyInitialSelection();
     }
   }
 
   Future<void> loadCategories() async {
-    isLoading.value = true;
+    hasLoading.value = true;
     final result = await _getCategories();
 
     result.when(
@@ -113,7 +113,7 @@ class CategorySelectionController extends PrjGetController {
             allCategories
                 .where(
                   (c) =>
-                      c.isEnabled &&
+                      c.hasEnabled &&
                       c.type == type &&
                       (groupIds == null || groupIds!.contains(c.groupId)) &&
                       (categoryIds == null || categoryIds!.contains(c.id)),
@@ -126,10 +126,10 @@ class CategorySelectionController extends PrjGetController {
               });
 
         categories.assignAll(filteredCategories);
-        isLoading.value = false;
+        hasLoading.value = false;
       },
       (error) {
-        isLoading.value = false;
+        hasLoading.value = false;
       },
     );
   }

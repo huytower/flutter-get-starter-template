@@ -38,16 +38,16 @@ class ProfilePage extends PrjGetView<ProfileController> {
       }
     });
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = context.ccColorScheme;
     final topPadding = MediaQuery.of(context).padding.top;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+      value: (hasDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
           .copyWith(
             statusBarColor: Colors.transparent,
             systemNavigationBarColor: scheme.background,
-            systemNavigationBarIconBrightness: isDark
+            systemNavigationBarIconBrightness: hasDark
                 ? Brightness.light
                 : Brightness.dark,
           ),
@@ -80,11 +80,11 @@ class ProfilePage extends PrjGetView<ProfileController> {
           daysToNextAudit: controller.daysToNextAudit,
           levelStatus: controller.userLevel.status.value,
           syncService: controller.syncService,
-          initialFlipped: controller.settings.value.isHeaderFlipped,
+          initialFlipped: controller.settings.value.hasHeaderFlipped,
           onFlip: controller.setHeaderFlipped,
           onEditName: () => controller.pickDisplayName(context),
           onLinkAccount: () => controller.handleLinkAccountTap(context),
-          onAvatarTap: controller.isLoggedIn
+          onAvatarTap: controller.hasLoggedIn
               ? null
               : () => controller.handleAvatarTap(context),
           onLinkPhone: () => controller.handlePhoneLinkTap(context),
@@ -110,7 +110,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
 
   Widget _buildAccountActions(BuildContext context) {
     return Obx(
-      () => controller.isLoggedIn
+      () => controller.hasLoggedIn
           ? Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -269,7 +269,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
             child: FittedBox(
               fit: BoxFit.contain,
               child: Switch(
-                value: controller.settings.value.isVip,
+                value: controller.settings.value.hasVip,
                 onChanged: (value) =>
                     controller.toggleFullAccess(context, value),
                 activeColor: context.ccColorScheme.primary,
@@ -321,13 +321,13 @@ class ProfilePage extends PrjGetView<ProfileController> {
         ),
       ),
       Obx(() {
-        final isDarkModeSetting = controller.settings.value.isDarkMode;
+        final hasDarkModeSetting = controller.settings.value.hasDarkMode;
         final systemBrightness = MediaQuery.platformBrightnessOf(context);
-        final isDarkMode =
-            isDarkModeSetting ?? (systemBrightness == Brightness.dark);
+        final hasDarkMode =
+            hasDarkModeSetting ?? (systemBrightness == Brightness.dark);
         return ProfileSettingsTile(
           icon: Icons.palette_rounded,
-          label: isDarkMode
+          label: hasDarkMode
               ? el.tr(PrjLocaleKeys.settings_theme_dark)
               : el.tr(PrjLocaleKeys.settings_theme_light),
           subtitle: el.tr(PrjLocaleKeys.profile_theme_subtitle),
@@ -337,7 +337,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
             child: FittedBox(
               fit: BoxFit.contain,
               child: Switch(
-                value: isDarkMode,
+                value: hasDarkMode,
                 onChanged: controller.setThemeMode,
                 activeColor: context.ccColorScheme.primary,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -442,14 +442,22 @@ class ProfilePage extends PrjGetView<ProfileController> {
       onTap: () async {
         await ProfileDeleteConfirmSheet.show(
           context,
+          hasAppleSignIn: controller.hasAppleSignIn,
+          accountLabel: controller.accountLabel,
           onConfirm: () async {
             final result = await controller.deleteAccount();
 
             result.when(
               (success) {
-                // After delete success, we stay on this page.
-                // The Obx wrappers will automatically refresh the UI to the
-                // Guest state because session.clearSession() was called.
+                // We stay on this page: the Obx wrappers switch it to the
+                // guest state because session.clearSession() was called. That
+                // change alone is easy to miss, so confirm it explicitly.
+                if (context.mounted) {
+                  CcSnackBarHelper.showSuccessSnackBar(
+                    context: context,
+                    message: el.tr(PrjLocaleKeys.profile_delete_success),
+                  );
+                }
               },
               (failure) {
                 // Dismissing the Apple/Google re-authentication sheet is not

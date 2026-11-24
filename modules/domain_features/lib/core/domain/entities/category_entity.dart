@@ -17,7 +17,7 @@ class CategoryEntity extends Equatable {
   final String? iconFamily;
   final Color? color;
   final String groupId;
-  final bool isEnabled;
+  final bool hasEnabled;
 
   /// [CategoryType.expense] or [CategoryType.income].
   final String type;
@@ -29,7 +29,7 @@ class CategoryEntity extends Equatable {
     this.iconFamily,
     this.color,
     required this.groupId,
-    this.isEnabled = true,
+    this.hasEnabled = true,
     this.type = CategoryType.expense,
   });
 
@@ -39,7 +39,7 @@ class CategoryEntity extends Equatable {
     String? iconFamily,
     Color? color,
     String? groupId,
-    bool? isEnabled,
+    bool? hasEnabled,
     String? type,
   }) => CategoryEntity(
     id: id,
@@ -48,7 +48,7 @@ class CategoryEntity extends Equatable {
     iconFamily: iconFamily ?? this.iconFamily,
     color: color ?? this.color,
     groupId: groupId ?? this.groupId,
-    isEnabled: isEnabled ?? this.isEnabled,
+    hasEnabled: hasEnabled ?? this.hasEnabled,
     type: type ?? this.type,
   );
 
@@ -60,7 +60,7 @@ class CategoryEntity extends Equatable {
     iconFamily,
     color,
     groupId,
-    isEnabled,
+    hasEnabled,
     type,
   ];
 }

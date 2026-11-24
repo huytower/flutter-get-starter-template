@@ -8,19 +8,19 @@ import 'prj_colors.dart';
 /// ambient [Theme] brightness, so forms never hardcode a hex value or reuse the
 /// status colors (success / error / warning).
 extension PrjFormAccent on BuildContext {
-  bool get _isDarkForm => Theme.of(this).brightness == Brightness.dark;
+  bool get _hasDarkForm => Theme.of(this).brightness == Brightness.dark;
 
   /// Income — teal.
   Color get incomeAccent =>
-      _isDarkForm ? PrjColors.darkIncomeAccent : PrjColors.incomeAccent;
+      _hasDarkForm ? PrjColors.darkIncomeAccent : PrjColors.incomeAccent;
 
   /// Expense — blue.
   Color get expenseAccent =>
-      _isDarkForm ? PrjColors.darkExpenseAccent : PrjColors.expenseAccent;
+      _hasDarkForm ? PrjColors.darkExpenseAccent : PrjColors.expenseAccent;
 
   /// Investment — metallic gold, solid accent for text, icons and tints.
   Color get investmentAccent =>
-      _isDarkForm ? PrjColors.darkInvestmentAccent : PrjColors.investmentAccent;
+      _hasDarkForm ? PrjColors.darkInvestmentAccent : PrjColors.investmentAccent;
 
   /// Foreground (label / icon) drawn on top of [investmentGoldGradient].
   Color get onInvestmentGold => PrjColors.onInvestmentGold;
@@ -56,7 +56,7 @@ extension PrjFormAccent on BuildContext {
   /// Liability zone (borrow + lend) — the violet of the liability hero card,
   /// for text, icons and tints.
   Color get liabilityAccent =>
-      _isDarkForm ? PrjColors.liabilityHighlight : PrjColors.liability;
+      _hasDarkForm ? PrjColors.liabilityHighlight : PrjColors.liability;
 
   /// Opaque violet fill for liability icon badges; pair with `onPrimary`.
   LinearGradient get liabilityGradient => const LinearGradient(
@@ -85,11 +85,11 @@ extension PrjFormAccent on BuildContext {
 
   /// Borrow (liability) — deep purple.
   Color get borrowAccent =>
-      _isDarkForm ? PrjColors.darkBorrowAccent : PrjColors.borrowAccent;
+      _hasDarkForm ? PrjColors.darkBorrowAccent : PrjColors.borrowAccent;
 
   /// Lend — orchid / lavender.
   Color get lendAccent =>
-      _isDarkForm ? PrjColors.darkLendAccent : PrjColors.lendAccent;
+      _hasDarkForm ? PrjColors.darkLendAccent : PrjColors.lendAccent;
 }
 
 /// Shade used for the second leg of a form (repay, collect, return).

@@ -33,7 +33,7 @@ class FormAmountSection extends StatelessWidget {
         label: label,
         amountStr: controller.amountStr.value,
         quickAmounts: controller.quickAmounts,
-        isKeypadVisible: controller.showKeypad.value,
+        hasKeypadVisible: controller.showKeypad.value,
         activeColor: activeColor,
         currencyCode: controller.currencyCode.value,
         fieldKey: fieldKey,

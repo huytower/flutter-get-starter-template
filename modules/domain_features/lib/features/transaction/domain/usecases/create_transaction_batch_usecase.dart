@@ -15,7 +15,7 @@ class BatchSaveResult {
   final CcFailure? failure;
   final int? failedAt;
 
-  bool get isSuccess => failure == null;
+  bool get hasSuccess => failure == null;
 }
 
 @lazySingleton

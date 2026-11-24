@@ -37,7 +37,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  bool get _isLinking => FirebaseAuth.instance.currentUser != null;
+  bool get _hasLinking => FirebaseAuth.instance.currentUser != null;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class _LoginViewState extends State<LoginView> {
           CcDialogHelper.showMessageBottomSheet(
             context: context,
             content: state.message,
-            isOnlyConfirm: true,
+            hasOnlyConfirm: true,
           );
         }
       },
@@ -85,23 +85,23 @@ class _LoginViewState extends State<LoginView> {
               return CcGradientCardLayout(
                 maxWidth:
                     AuthTwoColumnBody.cardMaxWidth(context) ??
-                    (CcContextExtension(context).isPortrait
+                    (CcContextExtension(context).hasPortrait
                         ? context.respDim(400)
                         : context.respDim(600)),
                 child: LoginCardContent(
                   onPhoneLogin: () =>
                       getIt<AuthCoordinator>().navigateToPhoneAuth(context),
-                  loginTitle: _isLinking
+                  loginTitle: _hasLinking
                       ? el.tr(CcMfLocaleKeys.auth_link_account)
                       : el.tr(CcMfLocaleKeys.auth_login),
-                  phoneLoginTitle: _isLinking
+                  phoneLoginTitle: _hasLinking
                       ? el.tr(CcMfLocaleKeys.auth_link_phone)
                       : el.tr(CcMfLocaleKeys.auth_login_phone),
                   // `auth_terms_and_privacy` is already a full sentence, so
                   // it must not be prefixed with `auth_agree_prefix`.
                   agreeText: '',
                   termsText: el.tr(CcMfLocaleKeys.auth_terms_and_privacy),
-                  isLinking: _isLinking,
+                  hasLinking: _hasLinking,
                 ),
               );
             },

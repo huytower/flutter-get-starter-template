@@ -24,7 +24,7 @@ class _EntryDatePickerContentSheetState
     extends State<EntryDatePickerContentSheet> {
   late DateTime _selectedDate;
   late DateTime _viewedMonth;
-  bool _isYearPickerOpen = false;
+  bool _hasYearPickerOpen = false;
 
   @override
   void initState() {
@@ -160,7 +160,7 @@ class _EntryDatePickerContentSheetState
             child: CcBouncing(
               onTap: () {
                 setState(() {
-                  _isYearPickerOpen = !_isYearPickerOpen;
+                  _hasYearPickerOpen = !_hasYearPickerOpen;
                 });
               },
               child: Row(
@@ -181,7 +181,7 @@ class _EntryDatePickerContentSheetState
                   ),
                   const SizedBox(width: 4),
                   Icon(
-                    _isYearPickerOpen
+                    _hasYearPickerOpen
                         ? Icons.arrow_drop_up_rounded
                         : Icons.arrow_drop_down_rounded,
                     color: scheme.onPrimary,
@@ -218,7 +218,7 @@ class _EntryDatePickerContentSheetState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (_isYearPickerOpen)
+          if (_hasYearPickerOpen)
             _buildYearGrid(context, scheme)
           else ...[
             _buildWeekdayLabels(context, scheme, languageCode),
@@ -249,7 +249,7 @@ class _EntryDatePickerContentSheetState
         itemCount: years.length,
         itemBuilder: (context, index) {
           final year = years[index];
-          final isSelected = year == _viewedMonth.year;
+          final hasSelected = year == _viewedMonth.year;
 
           return CcBouncing(
             onTap: () {
@@ -264,20 +264,20 @@ class _EntryDatePickerContentSheetState
               }
               setState(() {
                 _viewedMonth = DateTime(year, newMonth);
-                _isYearPickerOpen = false;
+                _hasYearPickerOpen = false;
               });
             },
             borderRadius: context.brLg,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
               decoration: BoxDecoration(
-                color: isSelected ? scheme.primary : Colors.transparent,
+                color: hasSelected ? scheme.primary : Colors.transparent,
                 borderRadius: context.brLg,
                 border: Border.all(
-                  color: isSelected
+                  color: hasSelected
                       ? scheme.primary
                       : scheme.primary.withOpacity(0.2),
-                  width: isSelected ? 1.5 : 1.0,
+                  width: hasSelected ? 1.5 : 1.0,
                 ),
               ),
               child: Center(
@@ -285,10 +285,10 @@ class _EntryDatePickerContentSheetState
                   '$year',
                   align: Alignment.center,
                   textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                    fontWeight: isSelected
+                    fontWeight: hasSelected
                         ? CcTypographyParams.bold
                         : CcTypographyParams.regular,
-                    color: isSelected ? scheme.onPrimary : scheme.onSurface,
+                    color: hasSelected ? scheme.onPrimary : scheme.onSurface,
                   ),
                 ),
               ),
@@ -354,15 +354,15 @@ class _EntryDatePickerContentSheetState
     DateTime date,
     DateTime today,
   ) {
-    final isCurrentMonth = _isInMonth(date, _viewedMonth);
-    final isSelected = _isSameDay(date, _selectedDate);
-    final isToday = _isSameDay(date, today);
-    final isSelectable =
+    final hasCurrentMonth = _isInMonth(date, _viewedMonth);
+    final hasSelected = _isSameDay(date, _selectedDate);
+    final hasToday = _isSameDay(date, today);
+    final hasSelectable =
         !date.isBefore(widget.firstDate) && !date.isAfter(widget.lastDate);
 
     return CcBouncing(
       onTap: () {
-        if (!isSelectable) {
+        if (!hasSelectable) {
           return;
         }
         _onDateTap(date);
@@ -371,15 +371,15 @@ class _EntryDatePickerContentSheetState
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
-          color: isSelected ? scheme.primary : Colors.transparent,
+          color: hasSelected ? scheme.primary : Colors.transparent,
           borderRadius: context.brLg,
           border: Border.all(
-            color: isSelected
+            color: hasSelected
                 ? scheme.primary
-                : isToday
+                : hasToday
                 ? scheme.primary.withOpacity(0.3)
                 : Colors.transparent,
-            width: isSelected || isToday ? 1.5 : 0,
+            width: hasSelected || hasToday ? 1.5 : 0,
           ),
         ),
         child: Center(
@@ -387,13 +387,13 @@ class _EntryDatePickerContentSheetState
             '${date.day}',
             align: Alignment.center,
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              fontWeight: isSelected
+              fontWeight: hasSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,
-              color: isSelected
+              color: hasSelected
                   ? scheme.onPrimary
-                  : isSelectable
-                  ? isCurrentMonth
+                  : hasSelectable
+                  ? hasCurrentMonth
                         ? scheme.onSurface
                         : scheme.onSurfaceVariant.withOpacity(0.4)
                   : scheme.onSurfaceVariant.withOpacity(0.4),

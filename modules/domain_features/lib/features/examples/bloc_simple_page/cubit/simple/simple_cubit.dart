@@ -15,18 +15,18 @@ class SimpleCubit extends SimpleCubitInterface {
   Future<void> increase() async {
     try {
       // Show loading state
-      emit(state.copyWith(isLoading: true));
+      emit(state.copyWith(hasLoading: true));
 
       // Simulate an async operation
       await Future.delayed(const Duration(milliseconds: 300));
 
       // Update state with new counter value
-      emit(state.copyWith(counter: state.counter + 1, isLoading: false));
+      emit(state.copyWith(counter: state.counter + 1, hasLoading: false));
     } catch (e, stackTrace) {
       // Handle error and update state
       final errorMessage =
           'Failed to increase counter: $e\nStack trace: $stackTrace';
-      emit(state.copyWith(isLoading: false, errorMessage: errorMessage));
+      emit(state.copyWith(hasLoading: false, errorMessage: errorMessage));
       Catcher2.reportCheckedError(e, stackTrace);
     }
   }
@@ -35,18 +35,18 @@ class SimpleCubit extends SimpleCubitInterface {
   Future<void> reset() async {
     try {
       // Show loading state
-      emit(state.copyWith(isLoading: true));
+      emit(state.copyWith(hasLoading: true));
 
       // Simulate an async operation
       await Future.delayed(const Duration(milliseconds: 300));
 
       // Reset state
-      emit(state.copyWith(counter: 0, isLoading: false, errorMessage: null));
+      emit(state.copyWith(counter: 0, hasLoading: false, errorMessage: null));
     } catch (e, stackTrace) {
       // Handle error and update state
       final errorMessage =
           'Failed to reset counter: $e\nStack trace: $stackTrace';
-      emit(state.copyWith(isLoading: false, errorMessage: errorMessage));
+      emit(state.copyWith(hasLoading: false, errorMessage: errorMessage));
       Catcher2.reportCheckedError(e, stackTrace);
     }
   }

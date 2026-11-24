@@ -49,16 +49,16 @@ class CheckBudgetThresholdUseCase {
   }
 
   Future<void> _notify(BudgetLimitStatsEntity stat, String tier) async {
-    final isOver = tier == 'over';
+    final hasOver = tier == 'over';
     await _notificationService.showNow(
       id: ReminderIds.budgetThreshold(stat.budget.id, tier),
       title: el.tr(
-        isOver
+        hasOver
             ? PrjLocaleKeys.budget_over_limit
             : PrjLocaleKeys.budget_near_limit,
       ),
       body: el.tr(
-        isOver
+        hasOver
             ? PrjLocaleKeys.notification_budget_over_body
             : PrjLocaleKeys.notification_budget_near_limit_body,
         namedArgs: {'name': stat.budget.name},

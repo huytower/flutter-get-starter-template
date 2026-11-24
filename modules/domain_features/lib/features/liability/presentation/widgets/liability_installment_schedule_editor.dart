@@ -82,10 +82,10 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
               onTap: () => controller.showKeypadForInstallment(context, index),
               borderRadius: context.brMd,
               child: Obx(() {
-                final isEditingThis =
+                final hasEditingThis =
                     controller.editingInstallmentIndex.value == index;
                 final amount = draft.amount.value;
-                final isLimitReached =
+                final hasLimitReached =
                     controller.installmentsTotal == controller.principalAmount;
 
                 return Container(
@@ -97,9 +97,9 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: context.ccColorScheme.surfaceVariant.withAlpha(80),
                     borderRadius: context.brMd,
-                    border: isEditingThis
+                    border: hasEditingThis
                         ? Border.all(color: activeColor, width: 2)
-                        : isLimitReached
+                        : hasLimitReached
                         ? Border.all(
                             color: activeColor.withAlpha(100),
                             width: 1.5,
@@ -143,11 +143,11 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
 
   Widget _buildAddButton(BuildContext context) {
     return Obx(() {
-      final isEnabled = controller.canAddInstallment;
-      final color = isEnabled ? activeColor : context.ccColorScheme.outline;
+      final hasEnabled = controller.canAddInstallment;
+      final color = hasEnabled ? activeColor : context.ccColorScheme.outline;
 
       return TextButton.icon(
-        onPressed: isEnabled ? controller.addInstallmentPeriod : null,
+        onPressed: hasEnabled ? controller.addInstallmentPeriod : null,
         icon: Icon(
           Icons.add,
           size: context.respIconSize(baseSize: 18),

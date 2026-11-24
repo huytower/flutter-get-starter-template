@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
 class EntryAdditionalDetailsSection extends StatelessWidget {
-  final bool isExpanded;
+  final bool hasExpanded;
   final VoidCallback? onToggle;
   final DateTime selectedDate;
   final ValueChanged<DateTime> onDateSelected;
@@ -17,7 +17,7 @@ class EntryAdditionalDetailsSection extends StatelessWidget {
 
   const EntryAdditionalDetailsSection({
     super.key,
-    required this.isExpanded,
+    required this.hasExpanded,
     this.onToggle,
     required this.selectedDate,
     required this.onDateSelected,
@@ -34,7 +34,7 @@ class EntryAdditionalDetailsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (onToggle != null) _buildMoreDetailsToggle(context),
-        if (isExpanded) _buildExpandedContent(context),
+        if (hasExpanded) _buildExpandedContent(context),
       ],
     );
   }
@@ -46,7 +46,7 @@ class EntryAdditionalDetailsSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Icon(
-          isExpanded ? Icons.expand_less : Icons.expand_more,
+          hasExpanded ? Icons.expand_less : Icons.expand_more,
           color: context.ccColorScheme.onSurfaceVariant,
           size: context.respDim(24),
         ),

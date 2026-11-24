@@ -416,7 +416,7 @@ class CategorySeed {
       nameKey: PrjLocaleKeys.category_milk_formula,
       iconCode: Icons.baby_changing_station.codePoint,
       groupId: '14',
-      isEnabled: false,
+      hasEnabled: false,
       colorValue: PrjColors.categoryMilkFormula.value,
     ),
     CategoryModel(
@@ -424,7 +424,7 @@ class CategorySeed {
       nameKey: PrjLocaleKeys.category_diapers,
       iconCode: Icons.child_care.codePoint,
       groupId: '14',
-      isEnabled: false,
+      hasEnabled: false,
       colorValue: PrjColors.categoryDiapers.value,
     ),
     CategoryModel(
@@ -432,7 +432,7 @@ class CategorySeed {
       nameKey: PrjLocaleKeys.category_baby_toys,
       iconCode: Icons.toys.codePoint,
       groupId: '14',
-      isEnabled: false,
+      hasEnabled: false,
       colorValue: PrjColors.categoryBabyToys.value,
     ),
 

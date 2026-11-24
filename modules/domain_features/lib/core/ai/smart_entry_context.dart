@@ -20,7 +20,7 @@ class SmartEntryContext {
   final String language;
   final DateTime today;
 
-  bool get isMixed => types.length > 1;
+  bool get hasMixed => types.length > 1;
 
   String get defaultType => types.first;
 }

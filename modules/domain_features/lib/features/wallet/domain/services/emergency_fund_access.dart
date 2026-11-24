@@ -17,15 +17,15 @@ class EmergencyFundAccess {
   final UpdateProfileSettingsUseCase _updateSettings;
 
   /// Whether the emergency-fund type is shown at all.
-  bool get isOffered {
+  bool get hasOffered {
     final status = _userLevel.status;
-    return status.level >= 3 || status.isVip;
+    return status.level >= 3 || status.hasVip;
   }
 
   /// Whether an emergency-fund wallet may be created now.
   Future<bool> isUnlocked() async {
     final settings = await _getSettings();
-    return settings.isVip ||
+    return settings.hasVip ||
         (_userLevel.status.level >= 3 && settings.hasViewedEmergencyFundEbook);
   }
 

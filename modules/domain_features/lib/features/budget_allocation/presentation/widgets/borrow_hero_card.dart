@@ -10,14 +10,14 @@ class BorrowHeroCard extends StatelessWidget {
   const BorrowHeroCard({
     required this.walletController,
     required this.balance,
-    required this.isFront,
+    required this.hasFront,
     this.onTap,
     super.key,
   });
 
   final WalletController walletController;
   final int balance;
-  final bool isFront;
+  final bool hasFront;
   final VoidCallback? onTap;
 
   @override
@@ -31,7 +31,7 @@ class BorrowHeroCard extends StatelessWidget {
       balanceIcon: Icons.waving_hand,
       bannerIconAsset: 'assets/icon/ic_borrow.webp',
       color: scheme.liability,
-      isFront: isFront,
+      hasFront: hasFront,
       onTap: onTap,
     );
   }

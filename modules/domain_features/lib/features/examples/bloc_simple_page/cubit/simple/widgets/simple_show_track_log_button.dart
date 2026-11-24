@@ -18,7 +18,7 @@ class SimpleShowTrackLogButton extends StatelessWidget {
         );
       },
       title: el.tr(PrjLocaleKeys.common_ok),
-      bgColor: [context.ccColorScheme.primary],
+      backgroundColor: [context.ccColorScheme.primary],
       textColor: context.ccColorScheme.onPrimary,
       height: 48,
       width: double.infinity,

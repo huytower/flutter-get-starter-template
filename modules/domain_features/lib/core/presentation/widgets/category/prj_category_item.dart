@@ -10,7 +10,7 @@ class PrjCategoryItem extends StatelessWidget {
     required this.iconCode,
     this.iconFamily,
     required this.label,
-    required this.isSelected,
+    required this.hasSelected,
     required this.onTap,
     this.activeColor,
     this.width,
@@ -19,7 +19,7 @@ class PrjCategoryItem extends StatelessWidget {
   final int iconCode;
   final String? iconFamily;
   final String label;
-  final bool isSelected;
+  final bool hasSelected;
   final VoidCallback onTap;
   final Color? activeColor;
   final double? width;
@@ -31,12 +31,12 @@ class PrjCategoryItem extends StatelessWidget {
 
     return CcInteractionWrapper(
       onTap: onTap,
-      isBouncing: true,
+      hasBouncing: true,
       useDebounce: false,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          if (isSelected)
+          if (hasSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
                 centerColor: effectiveActiveColor.withValues(alpha: 0.04),
@@ -47,12 +47,12 @@ class PrjCategoryItem extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             width: width ?? context.respDim(75),
             decoration: BoxDecoration(
-              color: isSelected
+              color: hasSelected
                   ? effectiveActiveColor.withValues(alpha: 0.02)
                   : scheme.onSurface.withValues(alpha: 0.02),
               borderRadius: context.brLg,
               border: Border.all(
-                color: isSelected
+                color: hasSelected
                     ? effectiveActiveColor.withValues(alpha: 0.04)
                     : scheme.onSurface.withValues(alpha: 0.02),
                 width: context.respDim(1),
@@ -62,7 +62,7 @@ class PrjCategoryItem extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildCategoryIcon(context, isSelected, effectiveActiveColor),
+                  _buildCategoryIcon(context, hasSelected, effectiveActiveColor),
                   const CcSpaceXS(),
                   CcText(
                     label,
@@ -71,10 +71,10 @@ class PrjCategoryItem extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                      fontWeight: isSelected
+                      fontWeight: hasSelected
                           ? CcTypographyParams.bold
                           : CcTypographyParams.regular,
-                      color: isSelected
+                      color: hasSelected
                           ? effectiveActiveColor
                           : scheme.onSurfaceVariant,
                     ),
@@ -94,7 +94,7 @@ class PrjCategoryItem extends StatelessWidget {
 
   Widget _buildCategoryIcon(
     BuildContext context,
-    bool isSelected,
+    bool hasSelected,
     Color activeColor,
   ) {
     final scheme = context.ccColorScheme;
@@ -103,7 +103,7 @@ class PrjCategoryItem extends StatelessWidget {
       width: context.respDim(35),
       height: context.respDim(35),
       decoration: BoxDecoration(
-        color: isSelected
+        color: hasSelected
             ? activeColor.withValues(alpha: 0.04)
             : scheme.onSurface.withValues(alpha: 0.02),
         borderRadius: context.brMd,
@@ -111,7 +111,7 @@ class PrjCategoryItem extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (isSelected)
+          if (hasSelected)
             Positioned.fill(
               child: CcGlassyGradientIcon(
                 centerColor: activeColor.withValues(alpha: 0.08),
@@ -121,7 +121,7 @@ class PrjCategoryItem extends StatelessWidget {
           CcIcon(
             icon: iconDataFromCode(iconCode, fontFamily: iconFamily),
             size: context.respIconSize(baseSize: 18),
-            color: isSelected ? activeColor : scheme.onSurfaceVariant,
+            color: hasSelected ? activeColor : scheme.onSurfaceVariant,
           ),
         ],
       ),

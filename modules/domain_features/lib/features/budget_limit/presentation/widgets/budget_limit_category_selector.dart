@@ -53,12 +53,12 @@ class BudgetLimitCategorySelector extends StatelessWidget {
           separatorBuilder: (_, _) => const CcSpaceSM(),
           itemBuilder: (context, index) {
             final cat = categories[index];
-            final isSelected = selectedCategoryId == cat.id;
+            final hasSelected = selectedCategoryId == cat.id;
             return PrjCategoryItem(
               iconCode: cat.iconCode,
               iconFamily: cat.iconFamily,
               label: el.tr(cat.nameKey),
-              isSelected: isSelected,
+              hasSelected: hasSelected,
               onTap: () => onCategorySelected(cat),
             );
           },

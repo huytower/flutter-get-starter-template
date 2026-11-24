@@ -21,7 +21,7 @@ class CurrencyDefinition {
     required this.sampleAmount,
     required this.locale,
     required this.decimalDigits,
-    required this.isPrefixSymbol,
+    required this.hasPrefixSymbol,
     this.aliases = const [],
   });
 
@@ -31,7 +31,7 @@ class CurrencyDefinition {
   final int sampleAmount;
   final String locale;
   final int decimalDigits;
-  final bool isPrefixSymbol;
+  final bool hasPrefixSymbol;
   final List<String> aliases;
 }
 
@@ -49,7 +49,7 @@ class CurrencyCatalog {
       sampleAmount: 2500000,
       locale: 'vi_VN',
       decimalDigits: 0,
-      isPrefixSymbol: false,
+      hasPrefixSymbol: false,
       aliases: ['vnd', 'dong', 'd', 'đ'],
     ),
     CurrencyDefinition(
@@ -59,7 +59,7 @@ class CurrencyCatalog {
       sampleAmount: 100,
       locale: 'en_US',
       decimalDigits: 0,
-      isPrefixSymbol: true,
+      hasPrefixSymbol: true,
       aliases: ['usd', 'dollar', 'dollars', '\$'],
     ),
     CurrencyDefinition(
@@ -69,7 +69,7 @@ class CurrencyCatalog {
       sampleAmount: 85,
       locale: 'en_US',
       decimalDigits: 0,
-      isPrefixSymbol: true,
+      hasPrefixSymbol: true,
       aliases: ['eur', 'euro', 'euros', '€'],
     ),
     CurrencyDefinition(
@@ -79,7 +79,7 @@ class CurrencyCatalog {
       sampleAmount: 11347,
       locale: 'ja_JP',
       decimalDigits: 0,
-      isPrefixSymbol: true,
+      hasPrefixSymbol: true,
       aliases: ['jpy', 'yen', '¥'],
     ),
     CurrencyDefinition(
@@ -89,7 +89,7 @@ class CurrencyCatalog {
       sampleAmount: 135000,
       locale: 'ko_KR',
       decimalDigits: 0,
-      isPrefixSymbol: true,
+      hasPrefixSymbol: true,
       aliases: ['krw', 'won', '₩'],
     ),
     CurrencyDefinition(
@@ -99,7 +99,7 @@ class CurrencyCatalog {
       sampleAmount: 639,
       locale: 'zh_CN',
       decimalDigits: 0,
-      isPrefixSymbol: true,
+      hasPrefixSymbol: true,
       aliases: ['cny', 'rmb', 'yuan', '¥'],
     ),
   ];

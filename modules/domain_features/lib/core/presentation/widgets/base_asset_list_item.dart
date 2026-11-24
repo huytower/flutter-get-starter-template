@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class BaseAssetListItem extends StatelessWidget {
   final Widget header;
   final List<Widget> stats;
-  final bool isEditMode;
+  final bool hasEditMode;
   final bool canDelete;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -14,7 +14,7 @@ class BaseAssetListItem extends StatelessWidget {
     super.key,
     required this.header,
     required this.stats,
-    this.isEditMode = false,
+    this.hasEditMode = false,
     this.canDelete = true,
     required this.onEdit,
     required this.onDelete,
@@ -51,7 +51,7 @@ class BaseAssetListItem extends StatelessWidget {
             ],
           ),
         ),
-        if (isEditMode) ..._buildEditBadges(context),
+        if (hasEditMode) ..._buildEditBadges(context),
       ],
     );
   }

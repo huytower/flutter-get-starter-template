@@ -76,7 +76,7 @@ class LiabilityFinalDueDateSection extends StatelessWidget {
           () => Transform.scale(
             scale: 0.7,
             child: CcCheckBox(
-              isChecked: controller.reminderBeforeDueDate.value,
+              hasChecked: controller.reminderBeforeDueDate.value,
               onChanged: (value) => controller.setReminderBeforeDueDate(value),
               checkedColor: accentColor,
               uncheckedBorderColor: context.ccColorScheme.outline,

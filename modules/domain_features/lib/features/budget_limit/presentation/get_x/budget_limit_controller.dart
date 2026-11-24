@@ -32,12 +32,12 @@ class BudgetLimitController extends PrjGetController {
   final DeleteBudgetLimitUseCase _deleteBudget;
 
   final RxList<BudgetLimitStatsEntity> budgets = <BudgetLimitStatsEntity>[].obs;
-  final RxBool isEditMode = false.obs;
+  final RxBool hasEditMode = false.obs;
 
-  void toggleEditMode() => isEditMode.toggle();
+  void toggleEditMode() => hasEditMode.toggle();
 
   void onCloseEditMode(BuildContext context) {
-    isEditMode.value = false;
+    hasEditMode.value = false;
     Navigator.of(context).pop();
   }
 
@@ -120,13 +120,13 @@ class BudgetLimitController extends PrjGetController {
     String id, {
     String? name,
     int? limit,
-    bool? isFixedPrice,
+    bool? hasFixedPrice,
   }) async {
     final result = await _updateBudget.call(
       id,
       name: name,
       limit: limit,
-      isFixedPrice: isFixedPrice,
+      hasFixedPrice: hasFixedPrice,
     );
     return result.when((_) {
       loadBudgets();

@@ -17,7 +17,7 @@ class UpdateBudgetLimitUseCase {
   static const int lastEditableDay = 7;
 
   /// Whether today falls inside the limit-editing window.
-  static bool get isLimitEditable => DateTime.now().day <= lastEditableDay;
+  static bool get hasLimitEditable => DateTime.now().day <= lastEditableDay;
 
   final BudgetLimitRepository _repository;
 
@@ -25,7 +25,7 @@ class UpdateBudgetLimitUseCase {
     String id, {
     String? name,
     int? limit,
-    bool? isFixedPrice,
+    bool? hasFixedPrice,
   }) async {
     final budgetResult = await _repository.getBudget(id);
     if (budgetResult.isError()) {
@@ -33,8 +33,8 @@ class UpdateBudgetLimitUseCase {
     }
     var budget = budgetResult.tryGetSuccess()!;
 
-    if (isFixedPrice != null) {
-      budget = budget.copyWith(isFixedPrice: isFixedPrice);
+    if (hasFixedPrice != null) {
+      budget = budget.copyWith(hasFixedPrice: hasFixedPrice);
     }
 
     if (name != null) {
@@ -48,7 +48,7 @@ class UpdateBudgetLimitUseCase {
     }
 
     if (limit != null && limit != budget.limit) {
-      if (!isLimitEditable) {
+      if (!hasLimitEditable) {
         return const Error(
           CcValidationFailure(
             'Chỉ có thể thay đổi định mức trong 7 ngày đầu tháng.',

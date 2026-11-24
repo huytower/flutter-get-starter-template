@@ -20,7 +20,7 @@ class LiabilityWalletsSection extends StatelessWidget {
     required this.lendBalances,
     required this.onAddLiability,
     required this.onSeeAll,
-    required this.isLendFront,
+    required this.hasLendFront,
     this.showGuidelineBadge = false,
     this.badgeColor,
     super.key,
@@ -30,7 +30,7 @@ class LiabilityWalletsSection extends StatelessWidget {
   final List<LiabilityBalanceEntity> lendBalances;
   final VoidCallback onAddLiability;
   final VoidCallback onSeeAll;
-  final bool isLendFront;
+  final bool hasLendFront;
   final bool showGuidelineBadge;
   final Color? badgeColor;
 
@@ -39,9 +39,9 @@ class LiabilityWalletsSection extends StatelessWidget {
     final controller = Get.find<BudgetAllocationController>();
     final guideline = getIt<GuidelineProvider>();
 
-    final isBothEmpty = borrowBalances.isEmpty && lendBalances.isEmpty;
+    final hasBothEmpty = borrowBalances.isEmpty && lendBalances.isEmpty;
 
-    final Widget activeCard = isLendFront
+    final Widget activeCard = hasLendFront
         ? LendWalletsCard(
             balances: lendBalances,
             onSeeAll: () => controller.navigateToLendList(context),
@@ -51,7 +51,7 @@ class LiabilityWalletsSection extends StatelessWidget {
             onSeeAll: () => controller.navigateToLiabilityList(context),
           );
 
-    final double sectionHeight = isBothEmpty ? 45 : 95;
+    final double sectionHeight = hasBothEmpty ? 45 : 95;
 
     return Stack(
       children: [
@@ -87,11 +87,11 @@ class LiabilityWalletsSection extends StatelessWidget {
     BudgetAllocationController controller,
     BuildContext context,
   ) {
-    final activeBalances = isLendFront ? lendBalances : borrowBalances;
+    final activeBalances = hasLendFront ? lendBalances : borrowBalances;
 
     return CcPadding(
       CcSectionHeader(
-        title: isLendFront
+        title: hasLendFront
             ? el.tr(PrjLocaleKeys.liability_lend)
             : el.tr(PrjLocaleKeys.liability_list_title),
         icon: Icons.warning_amber_outlined,
@@ -108,7 +108,7 @@ class LiabilityWalletsSection extends StatelessWidget {
             CcTextButton(
               text: el.tr(PrjLocaleKeys.wallet_see_all),
               onTap: () {
-                if (isLendFront) {
+                if (hasLendFront) {
                   controller.navigateToLendList(context);
                 } else {
                   controller.navigateToLiabilityList(context);

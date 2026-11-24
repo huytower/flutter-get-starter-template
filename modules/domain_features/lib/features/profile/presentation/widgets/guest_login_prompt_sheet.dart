@@ -31,7 +31,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
     return showAdaptiveBottomSheet<bool>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
-      isDismissible: false,
+      hasDismissible: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -45,16 +45,16 @@ class GuestLoginPromptSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isFinal = prompt == GuestLoginPrompt.finalWarning;
+    final hasFinal = prompt == GuestLoginPrompt.finalWarning;
     final scheme = context.ccColorScheme;
 
-    final bullet1Key = isFinal
+    final bullet1Key = hasFinal
         ? PrjLocaleKeys.profile_guest_login_final_bullet1
         : PrjLocaleKeys.profile_guest_login_bullet1;
-    final bullet2Key = isFinal
+    final bullet2Key = hasFinal
         ? PrjLocaleKeys.profile_guest_login_final_bullet2
         : PrjLocaleKeys.profile_guest_login_bullet2;
-    final bullet3Key = isFinal
+    final bullet3Key = hasFinal
         ? PrjLocaleKeys.profile_guest_login_final_bullet3
         : PrjLocaleKeys.profile_guest_login_bullet3;
 
@@ -81,7 +81,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    isFinal
+                    hasFinal
                         ? Icons.workspace_premium_outlined
                         : Icons.cloud_outlined,
                     size: context.respIconSize(baseSize: 32),
@@ -92,7 +92,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
               const CcSpaceMD(),
               CcText(
                 el.tr(
-                  isFinal
+                  hasFinal
                       ? PrjLocaleKeys.profile_guest_login_final_title
                       : PrjLocaleKeys.profile_guest_login_title,
                 ),
@@ -110,7 +110,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
                   _buildInsightCard(
                     context: context,
                     textKey: bullet1Key,
-                    icon: isFinal
+                    icon: hasFinal
                         ? Icons.stars_outlined
                         : Icons.thumb_up_alt_outlined,
                     color: PrjColors.info,
@@ -150,7 +150,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
                         ),
                         child: CcText(
                           el.tr(
-                            isFinal
+                            hasFinal
                                 ? PrjLocaleKeys.common_guest_login_continue_local
                                 : PrjLocaleKeys.common_later,
                           ),

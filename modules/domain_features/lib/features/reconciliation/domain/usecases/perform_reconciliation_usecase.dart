@@ -86,14 +86,14 @@ class PerformReconciliationUseCase {
 
       final diff = actual - book;
       if (diff != 0) {
-        final isSurplus = diff > 0;
+        final hasSurplus = diff > 0;
         final adjustment = TransactionEntity(
           id: '${stamp}_${balance.wallet.id}',
-          type: isSurplus ? TransactionType.income : TransactionType.expense,
+          type: hasSurplus ? TransactionType.income : TransactionType.expense,
           amount: diff.abs(),
           category: el.tr(PrjLocaleKeys.reconciliation_adjustment_category),
           note: el.tr(
-            isSurplus
+            hasSurplus
                 ? PrjLocaleKeys.reconciliation_adjustment_surplus
                 : PrjLocaleKeys.reconciliation_adjustment_shortfall,
           ),

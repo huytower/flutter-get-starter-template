@@ -14,17 +14,17 @@ import 'quick_edit_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';
 
 class ReportTransactionTile extends StatelessWidget {
-  const ReportTransactionTile({required this.transaction, required this.isEditMode});
+  const ReportTransactionTile({required this.transaction, required this.hasEditMode});
 
   final TransactionEntity transaction;
-  final bool isEditMode;
+  final bool hasEditMode;
 
   @override
   Widget build(BuildContext context) {
-    final isInflow = computeIsInflow(transaction);
+    final hasInflow = computeIsInflow(transaction);
     final amountColor = computeAmountColor(context, transaction);
     final amountText =
-        "${isInflow ? '+' : '-'}${TransactionFormHelpers.formatShortWithSymbol(transaction.amount, currencyCode: transaction.currencyCode)}";
+        "${hasInflow ? '+' : '-'}${TransactionFormHelpers.formatShortWithSymbol(transaction.amount, currencyCode: transaction.currencyCode)}";
 
     Widget getIcon() {
       if (transaction.categoryIconCode != null) {
@@ -38,7 +38,7 @@ class ReportTransactionTile extends StatelessWidget {
         );
       }
       return Icon(
-        isInflow ? Icons.north_east : Icons.south_west,
+        hasInflow ? Icons.north_east : Icons.south_west,
         size: context.respIconSize(baseSize: 20),
         color: amountColor,
       );
@@ -107,7 +107,7 @@ class ReportTransactionTile extends StatelessWidget {
                 ),
               ],
             ),
-            if (isEditMode && isEditableTransaction(transaction)) ...[
+            if (hasEditMode && isEditableTransaction(transaction)) ...[
               const CcSpaceXS(),
               CcIconButton.bouncing(
                 icon: Icon(

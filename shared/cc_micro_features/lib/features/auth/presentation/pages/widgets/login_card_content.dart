@@ -19,7 +19,7 @@ class LoginCardContent extends StatefulWidget {
     this.phoneLoginTitle,
     this.termsText,
     this.agreeText,
-    this.isLinking = false,
+    this.hasLinking = false,
   });
 
   final VoidCallback onPhoneLogin;
@@ -28,14 +28,14 @@ class LoginCardContent extends StatefulWidget {
   final String? phoneLoginTitle;
   final String? agreeText;
   final String? termsText;
-  final bool isLinking;
+  final bool hasLinking;
 
   @override
   State<LoginCardContent> createState() => _LoginCardContentState();
 }
 
 class _LoginCardContentState extends State<LoginCardContent> {
-  bool _isAgreed = false;
+  bool _hasAgreed = false;
 
   /// Set when a login button is tapped before the terms are accepted, so the
   /// terms row turns to the error color instead of the tap doing nothing.
@@ -50,15 +50,15 @@ class _LoginCardContentState extends State<LoginCardContent> {
   Future<void> _loadPreference() async {
     final accepted = await getIt<AuthPreferenceDataSource>().isTermsAccepted();
     if (mounted && accepted) {
-      setState(() => _isAgreed = true);
+      setState(() => _hasAgreed = true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isDisabled = widget.isLinking;
-    final double opacity = isDisabled ? 0.3 : (_isAgreed ? 1.0 : 0.5);
-    final bool needsAgreement = !isDisabled && !_isAgreed;
+    final bool hasDisabled = widget.hasLinking;
+    final double opacity = hasDisabled ? 0.3 : (_hasAgreed ? 1.0 : 0.5);
+    final bool needsAgreement = !hasDisabled && !_hasAgreed;
 
     return AuthTwoColumnBody(
       header: [
@@ -66,7 +66,7 @@ class _LoginCardContentState extends State<LoginCardContent> {
         const CcSpeechBubbleIcon(),
         const CcSpaceLG(),
         CcText(
-          widget.isLinking
+          widget.hasLinking
               ? (widget.loginTitle ?? el.tr(CcMfLocaleKeys.auth_link_account))
               : (widget.loginTitle ?? el.tr(CcMfLocaleKeys.auth_login)),
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
@@ -87,13 +87,13 @@ class _LoginCardContentState extends State<LoginCardContent> {
           behavior: HitTestBehavior.opaque,
           onTap: needsAgreement ? _nudgeTerms : null,
           child: IgnorePointer(
-            ignoring: isDisabled || !_isAgreed,
+            ignoring: hasDisabled || !_hasAgreed,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Opacity(
                   opacity: opacity,
-                  child: LoginSocialButtons(isLinking: widget.isLinking),
+                  child: LoginSocialButtons(hasLinking: widget.hasLinking),
                 ),
                 const CcSpaceXL(),
                 LoginOrDivider(orText: el.tr(CcMfLocaleKeys.common_or)),
@@ -101,15 +101,15 @@ class _LoginCardContentState extends State<LoginCardContent> {
                 Opacity(
                   opacity: opacity,
                   child: CcBaseButton(
-                    onTap: (isDisabled || !_isAgreed)
+                    onTap: (hasDisabled || !_hasAgreed)
                         ? null
                         : widget.onPhoneLogin,
-                    title: widget.isLinking
+                    title: widget.hasLinking
                         ? (widget.phoneLoginTitle ??
                               el.tr(CcMfLocaleKeys.auth_link_phone))
                         : (widget.phoneLoginTitle ??
                               el.tr(CcMfLocaleKeys.auth_login_phone)),
-                    bgColor: [
+                    backgroundColor: [
                       context.ccColorScheme.primary,
                       context.ccColorScheme.primary,
                     ],
@@ -121,7 +121,7 @@ class _LoginCardContentState extends State<LoginCardContent> {
           ),
         ),
         const CcSpaceLG(),
-        _buildTermsCheckbox(context, isDisabled: isDisabled),
+        _buildTermsCheckbox(context, hasDisabled: hasDisabled),
         const CcSpaceLG(),
       ],
     );
@@ -132,19 +132,19 @@ class _LoginCardContentState extends State<LoginCardContent> {
     setState(() => _showAgreeHint = true);
   }
 
-  Widget _buildTermsCheckbox(BuildContext context, {required bool isDisabled}) {
-    final bool highlight = _showAgreeHint && !_isAgreed;
+  Widget _buildTermsCheckbox(BuildContext context, {required bool hasDisabled}) {
+    final bool highlight = _showAgreeHint && !_hasAgreed;
     final Color? hintColor = highlight ? context.ccColorScheme.error : null;
 
     return Row(
       children: [
         Checkbox(
-          value: _isAgreed,
+          value: _hasAgreed,
           isError: highlight,
-          onChanged: isDisabled
+          onChanged: hasDisabled
               ? null
               : (value) => setState(() {
-                  _isAgreed = value ?? false;
+                  _hasAgreed = value ?? false;
                   _showAgreeHint = false;
                 }),
           activeColor: context.ccColorScheme.primary,
@@ -166,7 +166,7 @@ class _LoginCardContentState extends State<LoginCardContent> {
                     decoration: TextDecoration.underline,
                   ),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = isDisabled
+                    ..onTap = hasDisabled
                         ? null
                         : () {
                             getIt<AuthCoordinator>().navigateToTerms(context);

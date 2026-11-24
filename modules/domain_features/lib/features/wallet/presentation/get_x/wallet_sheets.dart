@@ -15,8 +15,8 @@ import 'wallet_controller.dart';
 extension WalletSheets on WalletController {
   /// Leaves edit mode, or closes the screen when not editing.
   void onCloseEditMode(BuildContext context) {
-    if (isEditMode.value) {
-      isEditMode.value = false;
+    if (hasEditMode.value) {
+      hasEditMode.value = false;
     } else {
       Navigator.of(context).pop();
     }
@@ -45,7 +45,7 @@ extension WalletSheets on WalletController {
 
     showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: false,
+      hasScrollControlled: false,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

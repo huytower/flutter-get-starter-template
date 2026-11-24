@@ -14,7 +14,7 @@ class CommentPage extends PrjGetView<CommentController> with CcPullToRefreshMixi
   @override
   Widget? buildContent(BuildContext context) {
     final comments = controller.comments;
-    final isLoading =
+    final hasLoading =
         controller.layoutStatus.value == CcLayoutStatus.loading ||
         controller.layoutStatus.value == CcLayoutStatus.loadMore;
 
@@ -25,9 +25,9 @@ class CommentPage extends PrjGetView<CommentController> with CcPullToRefreshMixi
         child: ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: isLoading ? 5 : comments.length,
+          itemCount: hasLoading ? 5 : comments.length,
           itemBuilder: (context, index) {
-            if (isLoading) {
+            if (hasLoading) {
               return const ShimmerCommentCard();
             }
 

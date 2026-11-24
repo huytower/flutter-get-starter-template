@@ -31,15 +31,15 @@ class HttpProd extends HttpBase {
   /// Prefer using [PrjAppConfig.instance] to get the current configuration.
   const HttpProd()
     : super(
-        isLogger: false, // Disable logging in production by default
-        isEnableLoggerDio: false,
+        hasLogger: false, // Disable logging in production by default
+        hasEnableLoggerDio: false,
       );
 
   @override
   final String environmentName = 'PRODUCTION';
 
   @override
-  bool get isEnvPro => true; // Mark as production environment
+  bool get hasEnvPro => true; // Mark as production environment
 
   @override
   String get baseUrl {
@@ -55,7 +55,7 @@ class HttpProd extends HttpBase {
 
   /// `IS_FORCE_UPDATE` (see [PrjEnv]). Anything but `true` is off.
   @override
-  bool get isForceUpdate => PrjEnv.isForceUpdate;
+  bool get hasForceUpdate => PrjEnv.hasForceUpdate;
 
   /// `MINIMUM_OS_VERSION_HAS_FORCE` (see [PrjEnv]). Blank reads as unset.
   @override
@@ -77,18 +77,18 @@ class HttpProd extends HttpBase {
   /// Whether analytics collection is enabled.
   ///
   /// From [PrjFeatureFlags].
-  bool get enableAnalytics => PrjFeatureFlags.isAnalyticsEnabled;
+  bool get enableAnalytics => PrjFeatureFlags.hasAnalyticsEnabled;
 
   /// Whether crash reporting is enabled.
   ///
   /// From [PrjFeatureFlags].
-  bool get enableCrashReporting => PrjFeatureFlags.isCrashReportingEnabled;
+  bool get enableCrashReporting => PrjFeatureFlags.hasCrashReportingEnabled;
 
   /// Whether certificate pinning is enabled for http requests.
   ///
   /// From [PrjFeatureFlags].
   bool get enableCertificatePinning =>
-      PrjFeatureFlags.isCertificatePinningEnabled;
+      PrjFeatureFlags.hasCertificatePinningEnabled;
 
   @override
   Map<String, String> get apiHeaders => {

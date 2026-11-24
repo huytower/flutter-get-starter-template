@@ -89,7 +89,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
   void _handleTabChange() {
     if (!_tabController.indexIsChanging) {
       controller.selectedTabIndex.value = _tabController.index;
-      controller.isSecondaryCardFront.value = _tabController.index >= 2;
+      controller.hasSecondaryCardFront.value = _tabController.index >= 2;
       controller.markStackInteracted();
     }
   }
@@ -150,7 +150,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
           children: [
             Obx(() {
               final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
-              final hidden = keyboardUp || controller.isKeypadOpen.value;
+              final hidden = keyboardUp || controller.hasKeypadOpen.value;
               return AnimatedOpacity(
                 opacity: hidden ? 0 : 1,
                 duration: const Duration(milliseconds: 200),
@@ -192,7 +192,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
 
     return Obx(() {
       final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
-      final hidden = keyboardUp || controller.isKeypadOpen.value;
+      final hidden = keyboardUp || controller.hasKeypadOpen.value;
       final showInvestmentBadge = controller.showInvestmentBadge;
 
       // Wide windows (beside the rail, large tablets): the tab bar and form

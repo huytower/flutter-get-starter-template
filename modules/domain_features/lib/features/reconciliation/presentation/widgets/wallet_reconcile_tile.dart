@@ -37,22 +37,22 @@ class WalletReconcileTile extends StatelessWidget {
     return Obx(() {
       final currencyCode = walletController.currencyCode.value;
       final counted = controller.actualOf(balance.wallet.id);
-      final isCounted = counted != null;
+      final hasCounted = counted != null;
       final actual = counted ?? balance.bookBalance;
       final diff = actual - balance.bookBalance;
-      final isBalanced = diff == 0;
-      final isAcknowledged = controller.isAcknowledged(balance.wallet.id);
-      final isResolved = isBalanced || isAcknowledged;
-      final isEditing = controller.editingWalletId.value == balance.wallet.id;
+      final hasBalanced = diff == 0;
+      final hasAcknowledged = controller.isAcknowledged(balance.wallet.id);
+      final hasResolved = hasBalanced || hasAcknowledged;
+      final hasEditing = controller.editingWalletId.value == balance.wallet.id;
       final scheme = context.ccColorScheme;
 
       Widget actualInput() => WalletActualBalanceInput(
         actual: counted,
-        isEditing: isEditing,
+        hasEditing: hasEditing,
         currencyCode: currencyCode,
         onTap: () => controller.startEditing(balance.wallet.id),
         onClear: () {
-          if (isEditing) {
+          if (hasEditing) {
             controller.clearAmount();
           } else {
             controller.resetActual(balance.wallet.id);
@@ -62,9 +62,9 @@ class WalletReconcileTile extends StatelessWidget {
 
       // Not counted yet: neutral, never an error — the wallet is assumed to
       // match its book balance until the user enters a counted amount.
-      final statusColor = !isCounted
+      final statusColor = !hasCounted
           ? scheme.onSurfaceVariant
-          : isResolved
+          : hasResolved
           ? scheme.primary
           : scheme.error;
 
@@ -77,10 +77,10 @@ class WalletReconcileTile extends StatelessWidget {
           color: scheme.surface,
           borderRadius: context.brLg,
           border: Border.all(
-            color: isEditing
+            color: hasEditing
                 ? scheme.primary
                 : scheme.outlineVariant.withValues(alpha: 0.4),
-            width: isEditing ? 2 : 1,
+            width: hasEditing ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -134,9 +134,9 @@ class WalletReconcileTile extends StatelessWidget {
                   ),
                 const CcSpaceSM(),
                 WalletReconcileStatusRow(
-                  isCounted: isCounted,
-                  isBalanced: isBalanced,
-                  isAcknowledged: isAcknowledged,
+                  hasCounted: hasCounted,
+                  hasBalanced: hasBalanced,
+                  hasAcknowledged: hasAcknowledged,
                   diff: diff,
                   currencyCode: currencyCode,
                   statusColor: statusColor,
@@ -200,7 +200,7 @@ class WalletReconcileTile extends StatelessWidget {
 class WalletActualBalanceInput extends StatefulWidget {
   /// Counted amount, or null while the wallet has not been counted yet.
   final int? actual;
-  final bool isEditing;
+  final bool hasEditing;
   final String currencyCode;
   final VoidCallback onTap;
   final VoidCallback onClear;
@@ -208,7 +208,7 @@ class WalletActualBalanceInput extends StatefulWidget {
   const WalletActualBalanceInput({
     super.key,
     required this.actual,
-    required this.isEditing,
+    required this.hasEditing,
     required this.currencyCode,
     required this.onTap,
     required this.onClear,
@@ -266,10 +266,10 @@ class _WalletActualBalanceInputState extends State<WalletActualBalanceInput> {
               margin: EdgeInsets.zero,
               textAlign: TextAlign.end,
               color: scheme.surface,
-              borderColor: widget.isEditing
+              borderColor: widget.hasEditing
                   ? scheme.primary
                   : scheme.outline.withValues(alpha: 0.5),
-              borderWidth: widget.isEditing ? 1.5 : 1,
+              borderWidth: widget.hasEditing ? 1.5 : 1,
               // Reserves room for the clear icon drawn on top.
               suffixIcon: widget.actual == null
                   ? null
@@ -299,9 +299,9 @@ class _WalletActualBalanceInputState extends State<WalletActualBalanceInput> {
 }
 
 class WalletReconcileStatusRow extends StatelessWidget {
-  final bool isCounted;
-  final bool isBalanced;
-  final bool isAcknowledged;
+  final bool hasCounted;
+  final bool hasBalanced;
+  final bool hasAcknowledged;
   final int diff;
   final String currencyCode;
   final Color statusColor;
@@ -314,9 +314,9 @@ class WalletReconcileStatusRow extends StatelessWidget {
 
   const WalletReconcileStatusRow({
     super.key,
-    required this.isCounted,
-    required this.isBalanced,
-    required this.isAcknowledged,
+    required this.hasCounted,
+    required this.hasBalanced,
+    required this.hasAcknowledged,
     required this.diff,
     required this.currencyCode,
     required this.statusColor,
@@ -329,7 +329,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    if (!isCounted) {
+    if (!hasCounted) {
       return Row(
         children: [
           Icon(
@@ -348,7 +348,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
       );
     }
 
-    if (isBalanced) {
+    if (hasBalanced) {
       return Row(
         children: [
           const CcIconToken(Icons.check_circle_outline, size: 16),
@@ -367,7 +367,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
     final status = Row(
       children: [
         Icon(
-          isAcknowledged ? Icons.check_circle_outline : Icons.error_outline,
+          hasAcknowledged ? Icons.check_circle_outline : Icons.error_outline,
           color: statusColor,
           size: 16,
         ),
@@ -390,7 +390,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
     final actions = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!isAcknowledged)
+        if (!hasAcknowledged)
           CcBouncing(
             onTap: onAcknowledge,
             child: CcText(

@@ -78,7 +78,7 @@ class InvestHeroBanner extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             CcText(
-                              walletController.isBalanceVisible.value
+                              walletController.hasBalanceVisible.value
                                   ? TransactionFormHelpers.formatShortWithSymbol(
                                       walletController.allTimeInvested.value,
                                       currencyCode:
@@ -100,7 +100,7 @@ class InvestHeroBanner extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             CcText(
-                              walletController.isBalanceVisible.value
+                              walletController.hasBalanceVisible.value
                                   ? TransactionFormHelpers.formatShortWithSymbol(
                                       walletController.allTimeReturned.value,
                                       currencyCode:
@@ -159,7 +159,7 @@ class InvestHeroBanner extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return Obx(() {
-      final isVisible = walletController.isBalanceVisible.value;
+      final hasVisible = walletController.hasBalanceVisible.value;
       final roi = walletController.monthlyRoiPercent.value;
       final breakeven = walletController.monthlyBreakevenPercent.value;
 
@@ -175,7 +175,7 @@ class InvestHeroBanner extends StatelessWidget {
           const SizedBox(height: 6),
           CompactStatRow(
             label: 'ROI',
-            value: isVisible
+            value: hasVisible
                 ? '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%'
                 : '***%',
             color: scheme.onPrimary,
@@ -183,7 +183,7 @@ class InvestHeroBanner extends StatelessWidget {
           const SizedBox(height: 2),
           CompactStatRow(
             label: el.tr(PrjLocaleKeys.wallet_investment_breakeven),
-            value: isVisible ? '${breakeven.toStringAsFixed(1)}%' : '***%',
+            value: hasVisible ? '${breakeven.toStringAsFixed(1)}%' : '***%',
             color: scheme.onPrimary.withOpacity(0.9),
           ),
           const SizedBox(height: 6),

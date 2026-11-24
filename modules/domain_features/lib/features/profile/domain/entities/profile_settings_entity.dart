@@ -8,16 +8,16 @@ class ProfileSettingsEntity {
     this.currencySelectionSource,
     this.currencyDetectionCountryCode,
     this.birthYear,
-    this.isDarkMode,
+    this.hasDarkMode,
     this.weeklyAuditDayChangedAt,
     this.levelFeatureAnchorAt,
-    this.isVip = false,
+    this.hasVip = false,
     this.highestUserLevelReached = 1,
     this.firstLaunchAt,
     this.cloudBackupReminderSentAt,
     this.hasViewedEmergencyFundEbook = false,
     this.hasSeenTutorial = false,
-    this.isHeaderFlipped = false,
+    this.hasHeaderFlipped = false,
     this.hasCustomizedCategories = false,
     this.completedGuidelineTaskIds = const [],
   });
@@ -35,7 +35,7 @@ class ProfileSettingsEntity {
   final int? birthYear;
 
   /// Theme mode preference: true for dark, false for light, null for system default
-  final bool? isDarkMode;
+  final bool? hasDarkMode;
 
   /// Last time the user changed [weeklyAuditDayIndex]; null if never changed.
   /// User-level reconciliation-streak progress only counts data from this
@@ -49,7 +49,7 @@ class ProfileSettingsEntity {
 
   /// Manual VIP flag (no real IAP/store billing infra exists yet). Lifts the
   /// free-tier cap on the number of Investment items / Loan records.
-  final bool isVip;
+  final bool hasVip;
 
   /// Highest LV1-3 user level ever computed. Level is monotonic — never
   /// decreases once reached — so the user-level usecase re-applies this
@@ -73,7 +73,7 @@ class ProfileSettingsEntity {
 
   /// Whether the profile header card is currently showing the back surface
   /// (experience chart).
-  final bool isHeaderFlipped;
+  final bool hasHeaderFlipped;
 
   /// Whether the user has manually customized their category settings.
   /// When true, age-based recommendations won't override their choices.
@@ -89,16 +89,16 @@ class ProfileSettingsEntity {
     String? currencySelectionSource,
     String? currencyDetectionCountryCode,
     int? birthYear,
-    bool? isDarkMode,
+    bool? hasDarkMode,
     DateTime? weeklyAuditDayChangedAt,
     DateTime? levelFeatureAnchorAt,
-    bool? isVip,
+    bool? hasVip,
     int? highestUserLevelReached,
     DateTime? firstLaunchAt,
     DateTime? cloudBackupReminderSentAt,
     bool? hasViewedEmergencyFundEbook,
     bool? hasSeenTutorial,
-    bool? isHeaderFlipped,
+    bool? hasHeaderFlipped,
     bool? hasCustomizedCategories,
     List<String>? completedGuidelineTaskIds,
   }) => ProfileSettingsEntity(
@@ -110,11 +110,11 @@ class ProfileSettingsEntity {
     currencyDetectionCountryCode:
         currencyDetectionCountryCode ?? this.currencyDetectionCountryCode,
     birthYear: birthYear ?? this.birthYear,
-    isDarkMode: isDarkMode ?? this.isDarkMode,
+    hasDarkMode: hasDarkMode ?? this.hasDarkMode,
     weeklyAuditDayChangedAt:
         weeklyAuditDayChangedAt ?? this.weeklyAuditDayChangedAt,
     levelFeatureAnchorAt: levelFeatureAnchorAt ?? this.levelFeatureAnchorAt,
-    isVip: isVip ?? this.isVip,
+    hasVip: hasVip ?? this.hasVip,
     highestUserLevelReached:
         highestUserLevelReached ?? this.highestUserLevelReached,
     firstLaunchAt: firstLaunchAt ?? this.firstLaunchAt,
@@ -123,7 +123,7 @@ class ProfileSettingsEntity {
     hasViewedEmergencyFundEbook:
         hasViewedEmergencyFundEbook ?? this.hasViewedEmergencyFundEbook,
     hasSeenTutorial: hasSeenTutorial ?? this.hasSeenTutorial,
-    isHeaderFlipped: isHeaderFlipped ?? this.isHeaderFlipped,
+    hasHeaderFlipped: hasHeaderFlipped ?? this.hasHeaderFlipped,
     hasCustomizedCategories:
         hasCustomizedCategories ?? this.hasCustomizedCategories,
     completedGuidelineTaskIds:

@@ -103,7 +103,7 @@ class QuickEntryBatchSession extends QuickEntrySession {
     BuildContext context,
     List<ParsedTransactionEntity> rows,
   ) async {
-    if (host.isSubmitting.value) return const SmartEntryCommitResult(saved: 0);
+    if (host.hasSubmitting.value) return const SmartEntryCommitResult(saved: 0);
 
     final categories = {
       for (final category
@@ -114,9 +114,9 @@ class QuickEntryBatchSession extends QuickEntrySession {
     final now = DateTime.now();
     final params = [for (final row in rows) _toParams(row, categories, now)];
 
-    host.isSubmitting.value = true;
+    host.hasSubmitting.value = true;
     final result = await handler.committer.save(params);
-    host.isSubmitting.value = false;
+    host.hasSubmitting.value = false;
 
     final savedParams = params.take(result.saved).toList();
     if (savedParams.isNotEmpty) {

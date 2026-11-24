@@ -162,7 +162,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     String label,
     IconData icon,
   ) {
-    final isSelected = controller.direction.value == direction;
+    final hasSelected = controller.direction.value == direction;
     final scheme = context.ccColorScheme;
 
     return CcBouncing(
@@ -173,15 +173,15 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
           vertical: context.respPadding(CcPaddingParams.SPACE_MD),
         ),
         decoration: BoxDecoration(
-          color: isSelected
+          color: hasSelected
               ? scheme.primaryContainer.withValues(alpha: 0.2)
               : scheme.onSurface.withOpacity(0.04),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
+            color: hasSelected
                 ? scheme.primary.withOpacity(0.3)
                 : scheme.onSurface.withOpacity(0.08),
-            width: isSelected ? 2 : 1,
+            width: hasSelected ? 2 : 1,
           ),
         ),
         child: Row(
@@ -190,16 +190,16 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
             Icon(
               icon,
               size: context.respIconSize(baseSize: 18),
-              color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
+              color: hasSelected ? scheme.primary : scheme.onSurfaceVariant,
             ),
             const CcSpaceSM(),
             CcText(
               label,
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                fontWeight: isSelected
+                fontWeight: hasSelected
                     ? CcTypographyParams.bold
                     : FontWeight.normal,
-                color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
+                color: hasSelected ? scheme.primary : scheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -235,14 +235,14 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
               itemBuilder: (context, index) {
                 final category = categories[index];
                 return Obx(() {
-                  final isSelected =
+                  final hasSelected =
                       controller.selectedLiabilityCategory.value?.id ==
                       category.id;
                   return PrjCategoryItem(
                     iconCode: category.iconCode,
                     iconFamily: category.iconFamily,
                     label: el.tr(category.nameKey),
-                    isSelected: isSelected,
+                    hasSelected: hasSelected,
                     onTap: () => controller.selectLiabilityCategory(category),
                   );
                 });
@@ -270,7 +270,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
           namedArgs: {'count': '25'},
         ),
         onClear: () {
-          controller.isNameValid.value = false;
+          controller.hasNameValid.value = false;
           controller.selectedLiabilityCategory.value = null;
           controller.nameError.value = null;
         },
@@ -285,12 +285,12 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     return Obx(() {
       final bool canSave =
           controller.selectedLiabilityCategory.value != null &&
-          !controller.isSubmitting.value;
+          !controller.hasSubmitting.value;
 
       return CcSaveButton(
         onPressed: canSave ? () => controller.save(context) : null,
         label: el.tr(PrjLocaleKeys.common_save),
-        isLoading: controller.isSubmitting.value,
+        hasLoading: controller.hasSubmitting.value,
       );
     });
   }

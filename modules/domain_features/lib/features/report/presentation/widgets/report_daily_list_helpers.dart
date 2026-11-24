@@ -11,8 +11,8 @@ bool computeIsInflow(TransactionEntity transaction) {
 }
 
 bool isEditableTransaction(TransactionEntity transaction) {
-  if (transaction.isDeleted) return false;
-  if (transaction.isTransfer) return false;
+  if (transaction.hasDeleted) return false;
+  if (transaction.hasTransfer) return false;
   return DateTime.now().difference(transaction.date).inDays <=
       transactionEditWindowDays;
 }

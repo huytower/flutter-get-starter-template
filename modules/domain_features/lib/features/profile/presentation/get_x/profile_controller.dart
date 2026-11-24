@@ -161,7 +161,23 @@ class ProfileController extends PrjGetController {
   // COMPUTED PROPERTIES
   // ===========================================================================
 
-  bool get isLoggedIn => user.value != null;
+  bool get hasLoggedIn => user.value != null;
+
+  /// Deleting an Apple-linked account asks Apple to confirm first.
+  bool get hasAppleSignIn =>
+      user.value?.linkedProviderIds.contains('apple.com') ?? false;
+
+  /// How the signed-in account is identified to the user: email, else phone,
+  /// else name. Null for an account with none of them.
+  String? get accountLabel {
+    final u = user.value;
+    if (u == null) return null;
+    if (u.email.isNotEmpty) return u.email;
+    final phone = u.phoneNumber ?? '';
+    if (phone.isNotEmpty) return phone;
+    final name = ProfileDisplayText.fullName(u);
+    return name.isEmpty ? null : name;
+  }
 
   String get displayName => ProfileDisplayText.displayName(user.value);
 
@@ -207,7 +223,7 @@ class ProfileController extends PrjGetController {
   }
 
   Future<void> setVip(bool value) async {
-    await _save(settings.value.copyWith(isVip: value));
+    await _save(settings.value.copyWith(hasVip: value));
 
     if (value) await _onboarding.enableFullAccessCategories();
 
@@ -220,14 +236,14 @@ class ProfileController extends PrjGetController {
     _onboarding.refreshCategorySettings();
   }
 
-  Future<void> setThemeMode(bool isDarkMode) async {
-    _settingsActions.applyTheme(isDarkMode: isDarkMode);
-    await _save(settings.value.copyWith(isDarkMode: isDarkMode));
+  Future<void> setThemeMode(bool hasDarkMode) async {
+    _settingsActions.applyTheme(hasDarkMode: hasDarkMode);
+    await _save(settings.value.copyWith(hasDarkMode: hasDarkMode));
   }
 
-  Future<void> setHeaderFlipped(bool isFlipped) async {
-    if (settings.value.isHeaderFlipped == isFlipped) return;
-    await _save(settings.value.copyWith(isHeaderFlipped: isFlipped));
+  Future<void> setHeaderFlipped(bool hasFlipped) async {
+    if (settings.value.hasHeaderFlipped == hasFlipped) return;
+    await _save(settings.value.copyWith(hasHeaderFlipped: hasFlipped));
   }
 
   /// Guards sign-out so the user can never leave behind unsynced financial
@@ -241,7 +257,7 @@ class ProfileController extends PrjGetController {
   LogoutBlock? get logoutBlock => _account.logoutBlock;
 
   void handleHeroBannerTap(BuildContext context) {
-    if (!isLoggedIn) _account.openLogin(context);
+    if (!hasLoggedIn) _account.openLogin(context);
   }
 
   void openCrashLogViewer(BuildContext context) =>
@@ -273,7 +289,7 @@ class ProfileController extends PrjGetController {
   /// Guests have no Firebase account to update — the edit affordance is
   /// hidden for them in [ProfileHeader], but guard here too.
   Future<void> pickDisplayName(BuildContext context) async {
-    if (!isLoggedIn) return;
+    if (!hasLoggedIn) return;
 
     final name = await ProfileSheets.displayName(
       context,
@@ -349,7 +365,7 @@ class ProfileController extends PrjGetController {
 
   /// Only guests are sent to login from the avatar.
   void handleAvatarTap(BuildContext context) {
-    if (!isLoggedIn) _account.openLogin(context);
+    if (!hasLoggedIn) _account.openLogin(context);
   }
 
   Future<void> navigateToCategorySettings(BuildContext context) async {

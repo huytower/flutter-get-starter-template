@@ -78,16 +78,16 @@ class TransactionTabBar extends StatelessWidget {
                     _buildCard(
                       context: context,
                       cardWidth: constraints.maxWidth,
-                      isFront: false,
-                      isSecondary: !controller.isSecondaryCardFront.value,
+                      hasFront: false,
+                      hasSecondary: !controller.hasSecondaryCardFront.value,
                       scheme: scheme,
                     ),
                     // Front Card (Interaction)
                     _buildCard(
                       context: context,
                       cardWidth: constraints.maxWidth,
-                      isFront: true,
-                      isSecondary: controller.isSecondaryCardFront.value,
+                      hasFront: true,
+                      hasSecondary: controller.hasSecondaryCardFront.value,
                       scheme: scheme,
                     ),
                   ],
@@ -103,13 +103,13 @@ class TransactionTabBar extends StatelessWidget {
   Widget _buildCard({
     required BuildContext context,
     required double cardWidth,
-    required bool isFront,
-    required bool isSecondary,
+    required bool hasFront,
+    required bool hasSecondary,
     required ColorScheme scheme,
   }) {
     final cardHeight = context.respDim(44);
 
-    final tabs = isSecondary
+    final tabs = hasSecondary
         ? [
             TransactionTabKind.investment,
             TransactionTabKind.borrow,
@@ -118,9 +118,9 @@ class TransactionTabBar extends StatelessWidget {
         : [TransactionTabKind.expense, TransactionTabKind.income];
 
     // Animation values
-    final double scale = isFront ? 1.0 : 0.94;
-    final double opacity = isFront ? 1.0 : 0.45;
-    final double yOffset = isFront ? 0 : -context.respDim(8);
+    final double scale = hasFront ? 1.0 : 0.94;
+    final double opacity = hasFront ? 1.0 : 0.45;
+    final double yOffset = hasFront ? 0 : -context.respDim(8);
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 400),
@@ -135,11 +135,11 @@ class TransactionTabBar extends StatelessWidget {
           curve: const Cubic(0.2, 0.8, 0.2, 1.0),
           opacity: opacity,
           child: IgnorePointer(
-            ignoring: !isFront,
+            ignoring: !hasFront,
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
-                onTap: isFront
+                onTap: hasFront
                     ? null
                     : () {
                         controller.toggleCardStack();
@@ -156,10 +156,10 @@ class TransactionTabBar extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color: scheme.onSurface.withOpacity(
-                          isFront ? 0.12 : 0.05,
+                          hasFront ? 0.12 : 0.05,
                         ),
                         blurRadius: context.respDim(12),
-                        offset: Offset(0, context.respDim(isFront ? 6 : 2)),
+                        offset: Offset(0, context.respDim(hasFront ? 6 : 2)),
                       ),
                     ],
                   ),
@@ -198,15 +198,15 @@ class TransactionTabBar extends StatelessWidget {
   Widget _buildTabItem(
     BuildContext context,
     TransactionTabKind kind,
-    bool isSelected,
+    bool hasSelected,
     ColorScheme scheme,
   ) {
-    final isUnlocked = controller.isTabUnlocked(kind);
+    final hasUnlocked = controller.isTabUnlocked(kind);
     final activeColor = kind.color(context);
 
     return CcInteractionWrapper(
-      isEnable: true,
-      isBouncing: true,
+      hasEnable: true,
+      hasBouncing: true,
       useDebounce: true,
       onTap: () {
         final index = controller.visibleTabs.indexOf(kind);
@@ -217,7 +217,7 @@ class TransactionTabBar extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected
+          color: hasSelected
               ? activeColor.withOpacity(0.08)
               : Colors.transparent,
           borderRadius: context.brLg,
@@ -226,13 +226,13 @@ class TransactionTabBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (!isUnlocked)
+            if (!hasUnlocked)
               Padding(
                 padding: const EdgeInsets.only(right: 4),
                 child: Icon(
                   Icons.lock_outline_rounded,
                   size: context.respIconSize(baseSize: 12),
-                  color: isSelected
+                  color: hasSelected
                       ? activeColor.withOpacity(0.6)
                       : scheme.onSurfaceVariant.withOpacity(0.5),
                 ),
@@ -241,23 +241,23 @@ class TransactionTabBar extends StatelessWidget {
               kind.label(context),
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                fontWeight: isSelected ? CcTypographyParams.bold : null,
-                color: isSelected
+                fontWeight: hasSelected ? CcTypographyParams.bold : null,
+                color: hasSelected
                     ? activeColor
                     : scheme.onSurfaceVariant.withOpacity(
-                        isUnlocked ? 1.0 : 0.5,
+                        hasUnlocked ? 1.0 : 0.5,
                       ),
               ),
             ),
             if (kind == TransactionTabKind.investment &&
                 showInvestmentBadge &&
-                !isSelected)
+                !hasSelected)
               _buildBadge(context),
             if (kind == TransactionTabKind.borrow &&
                 showLiabilityBadge &&
-                !isSelected)
+                !hasSelected)
               _buildBadge(context),
-            if (kind == TransactionTabKind.lend && showLendBadge && !isSelected)
+            if (kind == TransactionTabKind.lend && showLendBadge && !hasSelected)
               _buildBadge(context),
           ],
         ),
@@ -274,7 +274,7 @@ class TransactionTabBar extends StatelessWidget {
 
   Widget _buildToggleAction(BuildContext context, ColorScheme scheme) {
     final guideline = getIt<GuidelineProvider>();
-    final bool isSecondaryFront = controller.isSecondaryCardFront.value;
+    final bool hasSecondaryFront = controller.hasSecondaryCardFront.value;
     final String? activeTaskId = guideline.currentTaskId;
 
     // Show badge on reveal icon if there's a task on the back card
@@ -285,8 +285,8 @@ class TransactionTabBar extends StatelessWidget {
 
     // Show label on the reveal icon ONLY when the back card is NOT in front
     // but the dot stays if there's an active task.
-    final bool showLabelOnReveal = !isSecondaryFront && hasBackCardTask;
-    final bool showBadgeOnReveal = !isSecondaryFront && hasBackCardTask;
+    final bool showLabelOnReveal = !hasSecondaryFront && hasBackCardTask;
+    final bool showBadgeOnReveal = !hasSecondaryFront && hasBackCardTask;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -297,7 +297,7 @@ class TransactionTabBar extends StatelessWidget {
             tabController.animateTo(controller.selectedTabIndex.value);
           },
           icon: Icon(
-            isSecondaryFront
+            hasSecondaryFront
                 ? Icons.keyboard_double_arrow_left_rounded
                 : Icons.keyboard_double_arrow_right_rounded,
             size: context.respIconSize(baseSize: 16),

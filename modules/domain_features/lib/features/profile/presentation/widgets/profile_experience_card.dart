@@ -10,20 +10,20 @@ class ProfileExperienceCard extends StatelessWidget {
   final int level;
   final UserLevelStatusEntity levelStatus;
   final VoidCallback? onTap;
-  final bool isImmersive;
+  final bool hasImmersive;
 
   const ProfileExperienceCard({
     super.key,
     required this.level,
     required this.levelStatus,
     this.onTap,
-    this.isImmersive = false,
+    this.hasImmersive = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isVip = levelStatus.isVip;
-    final themeColor = isVip
+    final hasVip = levelStatus.hasVip;
+    final themeColor = hasVip
         ? const Color(0xFFF59E0B)
         : context.ccColorScheme.primary;
 
@@ -32,7 +32,7 @@ class ProfileExperienceCard extends StatelessWidget {
       borderRadius: context.brLg,
       child: Container(
         width: double.infinity,
-        decoration: isImmersive
+        decoration: hasImmersive
             ? null
             : BoxDecoration(
                 color: context.ccColorScheme.surface,
@@ -161,7 +161,7 @@ class ProfileExperienceCard extends StatelessWidget {
     final double progress;
     final String progressText;
 
-    if (levelStatus.isVip) {
+    if (levelStatus.hasVip) {
       progress = 1.0;
       progressText = el.tr(PrjLocaleKeys.profile_unlocked);
     } else if (level < 2) {

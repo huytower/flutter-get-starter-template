@@ -201,12 +201,12 @@ List<({String name, int price})> extractItemsFromText(String text) {
         .trim();
 
     // Ignore items that are just punctuation or repeated zeros (OCR artifacts)
-    final isNoise =
+    final hasNoise =
         name.isEmpty ||
         _localePack.regex.ocrNoisePattern.hasMatch(name) ||
         name.length < 2;
 
-    if (!isNoise && !_isStopWord(name)) {
+    if (!hasNoise && !_isStopWord(name)) {
       items.add((name: name, price: value));
     }
   }
@@ -342,11 +342,11 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
         return result;
       }
 
-      final isInflow =
+      final hasInflow =
           detectedDirection == QuickEntryIntent.income ||
           detectedDirection == QuickEntryIntent.debt;
 
-      final result = isInflow
+      final result = hasInflow
           ? contextEntry.value['inflow']!
           : contextEntry.value['outflow']!;
 
@@ -539,10 +539,10 @@ ParsedTransactionEntity parseQuickEntryTextLocally({
     }
   }
 
-  final isOcrText = text.contains('\n');
+  final hasOcrText = text.contains('\n');
 
   String? matchedCategoryId;
-  if (!isOcrText) {
+  if (!hasOcrText) {
     // Use word boundaries for short aliases to avoid partial matches
     for (final aliasEntry in _sortedCategoryKeywordAliases) {
       final pattern = aliasEntry.key.length <= 3
@@ -613,10 +613,10 @@ ParsedTransactionEntity parseQuickEntryTextLocally({
       .join(' ')
       .trim();
 
-  String? finalNote = isOcrText
+  String? finalNote = hasOcrText
       ? _extractLabeledFieldValue(text, _localePack.noteFieldLabels)
       : (residualNote.isEmpty ? null : residualNote);
-  if (isOcrText) {
+  if (hasOcrText) {
     final labeledCategoryText = _extractLabeledFieldValue(
       text,
       _localePack.categoryFieldLabels,

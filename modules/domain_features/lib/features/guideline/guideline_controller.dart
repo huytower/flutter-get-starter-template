@@ -56,11 +56,11 @@ class GuidelineController extends GetxController {
 
   /// Whether the descriptive text labels on guideline badges are hidden.
   /// Users can tap a bubble to hide all of them.
-  final RxBool isDescriptionHidden = false.obs;
+  final RxBool hasDescriptionHidden = false.obs;
 
   /// Whether the large guideline banner in the page header is hidden.
   /// Users can swipe to hide it.
-  final RxBool isBannerHidden = false.obs;
+  final RxBool hasBannerHidden = false.obs;
 
   /// True once the user has created their first investment position.
   /// Controls where the investment guideline badge points:
@@ -87,8 +87,8 @@ class GuidelineController extends GetxController {
     // This ensures the description/banner is shown for the new step even if
     // the user dismissed them for the previous step.
     ever(completedTasks, (_) {
-      isDescriptionHidden.value = false;
-      isBannerHidden.value = false;
+      hasDescriptionHidden.value = false;
+      hasBannerHidden.value = false;
     });
   }
 

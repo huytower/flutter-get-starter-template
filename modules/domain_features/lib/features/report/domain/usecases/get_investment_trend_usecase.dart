@@ -45,7 +45,7 @@ class GetInvestmentTrendUseCase {
         .tryGetSuccess()!
         .where(
           (t) =>
-              !t.isDeleted &&
+              !t.hasDeleted &&
               (t.type == TransactionType.investmentOut ||
                   t.type == TransactionType.investmentReturn) &&
               (walletId == null ||

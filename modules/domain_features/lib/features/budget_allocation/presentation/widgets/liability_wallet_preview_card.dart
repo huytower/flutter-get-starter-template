@@ -92,7 +92,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                 ),
                 _buildCompactStat(
                   context,
-                  iconAsset: liability.isBorrow
+                  iconAsset: liability.hasBorrow
                       ? 'assets/icon/ic_borrow.webp'
                       : 'assets/icon/ic_lend.webp',
                   color: context.ccColorScheme.onSurface,
@@ -126,7 +126,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
         const CcSpaceXS(),
         Obx(
           () => CcText(
-            controller.isBalanceVisible.value
+            controller.hasBalanceVisible.value
                 ? _formatStatValue(value, balance.liability.currencyCode)
                 : '*****',
             textStyle: context.ccTextTheme.labelSmall?.copyWith(

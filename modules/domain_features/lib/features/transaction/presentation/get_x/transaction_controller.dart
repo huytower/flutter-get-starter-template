@@ -43,7 +43,7 @@ class TransactionController extends PrjGetController {
   final RxInt selectedTabIndex = 0.obs;
 
   /// Whether the secondary card (Investment | Liability | Lend) is currently in front.
-  final RxBool isSecondaryCardFront = false.obs;
+  final RxBool hasSecondaryCardFront = false.obs;
 
   /// Whether the user has interacted with the card stack at least once.
   /// Persisted in [PrjAppStorage] to hide the interaction hint.
@@ -81,47 +81,47 @@ class TransactionController extends PrjGetController {
 
   /// True when the page header should be auto-hidden (scrolled down, or a
   /// keypad / soft keyboard is visible).
-  final RxBool isHeaderHidden = false.obs;
+  final RxBool hasHeaderHidden = false.obs;
 
   /// True while the custom transaction keypad (or soft keyboard) is shown.
-  final RxBool isKeypadOpen = false.obs;
+  final RxBool hasKeypadOpen = false.obs;
 
   /// Total book balance across all wallets, shown in the header "Ví" chip.
   final RxInt walletTotal = 0.obs;
 
   /// Shared wallet list for all forms to avoid duplicate API calls
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
-  final RxBool isLoadingWallets = false.obs;
+  final RxBool hasLoadingWallets = false.obs;
 
   /// Temporary flag to show wallet summary in the AppBar for 2 seconds.
   final RxBool showWalletSummaryTemporarily = false.obs;
 
   void setTabIndex(int index) {
     selectedTabIndex.value = index;
-    isHeaderHidden.value = false;
+    hasHeaderHidden.value = false;
   }
 
   /// Switches to the appropriate tab based on the detected [intent].
   void switchToTabForIntent(QuickEntryIntent intent) {
     switch (intent) {
       case QuickEntryIntent.expense:
-        if (isSecondaryCardFront.value) toggleCardStack();
+        if (hasSecondaryCardFront.value) toggleCardStack();
         setTabIndex(0);
         break;
       case QuickEntryIntent.income:
-        if (isSecondaryCardFront.value) toggleCardStack();
+        if (hasSecondaryCardFront.value) toggleCardStack();
         setTabIndex(1);
         break;
       case QuickEntryIntent.investment:
-        if (!isSecondaryCardFront.value) toggleCardStack();
+        if (!hasSecondaryCardFront.value) toggleCardStack();
         setTabIndex(2);
         break;
       case QuickEntryIntent.debt:
-        if (!isSecondaryCardFront.value) toggleCardStack();
+        if (!hasSecondaryCardFront.value) toggleCardStack();
         setTabIndex(3);
         break;
       case QuickEntryIntent.lend:
-        if (!isSecondaryCardFront.value) toggleCardStack();
+        if (!hasSecondaryCardFront.value) toggleCardStack();
         setTabIndex(4);
         break;
     }
@@ -183,13 +183,13 @@ class TransactionController extends PrjGetController {
 
   /// Swaps the front/back cards in the transaction tab stack.
   void toggleCardStack() {
-    isSecondaryCardFront.value = !isSecondaryCardFront.value;
+    hasSecondaryCardFront.value = !hasSecondaryCardFront.value;
     markStackInteracted();
 
     // When swapping to a card, automatically select its first tab if the
     // current selection is on the other card.
     final currentIndex = selectedTabIndex.value;
-    if (isSecondaryCardFront.value) {
+    if (hasSecondaryCardFront.value) {
       if (currentIndex < 2) setTabIndex(2);
     } else {
       if (currentIndex >= 2) setTabIndex(0);
@@ -267,9 +267,9 @@ class TransactionController extends PrjGetController {
   }
 
   Future<void> loadWallets() async {
-    isLoadingWallets.value = true;
+    hasLoadingWallets.value = true;
     final result = await _walletRepository.getWallets();
-    isLoadingWallets.value = false;
+    hasLoadingWallets.value = false;
     result.when((walletList) => wallets.assignAll(walletList), (_) {});
   }
 
@@ -298,20 +298,20 @@ class TransactionController extends PrjGetController {
   }
 
   bool get showInvestmentBadge {
-    if (!getIt<GuidelineProvider>().isAvailable) return false;
+    if (!getIt<GuidelineProvider>().hasAvailable) return false;
     final guideline = getIt<GuidelineProvider>();
     return guideline.isTaskActive('investment') &&
         guideline.hasCreatedFirstInvestment;
   }
 
   bool get showLiabilityBadge {
-    if (!getIt<GuidelineProvider>().isAvailable) return false;
+    if (!getIt<GuidelineProvider>().hasAvailable) return false;
     final guideline = getIt<GuidelineProvider>();
     return guideline.isTaskActive('liability');
   }
 
   bool get showLendBadge {
-    if (!getIt<GuidelineProvider>().isAvailable) return false;
+    if (!getIt<GuidelineProvider>().hasAvailable) return false;
     final guideline = getIt<GuidelineProvider>();
     return guideline.isTaskActive('lend');
   }

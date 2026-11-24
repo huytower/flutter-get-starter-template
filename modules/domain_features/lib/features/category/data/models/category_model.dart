@@ -33,7 +33,7 @@ class CategoryModel {
   final String groupId;
 
   @HiveField(6)
-  final bool isEnabled;
+  final bool hasEnabled;
 
   /// Nullable for records written before the field existed — read back as
   /// [CategoryType.expense].
@@ -59,7 +59,7 @@ class CategoryModel {
     this.iconFamily,
     this.colorValue,
     required this.groupId,
-    this.isEnabled = true,
+    this.hasEnabled = true,
     this.type = CategoryType.expense,
     this.remoteId,
     this.syncStatus,
@@ -74,7 +74,7 @@ class CategoryModel {
     iconFamily: entity.iconFamily,
     colorValue: entity.color?.toARGB32(),
     groupId: entity.groupId,
-    isEnabled: entity.isEnabled,
+    hasEnabled: entity.hasEnabled,
     type: entity.type,
   );
 
@@ -85,7 +85,7 @@ class CategoryModel {
     iconFamily: iconFamily,
     color: colorValue != null ? Color(colorValue!) : null,
     groupId: groupId,
-    isEnabled: isEnabled,
+    hasEnabled: hasEnabled,
     type: type ?? CategoryType.expense,
   );
 
@@ -110,7 +110,7 @@ class CategoryModel {
       iconFamily: iconFamily,
       colorValue: colorValue,
       groupId: groupId,
-      isEnabled: isEnabled,
+      hasEnabled: hasEnabled,
       type: type,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
@@ -126,7 +126,7 @@ class CategoryModel {
       'iconFamily': iconFamily,
       'colorValue': colorValue,
       'groupId': groupId,
-      'isEnabled': isEnabled,
+      'isEnabled': hasEnabled,
       'type': type,
     };
   }
@@ -147,7 +147,7 @@ class CategoryModel {
       iconFamily: data['iconFamily'] as String?,
       colorValue: data['colorValue'] as int?,
       groupId: data['groupId'] as String,
-      isEnabled: data['isEnabled'] as bool? ?? true,
+      hasEnabled: data['isEnabled'] as bool? ?? true,
       type: data['type'] as String? ?? CategoryType.expense,
       remoteId: data['remoteId'] as String?,
       syncStatus: SyncStatus.synced.name,

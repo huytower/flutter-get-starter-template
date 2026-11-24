@@ -24,10 +24,10 @@ class BudgetLimitEntity extends Equatable {
   final int order;
 
   /// Soft-deleted/archived budgets are hidden but kept in storage.
-  final bool isClosed;
+  final bool hasClosed;
 
   /// True if the budget has a fixed price/cost.
-  final bool isFixedPrice;
+  final bool hasFixedPrice;
 
   final String currencyCode;
 
@@ -37,8 +37,8 @@ class BudgetLimitEntity extends Equatable {
     required this.name,
     required this.limit,
     this.order = 0,
-    this.isClosed = false,
-    this.isFixedPrice = false,
+    this.hasClosed = false,
+    this.hasFixedPrice = false,
     this.currencyCode = CurrencyConstants.defaultCurrencyCode,
   });
 
@@ -48,8 +48,8 @@ class BudgetLimitEntity extends Equatable {
     String? name,
     int? limit,
     int? order,
-    bool? isClosed,
-    bool? isFixedPrice,
+    bool? hasClosed,
+    bool? hasFixedPrice,
     String? currencyCode,
   }) {
     return BudgetLimitEntity(
@@ -58,8 +58,8 @@ class BudgetLimitEntity extends Equatable {
       name: name ?? this.name,
       limit: limit ?? this.limit,
       order: order ?? this.order,
-      isClosed: isClosed ?? this.isClosed,
-      isFixedPrice: isFixedPrice ?? this.isFixedPrice,
+      hasClosed: hasClosed ?? this.hasClosed,
+      hasFixedPrice: hasFixedPrice ?? this.hasFixedPrice,
       currencyCode: currencyCode ?? this.currencyCode,
     );
   }
@@ -71,8 +71,8 @@ class BudgetLimitEntity extends Equatable {
     name,
     limit,
     order,
-    isClosed,
-    isFixedPrice,
+    hasClosed,
+    hasFixedPrice,
     currencyCode,
   ];
 }

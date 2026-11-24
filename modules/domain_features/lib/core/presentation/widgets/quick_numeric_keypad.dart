@@ -73,12 +73,12 @@ class QuickNumericKeypad extends StatelessWidget {
   }
 
   Widget _buildKey(BuildContext context, String label) {
-    final bool isDelete = label == 'DEL';
+    final bool hasDelete = label == 'DEL';
 
     return CcInteractionWrapper(
       useDebounce: false,
-      isBouncing: true,
-      onTap: () => isDelete ? onDelete() : onKeyPress(label),
+      hasBouncing: true,
+      onTap: () => hasDelete ? onDelete() : onKeyPress(label),
       child: Container(
         height: _isTablet(context)
             ? context.respDim(30).clamp(0, _tabletKeyHeight).toDouble()
@@ -96,7 +96,7 @@ class QuickNumericKeypad extends StatelessWidget {
           ],
         ),
         alignment: Alignment.center,
-        child: isDelete
+        child: hasDelete
             ? Icon(
                 Icons.backspace_outlined,
                 color: context.ccColorScheme.onSurfaceVariant,

@@ -49,7 +49,7 @@ class TransactionHeaderActions extends StatelessWidget {
 
       return CcIconButton.bouncing(
         onTap: onSubmit ?? () {},
-        bgColor: context.ccColorScheme.onPrimary.withAlpha(10),
+        backgroundColor: context.ccColorScheme.onPrimary.withAlpha(10),
         height: context.respDim(30),
         width: context.respDim(30),
         icon: Icon(

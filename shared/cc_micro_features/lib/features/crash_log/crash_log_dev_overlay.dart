@@ -11,7 +11,7 @@ class CrashLogDevOverlay extends StatefulWidget {
 
   final Widget child;
 
-  static bool get isViewerEnabled {
+  static bool get hasViewerEnabled {
     if (kDebugMode) {
       return true;
     }
@@ -33,7 +33,7 @@ class _CrashLogDevOverlayState extends State<CrashLogDevOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    if (!CrashLogDevOverlay.isViewerEnabled) {
+    if (!CrashLogDevOverlay.hasViewerEnabled) {
       return widget.child;
     }
 

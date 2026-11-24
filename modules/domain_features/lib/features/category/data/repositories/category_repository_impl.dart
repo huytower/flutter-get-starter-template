@@ -95,10 +95,10 @@ class CategoryRepositoryImpl
   @override
   Future<Result<void, CcFailure>> updateCategoryEnabled(
     String id,
-    bool isEnabled,
+    bool hasEnabled,
   ) {
     return safeRequest(() async {
-      await _local.updateCategoryEnabled(id, isEnabled);
+      await _local.updateCategoryEnabled(id, hasEnabled);
       _syncService.syncAll();
     });
   }

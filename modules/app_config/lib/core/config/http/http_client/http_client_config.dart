@@ -47,5 +47,5 @@ class HttpClientConfig {
   static Map<String, String> get apiHeaders => httpConfig.apiHeaders;
 
   /// Check if the current environment is production
-  static bool get isProduction => environment == Environment.PROD;
+  static bool get hasProduction => environment == Environment.PROD;
 }

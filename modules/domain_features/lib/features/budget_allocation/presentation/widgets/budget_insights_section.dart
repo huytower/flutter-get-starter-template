@@ -64,7 +64,7 @@ class BudgetInsightsSection extends StatelessWidget {
   ) {
     final cards = <Widget>[];
 
-    if (insights.isDeficit) {
+    if (insights.hasDeficit) {
       cards.add(
         _buildConvertedInsightCard(
           context,
@@ -81,7 +81,7 @@ class BudgetInsightsSection extends StatelessWidget {
       );
     }
 
-    if (insights.isInflowDebtDriven) {
+    if (insights.hasInflowDebtDriven) {
       cards.add(
         _buildConvertedInsightCard(
           context,
@@ -101,7 +101,7 @@ class BudgetInsightsSection extends StatelessWidget {
       );
     }
 
-    if (insights.isOutflowDebtDriven) {
+    if (insights.hasOutflowDebtDriven) {
       cards.add(
         _buildConvertedInsightCard(
           context,

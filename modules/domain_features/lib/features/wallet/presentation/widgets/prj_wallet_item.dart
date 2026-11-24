@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 class PrjWalletItem extends StatelessWidget {
   final String name;
   final int iconCode;
-  final bool isSelected;
+  final bool hasSelected;
   final Color activeColor;
-  final LinearGradient? defaultBgColor;
+  final LinearGradient? defaultBackgroundColor;
   final VoidCallback onTap;
   final String balanceText;
 
@@ -18,9 +18,9 @@ class PrjWalletItem extends StatelessWidget {
     super.key,
     required this.name,
     required this.iconCode,
-    required this.isSelected,
+    required this.hasSelected,
     required this.activeColor,
-    this.defaultBgColor,
+    this.defaultBackgroundColor,
     required this.onTap,
     required this.balanceText,
   });
@@ -30,12 +30,12 @@ class PrjWalletItem extends StatelessWidget {
     return CcInteractionWrapper(
       onTap: onTap,
       useDebounce: true,
-      isBouncing: true,
-      isEnable: true,
+      hasBouncing: true,
+      hasEnable: true,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          if (isSelected)
+          if (hasSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
                 centerColor: activeColor.withAlpha(10),
@@ -54,10 +54,10 @@ class PrjWalletItem extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        gradient: defaultBgColor ?? context.primaryVerticalGradient,
+        gradient: defaultBackgroundColor ?? context.primaryVerticalGradient,
         borderRadius: context.brMd,
         border: Border.all(
-          color: isSelected
+          color: hasSelected
               ? activeColor.withAlpha(10)
               : scheme.onSurface.withAlpha(5),
           width: context.respDim(1),
@@ -88,7 +88,7 @@ class PrjWalletItem extends StatelessWidget {
       width: context.respDim(35),
       height: context.respDim(35),
       decoration: BoxDecoration(
-        color: isSelected
+        color: hasSelected
             ? activeColor.withAlpha(10)
             : scheme.onSurface.withAlpha(5),
         borderRadius: context.brMd,
@@ -96,7 +96,7 @@ class PrjWalletItem extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (isSelected)
+          if (hasSelected)
             Positioned.fill(
               child: CcGlassyGradientIcon(
                 centerColor: activeColor.withAlpha(20),
@@ -104,7 +104,7 @@ class PrjWalletItem extends StatelessWidget {
               ),
             ),
           CcIconToken(
-            color: isSelected ? activeColor : scheme.onSurfaceVariant,
+            color: hasSelected ? activeColor : scheme.onSurfaceVariant,
             iconDataFromCode(iconCode),
             size: 18,
           ),
@@ -125,7 +125,7 @@ class PrjWalletItem extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: isSelected ? activeColor : scheme.onSurfaceVariant,
+            color: hasSelected ? activeColor : scheme.onSurfaceVariant,
           ),
         ),
         CcText(
@@ -134,7 +134,7 @@ class PrjWalletItem extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: isSelected ? activeColor : scheme.onSurface,
+            color: hasSelected ? activeColor : scheme.onSurface,
           ),
         ),
       ],

@@ -50,7 +50,7 @@ class ReconciliationController extends PrjGetController {
   final RxInt systemTotal = 0.obs;
   final RxInt actualTotal = 0.obs;
   final RxInt unhandledCount = 0.obs;
-  final RxBool isSubmitting = false.obs;
+  final RxBool hasSubmitting = false.obs;
 
   final RxnString editingWalletId = RxnString();
   final RxString amountStr = '0'.obs;
@@ -74,7 +74,7 @@ class ReconciliationController extends PrjGetController {
         _actuals.isNotEmpty &&
         unhandledCount.value == 0 &&
         balances.isNotEmpty &&
-        !isSubmitting.value;
+        !hasSubmitting.value;
   }
 
   bool isAcknowledged(String walletId) => _acknowledged.contains(walletId);
@@ -280,8 +280,8 @@ class ReconciliationController extends PrjGetController {
 
   /// Returns null on success, or an error message to surface.
   Future<String?> performReconciliation() async {
-    if (isSubmitting.value) return null;
-    isSubmitting.value = true;
+    if (hasSubmitting.value) return null;
+    hasSubmitting.value = true;
     try {
       final result = await _performReconciliation.call(
         await _actualsInWalletCurrency(),
@@ -298,7 +298,7 @@ class ReconciliationController extends PrjGetController {
         return null;
       }, (error) => error.message);
     } finally {
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
     }
   }
 
@@ -342,8 +342,8 @@ class ReconciliationController extends PrjGetController {
   }
 
   Future<String?> undoLast() async {
-    if (isSubmitting.value) return null;
-    isSubmitting.value = true;
+    if (hasSubmitting.value) return null;
+    hasSubmitting.value = true;
     try {
       final result = await _undoReconciliation.call();
       return result.when<String?>((_) {
@@ -353,7 +353,7 @@ class ReconciliationController extends PrjGetController {
         return null;
       }, (error) => error.message);
     } finally {
-      isSubmitting.value = false;
+      hasSubmitting.value = false;
     }
   }
 }

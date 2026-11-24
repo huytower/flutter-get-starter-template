@@ -27,17 +27,17 @@ class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
       weeklyAuditDayIndex: (fields[7] as num?)?.toInt(),
       currencyCode: fields[8] as String?,
       birthYear: (fields[9] as num?)?.toInt(),
-      isDarkMode: fields[10] as bool?,
+      hasDarkMode: fields[10] as bool?,
       completedGuidelineTaskIds: (fields[11] as List?)?.cast<String>(),
       weeklyAuditDayChangedAt: fields[12] as DateTime?,
       levelFeatureAnchorAt: fields[13] as DateTime?,
-      isVip: fields[14] as bool?,
+      hasVip: fields[14] as bool?,
       highestUserLevelReached: (fields[16] as num?)?.toInt(),
       firstLaunchAt: fields[17] as DateTime?,
       cloudBackupReminderSentAt: fields[18] as DateTime?,
       hasViewedEmergencyFundEbook: fields[19] as bool?,
       hasSeenTutorial: fields[20] as bool?,
-      isProfileHeaderFlipped: fields[21] as bool?,
+      hasProfileHeaderFlipped: fields[21] as bool?,
       hasCustomizedCategories: fields[22] as bool?,
       hasInteractedWithTransactionCardStack: fields[23] as bool?,
       financialDataOwnerId: fields[24] as String?,
@@ -75,7 +75,7 @@ class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
       ..writeByte(9)
       ..write(obj.birthYear)
       ..writeByte(10)
-      ..write(obj.isDarkMode)
+      ..write(obj.hasDarkMode)
       ..writeByte(11)
       ..write(obj.completedGuidelineTaskIds)
       ..writeByte(12)
@@ -83,7 +83,7 @@ class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
       ..writeByte(13)
       ..write(obj.levelFeatureAnchorAt)
       ..writeByte(14)
-      ..write(obj.isVip)
+      ..write(obj.hasVip)
       ..writeByte(16)
       ..write(obj.highestUserLevelReached)
       ..writeByte(17)
@@ -95,7 +95,7 @@ class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
       ..writeByte(20)
       ..write(obj.hasSeenTutorial)
       ..writeByte(21)
-      ..write(obj.isProfileHeaderFlipped)
+      ..write(obj.hasProfileHeaderFlipped)
       ..writeByte(22)
       ..write(obj.hasCustomizedCategories)
       ..writeByte(23)
@@ -146,7 +146,7 @@ PrjAppStorage _$PrjAppStorageFromJson(
   weeklyAuditDayIndex: (json['weeklyAuditDayIndex'] as num?)?.toInt(),
   currencyCode: json['currencyCode'] as String?,
   birthYear: (json['birthYear'] as num?)?.toInt(),
-  isDarkMode: json['isDarkMode'] as bool?,
+  hasDarkMode: json['hasDarkMode'] as bool?,
   completedGuidelineTaskIds:
       (json['completedGuidelineTaskIds'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -157,7 +157,7 @@ PrjAppStorage _$PrjAppStorageFromJson(
   levelFeatureAnchorAt: json['levelFeatureAnchorAt'] == null
       ? null
       : DateTime.parse(json['levelFeatureAnchorAt'] as String),
-  isVip: json['isVip'] as bool?,
+  hasVip: json['hasVip'] as bool?,
   highestUserLevelReached: (json['highestUserLevelReached'] as num?)?.toInt(),
   firstLaunchAt: json['firstLaunchAt'] == null
       ? null
@@ -167,7 +167,7 @@ PrjAppStorage _$PrjAppStorageFromJson(
       : DateTime.parse(json['cloudBackupReminderSentAt'] as String),
   hasViewedEmergencyFundEbook: json['hasViewedEmergencyFundEbook'] as bool?,
   hasSeenTutorial: json['hasSeenTutorial'] as bool?,
-  isProfileHeaderFlipped: json['isProfileHeaderFlipped'] as bool?,
+  hasProfileHeaderFlipped: json['hasProfileHeaderFlipped'] as bool?,
   hasCustomizedCategories: json['hasCustomizedCategories'] as bool?,
   hasInteractedWithTransactionCardStack:
       json['hasInteractedWithTransactionCardStack'] as bool?,
@@ -195,19 +195,19 @@ Map<String, dynamic> _$PrjAppStorageToJson(
   'weeklyAuditDayIndex': instance.weeklyAuditDayIndex,
   'currencyCode': instance.currencyCode,
   'birthYear': instance.birthYear,
-  'isDarkMode': instance.isDarkMode,
+  'hasDarkMode': instance.hasDarkMode,
   'completedGuidelineTaskIds': instance.completedGuidelineTaskIds,
   'weeklyAuditDayChangedAt': instance.weeklyAuditDayChangedAt
       ?.toIso8601String(),
   'levelFeatureAnchorAt': instance.levelFeatureAnchorAt?.toIso8601String(),
-  'isVip': instance.isVip,
+  'hasVip': instance.hasVip,
   'highestUserLevelReached': instance.highestUserLevelReached,
   'firstLaunchAt': instance.firstLaunchAt?.toIso8601String(),
   'cloudBackupReminderSentAt': instance.cloudBackupReminderSentAt
       ?.toIso8601String(),
   'hasViewedEmergencyFundEbook': instance.hasViewedEmergencyFundEbook,
   'hasSeenTutorial': instance.hasSeenTutorial,
-  'isProfileHeaderFlipped': instance.isProfileHeaderFlipped,
+  'hasProfileHeaderFlipped': instance.hasProfileHeaderFlipped,
   'hasCustomizedCategories': instance.hasCustomizedCategories,
   'hasInteractedWithTransactionCardStack':
       instance.hasInteractedWithTransactionCardStack,

@@ -251,7 +251,7 @@ void main(List<String> args) {
 
 Iterable<_Violation> _check(String owner, String path, File file) sync* {
   final source = file.readAsStringSync();
-  final isTest = path.contains('/test/') || path.startsWith('test/');
+  final hasTest = path.contains('/test/') || path.startsWith('test/');
 
   // Cross-module coordinators are implemented in one place, the bridge.
   if (path.endsWith('_coordinator_impl.dart') && owner != 'bridge') {
@@ -269,10 +269,10 @@ Iterable<_Violation> _check(String owner, String path, File file) sync* {
         .map((m) => m.group(1)!)
         .join();
     final line = '\n'.allMatches(source.substring(0, match.start)).length + 1;
-    yield* _checkUri(owner, path, line, uri, isTest);
+    yield* _checkUri(owner, path, line, uri, hasTest);
   }
 
-  if (!isTest) {
+  if (!hasTest) {
     yield* _checkFeatureControllers(path, source);
     yield* _checkComposition(owner, path, source);
     yield* _checkNaming(path, source);
@@ -301,20 +301,20 @@ Iterable<_Violation> _checkUri(
   String path,
   int line,
   String uri,
-  bool isTest,
+  bool hasTest,
 ) sync* {
   final pkg = uri.startsWith('package:')
       ? uri.substring(8, uri.contains('/') ? uri.indexOf('/') : uri.length)
       : null;
   final rest = pkg == null ? '' : uri.substring(8 + pkg.length + 1);
 
-  if (pkg != null && pkg != owner && _packages.containsKey(pkg) && !isTest) {
+  if (pkg != null && pkg != owner && _packages.containsKey(pkg) && !hasTest) {
     _edges.putIfAbsent((owner, pkg), () => []).add(_Edge(path, line, uri));
   }
 
   // Rule 15: logging goes through `.Log()`; only its implementation may use
   // dart:developer (`print` is the analyzer's avoid_print lint).
-  if (uri == 'dart:developer' && !isTest && path != _logImplementation) {
+  if (uri == 'dart:developer' && !hasTest && path != _logImplementation) {
     yield _Violation(
       path,
       line,
@@ -386,7 +386,7 @@ Iterable<_Violation> _checkUri(
     if (pkg == 'bloc' || pkg == 'flutter_bloc' || pkg == 'get') {
       yield _Violation(path, line, 'state-agnostic-core', '$pkg in $owner');
     }
-    if (_vendorPackage.hasMatch(pkg) && !isTest) {
+    if (_vendorPackage.hasMatch(pkg) && !hasTest) {
       yield _Violation(
         path,
         line,

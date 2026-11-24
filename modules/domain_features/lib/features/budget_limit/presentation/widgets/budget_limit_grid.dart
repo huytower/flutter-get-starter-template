@@ -80,8 +80,8 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
     return Obx(() {
       final budgets = _ctrl.budgets;
       // Read isEditMode inside Obx so GetX tracks it as a reactive dependency.
-      final isEdit = _ctrl.isEditMode.value;
-      if (!isEdit && _draggingId != null) {
+      final hasEdit = _ctrl.hasEditMode.value;
+      if (!hasEdit && _draggingId != null) {
         // Mode switched to view while a drag was in progress — clear state.
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
@@ -105,9 +105,9 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
         ),
         itemCount: budgets.length + 1,
         itemBuilder: (context, i) {
-          if (i == budgets.length) return _buildAddCell(context, isEdit);
+          if (i == budgets.length) return _buildAddCell(context, hasEdit);
           final stats = budgets[i];
-          return isEdit
+          return hasEdit
               ? _buildEditCell(context, stats)
               : _buildDraggableCell(context, stats);
         },
@@ -122,8 +122,8 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
     BudgetLimitStatsEntity stats,
   ) {
     final id = stats.budget.id;
-    final isDraggingThis = _draggingId == id;
-    final isDropTarget = _hoveredId == id && _draggingId != null;
+    final hasDraggingThis = _draggingId == id;
+    final hasDropTarget = _hoveredId == id && _draggingId != null;
 
     return LayoutBuilder(
       builder: (ctx, constraints) => LongPressDraggable<String>(
@@ -143,7 +143,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
             height: constraints.maxHeight,
             child: Transform.scale(
               scale: 0.9,
-              child: BudgetLimitGridCard(stats: stats, isDragging: true),
+              child: BudgetLimitGridCard(stats: stats, hasDragging: true),
             ),
           ),
         ),
@@ -163,11 +163,11 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
           onLeave: (_) => _clearHover(id),
           onAcceptWithDetails: (d) => _commitDrop(d.data, id),
           builder: (ctx, candidates, _) => AnimatedScale(
-            scale: isDropTarget ? 1.07 : 1.0,
+            scale: hasDropTarget ? 1.07 : 1.0,
             duration: const Duration(milliseconds: 150),
             curve: Curves.easeOut,
             child: AnimatedOpacity(
-              opacity: isDraggingThis ? 0.25 : 1.0,
+              opacity: hasDraggingThis ? 0.25 : 1.0,
               duration: const Duration(milliseconds: 150),
               child: BudgetLimitGridCard(key: ValueKey(id), stats: stats),
             ),
@@ -183,7 +183,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
     return BudgetLimitGridCard(
       key: ValueKey(stats.budget.id),
       stats: stats,
-      isEditMode: true,
+      hasEditMode: true,
       onEdit: () => widget.onOpenForm(context, editTarget: stats.budget),
       onDelete: () => widget.onDelete(context, stats.budget),
     );
@@ -191,7 +191,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
 
   // ── "Tuỳ chỉnh danh mục" add cell ────────────────────────────────────────
 
-  Widget _buildAddCell(BuildContext context, bool isEdit) {
+  Widget _buildAddCell(BuildContext context, bool hasEdit) {
     final scheme = context.ccColorScheme;
     return CcBouncing(
       onTap: () => Navigator.of(context).push(
@@ -199,7 +199,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
       ),
       borderRadius: context.brLg,
       child: Opacity(
-        opacity: isEdit ? 0.4 : 1.0,
+        opacity: hasEdit ? 0.4 : 1.0,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: scheme.surfaceContainerHighest,

@@ -20,10 +20,10 @@ class QuickEntrySection extends StatelessWidget {
   const QuickEntrySection({
     super.key,
     required this.controller,
-    required this.isParsing,
-    required this.isListening,
+    required this.hasParsing,
+    required this.hasListening,
     required this.suggestionLabel,
-    required this.isCategoryMissing,
+    required this.hasCategoryMissing,
     required this.errorText,
     required this.activeColor,
     required this.onSubmitted,
@@ -33,14 +33,14 @@ class QuickEntrySection extends StatelessWidget {
     required this.onDismissSuggestion,
     required this.aiPreferences,
     this.onClear,
-    this.isLocked = false,
+    this.hasLocked = false,
   });
 
   final TextEditingController controller;
-  final bool isParsing;
-  final bool isListening;
+  final bool hasParsing;
+  final bool hasListening;
   final String? suggestionLabel;
-  final bool isCategoryMissing;
+  final bool hasCategoryMissing;
   final String? errorText;
   final Color activeColor;
   final ValueChanged<String> onSubmitted;
@@ -50,7 +50,7 @@ class QuickEntrySection extends StatelessWidget {
   final VoidCallback onDismissSuggestion;
   final AiFallbackPreferenceDataSource aiPreferences;
   final VoidCallback? onClear;
-  final bool isLocked;
+  final bool hasLocked;
 
   bool _isSupportedLanguageAndCurrency(BuildContext context) {
     final languageCode = el.EasyLocalization.of(
@@ -67,7 +67,7 @@ class QuickEntrySection extends StatelessWidget {
       return const SizedBox.shrink();
     }
     return Opacity(
-      opacity: isLocked ? 0.5 : 1.0,
+      opacity: hasLocked ? 0.5 : 1.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -101,7 +101,7 @@ class QuickEntrySection extends StatelessWidget {
       builder: (context, child) {
         return TextField(
           controller: controller,
-          enabled: !isParsing,
+          enabled: !hasParsing,
           maxLines: 1,
           textAlign: TextAlign.start,
           textInputAction: TextInputAction.done,
@@ -129,7 +129,7 @@ class QuickEntrySection extends StatelessWidget {
       children: [
         CcSuggestionChip(
           label: el.tr(
-            isCategoryMissing
+            hasCategoryMissing
                 ? PrjLocaleKeys.quick_entry_category_missing
                 : PrjLocaleKeys.quick_entry_parsed_result,
             namedArgs: {'label': suggestionLabel!},
@@ -196,12 +196,12 @@ class QuickEntrySection extends StatelessWidget {
     final buttonSize = context.respDim(30);
 
     void handleMicTap() {
-      '[VoiceWorkflow] 🎤 Mic button tapped | isListening=$isListening | text="${controller.text}"'
+      '[VoiceWorkflow] 🎤 Mic button tapped | isListening=$hasListening | text="${controller.text}"'
           .Log('QuickEntrySection');
       onMicTap();
     }
 
-    if (isListening) {
+    if (hasListening) {
       return VoiceRippleAnimationWidget(
         activeColor: activeColor,
         onTap: handleMicTap,
@@ -222,7 +222,7 @@ class QuickEntrySection extends StatelessWidget {
   }
 
   Widget _buildTrailingIcons(BuildContext context) {
-    if (isParsing) {
+    if (hasParsing) {
       return SizedBox(
         width: context.respDim(30),
         height: context.respDim(30),
@@ -244,8 +244,8 @@ class QuickEntrySection extends StatelessWidget {
     return FutureBuilder<bool>(
       future: aiPreferences.isGeminiEnabled(),
       builder: (context, snapshot) {
-        final isGeminiEnabled = snapshot.data ?? true;
-        if (!isGeminiEnabled) {
+        final hasGeminiEnabled = snapshot.data ?? true;
+        if (!hasGeminiEnabled) {
           return const SizedBox.shrink();
         }
         return CcIconButton.bouncing(

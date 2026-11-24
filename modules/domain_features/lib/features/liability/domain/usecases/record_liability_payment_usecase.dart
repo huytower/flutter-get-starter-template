@@ -20,7 +20,7 @@ class RecordLiabilityPaymentParams {
 
   /// Whether this leg increases (Borrow/Lend) or decreases (Repay/Collect)
   /// the outstanding balance. Defaults to `true` (decrease).
-  final bool isSettlement;
+  final bool hasSettlement;
 
   /// Debited (repay/lend) or credited (collect/borrow).
   final String walletId;
@@ -40,7 +40,7 @@ class RecordLiabilityPaymentParams {
 
   const RecordLiabilityPaymentParams({
     required this.liabilityId,
-    this.isSettlement = true,
+    this.hasSettlement = true,
     required this.walletId,
     required this.amount,
     this.note,
@@ -114,7 +114,7 @@ class RecordLiabilityPaymentUseCase {
     }
 
     final outstanding = params.outstandingBalance;
-    if (params.isSettlement &&
+    if (params.hasSettlement &&
         outstanding != null &&
         await _inCurrencyOf(liability, params.amount) > outstanding) {
       '[LIABILITY] ❌ Settlement ${params.amount} exceeds outstanding $outstanding | liabilityId=${liability.id}'
@@ -148,22 +148,22 @@ class RecordLiabilityPaymentUseCase {
     }
 
     final String txnType;
-    if (liability.isBorrow) {
-      txnType = params.isSettlement
+    if (liability.hasBorrow) {
+      txnType = params.hasSettlement
           ? TransactionType.debtRepay
           : TransactionType.debtBorrow;
     } else {
-      txnType = params.isSettlement
+      txnType = params.hasSettlement
           ? TransactionType.debtCollect
           : TransactionType.debtLend;
     }
 
     // Check insufficient wallet balance for transactions where money leaves the wallet
-    final isMoneyLeavingWallet =
-        (liability.isBorrow && params.isSettlement) ||
-        (liability.isLend && !params.isSettlement);
+    final hasMoneyLeavingWallet =
+        (liability.hasBorrow && params.hasSettlement) ||
+        (liability.hasLend && !params.hasSettlement);
 
-    if (isMoneyLeavingWallet) {
+    if (hasMoneyLeavingWallet) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {
         return Error(balanceResult.tryGetError()!);

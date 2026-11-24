@@ -290,6 +290,11 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   /// credential together with the full name Apple provided (first sign-in only)
   /// and the one-time authorization code (needed to revoke the token on account
   /// deletion).
+  ///
+  /// [requestProfile] asks Apple for the name and email. Re-authentication
+  /// before account deletion passes false, so Apple shows a plain "continue
+  /// with your Apple ID" confirmation instead of a sign-up sheet that offers to
+  /// share or hide the email (which reads as a new sign-in, not a delete step).
   Future<
     Result<
       ({
@@ -300,10 +305,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       CcFailure
     >
   >
-  _getAppleCredential() async {
+  _getAppleCredential({bool requestProfile = true}) async {
     try {
-      final isAvailable = await SignInWithApple.isAvailable();
-      if (!isAvailable) {
+      final hasAvailable = await SignInWithApple.isAvailable();
+      if (!hasAvailable) {
         final err = Exception(
           '[AppleSignInTrace] Step 1: SignInWithApple.isAvailable() returned FALSE on this device',
         );
@@ -317,10 +322,12 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       final nonce = _sha256ofString(rawNonce);
 
       final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
+        scopes: requestProfile
+            ? const [
+                AppleIDAuthorizationScopes.email,
+                AppleIDAuthorizationScopes.fullName,
+              ]
+            : const [],
         nonce: nonce,
       );
 
@@ -607,9 +614,18 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       // authorization code needed for that during a fresh authorization, so
       // re-authenticate first (this also satisfies Firebase's recent-login
       // rule), revoke, then delete.
-      if (hasApple) {
+      //
+      // The Apple sheet always uses the Apple ID signed in on THIS device; it
+      // cannot be pointed at another one. If the account's Apple link belongs
+      // to a different Apple ID, the sheet would show that other Apple ID
+      // ("Create an account using ...") and the user would be confirming the
+      // wrong account, so it is only shown when this device's Apple ID is the
+      // linked one.
+      var hasAppleReauthenticated = false;
+      if (hasApple && await _canConfirmAppleOnThisDevice(user)) {
         final failure = await _reauthenticateAndRevokeApple(user);
         if (failure != null) return Error(failure);
+        hasAppleReauthenticated = true;
       }
 
       try {
@@ -620,7 +636,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         }
         // Google can be re-authenticated in place; phone/email cannot without
         // a dedicated flow, so those get a localized "log in again" message.
-        if (!hasGoogle || hasApple) {
+        if (!hasGoogle || hasAppleReauthenticated) {
           return const Error(RecentLoginRequiredFailure());
         }
         final reauth = await _reauthenticateWithGoogle(user);
@@ -638,6 +654,55 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// Whether the Apple ID signed in on this device is the one linked to
+  /// [user], so the Apple sheet confirms the same account that is deleted.
+  ///
+  /// - authorized: same Apple ID → confirm with Apple and revoke.
+  /// - revoked: the user already removed the app from their Apple ID → there
+  ///   is no token left to revoke.
+  /// - not found: the link belongs to a different Apple ID (signed in on
+  ///   another device) → the token cannot be revoked from here; reported so
+  ///   the gap is visible, and the deletion goes on without the Apple sheet.
+  ///
+  /// Platforms without a native credential-state API (Android's web flow,
+  /// where the user picks the Apple ID themselves) keep the Apple step.
+  Future<bool> _canConfirmAppleOnThisDevice(firebase_auth.User user) async {
+    final linkedAppleId = user.providerData
+        .where((p) => p.providerId == 'apple.com')
+        .map((p) => p.uid)
+        .whereType<String>()
+        .firstOrNull;
+    if (linkedAppleId == null || linkedAppleId.isEmpty) return true;
+
+    final CredentialState state;
+    try {
+      state = await SignInWithApple.getCredentialState(linkedAppleId);
+    } catch (e) {
+      '[AppleRevoke] Credential state unavailable ($e), keeping the Apple step'
+          .Log('FirebaseAuthRepositoryImpl');
+      return true;
+    }
+    '[AppleRevoke] Credential state of the linked Apple ID on this device: $state'
+        .Log('FirebaseAuthRepositoryImpl');
+
+    switch (state) {
+      case CredentialState.authorized:
+        return true;
+      case CredentialState.revoked:
+        return false;
+      case CredentialState.notFound:
+        Catcher2.reportCheckedError(
+          Exception(
+            '[AppleRevoke] The account is linked to an Apple ID that is not '
+            'signed in on this device, so its Apple token cannot be revoked '
+            'here. Deleting the account without the Apple step.',
+          ),
+          StackTrace.current,
+        );
+        return false;
+    }
+  }
+
   /// Re-authenticates [user] with a fresh Apple authorization, then revokes the
   /// Apple token. Returns a failure to abort the deletion (user cancelled or
   /// re-authentication failed), or null to continue.
@@ -648,7 +713,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   Future<CcFailure?> _reauthenticateAndRevokeApple(
     firebase_auth.User user,
   ) async {
-    final appleResult = await _getAppleCredential();
+    final appleResult = await _getAppleCredential(requestProfile: false);
     if (appleResult.isError()) return appleResult.tryGetError();
     final apple = appleResult.tryGetSuccess()!;
 
@@ -795,8 +860,8 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         user.photoURL,
         ...user.providerData.map((p) => p.photoURL),
       ]),
-      isEmailVerified: user.emailVerified,
-      isPhoneVerified: user.phoneNumber != null,
+      hasEmailVerified: user.emailVerified,
+      hasPhoneVerified: user.phoneNumber != null,
       registeredDeviceIds: const [],
       // To be populated by device service
       createdAt: user.metadata.creationTime ?? DateTime.now(),

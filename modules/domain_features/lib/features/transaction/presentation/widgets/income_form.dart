@@ -141,7 +141,7 @@ class _IncomeFormState extends State<IncomeForm> {
       ),
       right: [
         _buildAmountSection(context, controller, accentColor),
-        if (!controller.isEditing) ...[
+        if (!controller.hasEditing) ...[
           const CcSpaceSM(),
           _buildWalletSection(context, controller, accentColor),
         ],
@@ -160,9 +160,9 @@ class _IncomeFormState extends State<IncomeForm> {
     Color accentColor, {
     bool alwaysExpanded = false,
   }) {
-    if (controller.isEditing) {
+    if (controller.hasEditing) {
       return EntryAdditionalDetailsSection(
-        isExpanded: true,
+        hasExpanded: true,
         selectedDate: controller.date.value,
         onDateSelected: controller.setDate,
         onCalendarTap: () => controller.pickDate(context),
@@ -172,7 +172,7 @@ class _IncomeFormState extends State<IncomeForm> {
       );
     }
     return EntryAdditionalDetailsSection(
-      isExpanded: alwaysExpanded || controller.showMoreDetails.value,
+      hasExpanded: alwaysExpanded || controller.showMoreDetails.value,
       onToggle: alwaysExpanded ? null : controller.toggleMoreDetails,
       selectedDate: controller.date.value,
       onDateSelected: controller.setDate,
@@ -189,11 +189,11 @@ class _IncomeFormState extends State<IncomeForm> {
     Color accentColor,
   ) {
     return EntrySubmitButton(
-      text: controller.isEditing
+      text: controller.hasEditing
           ? el.tr(PrjLocaleKeys.common_save)
           : el.tr(PrjLocaleKeys.transaction_record_income),
-      isSubmitting: controller.isSubmitting.value,
-      isEnabled: controller.canSubmit,
+      hasSubmitting: controller.hasSubmitting.value,
+      hasEnabled: controller.canSubmit,
       onTap: () => controller.submitForm(context),
       activeColor: accentColor,
       leadingIcon: Icons.arrow_circle_up,
@@ -220,7 +220,7 @@ class _IncomeFormState extends State<IncomeForm> {
         children: [
           _buildAmountSection(context, controller, accentColor),
           const CcSpaceSM(),
-          if (!controller.isEditing) ...[
+          if (!controller.hasEditing) ...[
             _buildWalletSection(context, controller, accentColor),
             const CcSpaceSM(),
           ],

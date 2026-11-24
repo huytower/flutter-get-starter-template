@@ -50,7 +50,7 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
   late WalletEntity _destinationWallet;
   String _amount = '0';
   bool _showKeypad = false;
-  bool _isSubmitting = false;
+  bool _hasSubmitting = false;
 
   @override
   void initState() {
@@ -95,11 +95,11 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
   }
 
   Future<void> _submit() async {
-    if (_isSubmitting) return;
+    if (_hasSubmitting) return;
     final amount = int.tryParse(_amount) ?? 0;
     if (amount <= 0) return;
 
-    setState(() => _isSubmitting = true);
+    setState(() => _hasSubmitting = true);
     final result = await widget.transfer(
       CreateWalletTransferParams(
         sourceWalletId: _sourceWallet.id,
@@ -113,7 +113,7 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
     if (!mounted) return;
     final failure = result.tryGetError();
     if (failure != null) {
-      setState(() => _isSubmitting = false);
+      setState(() => _hasSubmitting = false);
       CcSnackBarHelper.showErrorSnackBar(
         context: context,
         message: el.tr(failure.message),
@@ -184,7 +184,7 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
                         quickAmounts: MoneyConstants.getWalletQuickAmounts(
                           currencyCode: currencyCode,
                         ),
-                        isKeypadVisible: _showKeypad,
+                        hasKeypadVisible: _showKeypad,
                         activeColor: scheme.primary,
                         currencyCode: currencyCode,
                         onTap: () => setState(() => _showKeypad = true),
@@ -234,8 +234,8 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
                       const CcSpaceMD(),
                       EntrySubmitButton(
                         text: el.tr('transaction.transfer_money'),
-                        isSubmitting: _isSubmitting,
-                        isEnabled: canSubmit,
+                        hasSubmitting: _hasSubmitting,
+                        hasEnabled: canSubmit,
                         onTap: _submit,
                         activeColor: scheme.primary,
                         widthFactor: 1,
@@ -281,7 +281,7 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
           wallets: wallets,
           selectedWalletId: wallet.id,
           activeColor: context.ccColorScheme.primary,
-          defaultBgColor: context.verticalGradient(
+          defaultBackgroundColor: context.verticalGradient(
             context.ccColorScheme.primary,
           ),
           onWalletSelected: onSelected,

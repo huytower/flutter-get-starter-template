@@ -6,12 +6,12 @@ import 'package:equatable/equatable.dart';
 /// approach for state management in Flutter BLoC/Cubit.
 class SimpleCubitState extends Equatable {
   final int counter;
-  final bool isLoading;
+  final bool hasLoading;
   final String? errorMessage;
 
   const SimpleCubitState({
     this.counter = 0,
-    this.isLoading = false,
+    this.hasLoading = false,
     this.errorMessage,
   });
 
@@ -19,7 +19,7 @@ class SimpleCubitState extends Equatable {
   static SimpleCubitState init() {
     return const SimpleCubitState(
       counter: 0,
-      isLoading: false,
+      hasLoading: false,
       errorMessage: null,
     );
   }
@@ -27,16 +27,16 @@ class SimpleCubitState extends Equatable {
   /// Creates a copy of this state with the given fields replaced with new values
   SimpleCubitState copyWith({
     int? counter,
-    bool? isLoading,
+    bool? hasLoading,
     String? errorMessage,
   }) {
     return SimpleCubitState(
       counter: counter ?? this.counter,
-      isLoading: isLoading ?? this.isLoading,
+      hasLoading: hasLoading ?? this.hasLoading,
       errorMessage: errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [counter, isLoading, errorMessage];
+  List<Object?> get props => [counter, hasLoading, errorMessage];
 }

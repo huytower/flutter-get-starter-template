@@ -56,17 +56,17 @@ class BudgetAllocationController extends PrjGetController {
       <LiabilityBalanceEntity>[].obs;
 
   /// Whether the Lend card is currently in front in the Liability section.
-  final RxBool isLendSectionFront = false.obs;
+  final RxBool hasLendSectionFront = false.obs;
 
   void toggleLiabilityCardStack() {
-    isLendSectionFront.toggle();
+    hasLendSectionFront.toggle();
   }
 
   List<LiabilityBalanceEntity> get borrowBalances =>
-      liabilityBalances.where((b) => b.liability.isBorrow).toList();
+      liabilityBalances.where((b) => b.liability.hasBorrow).toList();
 
   List<LiabilityBalanceEntity> get lendBalances =>
-      liabilityBalances.where((b) => !b.liability.isBorrow).toList();
+      liabilityBalances.where((b) => !b.liability.hasBorrow).toList();
 
   /// Phase 3.4 "AI Actions" — null while loading/on error, in which case the
   /// insights panel simply doesn't render (see [BudgetInsightsEntity.hasAnything]).
@@ -113,7 +113,7 @@ class BudgetAllocationController extends PrjGetController {
   void openAddLiability(BuildContext context, {String? initialDirection}) {
     final direction =
         initialDirection ??
-        (isLendSectionFront.value
+        (hasLendSectionFront.value
             ? LiabilityDirection.lend
             : LiabilityDirection.borrow);
     AddLiabilitySheet.show(
@@ -324,8 +324,8 @@ class BudgetAllocationController extends PrjGetController {
 
         unique[b.liability.id] = convertedBalanceEntity;
 
-        if (convertedOutstanding != 0 && !b.isSettled) {
-          if (b.liability.isBorrow) {
+        if (convertedOutstanding != 0 && !b.hasSettled) {
+          if (b.liability.hasBorrow) {
             newBorrow += convertedOutstanding;
           } else {
             newLend += convertedOutstanding;

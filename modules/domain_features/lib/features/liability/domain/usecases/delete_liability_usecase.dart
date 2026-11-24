@@ -63,11 +63,11 @@ class DeleteLiabilityUseCase {
         .toSet();
 
     final label = _norm(target.categoryLabel);
-    final isBorrow = target.isBorrow;
+    final hasBorrow = target.hasBorrow;
     final transactionIds = transactions
         .where((t) {
-          if (!t.isDebtActivity || t.isDeleted) return false;
-          final matchesDirection = isBorrow
+          if (!t.hasDebtActivity || t.hasDeleted) return false;
+          final matchesDirection = hasBorrow
               ? t.type == TransactionType.debtBorrow ||
                     t.type == TransactionType.debtRepay
               : t.type == TransactionType.debtLend ||

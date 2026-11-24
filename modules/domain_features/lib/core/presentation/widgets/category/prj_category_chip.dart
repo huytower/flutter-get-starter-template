@@ -9,7 +9,7 @@ class PrjCategoryChip extends StatelessWidget {
   final String label;
   final int iconCode;
   final String? iconFamily;
-  final bool isEnabled;
+  final bool hasEnabled;
   final VoidCallback onTap;
   final Color? accentColor;
 
@@ -18,7 +18,7 @@ class PrjCategoryChip extends StatelessWidget {
     required this.label,
     required this.iconCode,
     this.iconFamily,
-    required this.isEnabled,
+    required this.hasEnabled,
     required this.onTap,
     this.accentColor,
   });
@@ -26,13 +26,13 @@ class PrjCategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primary = accentColor ?? context.ccColorScheme.primary;
-    final chipBg = isEnabled
+    final chipBackground = hasEnabled
         ? primary.withValues(alpha: 0.15)
         : context.ccColorScheme.surfaceContainerHighest;
-    final iconColor = isEnabled
+    final iconColor = hasEnabled
         ? primary
         : context.ccColorScheme.onSurfaceVariant;
-    final textColor = isEnabled
+    final textColor = hasEnabled
         ? primary
         : context.ccColorScheme.onSurfaceVariant;
 
@@ -46,10 +46,10 @@ class PrjCategoryChip extends StatelessWidget {
           vertical: context.respDim(8),
         ),
         decoration: BoxDecoration(
-          color: chipBg,
+          color: chipBackground,
           borderRadius: context.brXl,
           border: Border.all(
-            color: isEnabled
+            color: hasEnabled
                 ? primary.withValues(alpha: 0.4)
                 : Colors.transparent,
             width: 1.5,
@@ -61,10 +61,10 @@ class PrjCategoryChip extends StatelessWidget {
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 150),
               child: Icon(
-                isEnabled
+                hasEnabled
                     ? Icons.check_box_rounded
                     : Icons.check_box_outline_blank_rounded,
-                key: ValueKey(isEnabled),
+                key: ValueKey(hasEnabled),
                 size: context.respIconSize(baseSize: 16),
                 color: iconColor,
               ),
@@ -80,7 +80,7 @@ class PrjCategoryChip extends StatelessWidget {
               label,
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
                 color: textColor,
-                fontWeight: isEnabled
+                fontWeight: hasEnabled
                     ? CcTypographyParams.semiBold
                     : CcTypographyParams.regular,
               ),

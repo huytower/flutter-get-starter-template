@@ -78,7 +78,7 @@ class BudgetLimitDeleteConfirmSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.common_cancel),
-                      bgColor: [
+                      backgroundColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
                       ],
@@ -90,7 +90,7 @@ class BudgetLimitDeleteConfirmSheet extends StatelessWidget {
                   Expanded(
                     child: CcBaseButton(
                       title: el.tr(PrjLocaleKeys.common_delete),
-                      bgColor: [scheme.error, scheme.error],
+                      backgroundColor: [scheme.error, scheme.error],
                       textColor: scheme.onError,
                       onTap: () {
                         Navigator.of(context).pop();

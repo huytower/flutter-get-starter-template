@@ -21,7 +21,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
         ? Get.find<WalletController>()
         : Get.put(getIt<WalletController>());
     final scheme = context.ccColorScheme;
-    final balanced = reconciliation.isBalanced;
+    final balanced = reconciliation.hasBalanced;
     final diff = reconciliation.difference;
 
     return Obx(() {

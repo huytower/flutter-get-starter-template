@@ -35,7 +35,7 @@ class LiabilityReminderToggle extends StatelessWidget {
               !controller.reminderBeforeDueDate.value,
             ),
             child: CcCheckBox(
-              isChecked: controller.reminderBeforeDueDate.value,
+              hasChecked: controller.reminderBeforeDueDate.value,
               onChanged: (value) => controller.setReminderBeforeDueDate(value),
               checkedColor: accentColor,
               uncheckedBorderColor: context.ccColorScheme.outline,

@@ -8,9 +8,9 @@ class ExchangeRateResult {
   final ExchangeRateTable table;
   final RateProvenance provenance;
 
-  bool get isUsable => isUsableForDisplay;
+  bool get hasUsable => hasUsableForDisplay;
 
-  bool get isUsableForDisplay =>
+  bool get hasUsableForDisplay =>
       provenance == RateProvenance.freshCache ||
       provenance == RateProvenance.staleCache ||
       provenance == RateProvenance.network ||
@@ -20,7 +20,7 @@ class ExchangeRateResult {
       provenance == RateProvenance.staleCache ||
       provenance == RateProvenance.offlineFallback;
 
-  bool get isSafeForPersistedConversion =>
+  bool get hasSafeForPersistedConversion =>
       provenance == RateProvenance.freshCache ||
       provenance == RateProvenance.network;
 }

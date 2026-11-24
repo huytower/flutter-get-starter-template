@@ -23,7 +23,7 @@ class QuickEntryTextInput {
 
   void onTextChanged() {
     _session.cancelAutoSaveCountdown();
-    if (_session.isListeningQuickEntry.value) {
+    if (_session.hasListeningQuickEntry.value) {
       // While dictating voice, ignore text change events to avoid launching duplicate parse timers
       return;
     }
@@ -64,7 +64,7 @@ class QuickEntryTextInput {
       categoryType: _session.host.quickEntryCategoryType,
       groupIds: _session.host.quickEntryCategoryGroupIds,
     );
-    if (_session.isQuickEntryDisposed ||
+    if (_session.hasQuickEntryDisposed ||
         text != _session.quickEntryController.text.trim()) {
       return;
     }
@@ -79,7 +79,7 @@ class QuickEntryTextInput {
     // holds the previous keystroke's result at this point.
     final hasAmount = local.amount != null && local.amount! > 0;
     final categoryMissing = _session.isCategoryMissingFor(local);
-    final isComplete = local.isComplete && !categoryMissing;
+    final hasComplete = local.hasComplete && !categoryMissing;
 
     // Publish the suggestion whenever an amount resolved, even if the category
     // didn't: the chip renders the "category missing (need +)" wording from
@@ -87,7 +87,7 @@ class QuickEntryTextInput {
     // here would leave the user with no feedback at all.
     _session.quickEntrySuggestion.value = hasAmount ? local : null;
 
-    '[AI_PARSING] [LOCAL] ✅ Local parse completed | isComplete=$isComplete | categoryMissing=$categoryMissing | categoryId=${local.categoryId} | amount=${local.amount}'
+    '[AI_PARSING] [LOCAL] ✅ Local parse completed | isComplete=$hasComplete | categoryMissing=$categoryMissing | categoryId=${local.categoryId} | amount=${local.amount}'
         .Log('QuickEntryTextInput');
 
     // Proactive Prefill: Update form fields (amount and category) immediately
@@ -107,7 +107,7 @@ class QuickEntryTextInput {
     // Auto-save should only trigger if we have BOTH a valid category and a
     // non-zero amount.
     final bool canAutoSave =
-        isComplete && hasAmount && local.categoryId != null;
+        hasComplete && hasAmount && local.categoryId != null;
 
     if (canAutoSave && Get.context != null) {
       _session.startAutoSaveTimer(Get.context!);
@@ -124,7 +124,7 @@ class QuickEntryTextInput {
     final geminiEnabled = await prefs.isGeminiEnabled();
     final cloudAllowed = geminiEnabled && await prefs.isUnderDailyLimit();
     // Guards a fast double-submit from firing two concurrent cloud calls.
-    if (_session.isParsingQuickEntry.value) return;
+    if (_session.hasParsingQuickEntry.value) return;
     final text = _session.quickEntryController.text.trim();
     if (text.isEmpty) return;
 
@@ -149,7 +149,7 @@ class QuickEntryTextInput {
 
     _debounce?.cancel();
     _session.quickEntryErrorKey.value = null;
-    _session.isParsingQuickEntry.value = true;
+    _session.hasParsingQuickEntry.value = true;
     final (isCurrentGeneration, resetParsingIfCurrent) = _session
         .trackQuickEntryGeneration();
 
@@ -178,7 +178,7 @@ class QuickEntryTextInput {
       // wording even when auto-save is blocked.
       _session.quickEntrySuggestion.value = local;
       if (_session.blockAutoSaveWhenNoCategory('local')) return;
-      if (!_session.isQuickEntryCategoryMissing && context.mounted) {
+      if (!_session.hasQuickEntryCategoryMissing && context.mounted) {
         _session.startAutoSaveTimer(context);
       }
       return;
@@ -219,7 +219,7 @@ class QuickEntryTextInput {
     '[AI_PARSING] [GEMINI] ↩️ Cloud returned nothing, using local result | result=${suggestion.toJson()}'
         .Log('QuickEntryTextInput');
 
-    if (suggestion.isEmpty) {
+    if (suggestion.hasEmpty) {
       _session.quickEntryErrorKey.value =
           PrjLocaleKeys.quick_entry_could_not_parse;
       return;
@@ -238,7 +238,7 @@ class QuickEntryTextInput {
     // wording even when auto-save is blocked.
     _session.quickEntrySuggestion.value = suggestion;
     if (_session.blockAutoSaveWhenNoCategory('cloud')) return;
-    if (!_session.isQuickEntryCategoryMissing && context.mounted) {
+    if (!_session.hasQuickEntryCategoryMissing && context.mounted) {
       _session.startAutoSaveTimer(context);
     }
   }

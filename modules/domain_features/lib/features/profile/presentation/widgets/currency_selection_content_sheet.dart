@@ -45,7 +45,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
         : Get.put(getIt<CurrencySelectionController>());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!controller.isInitialized) {
+      if (!controller.hasInitialized) {
         controller.loadInitialCurrency(initialCurrencyCode);
       }
     });
@@ -259,7 +259,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
         spacing: context.respDim(8),
         runSpacing: context.respDim(8),
         children: currencies.map((code) {
-          final isSelected =
+          final hasSelected =
               code.toUpperCase() ==
               controller.primaryCurrencyCode.value.toUpperCase();
           final symbol = MoneyFormatter.getSymbol(code);
@@ -276,10 +276,10 @@ class CurrencySelectionContentSheet extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 border: Border.all(
-                  color: isSelected
+                  color: hasSelected
                       ? scheme.primary
                       : scheme.outline.withOpacity(0.3),
-                  width: isSelected ? 1.5 : 1,
+                  width: hasSelected ? 1.5 : 1,
                 ),
                 borderRadius: context.brMd,
               ),
@@ -290,7 +290,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
                     width: 18,
                     height: 18,
                     child: Checkbox(
-                      value: isSelected,
+                      value: hasSelected,
                       onChanged: (_) {
                         controller.setPrimaryCurrency(code);
                       },
@@ -303,17 +303,17 @@ class CurrencySelectionContentSheet extends StatelessWidget {
                     symbol,
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? scheme.primary : scheme.onSurface,
+                      color: hasSelected ? scheme.primary : scheme.onSurface,
                     ),
                   ),
                   const SizedBox(width: 4),
                   CcText(
                     code,
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      fontWeight: isSelected
+                      fontWeight: hasSelected
                           ? FontWeight.bold
                           : FontWeight.normal,
-                      color: isSelected ? scheme.primary : scheme.onSurface,
+                      color: hasSelected ? scheme.primary : scheme.onSurface,
                     ),
                   ),
                 ],
@@ -364,18 +364,18 @@ class CurrencySelectionContentSheet extends StatelessWidget {
   ) {
     final definition = CurrencyCatalog.getDefinition(code);
 
-    final isSelected =
+    final hasSelected =
         code.toUpperCase() ==
         controller.primaryCurrencyCode.value.toUpperCase();
-    final isLoading = controller.isLoadingRates[code] ?? false;
+    final hasLoading = controller.isLoadingRates[code] ?? false;
     final convertedAmount = controller.convertedAmounts[code];
     final String displayAmount;
 
     final baseCurrency = controller.primaryCurrencyCode.value;
-    final bool isBaseVnd = baseCurrency.toUpperCase() == 'VND';
-    final formatCurrencyCode = isBaseVnd ? baseCurrency : code;
+    final bool hasBaseVnd = baseCurrency.toUpperCase() == 'VND';
+    final formatCurrencyCode = hasBaseVnd ? baseCurrency : code;
 
-    if (isLoading && convertedAmount == null) {
+    if (hasLoading && convertedAmount == null) {
       displayAmount = '...';
     } else if (convertedAmount != null) {
       displayAmount = MoneyFormatter.formatWithSymbol(
@@ -404,7 +404,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
                 horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
               ),
               decoration: BoxDecoration(
-                color: isSelected
+                color: hasSelected
                     ? scheme.primary.withValues(alpha: 0.15)
                     : scheme.primaryContainer.withValues(alpha: 0.1),
               ),
@@ -445,10 +445,10 @@ class CurrencySelectionContentSheet extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                            fontWeight: isSelected
+                            fontWeight: hasSelected
                                 ? CcTypographyParams.bold
                                 : CcTypographyParams.regular,
-                            color: isSelected
+                            color: hasSelected
                                 ? scheme.primary
                                 : scheme.onSurface,
                           ),
@@ -461,7 +461,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
                     displayAmount,
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? scheme.primary : PrjColors.success,
+                      color: hasSelected ? scheme.primary : PrjColors.success,
                     ),
                   ),
                 ],

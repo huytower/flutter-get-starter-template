@@ -42,10 +42,10 @@ class GetTrendDataUseCase {
         .tryGetSuccess()!
         .where(
           (t) =>
-              !t.isTransfer &&
-              !t.isInvestmentActivity &&
-              !t.isDebtActivity &&
-              !t.isDeleted &&
+              !t.hasTransfer &&
+              !t.hasInvestmentActivity &&
+              !t.hasDebtActivity &&
+              !t.hasDeleted &&
               (walletId == null || t.walletId == walletId),
         )
         .map((t) {

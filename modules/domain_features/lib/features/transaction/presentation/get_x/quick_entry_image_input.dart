@@ -24,16 +24,16 @@ class QuickEntryImageInput {
     if (!_session.handler.parser.canUseAiSmartEntry) {
       return false;
     }
-    if (_session.isParsingQuickEntry.value) return false;
+    if (_session.hasParsingQuickEntry.value) return false;
     _session.quickEntryErrorKey.value = null;
-    _session.isParsingQuickEntry.value = true;
+    _session.hasParsingQuickEntry.value = true;
     return true;
   }
 
   /// Releases the lock [beginQuickEntryImage] took when the user dismissed
   /// the sheet without picking anything.
   void cancelQuickEntryImage() {
-    _session.isParsingQuickEntry.value = false;
+    _session.hasParsingQuickEntry.value = false;
   }
 
   /// Picks an image, runs on-device OCR, then feeds the result through the
@@ -50,11 +50,11 @@ class QuickEntryImageInput {
 
     // Scanning sends the photo to Gemini, so ask for consent first if the user
     // has not allowed AI data sharing yet.
-    final isGeminiEnabled = await AiConsentSheet.ensure(
+    final hasGeminiEnabled = await AiConsentSheet.ensure(
       context,
       _session.handler.parser.aiPreferences,
     );
-    if (!isGeminiEnabled) {
+    if (!hasGeminiEnabled) {
       '[AI_PARSING] [GEMINI] ⛔ AI data sharing not allowed | aborting scan'.Log(
         'QuickEntryInput',
       );

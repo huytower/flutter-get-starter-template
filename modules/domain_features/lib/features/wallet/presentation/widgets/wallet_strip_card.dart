@@ -20,7 +20,7 @@ class WalletStripCard extends StatelessWidget {
   final List<WalletEntity> wallets;
   final String? selectedWalletId;
   final Color activeColor;
-  final LinearGradient? defaultBgColor;
+  final LinearGradient? defaultBackgroundColor;
   final ValueChanged<String>? onWalletSelected;
   final VoidCallback? onAddNew;
   final String? addNewLabel;
@@ -31,7 +31,7 @@ class WalletStripCard extends StatelessWidget {
     required this.wallets,
     this.selectedWalletId,
     this.activeColor = PrjColors.primary,
-    this.defaultBgColor,
+    this.defaultBackgroundColor,
     this.onWalletSelected,
     this.onAddNew,
     this.addNewLabel,
@@ -95,15 +95,15 @@ class WalletStripCard extends StatelessWidget {
     WalletEntity wallet,
     WalletController? controller,
   ) {
-    final isSelected = wallet.id == selectedWalletId;
+    final hasSelected = wallet.id == selectedWalletId;
 
     if (controller == null) {
       return PrjWalletItem(
         name: wallet.displayName(context),
         iconCode: wallet.iconCode,
-        isSelected: isSelected,
+        hasSelected: hasSelected,
         activeColor: activeColor,
-        defaultBgColor: defaultBgColor,
+        defaultBackgroundColor: defaultBackgroundColor,
         onTap: () => _handleWalletTap(context, wallet.id),
         balanceText: TransactionFormHelpers.formatShortWithSymbol(
           wallet.balance,
@@ -117,16 +117,16 @@ class WalletStripCard extends StatelessWidget {
       controller.totalBalance.value;
       controller.displayBookBalanceOf(wallet.id);
 
-      final balance = controller.isBalanceVisible.value
+      final balance = controller.hasBalanceVisible.value
           ? controller.displayBookBalanceOf(wallet.id)
           : null;
 
       return PrjWalletItem(
         name: wallet.displayName(context),
         iconCode: wallet.iconCode,
-        isSelected: isSelected,
+        hasSelected: hasSelected,
         activeColor: activeColor,
-        defaultBgColor: defaultBgColor,
+        defaultBackgroundColor: defaultBackgroundColor,
         onTap: () => _handleWalletTap(context, wallet.id),
         balanceText: balance != null
             ? TransactionFormHelpers.formatShortWithSymbol(

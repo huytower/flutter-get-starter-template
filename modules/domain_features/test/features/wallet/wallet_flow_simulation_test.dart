@@ -137,7 +137,7 @@ class _UserLevel implements UserLevelProvider {
     hasPositiveCashFlow: false,
     fixedBudgetCount: 0,
     completedGuidelineCount: 0,
-    isVip: false,
+    hasVip: false,
   );
 
   @override

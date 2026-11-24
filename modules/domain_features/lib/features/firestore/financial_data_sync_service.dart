@@ -59,7 +59,7 @@ class FinancialDataSyncService {
 
   final FinancialRefreshProvider _refresh;
 
-  bool get _isAuthenticated => _session.currentUser != null;
+  bool get _hasAuthenticated => _session.currentUser != null;
 
   String? get _userId => _session.currentUser?.id;
 
@@ -70,7 +70,7 @@ class FinancialDataSyncService {
   /// anything destructive (logout / cache clear) consults it. `onStatusChange`
   /// does not emit an initial value, so a device that boots offline would
   /// otherwise report "online" until connectivity actually changed.
-  final RxBool isOnline = false.obs;
+  final RxBool hasOnline = false.obs;
 
   /// Count of locally-stored records not yet backed up to Cloud (across all
   /// synced entity types) — also drives the sync-status icon. Recomputed
@@ -86,7 +86,7 @@ class FinancialDataSyncService {
   /// [pendingCount] alone cannot express this: it is only recomputed *after* a
   /// sync completes, so it reads `0` for the whole duration of a clean pull
   /// and the indicator would sit on "synced" while thousands of records merge.
-  final RxBool isSyncing = false.obs;
+  final RxBool hasSyncing = false.obs;
 
   /// Number of overlapping sync operations. A plain flag would flicker off
   /// when, say, a connectivity-triggered [syncAll] overlaps a manual pull.
@@ -99,16 +99,16 @@ class FinancialDataSyncService {
   bool _pushQueued = false;
   Future<void>? _pushLoop;
 
-  /// Runs [task] with [isSyncing] raised, using a counter so overlapping
+  /// Runs [task] with [hasSyncing] raised, using a counter so overlapping
   /// operations cannot clear the flag while another is still in flight.
   Future<T> _trackSync<T>(Future<T> Function() task) async {
     _activeSyncOps++;
-    isSyncing.value = true;
+    hasSyncing.value = true;
     try {
       return await task();
     } finally {
       _activeSyncOps--;
-      isSyncing.value = _activeSyncOps > 0;
+      hasSyncing.value = _activeSyncOps > 0;
     }
   }
 
@@ -126,7 +126,7 @@ class FinancialDataSyncService {
   void startWatching() {
     _connectivitySubscription ??= _connection.onStatusChange.listen((status) {
       final online = status == InternetStatus.connected;
-      isOnline.value = online;
+      hasOnline.value = online;
       if (online && pendingCount.value > 0) {
         unawaited(syncAll());
       }
@@ -143,15 +143,15 @@ class FinancialDataSyncService {
   }
 
   /// Asks the connectivity checker for the real current state and mirrors it
-  /// into [isOnline]. Fails closed — if the probe itself throws we treat the
+  /// into [hasOnline]. Fails closed — if the probe itself throws we treat the
   /// device as offline, because every destructive path keys off this value.
   Future<bool> _probeOnline() async {
     try {
       final online = await _connection.hasInternetAccess;
-      isOnline.value = online;
+      hasOnline.value = online;
       return online;
     } catch (e) {
-      isOnline.value = false;
+      hasOnline.value = false;
       '[LOGOUT_DEBUG] Connectivity probe failed, treating as offline: $e'.Log(
         'FinancialDataSyncService',
       );
@@ -329,9 +329,9 @@ class FinancialDataSyncService {
   /// only make sense for a user who is *about to lose* access to an account —
   /// and the Profile screen already hides the button for guests.
   LogoutBlock? get logoutBlock {
-    final online = isOnline.value;
+    final online = hasOnline.value;
     final pending = pendingCount.value;
-    if (!_isAuthenticated) {
+    if (!_hasAuthenticated) {
       return null;
     } else if (!online) {
       return LogoutBlock.offline;
@@ -354,7 +354,7 @@ class FinancialDataSyncService {
   /// The failure paths return *before* signing out and leave the cache
   /// untouched, so an offline or unsynced logout still cannot lose data.
   Future<LogoutResult> logoutSafely() async {
-    if (!_isAuthenticated) {
+    if (!_hasAuthenticated) {
       // Nothing to end. Signing out again would be a no-op, and running the
       // cache clear would silently destroy a guest's local records — they
       // belong to no account, so there is nothing to protect them from and
@@ -507,7 +507,7 @@ class FinancialDataSyncService {
 
   /// Merges the current user's Firestore state into Hive and refreshes the UI.
   ///
-  /// Tracked by [isSyncing]; the work itself lives in [_runPull].
+  /// Tracked by [hasSyncing]; the work itself lives in [_runPull].
   Future<void> pullFromFirestore() => _trackSync(_runPull);
 
   Future<void> _runPull() async {
@@ -549,7 +549,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
-      if (!_isAuthenticated) return;
+      if (!_hasAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<WalletHiveModel>(
@@ -578,7 +578,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
-      if (!_isAuthenticated) return;
+      if (!_hasAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<TransactionModel>(
@@ -607,7 +607,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
-      if (!_isAuthenticated) return;
+      if (!_hasAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<BudgetLimitModel>(
@@ -636,7 +636,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
-      if (!_isAuthenticated) return;
+      if (!_hasAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<ReconciliationModel>(
@@ -665,7 +665,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
-      if (!_isAuthenticated) return;
+      if (!_hasAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<CategoryModel>(
@@ -694,7 +694,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
-      if (!_isAuthenticated) return;
+      if (!_hasAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<LiabilityModel>(
@@ -801,7 +801,7 @@ class FinancialDataSyncService {
     required Box<dynamic> box,
     required T Function(T, String) updateFn,
   }) async {
-    if (!_isAuthenticated) return;
+    if (!_hasAuthenticated) return;
     try {
       final remoteId = await syncFn(model);
       if (remoteId != null) {
@@ -830,7 +830,7 @@ class FinancialDataSyncService {
     required Box<T> box,
     required T Function(Map<String, dynamic>, String) fromFirestore,
   }) async {
-    if (!_isAuthenticated) return;
+    if (!_hasAuthenticated) return;
     try {
       final remoteData = await _syncService.fetchFromFirestore(
         userId: userId,

@@ -24,7 +24,7 @@ class CheckAppUpdateUseCase {
         return Error(error);
       case Success(success: final config):
         // Skip the device lookup entirely when the flow is switched off.
-        if (!config.isForce) return const Success(AppUpdateNotRequired());
+        if (!config.hasForce) return const Success(AppUpdateNotRequired());
 
         final installedResult = await _appRepository.getInstalledApp();
         return switch (installedResult) {
@@ -42,7 +42,7 @@ class CheckAppUpdateUseCase {
     AppUpdateConfigEntity config,
     InstalledAppEntity installed,
   ) {
-    if (!config.isForce || !installed.isStoreDistributed) {
+    if (!config.hasForce || !installed.hasStoreDistributed) {
       return const AppUpdateNotRequired();
     }
     final minimum = AppVersionEntity.tryParse(config.minimumVersion);
