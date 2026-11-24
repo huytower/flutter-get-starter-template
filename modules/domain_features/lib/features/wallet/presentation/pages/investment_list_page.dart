@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/get_x/prj_get_view.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../get_x/wallet_controller.dart';
 import '../get_x/wallet_sheets.dart';
 import '../widgets/add_investment_sheet.dart';
@@ -202,7 +201,7 @@ class _InvestmentListView extends PrjGetView<WalletController> {
 }
 
 void _showAddInvestmentSheet(BuildContext context, {dynamic wallet}) {
-  showAdaptiveBottomSheet<void>(
+  CcAdaptiveBottomSheet.show<void>(
     context: context,
     backgroundColor: context.ccColorScheme.surface,
     shape: const RoundedRectangleBorder(

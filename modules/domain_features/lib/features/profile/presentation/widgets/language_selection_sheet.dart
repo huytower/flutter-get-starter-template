@@ -1,13 +1,13 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import 'language_selection_content_sheet.dart';
 
 class LanguageSelectionSheet extends StatelessWidget {
   const LanguageSelectionSheet({super.key});
 
   static Future<Locale?> show(BuildContext context) {
-    return showAdaptiveBottomSheet<Locale>(
+    return CcAdaptiveBottomSheet.show<Locale>(
       context: context,
       builder: (context) => const LanguageSelectionSheet(),
     );

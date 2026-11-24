@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/get_x/prj_get_view.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/budget_limit_controller.dart';
 import '../widgets/add_budget_limit_sheet.dart';
@@ -158,7 +157,7 @@ class _BudgetLimitListView extends PrjGetView<BudgetLimitController> {
     BuildContext context, {
     BudgetLimitEntity? editTarget,
   }) {
-    showAdaptiveBottomSheet<void>(
+    CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),
@@ -170,7 +169,7 @@ class _BudgetLimitListView extends PrjGetView<BudgetLimitController> {
     BuildContext context,
     BudgetLimitEntity budget,
   ) {
-    showAdaptiveBottomSheet<void>(
+    CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),

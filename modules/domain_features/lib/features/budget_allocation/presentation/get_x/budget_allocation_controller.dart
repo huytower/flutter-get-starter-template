@@ -16,7 +16,6 @@ import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
@@ -89,7 +88,7 @@ class BudgetAllocationController extends PrjGetController {
   }
 
   void openAddWallet(BuildContext context) {
-    showAdaptiveBottomSheet<void>(
+    CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
@@ -100,7 +99,7 @@ class BudgetAllocationController extends PrjGetController {
   }
 
   void openAddInvestment(BuildContext context) {
-    showAdaptiveBottomSheet<void>(
+    CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
@@ -144,7 +143,7 @@ class BudgetAllocationController extends PrjGetController {
   }
 
   void _editWallet(BuildContext context, WalletEntity wallet) {
-    showAdaptiveBottomSheet<void>(
+    CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
@@ -155,7 +154,7 @@ class BudgetAllocationController extends PrjGetController {
   }
 
   void _editInvestment(BuildContext context, WalletEntity wallet) {
-    showAdaptiveBottomSheet<void>(
+    CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(

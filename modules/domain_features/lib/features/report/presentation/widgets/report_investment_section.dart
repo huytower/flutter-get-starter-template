@@ -6,7 +6,6 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../get_x/report_controller.dart';
-import 'report_card_pair.dart';
 import 'trend_card.dart';
 
 class ReportInvestmentSection extends StatelessWidget {
@@ -34,8 +33,8 @@ class ReportInvestmentSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const CcSpaceLG(),
-          ReportCardPair(
-            cards: [
+          CcTwoColumnPair(
+            children: [
               TrendCard(
                 title: el.tr(PrjLocaleKeys.report_investment_contributed),
                 amount: data.totalExpense,

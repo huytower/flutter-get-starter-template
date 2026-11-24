@@ -1,7 +1,7 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import 'app_rating_sheet_content.dart';
 
 class AppRatingSheet extends StatelessWidget {
@@ -13,7 +13,7 @@ class AppRatingSheet extends StatelessWidget {
     BuildContext context,
     CcFeedbackReporter feedbackReporter,
   ) {
-    return showAdaptiveBottomSheet<void>(
+    return CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: null,
       builder: (_) => AppRatingSheetContent(feedbackReporter: feedbackReporter),

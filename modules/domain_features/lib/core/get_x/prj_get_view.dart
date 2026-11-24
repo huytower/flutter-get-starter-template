@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../di/di.dart';
-import '../presentation/widgets/prj_page_background.dart';
 import 'prj_get_controller.dart';
 
 /// Base class for GetX views with built-in layout state management.
@@ -56,7 +55,7 @@ abstract class PrjGetView<T extends PrjGetController> extends GetView<T>
   /// own.
   @override
   Widget onPageBodyWrapper(BuildContext context, Widget body) =>
-      PrjPageBackground(child: body);
+      CcGradientBackground.page(child: body);
 
   //----------------------------------------------------------------------------
   @override

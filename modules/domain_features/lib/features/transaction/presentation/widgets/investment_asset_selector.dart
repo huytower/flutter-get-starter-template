@@ -1,6 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
+import 'package:domain_features/core/presentation/helper/asset_card_metrics.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/base/category_customize_empty_state.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/budget/budget_name_helper.dart';
-import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../../../wallet/presentation/pages/investment_list_page.dart';
 import '../get_x/investment_form_controller.dart';
 
@@ -44,7 +43,7 @@ class InvestmentAssetSelector extends StatelessWidget {
         Obx(() {
           if (controller.hasLoadingMerged.value) {
             return CcContentPadding(
-              child: PrjCategoryShimmerList(
+              child: CcShimmerList(
                 height: context.respDim(95),
                 verticalPadding: context.respDim(4),
                 separator: const CcSpaceMD(),
@@ -151,7 +150,7 @@ class InvestmentAssetSelector extends StatelessWidget {
             ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(assetCardWidth),
+            width: context.respDim(AssetCardMetrics.width),
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
               color: hasSelected

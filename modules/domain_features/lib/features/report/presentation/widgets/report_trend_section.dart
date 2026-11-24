@@ -1,3 +1,4 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../domain/entities/trend_data_entity.dart';
 import '../get_x/report_controller.dart';
-import 'report_card_pair.dart';
 import 'trend_card.dart';
 
 class ReportTrendSection extends StatelessWidget {
@@ -59,7 +59,7 @@ class ReportTrendSection extends StatelessWidget {
         );
       }
 
-      return ReportCardPair(cards: cards);
+      return CcTwoColumnPair(children: cards);
     });
   }
 }

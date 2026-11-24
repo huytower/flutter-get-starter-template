@@ -1,6 +1,6 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import 'currency_selection_content_sheet.dart';
 
 class CurrencySelectionSheet extends StatelessWidget {
@@ -12,7 +12,7 @@ class CurrencySelectionSheet extends StatelessWidget {
     BuildContext context,
     String initialCurrencyCode,
   ) {
-    return showAdaptiveBottomSheet<String>(
+    return CcAdaptiveBottomSheet.show<String>(
       context: context,
       // Two columns of tiles need more room than a plain list sheet.
       tabletMaxWidth: 840,

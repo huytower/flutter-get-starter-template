@@ -8,7 +8,6 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart';
 import '../../../budget_limit/export_budget_limit.dart';
 import '../../../guideline/export_guideline.dart';
@@ -124,7 +123,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
   }
 
   void _openAddBudget(BuildContext context) {
-    showAdaptiveBottomSheet<void>(
+    CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(

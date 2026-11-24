@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/ai/ai_fallback_preference_datasource.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../pages/privacy_policy_page.dart';
 
 /// Asks the user to allow sharing data with Google Gemini before any AI
@@ -21,7 +20,7 @@ class AiConsentSheet extends StatelessWidget {
   ) async {
     if (await prefs.hasGeminiEnabled()) return true;
     if (!context.mounted) return false;
-    final allowed = await showAdaptiveBottomSheet<bool>(
+    final allowed = await CcAdaptiveBottomSheet.show<bool>(
       context: context,
       backgroundColor: null,
       builder: (_) => const AiConsentSheet(),

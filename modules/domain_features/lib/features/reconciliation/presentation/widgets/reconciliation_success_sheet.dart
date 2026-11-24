@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../get_x/reconciliation_controller.dart';
 import 'reward_completion_banner.dart';
 
@@ -80,7 +79,7 @@ class ReconciliationUndoSheet extends StatelessWidget {
   const ReconciliationUndoSheet({super.key});
 
   static Future<void> show(BuildContext context) {
-    return showAdaptiveBottomSheet<void>(
+    return CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: null,
       builder: (_) => const ReconciliationUndoSheet(),

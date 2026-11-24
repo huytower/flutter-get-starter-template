@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../guideline/export_guideline.dart';
 
 /// Bottom sheet for wallet actions (edit/delete).
@@ -29,7 +28,7 @@ class EditWalletSheet extends StatelessWidget {
     required VoidCallback onEdit,
     required VoidCallback onDelete,
   }) {
-    return showAdaptiveBottomSheet<void>(
+    return CcAdaptiveBottomSheet.show<void>(
       context: context,
       hasScrollControlled: false,
       backgroundColor: context.ccColorScheme.surface,

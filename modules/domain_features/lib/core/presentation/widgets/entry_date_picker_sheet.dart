@@ -1,4 +1,4 @@
-import 'package:domain_features/core/presentation/helper/adaptive_bottom_sheet.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/presentation/widgets/entry_date_picker_content_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +20,7 @@ class EntryDatePickerSheet extends StatelessWidget {
     required DateTime firstDate,
     required DateTime lastDate,
   }) {
-    return showAdaptiveBottomSheet<DateTime>(
+    return CcAdaptiveBottomSheet.show<DateTime>(
       context: context,
       backgroundColor: null,
       builder: (context) => EntryDatePickerSheet(

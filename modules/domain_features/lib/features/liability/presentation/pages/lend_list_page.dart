@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/get_x/prj_get_view.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
@@ -197,7 +196,7 @@ class _LendListView extends PrjGetView<LiabilityListController> {
       _openAddLendSheet(context, controller);
 
   void _confirmDelete(BuildContext context, String id) {
-    showAdaptiveBottomSheet<void>(
+    CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(

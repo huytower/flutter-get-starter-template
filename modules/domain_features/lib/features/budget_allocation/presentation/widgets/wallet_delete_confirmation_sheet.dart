@@ -4,8 +4,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
-
 /// Delete confirmation dialog for wallet deletion.
 class WalletDeleteConfirmationSheet extends StatelessWidget {
   const WalletDeleteConfirmationSheet({
@@ -22,7 +20,7 @@ class WalletDeleteConfirmationSheet extends StatelessWidget {
     required WalletEntity wallet,
     required VoidCallback onConfirm,
   }) {
-    return showAdaptiveBottomSheet<void>(
+    return CcAdaptiveBottomSheet.show<void>(
       context: context,
       hasScrollControlled: false,
       backgroundColor: context.ccColorScheme.surface,

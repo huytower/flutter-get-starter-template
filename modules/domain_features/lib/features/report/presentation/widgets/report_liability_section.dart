@@ -6,7 +6,6 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../get_x/report_controller.dart';
-import 'report_card_pair.dart';
 import 'trend_card.dart';
 
 class ReportLiabilitySection extends StatelessWidget {
@@ -67,7 +66,7 @@ class ReportLiabilitySection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const CcSpaceLG(),
-          ReportCardPair(cards: children),
+          CcTwoColumnPair(children: children),
           const CcSpaceSM(),
         ],
       );

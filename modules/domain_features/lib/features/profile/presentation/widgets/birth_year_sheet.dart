@@ -1,6 +1,6 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import 'birth_year_content_sheet.dart';
 
 class BirthYearSheet extends StatelessWidget {
@@ -21,7 +21,7 @@ class BirthYearSheet extends StatelessWidget {
     required int minYear,
     required int maxYear,
   }) {
-    return showAdaptiveBottomSheet<int>(
+    return CcAdaptiveBottomSheet.show<int>(
       context: context,
       builder: (context) => BirthYearSheet(
         currentYear: currentYear,

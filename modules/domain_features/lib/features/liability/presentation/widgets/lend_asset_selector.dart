@@ -1,5 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
+import 'package:domain_features/core/presentation/helper/asset_card_metrics.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/base/category_customize_empty_state.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/budget/budget_name_helper.dart';
-import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../get_x/lend_form_controller.dart';
 import '../pages/lend_list_page.dart';
 
@@ -42,7 +41,7 @@ class LendAssetSelector extends StatelessWidget {
         Obx(() {
           if (controller.hasLoadingMerged.value) {
             return const CcContentPadding(
-              child: PrjCategoryShimmerList(itemPadding: EdgeInsets.zero),
+              child: CcShimmerList(itemPadding: EdgeInsets.zero),
             );
           }
 
@@ -134,7 +133,7 @@ class LendAssetSelector extends StatelessWidget {
             ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(assetCardWidth),
+            width: context.respDim(AssetCardMetrics.width),
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
               color: hasSelected

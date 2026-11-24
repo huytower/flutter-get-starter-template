@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../budget_allocation/presentation/widgets/budget_insight_card.dart';
 import '../../../firestore/guest_login_prompt_service.dart';
 
@@ -28,7 +27,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
     BuildContext context, {
     required GuestLoginPrompt prompt,
   }) {
-    return showAdaptiveBottomSheet<bool>(
+    return CcAdaptiveBottomSheet.show<bool>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       hasDismissible: false,
@@ -151,7 +150,8 @@ class GuestLoginPromptSheet extends StatelessWidget {
                         child: CcText(
                           el.tr(
                             hasFinal
-                                ? PrjLocaleKeys.common_guest_login_continue_local
+                                ? PrjLocaleKeys
+                                      .common_guest_login_continue_local
                                 : PrjLocaleKeys.common_later,
                           ),
                           align: Alignment.center,

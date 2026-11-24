@@ -5,7 +5,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:collection/collection.dart' hide IterableFirstOrNull;
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
+import 'package:domain_features/core/presentation/helper/asset_card_metrics.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -28,8 +28,6 @@ import 'quick_entry_handler.dart';
 import 'quick_entry_session.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
-
-const String _debugTag = 'InvestmentAssetRow';
 
 @injectable
 class InvestmentFormController extends TransactionFormController {
@@ -141,8 +139,7 @@ class InvestmentFormController extends TransactionFormController {
     quickAmounts.assignAll(suggestions);
   }
 
-  final Rx<InvestmentDirection> direction =
-      InvestmentDirection.contribute.obs;
+  final Rx<InvestmentDirection> direction = InvestmentDirection.contribute.obs;
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
   final RxInt categoryKey = 0.obs;
@@ -262,13 +259,12 @@ class InvestmentFormController extends TransactionFormController {
     if (index == -1) return;
 
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => revealRowCard(
+      (_) => CcScrollReveal.reveal(
         scrollController: assetRowScrollController,
         index: index,
-        itemWidth: assetCardWidth,
-        itemGap: assetCardGap,
+        itemWidth: AssetCardMetrics.width,
+        itemGap: AssetCardMetrics.gap,
         leadingPadding: CcPaddingParams.PAGE_XS,
-        tag: _debugTag,
       ),
     );
   }
@@ -498,7 +494,9 @@ class InvestmentFormController extends TransactionFormController {
       if (context.mounted) {
         CcSnackBarHelper.showErrorSnackBar(
           context: context,
-          message: el.tr(PrjLocaleKeys.transaction_validation_category_required),
+          message: el.tr(
+            PrjLocaleKeys.transaction_validation_category_required,
+          ),
         );
       }
       return;

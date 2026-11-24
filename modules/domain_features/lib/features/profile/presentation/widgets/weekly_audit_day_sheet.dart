@@ -1,6 +1,6 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import 'weekly_audit_day_content_sheet.dart';
 
 class WeeklyAuditDaySheet extends StatelessWidget {
@@ -9,7 +9,7 @@ class WeeklyAuditDaySheet extends StatelessWidget {
   const WeeklyAuditDaySheet({super.key, required this.currentDay});
 
   static Future<int?> show(BuildContext context, {required int currentDay}) {
-    return showAdaptiveBottomSheet<int>(
+    return CcAdaptiveBottomSheet.show<int>(
       context: context,
       builder: (context) => WeeklyAuditDaySheet(currentDay: currentDay),
     );

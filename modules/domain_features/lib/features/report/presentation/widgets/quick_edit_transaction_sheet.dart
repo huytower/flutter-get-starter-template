@@ -11,7 +11,6 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../liability/presentation/widgets/borrow_asset_selector.dart';
 import '../../../liability/presentation/widgets/lend_asset_selector.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
@@ -33,7 +32,7 @@ class QuickEditTransactionSheet
       }
     });
 
-    return showAdaptiveBottomSheet<void>(
+    return CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(

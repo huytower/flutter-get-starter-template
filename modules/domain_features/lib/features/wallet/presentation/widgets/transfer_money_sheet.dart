@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../transaction/domain/usecases/create_wallet_transfer_usecase.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_strip_card.dart';
@@ -31,7 +30,7 @@ class TransferMoneySheet extends StatefulWidget {
     required WalletEntity sourceWallet,
     required CreateWalletTransferUseCase transfer,
   }) {
-    return showAdaptiveBottomSheet<void>(
+    return CcAdaptiveBottomSheet.show<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),

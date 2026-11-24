@@ -1,6 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:collection/collection.dart';
-import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/presentation/widgets/category/prj_category_item.dart';
-import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../get_x/category_selection_controller.dart';
 import 'base/category_selection_layout.dart';
 
@@ -100,7 +98,7 @@ class CategorySelectionSection extends StatelessWidget {
           _buildTitle(context),
           const CcSpaceXS(),
           controller.hasLoading.value
-              ? const PrjCategoryShimmerList()
+              ? const CcShimmerList()
               : _buildCategoryList(context, controller),
         ],
       );
@@ -137,14 +135,13 @@ class CategorySelectionSection extends StatelessWidget {
           // card into view (it may sit past the right edge, e.g. when editing).
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!context.mounted) return;
-            revealRowCard(
+            CcScrollReveal.reveal(
               scrollController: scrollController,
               index: index,
               itemWidth: categoryItemWidth,
               itemGap: categoryItemGap,
               leadingPadding: CcPaddingParams.PAGE_SM,
               context: context,
-              tag: 'CategorySelectionSection',
               attemptsLeft: 6,
             );
           });

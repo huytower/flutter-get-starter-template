@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../get_x/report_controller.dart';
 
 class ReportFilterPickerSheet extends StatefulWidget {
@@ -26,7 +25,9 @@ class ReportFilterPickerSheet extends StatefulWidget {
     required String? selectedWalletId,
     required ReportFilterType selectedType,
   }) {
-    return showAdaptiveBottomSheet<({ReportFilterType type, String? walletId})>(
+    return CcAdaptiveBottomSheet.show<
+      ({ReportFilterType type, String? walletId})
+    >(
       context: context,
       backgroundColor: null,
       builder: (_) => ReportFilterPickerSheet(

@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/presentation/widgets/prj_page_background.dart';
 import '../../domain/entities/comment_entity.dart';
 
 @RoutePage()
@@ -32,7 +31,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
 
   @override
   Widget onPageBodyWrapper(BuildContext context, Widget body) =>
-      PrjPageBackground(child: body);
+      CcGradientBackground.page(child: body);
 
   @override
   Widget? buildContent(BuildContext context) {

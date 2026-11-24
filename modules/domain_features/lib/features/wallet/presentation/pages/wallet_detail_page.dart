@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/currency/money_formatter.dart';
-import '../../../../core/presentation/widgets/prj_page_background.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/wallet_display_name.dart';
 
@@ -49,7 +48,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
 
   @override
   Widget onPageBodyWrapper(BuildContext context, Widget body) =>
-      PrjPageBackground(child: body);
+      CcGradientBackground.page(child: body);
 
   @override
   Widget? buildContent(BuildContext context) {

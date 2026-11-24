@@ -2,7 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 
 class ProfileDeleteConfirmSheet extends StatelessWidget {
   const ProfileDeleteConfirmSheet({
@@ -29,7 +28,7 @@ class ProfileDeleteConfirmSheet extends StatelessWidget {
     bool hasAppleSignIn = false,
     String? accountLabel,
   }) {
-    return showAdaptiveBottomSheet<bool>(
+    return CcAdaptiveBottomSheet.show<bool>(
       context: context,
       backgroundColor: null,
       builder: (_) => ProfileDeleteConfirmSheet(

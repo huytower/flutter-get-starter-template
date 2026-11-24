@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 
 class DeleteTransactionSheet extends StatelessWidget {
@@ -20,7 +19,7 @@ class DeleteTransactionSheet extends StatelessWidget {
     BuildContext context,
     TransactionEntity transaction,
   ) {
-    return showAdaptiveBottomSheet<Result<Unit, CcFailure>>(
+    return CcAdaptiveBottomSheet.show<Result<Unit, CcFailure>>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),

@@ -136,7 +136,7 @@ class _ReportView extends PrjGetView<ReportController> {
           // Landscape tablet: the tab bar stays at the content width while the
           // cards below use the wider two-column block, laid out as pairs
           // (expense | income, contributed | returned, ...) — see
-          // ReportCardPair. Phones and portrait tablets: one capped column.
+          // CcTwoColumnPair. Phones and portrait tablets: one capped column.
           final wide = CcTwoColumn.shouldUse(context);
           final sections = <Widget>[
             const CcSpaceXS(),
