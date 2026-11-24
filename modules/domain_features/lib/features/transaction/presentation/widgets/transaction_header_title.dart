@@ -54,7 +54,7 @@ class TransactionHeaderTitle extends StatelessWidget {
 
   Widget _buildPageTitle(BuildContext context) {
     return CcText(
-      el.tr(CcLocaleKeys.transaction_title),
+      el.tr(PrjLocaleKeys.transaction_title),
       key: const ValueKey('transaction_title'),
       textStyle: context.ccTextTheme.titleLarge?.copyWith(
         color: context.ccColorScheme.onPrimary,

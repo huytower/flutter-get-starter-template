@@ -1,4 +1,4 @@
-import 'package:message/cc_localization.dart';
+import 'package:message/prj_localization.dart';
 
 abstract final class AiLanguage {
   AiLanguage._();
@@ -12,7 +12,7 @@ abstract final class AiLanguage {
   };
 
   static String nameOf(String? languageCode) {
-    final code = (languageCode ?? CcLocalization.fallbackLocale.languageCode)
+    final code = (languageCode ?? PrjLocalization.fallbackLocale.languageCode)
         .toLowerCase();
     return _names[code] ?? code;
   }

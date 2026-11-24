@@ -9,7 +9,7 @@ Layer** for the Super App Hybrid-Shell, mapping design tokens to brand-specific 
     - `helper/theme_helper.dart` — helpers that create `ColorScheme` and theme builders
 - `presentation/` — UI-facing styles, color tokens and theme extensions
     - `style/prj_colors.dart` — maps semantic app colors to `cc_sdk_ui` `CcBaseColors`
-    - `style/cc_text_style.dart` — `ThemeExtension` building the `TextTheme`
+    - `style/prj_text_style.dart` — `ThemeExtension` building the `TextTheme`
 
 ## Design Principles
 
@@ -100,4 +100,4 @@ Edit: lib/presentation/style/prj_colors.dart
 
 Typography
 Edit: 
-lib/presentation/style/cc_text_style.dart
+lib/presentation/style/prj_text_style.dart

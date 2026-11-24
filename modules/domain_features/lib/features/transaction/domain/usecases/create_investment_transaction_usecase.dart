@@ -4,7 +4,7 @@ import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../wallet/domain/repositories/wallet_repository.dart';
@@ -76,12 +76,12 @@ class CreateInvestmentTransactionUseCase {
   ) async {
     if (params.amount <= 0) {
       return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
+        CcValidationFailure(PrjLocaleKeys.transaction_validation_amount_required),
       );
     }
     if (params.date.isAfter(DateTime.now())) {
       return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_future_date),
+        CcValidationFailure(PrjLocaleKeys.transaction_validation_future_date),
       );
     }
 
@@ -136,8 +136,8 @@ class CreateInvestmentTransactionUseCase {
     }
     if (finalLiquidAmount > balanceResult.tryGetSuccess()!) {
       return const Error(
-        ValidationFailure(
-          CcLocaleKeys.transaction_validation_insufficient_balance,
+        CcValidationFailure(
+          PrjLocaleKeys.transaction_validation_insufficient_balance,
         ),
       );
     }

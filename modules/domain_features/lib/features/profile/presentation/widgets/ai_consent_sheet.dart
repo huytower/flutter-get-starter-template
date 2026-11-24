@@ -60,7 +60,7 @@ class AiConsentSheet extends StatelessWidget {
               ),
               const CcSpaceMD(),
               CcText(
-                el.tr(CcLocaleKeys.profile_ai_consent_title),
+                el.tr(PrjLocaleKeys.profile_ai_consent_title),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleLarge?.copyWith(
@@ -70,7 +70,7 @@ class AiConsentSheet extends StatelessWidget {
               ),
               const CcSpaceSM(),
               CcText(
-                el.tr(CcLocaleKeys.profile_ai_consent_body),
+                el.tr(PrjLocaleKeys.profile_ai_consent_body),
                 align: Alignment.center,
                 maxLines: 10,
                 textAlign: TextAlign.center,
@@ -86,7 +86,7 @@ class AiConsentSheet extends StatelessWidget {
                   ),
                 ),
                 child: CcText(
-                  el.tr(CcLocaleKeys.profile_ai_consent_terms),
+                  el.tr(PrjLocaleKeys.profile_ai_consent_terms),
                   align: Alignment.center,
                   textAlign: TextAlign.center,
                   textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -99,8 +99,8 @@ class AiConsentSheet extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.profile_ai_consent_decline),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.profile_ai_consent_decline),
                       bgColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
@@ -111,8 +111,8 @@ class AiConsentSheet extends StatelessWidget {
                   ),
                   const CcSpaceMD(),
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.profile_ai_consent_allow),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.profile_ai_consent_allow),
                       bgColor: [scheme.primary, scheme.primary],
                       textColor: scheme.onPrimary,
                       onTap: () => Navigator.of(context).pop(true),

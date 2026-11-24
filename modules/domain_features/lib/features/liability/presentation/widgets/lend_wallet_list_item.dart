@@ -144,7 +144,7 @@ class LendWalletListItem extends StatelessWidget {
           ),
           const CcSpaceXS(),
           CcText(
-            el.tr(CcLocaleKeys.liability_to_collect),
+            el.tr(PrjLocaleKeys.liability_to_collect),
             align: Alignment.center,
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -179,7 +179,7 @@ class LendWalletListItem extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              TextSpan(text: '${el.tr(CcLocaleKeys.liability_received)}: '),
+              TextSpan(text: '${el.tr(PrjLocaleKeys.liability_received)}: '),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   repaid,
@@ -215,7 +215,7 @@ class LendWalletListItem extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              TextSpan(text: '${el.tr(CcLocaleKeys.liability_total_lend)}: '),
+              TextSpan(text: '${el.tr(PrjLocaleKeys.liability_total_lend)}: '),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   liability.principalAmount,

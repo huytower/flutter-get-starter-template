@@ -47,7 +47,7 @@ class _WebViewPageState extends State<WebViewPage> {
         centerTitle: true,
         backgroundColor: context.ccColorScheme.surface,
         elevation: 0,
-        leading: CcBackBtn(onTap: () => Navigator.of(context).pop()),
+        leading: CcBackButton(onTap: () => Navigator.of(context).pop()),
       ),
       body: Stack(
         children: [

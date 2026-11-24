@@ -1,5 +1,5 @@
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive_ce.dart';
 
@@ -18,8 +18,8 @@ abstract final class FinancialSchemaMigration {
   static const currentVersion = 2;
 
   static Future<CurrencyAnnotationResult> runMigrationIfNeeded() async {
-    final s = CcAppStorage.instance;
-    final storedVersion = s.financialSchemaVersion ?? 1;
+    final storage = PrjAppStorage.instance;
+    final storedVersion = storage.financialSchemaVersion ?? 1;
 
     if (storedVersion >= currentVersion) {
       return const CurrencyAnnotationResult(
@@ -40,11 +40,11 @@ abstract final class FinancialSchemaMigration {
 
     try {
       // 1. Wallets
-      if (Hive.isBoxOpen(CcHiveBox.WALLET_BOX_NAME) ||
-          await Hive.boxExists(CcHiveBox.WALLET_BOX_NAME)) {
-        final box = Hive.isBoxOpen(CcHiveBox.WALLET_BOX_NAME)
-            ? Hive.box<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME)
-            : await Hive.openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+      if (Hive.isBoxOpen(PrjHiveBox.WALLET_BOX_NAME) ||
+          await Hive.boxExists(PrjHiveBox.WALLET_BOX_NAME)) {
+        final box = Hive.isBoxOpen(PrjHiveBox.WALLET_BOX_NAME)
+            ? Hive.box<WalletHiveModel>(PrjHiveBox.WALLET_BOX_NAME)
+            : await Hive.openBox<WalletHiveModel>(PrjHiveBox.WALLET_BOX_NAME);
 
         for (final key in box.keys) {
           final wallet = box.get(key);
@@ -77,12 +77,12 @@ abstract final class FinancialSchemaMigration {
       }
 
       // 2. Transactions
-      if (Hive.isBoxOpen(CcHiveBox.TRANSACTION_BOX_NAME) ||
-          await Hive.boxExists(CcHiveBox.TRANSACTION_BOX_NAME)) {
-        final box = Hive.isBoxOpen(CcHiveBox.TRANSACTION_BOX_NAME)
-            ? Hive.box<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME)
+      if (Hive.isBoxOpen(PrjHiveBox.TRANSACTION_BOX_NAME) ||
+          await Hive.boxExists(PrjHiveBox.TRANSACTION_BOX_NAME)) {
+        final box = Hive.isBoxOpen(PrjHiveBox.TRANSACTION_BOX_NAME)
+            ? Hive.box<TransactionModel>(PrjHiveBox.TRANSACTION_BOX_NAME)
             : await Hive.openBox<TransactionModel>(
-                CcHiveBox.TRANSACTION_BOX_NAME,
+                PrjHiveBox.TRANSACTION_BOX_NAME,
               );
 
         for (final key in box.keys) {
@@ -101,11 +101,11 @@ abstract final class FinancialSchemaMigration {
       }
 
       // 3. Budgets
-      if (Hive.isBoxOpen(CcHiveBox.BUDGET_BOX_NAME) ||
-          await Hive.boxExists(CcHiveBox.BUDGET_BOX_NAME)) {
-        final box = Hive.isBoxOpen(CcHiveBox.BUDGET_BOX_NAME)
-            ? Hive.box<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME)
-            : await Hive.openBox<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+      if (Hive.isBoxOpen(PrjHiveBox.BUDGET_BOX_NAME) ||
+          await Hive.boxExists(PrjHiveBox.BUDGET_BOX_NAME)) {
+        final box = Hive.isBoxOpen(PrjHiveBox.BUDGET_BOX_NAME)
+            ? Hive.box<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME)
+            : await Hive.openBox<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME);
 
         for (final key in box.keys) {
           final budget = box.get(key);
@@ -137,11 +137,11 @@ abstract final class FinancialSchemaMigration {
       }
 
       // 4. Liabilities
-      if (Hive.isBoxOpen(CcHiveBox.LIABILITY_BOX_NAME) ||
-          await Hive.boxExists(CcHiveBox.LIABILITY_BOX_NAME)) {
-        final box = Hive.isBoxOpen(CcHiveBox.LIABILITY_BOX_NAME)
-            ? Hive.box<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME)
-            : await Hive.openBox<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
+      if (Hive.isBoxOpen(PrjHiveBox.LIABILITY_BOX_NAME) ||
+          await Hive.boxExists(PrjHiveBox.LIABILITY_BOX_NAME)) {
+        final box = Hive.isBoxOpen(PrjHiveBox.LIABILITY_BOX_NAME)
+            ? Hive.box<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME)
+            : await Hive.openBox<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME);
 
         for (final key in box.keys) {
           final lib = box.get(key);
@@ -180,12 +180,12 @@ abstract final class FinancialSchemaMigration {
       }
 
       // 5. Reconciliations
-      if (Hive.isBoxOpen(CcHiveBox.RECONCILIATION_BOX_NAME) ||
-          await Hive.boxExists(CcHiveBox.RECONCILIATION_BOX_NAME)) {
-        final box = Hive.isBoxOpen(CcHiveBox.RECONCILIATION_BOX_NAME)
-            ? Hive.box<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME)
+      if (Hive.isBoxOpen(PrjHiveBox.RECONCILIATION_BOX_NAME) ||
+          await Hive.boxExists(PrjHiveBox.RECONCILIATION_BOX_NAME)) {
+        final box = Hive.isBoxOpen(PrjHiveBox.RECONCILIATION_BOX_NAME)
+            ? Hive.box<ReconciliationModel>(PrjHiveBox.RECONCILIATION_BOX_NAME)
             : await Hive.openBox<ReconciliationModel>(
-                CcHiveBox.RECONCILIATION_BOX_NAME,
+                PrjHiveBox.RECONCILIATION_BOX_NAME,
               );
 
         for (final key in box.keys) {
@@ -220,8 +220,8 @@ abstract final class FinancialSchemaMigration {
       }
 
       // Only advance version after ALL box migrations succeed completely
-      s.financialSchemaVersion = currentVersion;
-      await s.save();
+      storage.financialSchemaVersion = currentVersion;
+      await storage.save();
 
       return CurrencyAnnotationResult(
         walletsUpdated: walletsUpdated,

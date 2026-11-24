@@ -108,7 +108,7 @@ class BudgetLimitGridCardDetail extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              TextSpan(text: '${el.tr(CcLocaleKeys.budget_spent_prefix)}: '),
+              TextSpan(text: '${el.tr(PrjLocaleKeys.budget_spent_prefix)}: '),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   stats.spent,
@@ -144,7 +144,7 @@ class BudgetLimitGridCardDetail extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              TextSpan(text: '${el.tr(CcLocaleKeys.budget_limit_prefix)}: '),
+              TextSpan(text: '${el.tr(PrjLocaleKeys.budget_limit_prefix)}: '),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   stats.budget.limit,

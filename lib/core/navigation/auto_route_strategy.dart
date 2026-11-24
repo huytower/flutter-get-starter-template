@@ -31,7 +31,7 @@ class AutoRouteStrategy extends RoutingStrategy {
         routerConfig: _appRouter.config(
           navigatorObservers: () => [?_analytics.navigatorObserver],
         ),
-        locale: CcLocalization.getCurrentLocale(context),
+        locale: PrjLocalization.getCurrentLocale(context),
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         builder: (context, child) {

@@ -28,7 +28,7 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
           AppVersionEntity.tryParse(raw) ??
           AppVersionEntity.tryParse(info.version);
       if (version == null) {
-        return Error(DeviceFailure('Unreadable app version "$raw"'));
+        return Error(CcDeviceFailure('Unreadable app version "$raw"'));
       }
       return Success(
         InstalledAppEntity(
@@ -38,7 +38,7 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
         ),
       );
     } catch (e) {
-      return Error(DeviceFailure('Failed to read app version: $e'));
+      return Error(CcDeviceFailure('Failed to read app version: $e'));
     }
   }
 
@@ -52,7 +52,7 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
       if (_isIOS) {
         final id = iosAppStoreId?.trim() ?? '';
         if (id.isEmpty) {
-          return const Error(ValidationFailure('Missing App Store id'));
+          return const Error(CcValidationFailure('Missing App Store id'));
         }
         candidates = [
           Uri.parse('itms-apps://itunes.apple.com/app/id$id'),
@@ -68,7 +68,7 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
           Uri.parse('https://play.google.com/store/apps/details?id=$package'),
         ];
       } else {
-        return const Error(DeviceFailure('No app store on this platform'));
+        return const Error(CcDeviceFailure('No app store on this platform'));
       }
 
       for (final uri in candidates) {
@@ -78,10 +78,10 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
         ).catchError((_) => false);
         if (opened) return const Success(unit);
       }
-      return const Error(DeviceFailure('Could not open the app store'));
+      return const Error(CcDeviceFailure('Could not open the app store'));
     } catch (e) {
       'Open store failed: $e'.Log('AppUpdate');
-      return Error(DeviceFailure('Could not open the app store: $e'));
+      return Error(CcDeviceFailure('Could not open the app store: $e'));
     }
   }
 }

@@ -4335,8 +4335,8 @@ class CodegenLoader extends AssetLoader {
   };
 }
 
-class CcLocaleKeys {
-  CcLocaleKeys._();
+class PrjLocaleKeys {
+  PrjLocaleKeys._();
 
   static const app = 'app';
   static const app_name = 'app.name';

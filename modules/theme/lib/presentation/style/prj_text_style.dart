@@ -15,12 +15,12 @@ import 'prj_colors.dart';
 /// MaterialApp(
 ///   theme: ThemeData(
 ///     extensions: <ThemeExtension<dynamic>>[
-///       CcTextStyle.light(),
+///       PrjTextStyle.light(),
 ///     ],
 ///   ),
 ///   darkTheme: ThemeData.dark().copyWith(
 ///     extensions: <ThemeExtension<dynamic>>[
-///       CcTextStyle.dark(),
+///       PrjTextStyle.dark(),
 ///     ],
 ///   ),
 /// );
@@ -28,10 +28,10 @@ import 'prj_colors.dart';
 /// // In your widgets:
 /// Text(
 ///   'Hello World',
-///   style: Theme.of(context).extension<CcTextStyle>()?.displayLarge,
+///   style: Theme.of(context).extension<PrjTextStyle>()?.displayLarge,
 /// )
 /// ```
-class CcTextStyle extends ThemeExtension<CcTextStyle> {
+class PrjTextStyle extends ThemeExtension<PrjTextStyle> {
   // Typography tokens are defined in CcTypographyParams (cc_sdk_ui)
 
   // Display Styles (Material 3)
@@ -59,8 +59,8 @@ class CcTextStyle extends ThemeExtension<CcTextStyle> {
   final TextStyle labelMedium;
   final TextStyle labelSmall;
 
-  /// Creates a [CcTextStyle] with the given styles.
-  const CcTextStyle({
+  /// Creates a [PrjTextStyle] with the given styles.
+  const PrjTextStyle({
     required this.displayLarge,
     required this.displayMedium,
     required this.displaySmall,
@@ -79,8 +79,8 @@ class CcTextStyle extends ThemeExtension<CcTextStyle> {
   });
 
   /// Creates a light theme text style configuration.
-  factory CcTextStyle.light() {
-    return const CcTextStyle(
+  factory PrjTextStyle.light() {
+    return const PrjTextStyle(
       // Display Styles
       displayLarge: TextStyle(
         fontWeight: CcTypographyParams.regular,
@@ -190,9 +190,9 @@ class CcTextStyle extends ThemeExtension<CcTextStyle> {
   }
 
   /// Creates a dark theme text style configuration.
-  factory CcTextStyle.dark() {
-    final light = CcTextStyle.light();
-    return CcTextStyle(
+  factory PrjTextStyle.dark() {
+    final light = PrjTextStyle.light();
+    return PrjTextStyle(
       // Update colors for dark theme
       displayLarge: light.displayLarge.copyWith(color: PrjColors.onSurface),
       displayMedium: light.displayMedium.copyWith(color: PrjColors.onSurface),
@@ -217,7 +217,7 @@ class CcTextStyle extends ThemeExtension<CcTextStyle> {
   }
 
   @override
-  ThemeExtension<CcTextStyle> copyWith({
+  ThemeExtension<PrjTextStyle> copyWith({
     TextStyle? displayLarge,
     TextStyle? displayMedium,
     TextStyle? displaySmall,
@@ -234,7 +234,7 @@ class CcTextStyle extends ThemeExtension<CcTextStyle> {
     TextStyle? labelMedium,
     TextStyle? labelSmall,
   }) {
-    return CcTextStyle(
+    return PrjTextStyle(
       displayLarge: displayLarge ?? this.displayLarge,
       displayMedium: displayMedium ?? this.displayMedium,
       displaySmall: displaySmall ?? this.displaySmall,
@@ -254,14 +254,14 @@ class CcTextStyle extends ThemeExtension<CcTextStyle> {
   }
 
   @override
-  ThemeExtension<CcTextStyle> lerp(
-    ThemeExtension<CcTextStyle>? other,
+  ThemeExtension<PrjTextStyle> lerp(
+    ThemeExtension<PrjTextStyle>? other,
     double t,
   ) {
-    if (other is! CcTextStyle) {
+    if (other is! PrjTextStyle) {
       return this;
     }
-    return CcTextStyle(
+    return PrjTextStyle(
       displayLarge: TextStyle.lerp(displayLarge, other.displayLarge, t)!,
       displayMedium: TextStyle.lerp(displayMedium, other.displayMedium, t)!,
       displaySmall: TextStyle.lerp(displaySmall, other.displaySmall, t)!,

@@ -1,7 +1,7 @@
 // Translations owned by cc_micro_features. Every key lives under the top-level
 // `mf` group so it never collides with an app's own keys. The app merges
 // [CcMfTranslations.mapLocales] into its easy_localization loader (see
-// `CcLocalization.wrapWithLocalization(packageTranslations: ...)` in the
+// `PrjLocalization.wrapWithLocalization(packageTranslations: ...)` in the
 // `message` module); an app may override any value by defining the same key.
 //
 // Adding a string: add the constant to [CcMfLocaleKeys] and the value to every

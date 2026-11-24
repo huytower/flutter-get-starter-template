@@ -24,7 +24,7 @@ class ReconciliationHistorySection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CcText(
-                el.tr(CcLocaleKeys.reconciliation_history),
+                el.tr(PrjLocaleKeys.reconciliation_history),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

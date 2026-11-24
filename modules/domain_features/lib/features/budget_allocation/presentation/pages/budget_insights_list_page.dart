@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_insights_section.dart';
 
@@ -35,7 +35,7 @@ class _BudgetInsightsListPageState extends State<BudgetInsightsListPage> {
   }
 }
 
-class _BudgetInsightsListView extends CcGetView<BudgetAllocationController> {
+class _BudgetInsightsListView extends PrjGetView<BudgetAllocationController> {
   const _BudgetInsightsListView({required this.controller});
 
   @override
@@ -58,7 +58,7 @@ class _BudgetInsightsListView extends CcGetView<BudgetAllocationController> {
       ),
       title: Center(
         child: CcText(
-          el.tr(CcLocaleKeys.budget_insights_title),
+          el.tr(PrjLocaleKeys.budget_insights_title),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
@@ -74,7 +74,7 @@ class _BudgetInsightsListView extends CcGetView<BudgetAllocationController> {
       final insights = controller.insights.value;
       if (insights == null || !insights.hasAnything) {
         return CcSectionEmptyState(
-          message: el.tr(CcLocaleKeys.budget_empty),
+          message: el.tr(PrjLocaleKeys.budget_empty),
           verticalPadding: 24,
           horizontalPadding: CcPaddingParams.SPACE_LG,
         );

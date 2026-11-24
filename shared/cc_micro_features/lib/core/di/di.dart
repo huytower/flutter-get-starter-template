@@ -17,7 +17,7 @@ final GetIt getIt = GetIt.instance;
     SharedPreferences,
     // Implemented by the host app (env / remote config), see app_update.
     AppUpdateConfigRepository,
-    CcDeviceInfoHelper,
+    CcDeviceInfoService,
     CcAnalytics,
     FirebaseAuth,
     GoogleSignIn,

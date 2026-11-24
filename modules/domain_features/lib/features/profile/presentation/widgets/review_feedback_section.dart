@@ -118,14 +118,14 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
 
   /// Captions of the message the team receives, in the user's language.
   CcFeedbackLabels _feedbackLabels() => CcFeedbackLabels(
-    title: el.tr(CcLocaleKeys.profile_feedback_slack_title),
-    rating: el.tr(CcLocaleKeys.profile_feedback_slack_rating),
-    praise: el.tr(CcLocaleKeys.profile_feedback_slack_praise),
-    criticism: el.tr(CcLocaleKeys.profile_feedback_slack_criticism),
-    text: el.tr(CcLocaleKeys.profile_feedback_slack_text),
-    none: el.tr(CcLocaleKeys.profile_feedback_slack_none),
-    noText: el.tr(CcLocaleKeys.profile_feedback_slack_no_text),
-    notRated: el.tr(CcLocaleKeys.profile_feedback_slack_not_rated),
+    title: el.tr(PrjLocaleKeys.profile_feedback_slack_title),
+    rating: el.tr(PrjLocaleKeys.profile_feedback_slack_rating),
+    praise: el.tr(PrjLocaleKeys.profile_feedback_slack_praise),
+    criticism: el.tr(PrjLocaleKeys.profile_feedback_slack_criticism),
+    text: el.tr(PrjLocaleKeys.profile_feedback_slack_text),
+    none: el.tr(PrjLocaleKeys.profile_feedback_slack_none),
+    noText: el.tr(PrjLocaleKeys.profile_feedback_slack_no_text),
+    notRated: el.tr(PrjLocaleKeys.profile_feedback_slack_not_rated),
   );
 
   @override
@@ -195,7 +195,7 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
         activeColor: activeColor,
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: context.respDim(8)),
-          child: HorizontalFadeScrollView(
+          child: CcHorizontalFadeScrollView(
             height: context.respDim(75),
             builder: (scrollController) {
               final half = (keys.length / 2).ceil();

@@ -41,7 +41,7 @@ class CategoryCustomizeTile extends StatelessWidget {
               ),
               const CcSpaceXS(),
               CcText(
-                el.tr(CcLocaleKeys.budget_customize_category),
+                el.tr(PrjLocaleKeys.budget_customize_category),
                 textAlign: TextAlign.center,
                 align: Alignment.center,
                 maxLines: 2,

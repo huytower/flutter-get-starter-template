@@ -100,7 +100,7 @@ class _LoginCardContentState extends State<LoginCardContent> {
                 const CcSpaceXL(),
                 Opacity(
                   opacity: opacity,
-                  child: CcBaseBtn(
+                  child: CcBaseButton(
                     onTap: (isDisabled || !_isAgreed)
                         ? null
                         : widget.onPhoneLogin,

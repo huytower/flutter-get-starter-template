@@ -77,7 +77,7 @@ class GuidelineController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    final saved = CcAppStorage.instance.completedGuidelineTaskIds;
+    final saved = PrjAppStorage.instance.completedGuidelineTaskIds;
     if (saved != null) {
       completedTasks.assignAll(saved);
     }
@@ -210,8 +210,8 @@ class GuidelineController extends GetxController {
     if (completedTasks.contains(taskId)) return;
 
     completedTasks.add(taskId);
-    CcAppStorage.instance.completedGuidelineTaskIds = completedTasks.toList();
-    await CcAppStorage.instance.save();
+    PrjAppStorage.instance.completedGuidelineTaskIds = completedTasks.toList();
+    await PrjAppStorage.instance.save();
 
     unawaited(_userLevelController.refresh());
   }
@@ -240,8 +240,8 @@ class GuidelineController extends GetxController {
   /// Resets all completed guideline tasks, showing the guide banner again.
   Future<void> resetGuideline() async {
     completedTasks.clear();
-    CcAppStorage.instance.completedGuidelineTaskIds = [];
-    await CcAppStorage.instance.save();
+    PrjAppStorage.instance.completedGuidelineTaskIds = [];
+    await PrjAppStorage.instance.save();
     hasCreatedFirstInvestment.value = false;
     hasCreatedFirstLiability.value = false;
     final prefs = await SharedPreferences.getInstance();
@@ -260,34 +260,34 @@ class GuidelineController extends GetxController {
 
   String get bannerTitle {
     return el.tr(
-      CcLocaleKeys.guideline_banner_title_in_progress,
+      PrjLocaleKeys.guideline_banner_title_in_progress,
       namedArgs: {'remaining': remainingGuidelineStep.toString()},
     );
   }
 
   String get bannerDescription {
     if (currentTaskId == null) {
-      return el.tr(CcLocaleKeys.guideline_banner_desc_completed);
+      return el.tr(PrjLocaleKeys.guideline_banner_desc_completed);
     }
     switch (currentTaskId) {
       case 'birth_year':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_birth_year);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_birth_year);
       case 'categories':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_categories);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_categories);
       case 'wallet_balance':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_wallet_balance);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_wallet_balance);
       case 'budget_limit':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_budget_limit);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_budget_limit);
       case 'min_living':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_min_living);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_min_living);
       case 'first_transaction':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_first_transaction);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_first_transaction);
       case 'investment':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_investment);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_investment);
       case 'liability':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_liability);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_liability);
       default:
-        return el.tr(CcLocaleKeys.guideline_banner_desc_default);
+        return el.tr(PrjLocaleKeys.guideline_banner_desc_default);
     }
   }
 }

@@ -63,7 +63,7 @@ class WalletStripCard extends StatelessWidget {
 
     final itemCount = wallets.length + (onAddNew != null ? 1 : 0);
 
-    return HorizontalFadeScrollView(
+    return CcHorizontalFadeScrollView(
       height: context.respDim(60),
       builder: (scrollController) => ListView.separated(
         scrollDirection: Axis.horizontal,
@@ -84,7 +84,7 @@ class WalletStripCard extends StatelessWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return CcSectionEmptyState(
-      message: el.tr(emptyMessageKey ?? CcLocaleKeys.wallet_empty),
+      message: el.tr(emptyMessageKey ?? PrjLocaleKeys.wallet_empty),
       verticalPadding: 12,
       horizontalPadding: CcPaddingParams.SPACE_LG,
     );
@@ -133,7 +133,7 @@ class WalletStripCard extends StatelessWidget {
                 balance,
                 currencyCode: controller.currencyCode.value,
               )
-            : el.tr(CcLocaleKeys.wallet_balance_hidden),
+            : el.tr(PrjLocaleKeys.wallet_balance_hidden),
       );
     });
   }

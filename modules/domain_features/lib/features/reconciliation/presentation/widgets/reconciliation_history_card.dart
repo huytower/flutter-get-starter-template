@@ -42,7 +42,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
               children: [
                 CcText(
                   el.tr(
-                    CcLocaleKeys.reconciliation_week,
+                    PrjLocaleKeys.reconciliation_week,
                     namedArgs: {
                       'week': reconciliation.week.toString(),
                       'year': reconciliation.year.toString(),
@@ -63,7 +63,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
             const CcSpaceSM(),
             _row(
               context,
-              el.tr(CcLocaleKeys.reconciliation_book),
+              el.tr(PrjLocaleKeys.reconciliation_book),
               formatShortCurrencyWithSymbol(
                 reconciliation.systemTotal,
                 currencyCode: currencyCode,
@@ -71,7 +71,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
             ),
             _row(
               context,
-              el.tr(CcLocaleKeys.reconciliation_actual),
+              el.tr(PrjLocaleKeys.reconciliation_actual),
               formatShortCurrencyWithSymbol(
                 reconciliation.actualTotal,
                 currencyCode: currencyCode,
@@ -80,11 +80,11 @@ class ReconciliationHistoryCard extends StatelessWidget {
             const CcSpaceXS(),
             CcText(
               balanced
-                  ? el.tr(CcLocaleKeys.reconciliation_balanced)
+                  ? el.tr(PrjLocaleKeys.reconciliation_balanced)
                   : el.tr(
                       diff > 0
-                          ? CcLocaleKeys.reconciliation_surplus
-                          : CcLocaleKeys.reconciliation_deficit,
+                          ? PrjLocaleKeys.reconciliation_surplus
+                          : PrjLocaleKeys.reconciliation_deficit,
                       namedArgs: {
                         'amount': formatShortCurrencyWithSymbol(
                           diff.abs(),

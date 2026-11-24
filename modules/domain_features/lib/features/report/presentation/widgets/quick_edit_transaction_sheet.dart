@@ -1,9 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
 import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/prj_amount_input_section.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +27,7 @@ class QuickEditTransactionSheet
     TransactionEntity transaction,
   ) {
     final controller = Get.put(getIt<QuickEditTransactionSheetController>());
-    controller.init(transaction, () {
+    controller.prepareForm(transaction, () {
       if (context.mounted && Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
@@ -82,7 +82,7 @@ class QuickEditTransactionSheet
                       ),
                       const CcSpaceSM(),
                       EntrySubmitButton(
-                        text: el.tr(CcLocaleKeys.common_save),
+                        text: el.tr(PrjLocaleKeys.common_save),
                         isSubmitting: controller.isSubmitting.value,
                         isEnabled: true,
                         onTap: () => controller.save(context),
@@ -160,7 +160,7 @@ class QuickEditTransactionSheet
       child: Row(
         children: [
           CcText(
-            el.tr(CcLocaleKeys.transaction_edit_title),
+            el.tr(PrjLocaleKeys.transaction_edit_title),
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -181,8 +181,8 @@ class QuickEditTransactionSheet
         horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
       ),
       child: Obx(
-        () => CcAmountInputSection(
-          label: el.tr(CcLocaleKeys.transaction_amount),
+        () => PrjAmountInputSection(
+          label: el.tr(PrjLocaleKeys.transaction_amount),
           amountStr: controller.amountStr.value,
           quickAmounts: MoneyConstants.getQuickAmounts(
             currencyCode: controller.currencyCode,
@@ -203,7 +203,7 @@ class QuickEditTransactionSheet
 
     return CcNoteInputField(
       controller: controller.noteController,
-      hintText: el.tr(CcLocaleKeys.transaction_note_hint),
+      hintText: el.tr(PrjLocaleKeys.transaction_note_hint),
       maxLines: 2,
       color: scheme.surfaceVariant.withAlpha(80),
       borderColor: scheme.outlineVariant.withAlpha(10),

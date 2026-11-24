@@ -1,5 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/presentation/widgets/cc_quick_amount_chips.dart';
+import 'package:domain_features/core/presentation/widgets/prj_quick_amount_chips.dart';
 import 'package:domain_features/core/presentation/widgets/quick_numeric_keypad.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -107,7 +107,7 @@ class MoneyKeypadPanel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: CcQuickAmountChips(
+                  child: PrjQuickAmountChips(
                     amounts: suggestions,
                     onSelected: (val) => onSuggestion?.call(val),
                     activeColor: activeColor,
@@ -123,7 +123,7 @@ class MoneyKeypadPanel extends StatelessWidget {
                     size: context.respIconSize(baseSize: 20),
                   ),
                   onTap: onClear,
-                  tooltip: el.tr(CcLocaleKeys.common_clear),
+                  tooltip: el.tr(PrjLocaleKeys.common_clear),
                 ),
                 if (onCopy != null)
                   CcIconButton.bouncing(
@@ -133,14 +133,14 @@ class MoneyKeypadPanel extends StatelessWidget {
                       size: context.respIconSize(baseSize: 20),
                     ),
                     onTap: onCopy!,
-                    tooltip: el.tr(CcLocaleKeys.common_copy),
+                    tooltip: el.tr(PrjLocaleKeys.common_copy),
                   ),
                 CcBouncing(
                   onTap: onDone,
                   child: CcSymmetricPadding(
                     horizontal: CcPaddingParams.SPACE_XL,
                     child: CcText(
-                      el.tr(CcLocaleKeys.common_done),
+                      el.tr(PrjLocaleKeys.common_done),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
                         color: activeColor,
                         fontWeight: CcTypographyParams.bold,

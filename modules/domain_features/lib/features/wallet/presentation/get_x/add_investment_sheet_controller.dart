@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../../core/presentation/helper/wallet_icon_helper.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
@@ -18,7 +18,7 @@ import 'wallet_controller.dart';
 
 /// Backs [AddInvestmentSheet] — specifically for creating/editing investment assets.
 @injectable
-class AddInvestmentSheetController extends CcGetController {
+class AddInvestmentSheetController extends PrjGetController {
   AddInvestmentSheetController(
     this._walletController,
     this._getCategories,
@@ -55,7 +55,7 @@ class AddInvestmentSheetController extends CcGetController {
       _walletController.walletHasTransactions(_wallet!.id) &&
       _wallet!.balance != 0;
 
-  void init(WalletEntity? wallet, {CategoryEntity? category}) {
+  void prepareForm(WalletEntity? wallet, {CategoryEntity? category}) {
     _wallet = wallet;
     nameController.text = wallet?.name ?? '';
     nameController.removeListener(_onNameChanged);
@@ -166,7 +166,7 @@ class AddInvestmentSheetController extends CcGetController {
     });
 
     if (isDuplicate) {
-      nameError.value = el.tr(CcLocaleKeys.wallet_name_duplicate_error);
+      nameError.value = el.tr(PrjLocaleKeys.wallet_name_duplicate_error);
       return;
     }
 
@@ -211,8 +211,8 @@ class AddInvestmentSheetController extends CcGetController {
       CcSnackBarHelper.showSuccessSnackBar(
         context: context,
         message: isEditing
-            ? el.tr(CcLocaleKeys.wallet_updated_success)
-            : el.tr(CcLocaleKeys.wallet_added_success),
+            ? el.tr(PrjLocaleKeys.wallet_updated_success)
+            : el.tr(PrjLocaleKeys.wallet_added_success),
       );
     }
   }

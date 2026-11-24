@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
@@ -13,7 +13,7 @@ final GetIt getIt = GetIt.instance;
 /// Uses the Micro-Package pattern for injectable.
 @InjectableInit.microPackage(
   ignoreUnregisteredTypes: [
-    CcAppStorage,
+    PrjAppStorage,
     Dio,
     InternetConnection,
     SharedPreferences,

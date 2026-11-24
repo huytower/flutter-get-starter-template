@@ -2,7 +2,7 @@ import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 
 /// Button to show track log modal
 class SimpleShowTrackLogButton extends StatelessWidget {
@@ -10,14 +10,14 @@ class SimpleShowTrackLogButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcBaseBtn(
+    return CcBaseButton(
       onTap: () {
         CcDialogHelper.showModalBottomSheet(
           context,
           const CrashLogViewerPage(),
         );
       },
-      title: el.tr(CcLocaleKeys.common_ok),
+      title: el.tr(PrjLocaleKeys.common_ok),
       bgColor: [context.ccColorScheme.primary],
       textColor: context.ccColorScheme.onPrimary,
       height: 48,

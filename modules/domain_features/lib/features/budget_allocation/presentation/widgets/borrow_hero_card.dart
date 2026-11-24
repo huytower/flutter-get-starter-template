@@ -25,9 +25,9 @@ class BorrowHeroCard extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return BaseHeroBannerCard(
-      titleKey: CcLocaleKeys.wallet_liabilities,
+      titleKey: PrjLocaleKeys.wallet_liabilities,
       balance: balance,
-      subtitleKey: CcLocaleKeys.wallet_liabilities_desc,
+      subtitleKey: PrjLocaleKeys.wallet_liabilities_desc,
       balanceIcon: Icons.waving_hand,
       bannerIconAsset: 'assets/icon/ic_borrow.webp',
       color: scheme.liability,

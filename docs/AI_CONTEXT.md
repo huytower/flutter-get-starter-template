@@ -56,8 +56,8 @@ flutter-get-starter-template/
 │   │                            #   (AppLifecycleProvider, MainShellProvider, RegionalSettingsContract)
 │   │                            #   Distinct from cc_bridge — not a duplicate.
 │   ├── data_config/             # App-specific data implementations, sync helpers, exchange rates
-│   ├── message/                 # i18n/localization (CcLocaleKeys)
-│   └── theme/                   # Theming system (PrjColors, CcTextStyle)
+│   ├── message/                 # i18n/localization (PrjLocaleKeys)
+│   └── theme/                   # Theming system (PrjColors, PrjTextStyle)
 └── docs/                        # Documentation
 ```
 
@@ -71,7 +71,7 @@ Window size classes, scaling and the `context.resp*` API are covered in `AGENTS.
 
 **Orientation policy** (one rule, applied in Dart on every platform): screens whose shortest side is < 600 dp
 (phones, foldable cover screens) are portrait-only; larger screens (tablets, unfolded foldables, desktop/web)
-rotate freely. `CcDeviceHelper.applyOrientationPolicy` implements it; `main.dart` applies it before the first
+rotate freely. `CcOrientationPolicy.apply` implements it; `main.dart` applies it before the first
 frame and `OrientationPolicyScope` (in `MaterialApp.builder`) re-applies it on every window size change, e.g. a
 foldable opening or closing. Platform configuration backing it:
 

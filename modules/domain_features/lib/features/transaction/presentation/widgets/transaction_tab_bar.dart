@@ -12,11 +12,11 @@ import '../get_x/transaction_controller.dart';
 
 extension TransactionTabKindStyle on TransactionTabKind {
   String label(BuildContext context) => switch (this) {
-    TransactionTabKind.expense => el.tr(CcLocaleKeys.transaction_expense_slip),
-    TransactionTabKind.income => el.tr(CcLocaleKeys.transaction_income_slip),
-    TransactionTabKind.investment => el.tr(CcLocaleKeys.transaction_investment),
-    TransactionTabKind.borrow => el.tr(CcLocaleKeys.liability_title),
-    TransactionTabKind.lend => el.tr(CcLocaleKeys.liability_lend),
+    TransactionTabKind.expense => el.tr(PrjLocaleKeys.transaction_expense_slip),
+    TransactionTabKind.income => el.tr(PrjLocaleKeys.transaction_income_slip),
+    TransactionTabKind.investment => el.tr(PrjLocaleKeys.transaction_investment),
+    TransactionTabKind.borrow => el.tr(PrjLocaleKeys.liability_title),
+    TransactionTabKind.lend => el.tr(PrjLocaleKeys.liability_lend),
   };
 
   Color color(BuildContext context) => switch (this) {

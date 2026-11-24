@@ -646,7 +646,7 @@ class ExpenseFormController extends TransactionFormController
 
   Future<void> _loadRecentExpenses() async {
     final result = await _transactionRepository.getTransactions(
-      const PaginationRequest(page: 1, itemsPerPage: 100),
+      const CcPaginationRequest(page: 1, itemsPerPage: 100),
       type: TransactionType.expense,
     );
     result.when((transactions) {
@@ -828,21 +828,21 @@ class ExpenseFormController extends TransactionFormController
       return SmartSuggestion(
         match: merchantMatch,
         icon: Icons.auto_awesome,
-        hintKey: CcLocaleKeys.transaction_merchant_match_hint,
+        hintKey: PrjLocaleKeys.transaction_merchant_match_hint,
       );
     }
     if (billMatch != null) {
       return SmartSuggestion(
         match: billMatch,
         icon: Icons.event_repeat,
-        hintKey: CcLocaleKeys.transaction_bill_match_hint,
+        hintKey: PrjLocaleKeys.transaction_bill_match_hint,
       );
     }
     if (locationMatch != null) {
       return SmartSuggestion(
         match: locationMatch,
         icon: Icons.place,
-        hintKey: CcLocaleKeys.transaction_location_match_hint,
+        hintKey: PrjLocaleKeys.transaction_location_match_hint,
       );
     }
     return null;
@@ -973,7 +973,7 @@ class ExpenseFormController extends TransactionFormController
           CcSnackBarHelper.showSnackBar(
             context: context,
             message: el.tr(
-              CcLocaleKeys.budget_over_limit_count,
+              PrjLocaleKeys.budget_over_limit_count,
               namedArgs: {
                 'name': overLimit.budgetName,
                 'count': '${overLimit.count}',
@@ -989,8 +989,8 @@ class ExpenseFormController extends TransactionFormController
             context: context,
             message: el.tr(
               isEditing
-                  ? CcLocaleKeys.transaction_expense_updated
-                  : CcLocaleKeys.transaction_expense_saved,
+                  ? PrjLocaleKeys.transaction_expense_updated
+                  : PrjLocaleKeys.transaction_expense_saved,
               namedArgs: {'amount': savedAmount},
             ),
           );

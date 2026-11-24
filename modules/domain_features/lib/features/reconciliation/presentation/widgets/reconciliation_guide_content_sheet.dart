@@ -13,27 +13,27 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
   static const List<({IconData icon, String textKey})> _items = [
     (
       icon: Icons.info_outline_rounded,
-      textKey: CcLocaleKeys.reconciliation_description_line_1,
+      textKey: PrjLocaleKeys.reconciliation_description_line_1,
     ),
     (
       icon: Icons.sync_alt_rounded,
-      textKey: CcLocaleKeys.reconciliation_description_line_2,
+      textKey: PrjLocaleKeys.reconciliation_description_line_2,
     ),
     (
       icon: Icons.paid_outlined,
-      textKey: CcLocaleKeys.reconciliation_guide_count,
+      textKey: PrjLocaleKeys.reconciliation_guide_count,
     ),
     (
       icon: Icons.balance_rounded,
-      textKey: CcLocaleKeys.reconciliation_guide_compare,
+      textKey: PrjLocaleKeys.reconciliation_guide_compare,
     ),
     (
       icon: Icons.menu_book_rounded,
-      textKey: CcLocaleKeys.reconciliation_guide_record,
+      textKey: PrjLocaleKeys.reconciliation_guide_record,
     ),
     (
       icon: Icons.event_repeat_rounded,
-      textKey: CcLocaleKeys.reconciliation_cycle_subtitle,
+      textKey: PrjLocaleKeys.reconciliation_cycle_subtitle,
     ),
   ];
 
@@ -75,7 +75,7 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
         ),
       ),
       child: CcText(
-        tr(CcLocaleKeys.reconciliation_title),
+        tr(PrjLocaleKeys.reconciliation_title),
         maxLines: 1,
         textStyle: context.ccTextTheme.titleLarge?.copyWith(
           color: scheme.onPrimary,
@@ -208,7 +208,7 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: CcText(
-              tr(CcLocaleKeys.common_ok),
+              tr(PrjLocaleKeys.common_ok),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,

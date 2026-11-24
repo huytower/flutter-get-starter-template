@@ -103,7 +103,7 @@ void main() {
     });
 
     test('propagates repository failures', () async {
-      const failure = ServerFailure('boom');
+      const failure = CcServerFailure('boom');
       final repository = _FakeTransactionRepository(const Error(failure));
 
       final result = await GetMonthlyRecurringMatchUseCase(

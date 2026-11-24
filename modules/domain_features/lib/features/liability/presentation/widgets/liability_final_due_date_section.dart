@@ -23,7 +23,7 @@ class LiabilityFinalDueDateSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CcFormLabel(
-          text: el.tr(CcLocaleKeys.transaction_liability_final_due_date_label),
+          text: el.tr(PrjLocaleKeys.transaction_liability_final_due_date_label),
         ),
         const CcSpaceXS(),
         Expanded(
@@ -66,7 +66,7 @@ class LiabilityFinalDueDateSection extends StatelessWidget {
             !controller.reminderBeforeDueDate.value,
           ),
           child: CcText(
-            el.tr(CcLocaleKeys.transaction_liability_reminder_once_label),
+            el.tr(PrjLocaleKeys.transaction_liability_reminder_once_label),
             maxLines: 2,
             textStyle: context.ccTextTheme.bodySmall,
           ),

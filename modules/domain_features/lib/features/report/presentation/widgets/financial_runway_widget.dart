@@ -21,9 +21,9 @@ class FinancialRunwayWidget extends StatelessWidget {
     final statusColor = _getStatusColor(context);
     final statusIcon = _getStatusIcon(runway.status);
     final message = runway.status == FinancialRunwayStatus.insufficient
-        ? el.tr(CcLocaleKeys.report_runway_not_available)
+        ? el.tr(PrjLocaleKeys.report_runway_not_available)
         : el.tr(
-            CcLocaleKeys.report_runway_message,
+            PrjLocaleKeys.report_runway_message,
             namedArgs: {
               'months': runway.months.toString(),
               'days': runway.days.toString(),
@@ -38,8 +38,8 @@ class FinancialRunwayWidget extends StatelessWidget {
           color: statusColor,
           endColor: _getEndColor(context),
           description: runway.fixedMonthlyCost > 0
-              ? el.tr(CcLocaleKeys.report_runway_fixed_price_desc)
-              : el.tr(CcLocaleKeys.report_runway_no_fixed_price_desc),
+              ? el.tr(PrjLocaleKeys.report_runway_fixed_price_desc)
+              : el.tr(PrjLocaleKeys.report_runway_no_fixed_price_desc),
           descriptionIcon: runway.fixedMonthlyCost > 0
               ? Icons.bolt_rounded
               : Icons.info_outline_rounded,
@@ -47,7 +47,7 @@ class FinancialRunwayWidget extends StatelessWidget {
           showChevron: false,
         ),
         const CcSpaceSM(),
-        _buildDescription(context, el.tr(CcLocaleKeys.report_runway_desc_2)),
+        _buildDescription(context, el.tr(PrjLocaleKeys.report_runway_desc_2)),
       ],
     );
   }
@@ -67,7 +67,7 @@ class FinancialRunwayWidget extends StatelessWidget {
     return CcBouncing(
       onTap: () => CcDialogHelper.showMessageBottomSheet(
         context: context,
-        title: el.tr(CcLocaleKeys.report_safety_index),
+        title: el.tr(PrjLocaleKeys.report_safety_index),
         content: text,
         isOnlyConfirm: true,
       ),

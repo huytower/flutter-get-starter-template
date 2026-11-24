@@ -5,7 +5,7 @@ import 'package:domain_features/core/constant/emergency_fund_constants.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/get_x/cc_get_controller.dart';
+import 'package:domain_features/core/get_x/prj_get_controller.dart';
 import 'package:domain_features/core/presentation/helper/wallet_icon_helper.dart';
 import 'package:domain_features/features/category/domain/usecases/get_categories_usecase.dart';
 import 'package:domain_features/features/profile/domain/usecases/get_profile_settings_usecase.dart';
@@ -23,7 +23,7 @@ import 'wallet_controller.dart';
 /// Instantiated fresh per sheet open via [init]; see the sheet's
 /// `GetX` wrapper for the lifecycle.
 @injectable
-class AddLiquidSheetController extends CcGetController {
+class AddLiquidSheetController extends PrjGetController {
   AddLiquidSheetController(
     this._walletController,
     this._getCategories,
@@ -85,14 +85,14 @@ class AddLiquidSheetController extends CcGetController {
   /// empty name is invalid. Show the same label the wallet list shows instead.
   String _initialName(WalletEntity? wallet) {
     if (wallet == null) return '';
-    if (wallet.type == WalletType.cash) return el.tr(CcLocaleKeys.wallet_cash);
+    if (wallet.type == WalletType.cash) return el.tr(PrjLocaleKeys.wallet_cash);
     final stored = wallet.name.trim();
     if (stored.isNotEmpty) return wallet.name;
-    if (wallet.type == WalletType.bank) return el.tr(CcLocaleKeys.wallet_bank);
+    if (wallet.type == WalletType.bank) return el.tr(PrjLocaleKeys.wallet_bank);
     return '';
   }
 
-  void init(WalletEntity? wallet) {
+  void prepareForm(WalletEntity? wallet) {
     _wallet = wallet;
     nameController.text = _initialName(wallet);
     nameController.removeListener(_onNameChanged);
@@ -161,7 +161,7 @@ class AddLiquidSheetController extends CcGetController {
       MaterialPageRoute(
         builder: (_) => WebPage(
           url: emergencyFundEbookUrl,
-          title: el.tr(CcLocaleKeys.wallet_emergency_fund),
+          title: el.tr(PrjLocaleKeys.wallet_emergency_fund),
         ),
       ),
     );
@@ -264,7 +264,7 @@ class AddLiquidSheetController extends CcGetController {
         );
 
     if (isDuplicate) {
-      nameError.value = el.tr(CcLocaleKeys.wallet_name_duplicate_error);
+      nameError.value = el.tr(PrjLocaleKeys.wallet_name_duplicate_error);
       isSubmitting.value = false;
       return;
     }
@@ -345,8 +345,8 @@ class AddLiquidSheetController extends CcGetController {
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: isEditing
-              ? el.tr(CcLocaleKeys.wallet_updated_success)
-              : el.tr(CcLocaleKeys.wallet_added_success),
+              ? el.tr(PrjLocaleKeys.wallet_updated_success)
+              : el.tr(PrjLocaleKeys.wallet_added_success),
         );
         if (!isEditing && context.mounted) {
           _effects.promptGuestSignIn(context);
@@ -356,7 +356,7 @@ class AddLiquidSheetController extends CcGetController {
       if (context.mounted) {
         CcSnackBarHelper.showErrorSnackBar(
           context: context,
-          message: el.tr(CcLocaleKeys.app_error_general),
+          message: el.tr(PrjLocaleKeys.app_error_general),
         );
       }
     } finally {

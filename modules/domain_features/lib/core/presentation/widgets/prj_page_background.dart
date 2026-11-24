@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 /// Standard page background: the faint brand gradient first used on the
 /// Profile page, painted behind [child].
 ///
-/// Every `CcGetView` page gets it by default (see
-/// `CcGetView.onPageBodyWrapper`); pages built on `CcViewConfigMixin` directly
+/// Every `PrjGetView` page gets it by default (see
+/// `PrjGetView.onPageBodyWrapper`); pages built on `CcViewConfigMixin` directly
 /// wrap their body with it themselves. A page with its own background (the
 /// Transaction page's immersive header, the reconciliation line art) overrides
 /// `onPageBodyWrapper` instead.
@@ -25,7 +25,7 @@ class PrjPageBackground extends StatelessWidget {
       // background.
       fit: StackFit.expand,
       children: [
-        BgGradientWidget(topColor: topColor, bottomColor: bottomColor),
+        CcGradientBackground(topColor: topColor, bottomColor: bottomColor),
         child,
       ],
     );

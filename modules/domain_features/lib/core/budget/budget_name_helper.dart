@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 
 /// Helper to handle budget name localization and formatting.
 abstract final class BudgetNameHelper {

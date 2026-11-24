@@ -24,7 +24,7 @@ class FirebaseMessagingServiceImpl implements CcMessagingService {
       final token = await _firebaseMessaging.getToken();
       return Success(token);
     } catch (e) {
-      return const Error(UnknownFailure('An error occurred'));
+      return const Error(CcUnknownFailure('An error occurred'));
     }
   }
 

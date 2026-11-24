@@ -12,7 +12,7 @@
 
 export 'package:cc_sdk/export_cc_sdk.dart' show CcNetworkHelper;
 
-export 'core/config/app/cc_app_config.dart';
+export 'core/config/app/prj_app_config.dart';
 export 'core/config/app/prj_env.dart';
 export 'core/config/app/prj_feature_flags.dart';
 // =================================
@@ -50,9 +50,9 @@ export 'core/enum/environment.dart';
 // =================================
 
 // Local Data Sources
-export 'data/datasources/local/box/app_storage/cc_app_storage.dart';
-export 'data/datasources/local/box/cc_hive_box.dart';
-export 'data/datasources/local/box/device_info/cc_device_info.dart';
+export 'data/datasources/local/box/app_storage/prj_app_storage.dart';
+export 'data/datasources/local/box/device_info/prj_device_info.dart';
+export 'data/datasources/local/box/prj_hive_box.dart';
 export 'data/datasources/local/box/register_hive_adapter.dart';
 
 // Remote Data Sources

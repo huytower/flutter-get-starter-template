@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart' show AssetLoader;
 
-import 'cc_locale_keys.dart';
+import 'prj_locale_keys.dart';
 
 /// Loads the app's own translations ([CodegenLoader.mapLocales]) merged with
 /// translations shipped by reusable packages (e.g. `CcMfTranslations` from
@@ -12,8 +12,8 @@ import 'cc_locale_keys.dart';
 /// Merge order: package maps first (in list order), then the app's map, so the
 /// app can override any package string by defining the same key. A package
 /// that lacks the requested locale contributes its `en` map instead.
-class CcMergedAssetLoader extends AssetLoader {
-  const CcMergedAssetLoader({this.packageTranslations = const []});
+class PrjMergedAssetLoader extends AssetLoader {
+  const PrjMergedAssetLoader({this.packageTranslations = const []});
 
   /// Each entry is a package's `locale code -> translations` map.
   final List<Map<String, Map<String, dynamic>>> packageTranslations;

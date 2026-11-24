@@ -5,7 +5,7 @@ import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../profile/domain/entities/profile_settings_entity.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
@@ -16,7 +16,7 @@ import '../../domain/usecases/get_category_groups_usecase.dart';
 import '../../domain/usecases/toggle_category_enabled_usecase.dart';
 
 @injectable
-class CategorySettingsController extends CcGetController {
+class CategorySettingsController extends PrjGetController {
   CategorySettingsController(
     this._getGroups,
     this._getCategories,

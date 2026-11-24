@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,7 +17,7 @@ import '../reconciliation/data/models/reconciliation_model.dart';
 import '../transaction/data/models/transaction_model.dart';
 import '../wallet/data/models/wallet_hive_model.dart';
 
-enum GuestLoginPrompt { atEight, finalWarning }
+enum GuestLoginPrompt { firstReminder, finalWarning }
 
 @lazySingleton
 class GuestLoginPromptService {
@@ -33,34 +33,34 @@ class GuestLoginPromptService {
 
   Future<int> countFinancialRecords() async {
     final counts = await Future.wait([
-      _count<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME),
-      _count<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME),
-      _count<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME),
-      _count<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME),
-      _count<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME),
-      _count<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME),
+      _count<WalletHiveModel>(PrjHiveBox.WALLET_BOX_NAME),
+      _count<TransactionModel>(PrjHiveBox.TRANSACTION_BOX_NAME),
+      _count<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME),
+      _count<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME),
+      _count<CategoryModel>(PrjHiveBox.CATEGORY_BOX_NAME),
+      _count<ReconciliationModel>(PrjHiveBox.RECONCILIATION_BOX_NAME),
     ]);
     return counts.fold<int>(0, (int total, int count) => total + count);
   }
 
   Future<GuestLoginPrompt?> evaluate() async {
-    final isAuth = _session.isAuthenticated;
-    final isAnon = _session.isAnonymous;
-    if (isAuth && !isAnon) {
+    final hasSignedIn = _session.isAuthenticated;
+    final hasAnonymousSession = _session.isAnonymous;
+    if (hasSignedIn && !hasAnonymousSession) {
       return null;
     }
 
     final uid = _session.currentUser?.id ?? 'guest_local_user';
 
-    final storage = CcAppStorage.instance;
+    final storage = PrjAppStorage.instance;
     if (storage.guestLoginPromptSessionUid != uid) {
       storage.guestLoginPromptSessionUid = uid;
-      storage.guestLoginPromptAtTimes8Shown = false;
-      storage.guestLoginPrompt15Dismissed = false;
+      storage.hasShownGuestLoginFirstReminder = false;
+      storage.hasDismissedGuestLoginFinalWarning = false;
       await storage.save();
     }
 
-    if (storage.guestLoginPrompt15Dismissed == true) {
+    if (storage.hasDismissedGuestLoginFinalWarning == true) {
       return null;
     }
 
@@ -70,31 +70,31 @@ class GuestLoginPromptService {
     }
 
     if (count >= _firstPromptThreshold &&
-        storage.guestLoginPromptAtTimes8Shown != true) {
-      return GuestLoginPrompt.atEight;
+        storage.hasShownGuestLoginFirstReminder != true) {
+      return GuestLoginPrompt.firstReminder;
     }
 
     return null;
   }
 
   Future<void> markShown(GuestLoginPrompt prompt) async {
-    if (prompt == GuestLoginPrompt.atEight) {
-      CcAppStorage.instance.guestLoginPromptAtTimes8Shown = true;
+    if (prompt == GuestLoginPrompt.firstReminder) {
+      PrjAppStorage.instance.hasShownGuestLoginFirstReminder = true;
     }
-    await CcAppStorage.instance.save();
+    await PrjAppStorage.instance.save();
   }
 
   Future<void> dismissFinalWarning() async {
-    CcAppStorage.instance.guestLoginPromptAtTimes8Shown = true;
-    CcAppStorage.instance.guestLoginPrompt15Dismissed = true;
-    await CcAppStorage.instance.save();
+    PrjAppStorage.instance.hasShownGuestLoginFirstReminder = true;
+    PrjAppStorage.instance.hasDismissedGuestLoginFinalWarning = true;
+    await PrjAppStorage.instance.save();
   }
 
   /// Resets prompt flags when user logs out from a logged-in user status to guest status.
   Future<void> resetPromptFlags() async {
-    final storage = CcAppStorage.instance;
-    storage.guestLoginPromptAtTimes8Shown = false;
-    storage.guestLoginPrompt15Dismissed = false;
+    final storage = PrjAppStorage.instance;
+    storage.hasShownGuestLoginFirstReminder = false;
+    storage.hasDismissedGuestLoginFinalWarning = false;
     storage.guestLoginPromptSessionUid = null;
     await storage.save();
   }
@@ -118,7 +118,7 @@ class GuestLoginPromptService {
         prompt: prompt,
       );
 
-      if (prompt == GuestLoginPrompt.atEight) {
+      if (prompt == GuestLoginPrompt.firstReminder) {
         await markShown(prompt);
       } else if (prompt == GuestLoginPrompt.finalWarning) {
         await dismissFinalWarning();

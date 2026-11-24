@@ -18,7 +18,7 @@ class BudgetLimitLockNotice extends StatelessWidget {
         const CcSpaceSM(),
         Expanded(
           child: CcText(
-            el.tr(CcLocaleKeys.budget_limit_locked),
+            el.tr(PrjLocaleKeys.budget_limit_locked),
             maxLines: 2,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.onSurfaceVariant,

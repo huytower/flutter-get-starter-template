@@ -49,14 +49,14 @@ class GuestLoginPromptSheet extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     final bullet1Key = isFinal
-        ? CcLocaleKeys.profile_guest_login_final_bullet1
-        : CcLocaleKeys.profile_guest_login_bullet1;
+        ? PrjLocaleKeys.profile_guest_login_final_bullet1
+        : PrjLocaleKeys.profile_guest_login_bullet1;
     final bullet2Key = isFinal
-        ? CcLocaleKeys.profile_guest_login_final_bullet2
-        : CcLocaleKeys.profile_guest_login_bullet2;
+        ? PrjLocaleKeys.profile_guest_login_final_bullet2
+        : PrjLocaleKeys.profile_guest_login_bullet2;
     final bullet3Key = isFinal
-        ? CcLocaleKeys.profile_guest_login_final_bullet3
-        : CcLocaleKeys.profile_guest_login_bullet3;
+        ? PrjLocaleKeys.profile_guest_login_final_bullet3
+        : PrjLocaleKeys.profile_guest_login_bullet3;
 
     // Scrolls in landscape (short window) instead of overflowing.
     return CcLandscapeScrollable(
@@ -93,8 +93,8 @@ class GuestLoginPromptSheet extends StatelessWidget {
               CcText(
                 el.tr(
                   isFinal
-                      ? CcLocaleKeys.profile_guest_login_final_title
-                      : CcLocaleKeys.profile_guest_login_title,
+                      ? PrjLocaleKeys.profile_guest_login_final_title
+                      : PrjLocaleKeys.profile_guest_login_title,
                 ),
                 align: Alignment.center,
                 maxLines: 3,
@@ -151,8 +151,8 @@ class GuestLoginPromptSheet extends StatelessWidget {
                         child: CcText(
                           el.tr(
                             isFinal
-                                ? CcLocaleKeys.common_guest_login_continue_local
-                                : CcLocaleKeys.common_later,
+                                ? PrjLocaleKeys.common_guest_login_continue_local
+                                : PrjLocaleKeys.common_later,
                           ),
                           align: Alignment.center,
                           textAlign: TextAlign.center,
@@ -180,7 +180,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
                           ),
                         ),
                         child: CcText(
-                          el.tr(CcLocaleKeys.common_guest_login_action),
+                          el.tr(PrjLocaleKeys.common_guest_login_action),
                           align: Alignment.center,
                           textAlign: TextAlign.center,
                           textStyle: context.ccTextTheme.labelLarge?.copyWith(

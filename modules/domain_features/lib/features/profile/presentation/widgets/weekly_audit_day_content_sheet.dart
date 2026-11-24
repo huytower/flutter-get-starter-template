@@ -32,7 +32,7 @@ class _WeeklyAuditDayContentSheetState
   String _getDayName(int day) {
     // 1 = Monday, ..., 7 = Sunday
     // We can use common_weekday_names which is "Thứ Hai|Thứ Ba|..."
-    final names = el.tr(CcLocaleKeys.common_weekday_names).split('|');
+    final names = el.tr(PrjLocaleKeys.common_weekday_names).split('|');
     if (day >= 1 && day <= 7) {
       return names[day - 1];
     }
@@ -68,7 +68,7 @@ class _WeeklyAuditDayContentSheetState
         ),
       ),
       child: CcText(
-        el.tr(CcLocaleKeys.profile_weekly_audit_day_hint),
+        el.tr(PrjLocaleKeys.profile_weekly_audit_day_hint),
         maxLines: 3,
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: scheme.onPrimary,
@@ -157,7 +157,7 @@ class _WeeklyAuditDayContentSheetState
           TextButton(
             onPressed: () => Navigator.of(context).pop(null),
             child: CcText(
-              el.tr(CcLocaleKeys.common_cancel),
+              el.tr(PrjLocaleKeys.common_cancel),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,
@@ -168,7 +168,7 @@ class _WeeklyAuditDayContentSheetState
           TextButton(
             onPressed: () => Navigator.of(context).pop(_selectedDay),
             child: CcText(
-              el.tr(CcLocaleKeys.common_ok),
+              el.tr(PrjLocaleKeys.common_ok),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,

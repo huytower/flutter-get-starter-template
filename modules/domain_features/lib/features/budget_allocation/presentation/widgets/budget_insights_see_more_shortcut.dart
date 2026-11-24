@@ -27,7 +27,7 @@ class BudgetInsightsSeeMoreShortcut extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           CcTextButton(
-            text: el.tr(CcLocaleKeys.budget_see_all),
+            text: el.tr(PrjLocaleKeys.budget_see_all),
             onTap: handleTap,
           ),
           const CcSpaceXS(),

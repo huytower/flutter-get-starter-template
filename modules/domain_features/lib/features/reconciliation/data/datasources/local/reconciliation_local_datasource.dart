@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,10 +8,10 @@ import '../../models/reconciliation_model.dart';
 @lazySingleton
 class ReconciliationLocalDataSource {
   Future<Box<ReconciliationModel>> get _box async {
-    if (Hive.isBoxOpen(CcHiveBox.RECONCILIATION_BOX_NAME)) {
-      return Hive.box<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
+    if (Hive.isBoxOpen(PrjHiveBox.RECONCILIATION_BOX_NAME)) {
+      return Hive.box<ReconciliationModel>(PrjHiveBox.RECONCILIATION_BOX_NAME);
     }
-    return Hive.openBox<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
+    return Hive.openBox<ReconciliationModel>(PrjHiveBox.RECONCILIATION_BOX_NAME);
   }
 
   Future<List<ReconciliationModel>> getAll() async {

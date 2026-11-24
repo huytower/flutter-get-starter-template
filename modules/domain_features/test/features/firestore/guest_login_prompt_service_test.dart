@@ -79,7 +79,7 @@ void main() {
     });
 
     test('defines prompt thresholds at 8 and 15', () {
-      expect(GuestLoginPrompt.values, contains(GuestLoginPrompt.atEight));
+      expect(GuestLoginPrompt.values, contains(GuestLoginPrompt.firstReminder));
       expect(GuestLoginPrompt.values, contains(GuestLoginPrompt.finalWarning));
     });
   });

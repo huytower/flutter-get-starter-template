@@ -99,7 +99,7 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
         ),
       ),
       child: CcText(
-        el.tr(CcLocaleKeys.profile_birth_year_hint),
+        el.tr(PrjLocaleKeys.profile_birth_year_hint),
         maxLines: 3,
         textStyle: context.ccTextTheme.labelLarge?.copyWith(
           color: scheme.onPrimary,
@@ -195,7 +195,7 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(null),
             child: CcText(
-              el.tr(CcLocaleKeys.common_cancel),
+              el.tr(PrjLocaleKeys.common_cancel),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,
@@ -206,7 +206,7 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(_selectedYear),
             child: CcText(
-              el.tr(CcLocaleKeys.common_ok),
+              el.tr(PrjLocaleKeys.common_ok),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,

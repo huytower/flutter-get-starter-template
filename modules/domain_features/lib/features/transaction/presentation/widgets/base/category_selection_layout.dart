@@ -243,7 +243,7 @@ class CategorySelectionLayout extends StatelessWidget {
       child: CcSymmetricPadding(
         horizontal: CcPaddingParams.PAGE_SM,
         child: CcText(
-          el.tr(CcLocaleKeys.transaction_category),
+          el.tr(PrjLocaleKeys.transaction_category),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
             fontWeight: FontWeight.bold,
@@ -263,7 +263,7 @@ class CategorySelectionLayout extends StatelessWidget {
   }
 
   Widget _buildGrid(BuildContext context) {
-    return HorizontalFadeScrollView(
+    return CcHorizontalFadeScrollView(
       height: _gridHeight(context),
       scrollController: scrollController,
       builder: (gridScrollController) => LayoutBuilder(

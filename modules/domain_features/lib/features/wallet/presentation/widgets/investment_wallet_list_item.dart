@@ -53,7 +53,7 @@ class InvestmentWalletListItem extends StatelessWidget {
       header: _buildHeader(context),
       stats: [
         AssetStatItem(
-          label: el.tr(CcLocaleKeys.report_investment_returned),
+          label: el.tr(PrjLocaleKeys.report_investment_returned),
           value: returned,
           color: PrjColors.success,
           icon: const Icon(Icons.auto_graph_rounded),
@@ -68,7 +68,7 @@ class InvestmentWalletListItem extends StatelessWidget {
         ),
         const CcSpaceXS(),
         AssetStatItem(
-          label: el.tr(CcLocaleKeys.report_investment_contributed),
+          label: el.tr(PrjLocaleKeys.report_investment_contributed),
           value: contributed,
           color: context.ccColorScheme.onSurfaceVariant,
           icon: const Icon(Icons.eco),

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../get_x/report_controller.dart';
 import '../widgets/report_daily_detail_shortcut.dart';
 import '../widgets/report_investment_section.dart';
@@ -43,7 +43,7 @@ class _ReportPageState extends State<ReportPage> {
   }
 }
 
-class _ReportView extends CcGetView<ReportController> {
+class _ReportView extends PrjGetView<ReportController> {
   const _ReportView({required this.controller});
 
   @override
@@ -75,7 +75,7 @@ class _ReportView extends CcGetView<ReportController> {
         },
         child: DefaultTabController(
           length: 3,
-          child: FadePageWrapper(
+          child: CcFadePageWrapper(
             child: Stack(
               children: [
                 Obx(() {
@@ -93,7 +93,7 @@ class _ReportView extends CcGetView<ReportController> {
                           maxHeight: headerHeight,
                           child: ReportPageHeader(
                             controller: controller,
-                            title: el.tr(CcLocaleKeys.report_title),
+                            title: el.tr(PrjLocaleKeys.report_title),
                             onBackPressed: () => controller.onBack(context),
                           ),
                         ),

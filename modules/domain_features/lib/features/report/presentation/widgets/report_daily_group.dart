@@ -106,7 +106,7 @@ class _ReportDailyGroupState extends State<ReportDailyGroup> {
                           Builder(
                             builder: (context) {
                               final weekdayNames = el
-                                  .tr(CcLocaleKeys.common_weekday_names)
+                                  .tr(PrjLocaleKeys.common_weekday_names)
                                   .split('|');
                               final weekdayIndex = widget.date.weekday - 1;
                               final weekdayText =

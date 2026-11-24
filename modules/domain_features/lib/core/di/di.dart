@@ -20,7 +20,7 @@ final GetIt getIt = GetIt.instance;
     SessionContract,
     AuthRepository,
     AuthCoordinator,
-    CcDeviceInfoHelper,
+    CcDeviceInfoService,
     InternetConnection,
     CcAnalytics,
     CcAiClient,

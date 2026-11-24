@@ -28,7 +28,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
           children: [
             CcPadding(
               CcSectionHeader(
-                title: el.tr(CcLocaleKeys.budget_this_month),
+                title: el.tr(PrjLocaleKeys.budget_this_month),
                 icon: Icons.bar_chart,
                 actions: [
                   CcBouncing(
@@ -48,7 +48,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                       children: [
                         const CcSpaceSM(),
                         CcTextButton(
-                          text: el.tr(CcLocaleKeys.budget_see_all),
+                          text: el.tr(PrjLocaleKeys.budget_see_all),
                           onTap: () =>
                               context.router.push(const BudgetLimitListRoute()),
                         ),
@@ -70,7 +70,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
               );
               if (budgets.isEmpty) {
                 return CcSectionEmptyState(
-                  message: el.tr(CcLocaleKeys.budget_empty),
+                  message: el.tr(PrjLocaleKeys.budget_empty),
                   verticalPadding: 12,
                   horizontalPadding: CcPaddingParams.SPACE_LG,
                 );

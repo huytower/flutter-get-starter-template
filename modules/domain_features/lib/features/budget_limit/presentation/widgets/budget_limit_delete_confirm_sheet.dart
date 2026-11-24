@@ -46,7 +46,7 @@ class BudgetLimitDeleteConfirmSheet extends StatelessWidget {
               ),
               const CcSpaceMD(),
               CcText(
-                el.tr(CcLocaleKeys.budget_delete_title),
+                el.tr(PrjLocaleKeys.budget_delete_title),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleLarge?.copyWith(
@@ -57,7 +57,7 @@ class BudgetLimitDeleteConfirmSheet extends StatelessWidget {
               const CcSpaceSM(),
               CcText(
                 el.tr(
-                  CcLocaleKeys.budget_delete_confirm,
+                  PrjLocaleKeys.budget_delete_confirm,
                   namedArgs: {
                     'name': BudgetNameHelper.getDisplayName(
                       name: budget.name,
@@ -76,8 +76,8 @@ class BudgetLimitDeleteConfirmSheet extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.common_cancel),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.common_cancel),
                       bgColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
@@ -88,8 +88,8 @@ class BudgetLimitDeleteConfirmSheet extends StatelessWidget {
                   ),
                   const CcSpaceMD(),
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.common_delete),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.common_delete),
                       bgColor: [scheme.error, scheme.error],
                       textColor: scheme.onError,
                       onTap: () {

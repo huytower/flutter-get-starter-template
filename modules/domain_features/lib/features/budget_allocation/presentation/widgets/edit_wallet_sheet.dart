@@ -51,7 +51,7 @@ class EditWalletSheet extends StatelessWidget {
             children: [
               ListTile(
                 leading: Icon(Icons.edit_outlined, color: scheme.primary),
-                title: CcText(el.tr(CcLocaleKeys.common_edit)),
+                title: CcText(el.tr(PrjLocaleKeys.common_edit)),
                 onTap: () {
                   Navigator.pop(context);
                   onEdit();
@@ -79,7 +79,7 @@ class EditWalletSheet extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.delete_outline, color: scheme.error),
             title: CcText(
-              el.tr(CcLocaleKeys.common_delete),
+              el.tr(PrjLocaleKeys.common_delete),
               textStyle: TextStyle(color: scheme.error),
             ),
             onTap: () {

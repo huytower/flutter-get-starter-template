@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
 import 'package:hive_ce/hive_ce.dart';
@@ -8,7 +8,7 @@ import 'reconciliation_allocation_model.dart';
 
 part 'reconciliation_model.g.dart';
 
-@HiveType(typeId: CcHiveBox.RECONCILIATION_TYPE_ID)
+@HiveType(typeId: PrjHiveBox.RECONCILIATION_TYPE_ID)
 class ReconciliationModel {
   @HiveField(0)
   final String id;

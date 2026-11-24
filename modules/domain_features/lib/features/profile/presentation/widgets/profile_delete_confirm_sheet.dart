@@ -50,7 +50,7 @@ class ProfileDeleteConfirmSheet extends StatelessWidget {
               ),
               const CcSpaceMD(),
               CcText(
-                el.tr(CcLocaleKeys.profile_delete_confirm),
+                el.tr(PrjLocaleKeys.profile_delete_confirm),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleLarge?.copyWith(
@@ -60,7 +60,7 @@ class ProfileDeleteConfirmSheet extends StatelessWidget {
               ),
               const CcSpaceSM(),
               CcText(
-                el.tr(CcLocaleKeys.profile_delete_confirm_desc),
+                el.tr(PrjLocaleKeys.profile_delete_confirm_desc),
                 align: Alignment.center,
                 maxLines: 5,
                 textAlign: TextAlign.center,
@@ -72,8 +72,8 @@ class ProfileDeleteConfirmSheet extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.common_cancel),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.common_cancel),
                       bgColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
@@ -84,8 +84,8 @@ class ProfileDeleteConfirmSheet extends StatelessWidget {
                   ),
                   const CcSpaceMD(),
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.profile_delete_account),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.profile_delete_account),
                       bgColor: [scheme.error, scheme.error],
                       textColor: scheme.onError,
                       onTap: () {

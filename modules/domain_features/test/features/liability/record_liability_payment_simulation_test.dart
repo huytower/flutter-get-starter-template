@@ -12,7 +12,7 @@ import 'package:domain_features/features/transaction/domain/repositories/transac
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 // Simulates recording a repayment / collection, for a stored liability and for
@@ -155,7 +155,7 @@ void main() {
     final short = await useCase(available: 50)(pay('lent', settle: false));
     expect(
       short.tryGetError()?.message,
-      CcLocaleKeys.transaction_validation_insufficient_balance,
+      PrjLocaleKeys.transaction_validation_insufficient_balance,
     );
     expect(transactions.created, isEmpty);
 
@@ -200,7 +200,7 @@ void main() {
 
     expect(
       result.tryGetError()?.message,
-      CcLocaleKeys.transaction_liability_not_found,
+      PrjLocaleKeys.transaction_liability_not_found,
     );
     expect(transactions.created, isEmpty);
   });
@@ -220,7 +220,7 @@ void main() {
     final over = await useCase()(pay('loan', amount: 301, outstanding: 300));
     expect(
       over.tryGetError()?.message,
-      CcLocaleKeys.transaction_liability_exceeds_outstanding,
+      PrjLocaleKeys.transaction_liability_exceeds_outstanding,
     );
     expect(transactions.created, isEmpty);
 

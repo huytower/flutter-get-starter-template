@@ -225,7 +225,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             final bool isOtpFilled = value.text.length == 6;
             final bool isEnabled = !isLoading && isOtpFilled;
 
-            return CcNextBtn(
+            return CcNextButton(
               onTap: _handleVerify,
               isEnable: isEnabled,
               title: el.tr(CcMfLocaleKeys.auth_verify),

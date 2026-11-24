@@ -100,7 +100,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
               children: [
                 CcText(
                   el.tr(
-                    CcLocaleKeys.common_edit,
+                    PrjLocaleKeys.common_edit,
                   ), // "Lọc" would be better but using existing keys
                   textStyle: context.ccTextTheme.titleMedium?.copyWith(
                     color: scheme.onPrimary,
@@ -108,7 +108,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
                   ),
                 ),
                 CcTextButton(
-                  text: el.tr(CcLocaleKeys.common_done),
+                  text: el.tr(PrjLocaleKeys.common_done),
                   textColor: context.ccColorScheme.onPrimary,
                   onTap: () => Navigator.of(
                     context,
@@ -132,7 +132,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
                   children: [
                     _buildSectionHeader(
                       context,
-                      el.tr(CcLocaleKeys.report_filter_by_type),
+                      el.tr(PrjLocaleKeys.report_filter_by_type),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
@@ -148,41 +148,41 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
                             context,
                             ReportFilterType.all,
                             icon: Icons.apps_rounded,
-                            label: el.tr(CcLocaleKeys.report_filter_all_types),
+                            label: el.tr(PrjLocaleKeys.report_filter_all_types),
                           ),
                           _buildTypeRow(
                             context,
                             ReportFilterType.expense,
                             icon: Icons.south_west,
-                            label: el.tr(CcLocaleKeys.common_expense),
+                            label: el.tr(PrjLocaleKeys.common_expense),
                             color: scheme.error,
                           ),
                           _buildTypeRow(
                             context,
                             ReportFilterType.income,
                             icon: Icons.north_east,
-                            label: el.tr(CcLocaleKeys.common_income),
+                            label: el.tr(PrjLocaleKeys.common_income),
                             color: PrjColors.success,
                           ),
                           _buildTypeRow(
                             context,
                             ReportFilterType.investment,
                             icon: Icons.eco_outlined,
-                            label: el.tr(CcLocaleKeys.transaction_investment),
+                            label: el.tr(PrjLocaleKeys.transaction_investment),
                             color: scheme.investment,
                           ),
                           _buildTypeRow(
                             context,
                             ReportFilterType.liability,
                             iconAsset: 'assets/icon/ic_borrow.webp',
-                            label: el.tr(CcLocaleKeys.liability_title),
+                            label: el.tr(PrjLocaleKeys.liability_title),
                             color: scheme.liability,
                           ),
                           _buildTypeRow(
                             context,
                             ReportFilterType.lend,
                             iconAsset: 'assets/icon/ic_lend.webp',
-                            label: el.tr(CcLocaleKeys.liability_lend),
+                            label: el.tr(PrjLocaleKeys.liability_lend),
                             color: scheme.liabilitySecondary,
                           ),
                         ],
@@ -192,7 +192,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
                     const CcSpaceLG(),
                     _buildSectionHeader(
                       context,
-                      el.tr(CcLocaleKeys.report_filter_by_wallet),
+                      el.tr(PrjLocaleKeys.report_filter_by_wallet),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
@@ -208,7 +208,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
                             context,
                             null,
                             Icons.account_balance_wallet_outlined,
-                            el.tr(CcLocaleKeys.report_filter_all_wallets),
+                            el.tr(PrjLocaleKeys.report_filter_all_wallets),
                           ),
                           for (final wallet in _orderedWallets)
                             _buildWalletRow(

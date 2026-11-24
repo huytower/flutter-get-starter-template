@@ -36,7 +36,7 @@ class _LanguageSelectionContentSheetState
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    const locales = CcLocalization.supportedLocales;
+    const locales = PrjLocalization.supportedLocales;
 
     // Scrolls in landscape (short window) instead of overflowing.
     return CcLandscapeScrollable(
@@ -73,7 +73,7 @@ class _LanguageSelectionContentSheetState
         ),
       ),
       child: CcText(
-        tr(CcLocaleKeys.settings_language),
+        tr(PrjLocaleKeys.settings_language),
         maxLines: 1,
         textStyle: context.ccTextTheme.titleLarge?.copyWith(
           color: scheme.onPrimary,
@@ -196,16 +196,16 @@ class _LanguageSelectionContentSheetState
   String _getLanguageLabel(Locale locale) {
     switch (locale.languageCode) {
       case 'vi':
-        return tr(CcLocaleKeys.settings_language_vietnamese);
+        return tr(PrjLocaleKeys.settings_language_vietnamese);
       case 'ko':
-        return tr(CcLocaleKeys.settings_language_korean);
+        return tr(PrjLocaleKeys.settings_language_korean);
       case 'ja':
-        return tr(CcLocaleKeys.settings_language_japanese);
+        return tr(PrjLocaleKeys.settings_language_japanese);
       case 'zh':
-        return tr(CcLocaleKeys.settings_language_chinese);
+        return tr(PrjLocaleKeys.settings_language_chinese);
       case 'en':
       default:
-        return tr(CcLocaleKeys.settings_language_english);
+        return tr(PrjLocaleKeys.settings_language_english);
     }
   }
 
@@ -220,7 +220,7 @@ class _LanguageSelectionContentSheetState
           TextButton(
             onPressed: () => Navigator.of(context).pop(null),
             child: CcText(
-              tr(CcLocaleKeys.common_cancel),
+              tr(PrjLocaleKeys.common_cancel),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,
@@ -231,7 +231,7 @@ class _LanguageSelectionContentSheetState
           TextButton(
             onPressed: () => Navigator.of(context).pop(_selectedLocale),
             child: CcText(
-              tr(CcLocaleKeys.common_ok),
+              tr(PrjLocaleKeys.common_ok),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,

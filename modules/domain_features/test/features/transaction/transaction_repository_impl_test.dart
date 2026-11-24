@@ -63,7 +63,7 @@ void main() {
     test('returns every type newest first when no type is given', () async {
       final result = await _repository(
         mixed,
-      ).getTransactions(const PaginationRequest(page: 1, itemsPerPage: 100));
+      ).getTransactions(const CcPaginationRequest(page: 1, itemsPerPage: 100));
 
       expect(result.tryGetSuccess()!.map((t) => t.id).toList(), [
         '6_income',
@@ -77,7 +77,7 @@ void main() {
 
     test('returns only the requested type', () async {
       final result = await _repository(mixed).getTransactions(
-        const PaginationRequest(page: 1, itemsPerPage: 100),
+        const CcPaginationRequest(page: 1, itemsPerPage: 100),
         type: TransactionType.income,
       );
 
@@ -88,7 +88,7 @@ void main() {
 
     test('applies the page window after filtering by type', () async {
       final result = await _repository(mixed).getTransactions(
-        const PaginationRequest(page: 1, itemsPerPage: 2),
+        const CcPaginationRequest(page: 1, itemsPerPage: 2),
         type: TransactionType.expense,
       );
 
@@ -104,11 +104,11 @@ void main() {
       final repository = _repository(mixed);
 
       final first = await repository.getTransactions(
-        const PaginationRequest(page: 1, itemsPerPage: 1),
+        const CcPaginationRequest(page: 1, itemsPerPage: 1),
         type: TransactionType.expense,
       );
       final second = await repository.getTransactions(
-        const PaginationRequest(page: 2, itemsPerPage: 1),
+        const CcPaginationRequest(page: 2, itemsPerPage: 1),
         type: TransactionType.expense,
       );
 
@@ -118,7 +118,7 @@ void main() {
 
     test('returns an empty page past the filtered results', () async {
       final result = await _repository(mixed).getTransactions(
-        const PaginationRequest(page: 2, itemsPerPage: 2),
+        const CcPaginationRequest(page: 2, itemsPerPage: 2),
         type: TransactionType.income,
       );
 

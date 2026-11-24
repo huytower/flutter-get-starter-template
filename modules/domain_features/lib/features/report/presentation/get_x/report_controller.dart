@@ -17,7 +17,7 @@ import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/exchange_rates/display_currency_converter.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/entities/ai_advice_entity.dart';
@@ -36,7 +36,7 @@ import '../widgets/report_filter_picker_sheet.dart';
 enum ReportFilterType { all, expense, income, investment, liability, lend }
 
 @injectable
-class ReportController extends CcGetController {
+class ReportController extends PrjGetController {
   ReportController(
     this._getCategorySpending,
     this._getFinancialRunway,
@@ -235,14 +235,14 @@ class ReportController extends CcGetController {
         !await AiConsentSheet.ensure(context, _aiPreferences)) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
-      aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
+      aiAdviceErrorKey.value = PrjLocaleKeys.report_ai_advice_gemini_disabled;
       return;
     }
     if (!await _aiPreferences.tryConsumeDailyCall()) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdviceErrorKey.value =
-          CcLocaleKeys.report_ai_advice_daily_limit_reached;
+          PrjLocaleKeys.report_ai_advice_daily_limit_reached;
       final previousCached = await cacheDs.getLastCachedAdvice(
         languageCode: languageCode,
       );
@@ -264,10 +264,10 @@ class ReportController extends CcGetController {
     if (advice == null) {
       _analytics.logEvent(name: 'ai_advice_failed');
       final failure = outcome.tryGetError();
-      if (failure is ValidationFailure &&
+      if (failure is CcValidationFailure &&
           failure.message ==
               GenerateAiFinancialAdviceUseCase.deviceNotGenuineReason) {
-        aiAdviceErrorKey.value = CcLocaleKeys.quick_entry_device_not_genuine;
+        aiAdviceErrorKey.value = PrjLocaleKeys.quick_entry_device_not_genuine;
         return;
       }
       final previousCached = await cacheDs.getLastCachedAdvice(
@@ -276,7 +276,7 @@ class ReportController extends CcGetController {
       if (previousCached != null) {
         aiAdvice.value = previousCached;
       } else {
-        aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_generate_failed;
+        aiAdviceErrorKey.value = PrjLocaleKeys.report_ai_advice_generate_failed;
       }
       return;
     }
@@ -422,7 +422,7 @@ class ReportController extends CcGetController {
     final code = resolved == null
         ? null
         : el.EasyLocalization.of(resolved)?.locale.languageCode;
-    return (code ?? CcLocalization.fallbackLocale.languageCode).toLowerCase();
+    return (code ?? PrjLocalization.fallbackLocale.languageCode).toLowerCase();
   }
 
   Future<void> _loadCachedAdviceIfAvailable() async {

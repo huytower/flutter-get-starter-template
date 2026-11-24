@@ -497,7 +497,7 @@ Iterable<_Violation> _checkComposition(
     for (final hit in _getItUse.allMatches(lines[i])) {
       final type = hit.group(1) ?? hit.group(2);
       // The controller the entry point creates, also as a generic page base's
-      // type parameter (`getIt<T>()` in CcGetView).
+      // type parameter (`getIt<T>()` in PrjGetView).
       if (type != null &&
           RegExp(r'(Controller|Bloc|Cubit)$|^[A-Z]$').hasMatch(type)) {
         continue;

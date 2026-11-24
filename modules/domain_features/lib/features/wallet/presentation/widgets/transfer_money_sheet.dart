@@ -1,8 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/prj_amount_input_section.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -178,8 +178,8 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
                         color: scheme.primary,
                       ),
                       const CcSpaceSM(),
-                      CcAmountInputSection(
-                        label: el.tr(CcLocaleKeys.transaction_amount),
+                      PrjAmountInputSection(
+                        label: el.tr(PrjLocaleKeys.transaction_amount),
                         amountStr: _amount,
                         quickAmounts: MoneyConstants.getWalletQuickAmounts(
                           currencyCode: currencyCode,

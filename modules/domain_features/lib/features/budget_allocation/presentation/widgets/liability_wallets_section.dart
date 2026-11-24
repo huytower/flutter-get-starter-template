@@ -92,8 +92,8 @@ class LiabilityWalletsSection extends StatelessWidget {
     return CcPadding(
       CcSectionHeader(
         title: isLendFront
-            ? el.tr(CcLocaleKeys.liability_lend)
-            : el.tr(CcLocaleKeys.liability_list_title),
+            ? el.tr(PrjLocaleKeys.liability_lend)
+            : el.tr(PrjLocaleKeys.liability_list_title),
         icon: Icons.warning_amber_outlined,
         actions: [
           CcBouncing(
@@ -106,7 +106,7 @@ class LiabilityWalletsSection extends StatelessWidget {
           if (activeBalances.isNotEmpty) ...[
             const CcSpaceSM(),
             CcTextButton(
-              text: el.tr(CcLocaleKeys.wallet_see_all),
+              text: el.tr(PrjLocaleKeys.wallet_see_all),
               onTap: () {
                 if (isLendFront) {
                   controller.navigateToLendList(context);

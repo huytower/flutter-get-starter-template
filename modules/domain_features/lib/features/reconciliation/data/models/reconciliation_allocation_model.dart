@@ -1,11 +1,11 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 import '../../domain/entities/reconciliation_allocation_entity.dart';
 
 part 'reconciliation_allocation_model.g.dart';
 
-@HiveType(typeId: CcHiveBox.RECONCILIATION_ALLOCATION_TYPE_ID)
+@HiveType(typeId: PrjHiveBox.RECONCILIATION_ALLOCATION_TYPE_ID)
 class ReconciliationAllocationModel {
   @HiveField(0)
   final String walletId;

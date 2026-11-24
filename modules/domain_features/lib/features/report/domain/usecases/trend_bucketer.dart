@@ -1,7 +1,7 @@
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:intl/intl.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 
 import '../entities/trend_data_entity.dart';
 import '../report_range.dart';
@@ -33,7 +33,7 @@ List<TrendPoint> bucketTrendPoints({
       points.add(
         TrendPoint(
           label: el.tr(
-            CcLocaleKeys.report_trend_week_label,
+            PrjLocaleKeys.report_trend_week_label,
             namedArgs: {'number': '${i + 1}'},
           ),
           income: periodTxns.fold<double>(0, (s, t) => s + inflowAmount(t)),

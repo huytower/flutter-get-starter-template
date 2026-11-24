@@ -89,7 +89,7 @@ class AppUpdateConfigRepositoryImpl implements AppUpdateConfigRepository {
         ),
       );
     } catch (e) {
-      return Error(UnknownFailure('Failed to read app update config: $e'));
+      return Error(CcUnknownFailure('Failed to read app update config: $e'));
     }
   }
 }

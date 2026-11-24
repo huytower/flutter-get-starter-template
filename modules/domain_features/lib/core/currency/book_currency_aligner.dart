@@ -88,7 +88,7 @@ class BookCurrencyAligner {
         }
       }
       if (rebase.failed) {
-        return Error(ValidationFailure('No exchange rate into $target'));
+        return Error(CcValidationFailure('No exchange rate into $target'));
       }
     }
 

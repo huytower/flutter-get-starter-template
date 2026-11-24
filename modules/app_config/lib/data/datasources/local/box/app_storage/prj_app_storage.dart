@@ -5,34 +5,34 @@ import 'package:app_config/domain/entities/auth/domain_user_entity.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../cc_hive_box.dart';
+import '../prj_hive_box.dart';
 
-part 'cc_app_storage.g.dart';
+part 'prj_app_storage.g.dart';
 
 ///
 ///[example update]-------------------------------------------------------------
-///   CcAppStorage.instance.accessToken = "token_123";
-///   CcAppStorage.instance.userRole = "admin";
-///   CcAppStorage.instance.save();
+///   PrjAppStorage.instance.accessToken = "token_123";
+///   PrjAppStorage.instance.userRole = "admin";
+///   PrjAppStorage.instance.save();
 ///
 ///[example logger]-------------------------------------------------------------
-///   CcAppStorage.instance.Log();
+///   PrjAppStorage.instance.Log();
 ///
 
 @JsonSerializable()
-@HiveType(typeId: CcHiveBox.APP_STORAGE_TYPE_ID)
-class CcAppStorage extends HiveObject {
-  static late CcAppStorage instance;
+@HiveType(typeId: PrjHiveBox.APP_STORAGE_TYPE_ID)
+class PrjAppStorage extends HiveObject {
+  static late PrjAppStorage instance;
 
-  static Future<CcAppStorage?> register() async {
-    Hive.registerAdapter(CcAppStorageAdapter());
-    Box<CcAppStorage> box = await Hive.openBox<CcAppStorage>(
-      CcHiveBox.APP_BOX_NAME,
+  static Future<PrjAppStorage?> register() async {
+    Hive.registerAdapter(PrjAppStorageAdapter());
+    Box<PrjAppStorage> box = await Hive.openBox<PrjAppStorage>(
+      PrjHiveBox.APP_BOX_NAME,
     );
-    final model = box.get(CcHiveBox.keyDefault) ?? CcAppStorage();
+    final model = box.get(PrjHiveBox.keyDefault) ?? PrjAppStorage();
 
-    if (!box.containsKey(CcHiveBox.keyDefault)) {
-      await box.put(CcHiveBox.keyDefault, model);
+    if (!box.containsKey(PrjHiveBox.keyDefault)) {
+      await box.put(PrjHiveBox.keyDefault, model);
     }
 
     instance = model;
@@ -155,16 +155,20 @@ class CcAppStorage extends HiveObject {
   @HiveField(27)
   int? financialSchemaVersion;
 
+  /// Whether the first "sign in to back up your data" reminder was shown to
+  /// the current guest session.
   @HiveField(28)
-  bool? guestLoginPromptAtTimes8Shown;
+  bool? hasShownGuestLoginFirstReminder;
 
+  /// Whether the guest dismissed the final sign-in warning, so no more
+  /// reminders are shown in this session.
   @HiveField(29)
-  bool? guestLoginPrompt15Dismissed;
+  bool? hasDismissedGuestLoginFinalWarning;
 
   @HiveField(30)
   String? guestLoginPromptSessionUid;
 
-  CcAppStorage({
+  PrjAppStorage({
     this.accessToken,
     this.fcmToken,
     this.gpsLocation,
@@ -192,8 +196,8 @@ class CcAppStorage extends HiveObject {
     this.currencySelectionSource,
     this.currencyDetectionCountryCode,
     this.financialSchemaVersion,
-    this.guestLoginPromptAtTimes8Shown,
-    this.guestLoginPrompt15Dismissed,
+    this.hasShownGuestLoginFirstReminder,
+    this.hasDismissedGuestLoginFinalWarning,
     this.guestLoginPromptSessionUid,
   });
 }

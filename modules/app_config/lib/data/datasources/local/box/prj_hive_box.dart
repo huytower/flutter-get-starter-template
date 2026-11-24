@@ -8,18 +8,18 @@
 ///
 /// Example:
 /// ```dart
-/// @HiveType(typeId: CcHiveBox.APP_STORAGE_TYPE_ID)
+/// @HiveType(typeId: PrjHiveBox.APP_STORAGE_TYPE_ID)
 /// class AppStorage extends HiveObject {
 ///   @HiveField(0) final String id;
 ///   // ...
 /// }
 ///
 /// // To open a box:
-/// final box = await Hive.openBox(CcHiveBox.APP_BOX_NAME);
+/// final box = await Hive.openBox(PrjHiveBox.APP_BOX_NAME);
 /// ```
-class CcHiveBox {
+class PrjHiveBox {
   // Prevent instantiation
-  CcHiveBox._();
+  PrjHiveBox._();
 
   // ===== Type IDs =====
   // Use these with @HiveType(typeId: )

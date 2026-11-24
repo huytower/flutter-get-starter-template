@@ -20,7 +20,7 @@ class OutstandingExceededHint extends StatelessWidget {
         right: context.respPadding(CcPaddingParams.DESC_SM),
       ),
       child: Text(
-        el.tr(CcLocaleKeys.transaction_liability_exceeds_outstanding),
+        el.tr(PrjLocaleKeys.transaction_liability_exceeds_outstanding),
         style: context.ccTextTheme.bodySmall?.copyWith(
           color: context.ccColorScheme.error,
         ),

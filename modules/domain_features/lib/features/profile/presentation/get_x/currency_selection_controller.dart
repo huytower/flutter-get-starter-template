@@ -6,10 +6,10 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 
 @injectable
-class CurrencySelectionController extends CcGetController {
+class CurrencySelectionController extends PrjGetController {
   CurrencySelectionController(this._conversionService);
 
   final CurrencyConversionService _conversionService;
@@ -22,7 +22,7 @@ class CurrencySelectionController extends CcGetController {
 
   bool get isInitialized => _initialized;
 
-  void init(String initialCurrencyCode) {
+  void loadInitialCurrency(String initialCurrencyCode) {
     if (_initialized) return;
     _initialized = true;
     primaryCurrencyCode.value = CurrencyConstants.validateCurrencyCode(

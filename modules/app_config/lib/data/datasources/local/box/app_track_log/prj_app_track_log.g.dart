@@ -1,29 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'cc_app_track_log.dart';
+part of 'prj_app_track_log.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class CcAppTrackLogAdapter extends TypeAdapter<CcAppTrackLog> {
+class PrjAppTrackLogAdapter extends TypeAdapter<PrjAppTrackLog> {
   @override
   final typeId = 4;
 
   @override
-  CcAppTrackLog read(BinaryReader reader) {
+  PrjAppTrackLog read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return CcAppTrackLog(
+    return PrjAppTrackLog(
       msg: (fields[0] as List?)?.cast<String>(),
       tag: fields[1] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, CcAppTrackLog obj) {
+  void write(BinaryWriter writer, PrjAppTrackLog obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -38,7 +38,7 @@ class CcAppTrackLogAdapter extends TypeAdapter<CcAppTrackLog> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CcAppTrackLogAdapter &&
+      other is PrjAppTrackLogAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -47,11 +47,11 @@ class CcAppTrackLogAdapter extends TypeAdapter<CcAppTrackLog> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-CcAppTrackLog _$CcAppTrackLogFromJson(Map<String, dynamic> json) =>
-    CcAppTrackLog(
+PrjAppTrackLog _$PrjAppTrackLogFromJson(Map<String, dynamic> json) =>
+    PrjAppTrackLog(
       msg: (json['msg'] as List<dynamic>?)?.map((e) => e as String).toList(),
       tag: json['tag'] as String?,
     );
 
-Map<String, dynamic> _$CcAppTrackLogToJson(CcAppTrackLog instance) =>
+Map<String, dynamic> _$PrjAppTrackLogToJson(PrjAppTrackLog instance) =>
     <String, dynamic>{'msg': instance.msg, 'tag': instance.tag};

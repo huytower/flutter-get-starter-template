@@ -68,7 +68,7 @@ class AiAdviceSection extends StatelessWidget {
         ),
         const CcSpaceXS(),
         CcText(
-          el.tr(CcLocaleKeys.report_ai_advice_title),
+          el.tr(PrjLocaleKeys.report_ai_advice_title),
           textStyle: context.ccTextTheme.titleSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: PrjColors.info,
@@ -83,7 +83,7 @@ class AiAdviceSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcText(
-          el.tr(CcLocaleKeys.report_ai_advice_empty_body),
+          el.tr(PrjLocaleKeys.report_ai_advice_empty_body),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
           ),
@@ -103,7 +103,7 @@ class AiAdviceSection extends StatelessWidget {
             color: context.ccColorScheme.onPrimary,
           ),
           label: CcText(
-            el.tr(CcLocaleKeys.report_ai_advice_generate_cta),
+            el.tr(PrjLocaleKeys.report_ai_advice_generate_cta),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: context.ccColorScheme.onPrimary,
               fontWeight: CcTypographyParams.semiBold,
@@ -127,7 +127,7 @@ class AiAdviceSection extends StatelessWidget {
         ),
         const CcSpaceXS(),
         CcText(
-          el.tr(CcLocaleKeys.report_ai_advice_loading),
+          el.tr(PrjLocaleKeys.report_ai_advice_loading),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
           ),

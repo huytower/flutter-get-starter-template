@@ -154,7 +154,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                 final bool isNotEmpty = value.text.trim().isNotEmpty;
                 final bool isEnabled = !isLoading && isNotEmpty;
 
-                return CcNextBtn.bouncing(
+                return CcNextButton.bouncing(
                   onTap: _handleContinue,
                   isEnable: isEnabled,
                   title: el.tr(CcMfLocaleKeys.common_continue),

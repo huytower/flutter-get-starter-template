@@ -42,12 +42,12 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       if (user != null) {
         return Success(_mapFirebaseUserToEntity(user));
       } else {
-        return const Error(UnauthorizedFailure('Login failed'));
+        return const Error(CcUnauthorizedFailure('Login failed'));
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? 'Server error'));
+      return Error(CcServerFailure(e.message ?? 'Server error'));
     } catch (_) {
-      return const Error(UnknownFailure('An error occurred'));
+      return const Error(CcUnknownFailure('An error occurred'));
     }
   }
 
@@ -59,12 +59,12 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       if (user != null) {
         return Success(_mapFirebaseUserToEntity(user));
       } else {
-        return const Error(UnauthorizedFailure('Login failed'));
+        return const Error(CcUnauthorizedFailure('Login failed'));
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? 'Server error'));
+      return Error(CcServerFailure(e.message ?? 'Server error'));
     } catch (_) {
-      return const Error(UnknownFailure('An error occurred'));
+      return const Error(CcUnknownFailure('An error occurred'));
     }
   }
 
@@ -309,7 +309,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         );
         Catcher2.reportCheckedError(err, StackTrace.current);
         return const Error(
-          UnauthorizedFailure('Apple Sign-In is not supported on this device'),
+          CcUnauthorizedFailure('Apple Sign-In is not supported on this device'),
         );
       }
 
@@ -329,7 +329,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
           '[AppleSignInTrace] Step 2: Apple identityToken is NULL in response',
         );
         Catcher2.reportCheckedError(err, StackTrace.current);
-        return const Error(UnknownFailure('Apple identity token missing'));
+        return const Error(CcUnknownFailure('Apple identity token missing'));
       }
 
       final credential = firebase_auth.OAuthProvider(
@@ -357,12 +357,12 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       if (e.code == AuthorizationErrorCode.unknown) {
         return const Error(AppleVerificationFailure());
       }
-      return Error(ServerFailure('Apple Sign-In failed: ${e.message}'));
+      return Error(CcServerFailure('Apple Sign-In failed: ${e.message}'));
     } catch (e, stack) {
       final traceErr = Exception('[AppleSignInTrace] Unexpected Error: $e');
       Catcher2.reportCheckedError(traceErr, stack);
       return Error(
-        UnknownFailure('An error occurred during Apple authentication: $e'),
+        CcUnknownFailure('An error occurred during Apple authentication: $e'),
       );
     }
   }
@@ -392,7 +392,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       },
       verificationFailed: (e) {
         onStatus(
-          PhoneAuthStatusFailed(ServerFailure(e.message ?? _serverError)),
+          PhoneAuthStatusFailed(CcServerFailure(e.message ?? _serverError)),
         );
       },
       codeSent: (id, token) {
@@ -425,7 +425,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
       return const Success(unit);
     } catch (_) {
-      return const Error(UnknownFailure('An error occurred'));
+      return const Error(CcUnknownFailure('An error occurred'));
     }
   }
 
@@ -435,7 +435,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       final user = _firebaseAuth.currentUser;
       return Success(user != null ? _mapFirebaseUserToEntity(user) : null);
     } catch (_) {
-      return const Error(UnknownFailure('An error occurred'));
+      return const Error(CcUnknownFailure('An error occurred'));
     }
   }
 
@@ -455,16 +455,16 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) {
-        return const Error(UnauthorizedFailure('Login failed'));
+        return const Error(CcUnauthorizedFailure('Login failed'));
       }
       await user.updateDisplayName(name);
       await user.reload();
       final refreshed = _firebaseAuth.currentUser ?? user;
       return Success(_mapFirebaseUserToEntity(refreshed));
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? 'Server error'));
+      return Error(CcServerFailure(e.message ?? 'Server error'));
     } catch (_) {
-      return const Error(UnknownFailure('An error occurred'));
+      return const Error(CcUnknownFailure('An error occurred'));
     }
   }
 
@@ -480,12 +480,12 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
 
       return switch (user) {
         firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure('Login failed')),
+        _ => const Error(CcUnauthorizedFailure('Login failed')),
       };
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? 'Server error'));
+      return Error(CcServerFailure(e.message ?? 'Server error'));
     } catch (_) {
-      return const Error(UnknownFailure('Sign in failed'));
+      return const Error(CcUnknownFailure('Sign in failed'));
     }
   }
 
@@ -531,10 +531,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return const Error(AuthCancelledFailure());
       }
-      return Error(ServerFailure(e.toString()));
+      return Error(CcServerFailure(e.toString()));
     } catch (_) {
       return const Error(
-        UnknownFailure('An error occurred during Google authentication'),
+        CcUnknownFailure('An error occurred during Google authentication'),
       );
     }
   }
@@ -567,7 +567,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         );
       },
       verificationFailed: (e) => onStatus(
-        PhoneAuthStatusFailed(ServerFailure(e.message ?? _serverError)),
+        PhoneAuthStatusFailed(CcServerFailure(e.message ?? _serverError)),
       ),
       codeSent: (id, token) => onStatus(PhoneAuthStatusCodeSent(id, token)),
       codeAutoRetrievalTimeout: (id) =>
@@ -595,7 +595,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) {
-        return const Error(UnauthorizedFailure('Not logged in'));
+        return const Error(CcUnauthorizedFailure('Not logged in'));
       }
 
       final providerIds = user.providerData.map((p) => p.providerId).toSet();
@@ -634,7 +634,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
 
       return const Success(unit);
     } catch (e) {
-      return Error(UnknownFailure('Delete account failed: $e'));
+      return Error(CcUnknownFailure('Delete account failed: $e'));
     }
   }
 
@@ -695,9 +695,9 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       await user.reauthenticateWithCredential(credential);
       return null;
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return ServerFailure(e.message ?? 'Re-authentication failed');
+      return CcServerFailure(e.message ?? 'Re-authentication failed');
     } catch (e) {
-      return UnknownFailure('Re-authentication failed: $e');
+      return CcUnknownFailure('Re-authentication failed: $e');
     }
   }
 
@@ -707,7 +707,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     try {
       final current = _firebaseAuth.currentUser;
       if (current == null) {
-        return const Error(UnauthorizedFailure('Login failed'));
+        return const Error(CcUnauthorizedFailure('Login failed'));
       }
       final userCredential = await current.linkWithCredential(credential);
       final user = userCredential.user ?? current;
@@ -729,14 +729,14 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
           if (newUser != null) {
             return Success(_mapFirebaseUserToEntity(newUser));
           }
-          return const Error(UnauthorizedFailure('Login failed'));
+          return const Error(CcUnauthorizedFailure('Login failed'));
         } catch (signInError) {
-          return Error(UnknownFailure('Sign in conflict: $signInError'));
+          return Error(CcUnknownFailure('Sign in conflict: $signInError'));
         }
       }
       return Error(_mapLinkException(e));
     } catch (e) {
-      return Error(UnknownFailure('Link account failed: $e'));
+      return Error(CcUnknownFailure('Link account failed: $e'));
     }
   }
 
@@ -745,13 +745,13 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   CcFailure _mapLinkException(firebase_auth.FirebaseAuthException e) {
     switch (e.code) {
       case 'credential-already-in-use':
-        return const ServerFailure(
+        return const CcServerFailure(
           'This account is already linked to a different user.',
         );
       case 'provider-already-linked':
-        return const ServerFailure('This account is already linked.');
+        return const CcServerFailure('This account is already linked.');
       default:
-        return ServerFailure(e.message ?? 'Server error');
+        return CcServerFailure(e.message ?? 'Server error');
     }
   }
 

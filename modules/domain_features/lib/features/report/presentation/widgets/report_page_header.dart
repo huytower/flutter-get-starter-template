@@ -123,14 +123,14 @@ class ReportPageHeader extends StatelessWidget {
       } else if (isTypeActive) {
         label = _typeLabel(type);
       } else {
-        label = el.tr(CcLocaleKeys.report_filter_all_wallets);
+        label = el.tr(PrjLocaleKeys.report_filter_all_wallets);
       }
 
       final scheme = context.ccColorScheme;
       final isDark = Theme.of(context).brightness == Brightness.dark;
 
       return Tooltip(
-        message: el.tr(CcLocaleKeys.report_filter_by_wallet),
+        message: el.tr(PrjLocaleKeys.report_filter_by_wallet),
         child: CcBouncing(
           borderRadius: BorderRadius.circular(context.respDim(8)),
           onTap: () => controller.openFilterPicker(context),
@@ -191,17 +191,17 @@ class ReportPageHeader extends StatelessWidget {
   String _typeLabel(ReportFilterType type) {
     switch (type) {
       case ReportFilterType.all:
-        return el.tr(CcLocaleKeys.report_filter_all_types);
+        return el.tr(PrjLocaleKeys.report_filter_all_types);
       case ReportFilterType.expense:
-        return el.tr(CcLocaleKeys.common_expense);
+        return el.tr(PrjLocaleKeys.common_expense);
       case ReportFilterType.income:
-        return el.tr(CcLocaleKeys.common_income);
+        return el.tr(PrjLocaleKeys.common_income);
       case ReportFilterType.investment:
-        return el.tr(CcLocaleKeys.transaction_investment);
+        return el.tr(PrjLocaleKeys.transaction_investment);
       case ReportFilterType.liability:
-        return el.tr(CcLocaleKeys.liability_title);
+        return el.tr(PrjLocaleKeys.liability_title);
       case ReportFilterType.lend:
-        return el.tr(CcLocaleKeys.liability_lend);
+        return el.tr(PrjLocaleKeys.liability_lend);
     }
   }
 

@@ -1,17 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import 'cc_merged_asset_loader.dart';
+import 'prj_merged_asset_loader.dart';
 
 ///
 /// This class provides static methods to handle all localization needs,
 /// including string translation, locale management, and supported locales.
-class CcLocalization {
+class PrjLocalization {
   // Private constructor to prevent instantiation
-  CcLocalization._();
+  PrjLocalization._();
 
   /// The path to the directory containing the translation files.
-  // In modules/message/lib/cc_localization.dart
+  // In modules/message/lib/prj_localization.dart
   static const String translationsPath = 'packages/message/assets/translations';
 
   /// The fallback locale to use when a locale is not supported.
@@ -41,7 +41,7 @@ class CcLocalization {
   /// [packageTranslations] are the `locale code -> translations` maps shipped
   /// by reusable packages (e.g. `CcMfTranslations.mapLocales` from
   /// cc_micro_features); they are merged under the app's own strings by
-  /// [CcMergedAssetLoader]. A key missing in the current locale falls back to
+  /// [PrjMergedAssetLoader]. A key missing in the current locale falls back to
   /// [fallbackLocale].
   static Widget wrapWithLocalization({
     required Widget child,
@@ -55,7 +55,7 @@ class CcLocalization {
       startLocale: const Locale('en'),
       useOnlyLangCode: true,
       saveLocale: true,
-      assetLoader: CcMergedAssetLoader(
+      assetLoader: PrjMergedAssetLoader(
         packageTranslations: packageTranslations,
       ),
       child: child,
@@ -66,7 +66,7 @@ class CcLocalization {
   ///
   /// Example:
   /// ```dart
-  /// CcLocalization.translate('hello_world');
+  /// PrjLocalization.translate('hello_world');
   /// ```
   static String translate(
     String key, {
@@ -85,7 +85,7 @@ class CcLocalization {
   ///
   /// Example:
   /// ```dart
-  /// await CcLocalization.setLocale(context, const Locale('vi'));
+  /// await PrjLocalization.setLocale(context, const Locale('vi'));
   /// ```
   static Future<void> setLocale(BuildContext context, Locale newLocale) async {
     await context.setLocale(newLocale);
@@ -125,7 +125,7 @@ class CcLocalization {
   ///
   /// Example:
   /// ```dart
-  /// CcLocalization.plural('items_count', 5);
+  /// PrjLocalization.plural('items_count', 5);
   /// ```
   static String plural(String key, num count, {List<String>? args}) {
     return key.plural(count.toDouble(), args: args);

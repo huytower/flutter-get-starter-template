@@ -14,7 +14,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
@@ -31,7 +31,7 @@ import '../widgets/edit_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirmation_sheet.dart';
 
 @lazySingleton
-class BudgetAllocationController extends CcGetController {
+class BudgetAllocationController extends PrjGetController {
   BudgetAllocationController(
     this.walletController,
     this.budgetLimitController,
@@ -183,19 +183,19 @@ class BudgetAllocationController extends CcGetController {
         _refresh.refreshReconciliationBalances();
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
-          message: el.tr(CcLocaleKeys.common_done),
+          message: el.tr(PrjLocaleKeys.common_done),
         );
         break;
       case WalletDeleteOutcome.notEmpty:
         CcSnackBarHelper.showErrorSnackBar(
           context: context,
-          message: el.tr(CcLocaleKeys.wallet_delete_error_not_empty),
+          message: el.tr(PrjLocaleKeys.wallet_delete_error_not_empty),
         );
         break;
       case WalletDeleteOutcome.protected:
         CcSnackBarHelper.showErrorSnackBar(
           context: context,
-          message: el.tr(CcLocaleKeys.wallet_delete_error_protected),
+          message: el.tr(PrjLocaleKeys.wallet_delete_error_protected),
         );
         break;
       case WalletDeleteOutcome.error:
@@ -203,7 +203,7 @@ class BudgetAllocationController extends CcGetController {
           context: context,
           message: walletController.errorMessage.value.isNotEmpty
               ? walletController.errorMessage.value
-              : el.tr(CcLocaleKeys.app_error_general),
+              : el.tr(PrjLocaleKeys.app_error_general),
         );
         break;
     }

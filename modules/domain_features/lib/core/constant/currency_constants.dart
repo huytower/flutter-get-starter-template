@@ -1,5 +1,5 @@
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:hive_ce/hive_ce.dart';
@@ -65,8 +65,8 @@ class CurrencyConstants {
   /// Returns the active user primary currency (fallback to defaultCurrencyCode if uninitialized).
   static String get currentPrimaryCurrency {
     try {
-      if (Hive.isBoxOpen(CcHiveBox.APP_BOX_NAME)) {
-        final code = CcAppStorage.instance.currencyCode;
+      if (Hive.isBoxOpen(PrjHiveBox.APP_BOX_NAME)) {
+        final code = PrjAppStorage.instance.currencyCode;
         if (code != null &&
             supportedCurrencyCodes.contains(code.toUpperCase())) {
           return code.toUpperCase();

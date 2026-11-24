@@ -22,7 +22,7 @@ class RatingBarRow extends StatelessWidget {
           width: context.respDim(56),
           child: CcText(
             el.tr(
-              CcLocaleKeys.profile_star_count,
+              PrjLocaleKeys.profile_star_count,
               namedArgs: {'count': '$level'},
             ),
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(

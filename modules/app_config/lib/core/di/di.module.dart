@@ -7,10 +7,10 @@
 import 'dart:async' as _i687;
 
 import 'package:app_config/core/di/module/app_config_dependencies.dart' as _i33;
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart'
-    as _i393;
-import 'package:app_config/data/datasources/local/box/device_info/cc_device_info.dart'
-    as _i522;
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart'
+    as _i145;
+import 'package:app_config/data/datasources/local/box/device_info/prj_device_info.dart'
+    as _i776;
 import 'package:injectable/injectable.dart' as _i526;
 
 class AppConfigPackageModule extends _i526.MicroPackageModule {
@@ -18,9 +18,9 @@ class AppConfigPackageModule extends _i526.MicroPackageModule {
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     final appConfigDependencies = _$AppConfigDependencies();
-    gh.lazySingleton<_i393.CcAppStorage>(
+    gh.lazySingleton<_i145.PrjAppStorage>(
         () => appConfigDependencies.ccAppStorage);
-    gh.lazySingleton<_i522.CcDeviceInfo>(
+    gh.lazySingleton<_i776.PrjDeviceInfo>(
         () => appConfigDependencies.ccDeviceInfo);
   }
 }

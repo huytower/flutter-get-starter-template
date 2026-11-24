@@ -9,7 +9,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../di/di.dart';
 
-abstract class CcGetController extends GetxController {
+abstract class PrjGetController extends GetxController {
   Rx<CcLayoutStatus> layoutStatus = Rx<CcLayoutStatus>(CcLayoutStatus.loading);
   RxString errorMessage = RxString('');
 
@@ -60,10 +60,10 @@ abstract class CcGetController extends GetxController {
     try {
       final hasInternet = await getIt<CcNetworkHelper>().hasInternet;
       if (!hasInternet) {
-        final errorMsg = el.tr(CcLocaleKeys.app_error_network);
+        final errorMsg = el.tr(PrjLocaleKeys.app_error_network);
         errorMessage.value = errorMsg;
         layoutStatus.value = CcLayoutStatus.error;
-        return Error(NetworkFailure(errorMsg));
+        return Error(CcNetworkFailure(errorMsg));
       }
 
       final result = await fetchFunction();
@@ -89,7 +89,7 @@ abstract class CcGetController extends GetxController {
       final errorMsg = e.toString();
       errorMessage.value = errorMsg;
       layoutStatus.value = CcLayoutStatus.error;
-      return Error(ServerFailure(errorMsg));
+      return Error(CcServerFailure(errorMsg));
     }
   }
 }

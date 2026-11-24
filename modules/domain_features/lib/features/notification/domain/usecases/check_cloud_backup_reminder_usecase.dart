@@ -41,8 +41,8 @@ class CheckCloudBackupReminderUseCase {
 
     await _notificationService.showNow(
       id: ReminderIds.cloudBackup,
-      title: el.tr(CcLocaleKeys.notification_cloud_backup_title),
-      body: el.tr(CcLocaleKeys.notification_cloud_backup_body),
+      title: el.tr(PrjLocaleKeys.notification_cloud_backup_title),
+      body: el.tr(PrjLocaleKeys.notification_cloud_backup_body),
     );
     await _profileRepository.saveSettings(
       settings.copyWith(cloudBackupReminderSentAt: DateTime.now()),

@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,10 +8,10 @@ import '../../models/transaction_model.dart';
 @lazySingleton
 class TransactionLocalDataSource {
   Future<Box<TransactionModel>> get _box async {
-    if (Hive.isBoxOpen(CcHiveBox.TRANSACTION_BOX_NAME)) {
-      return Hive.box<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
+    if (Hive.isBoxOpen(PrjHiveBox.TRANSACTION_BOX_NAME)) {
+      return Hive.box<TransactionModel>(PrjHiveBox.TRANSACTION_BOX_NAME);
     }
-    return Hive.openBox<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
+    return Hive.openBox<TransactionModel>(PrjHiveBox.TRANSACTION_BOX_NAME);
   }
 
   Future<List<TransactionModel>> getAll() async {

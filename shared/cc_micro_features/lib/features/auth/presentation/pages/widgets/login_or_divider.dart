@@ -9,7 +9,7 @@ class LoginOrDivider extends StatelessWidget {
 
   /// Semantic token for the divider label.
   /// Defaults to a plain English token so this project-blind widget never
-  /// depends on the `message` module (follows `CcNextBtn.title` pattern).
+  /// depends on the `message` module (follows `CcNextButton.title` pattern).
   final String? orText;
 
   @override

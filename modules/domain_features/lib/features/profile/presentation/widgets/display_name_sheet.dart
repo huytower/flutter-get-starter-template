@@ -67,7 +67,7 @@ class _DisplayNameSheetState extends State<DisplayNameSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CcText(
-              el.tr(CcLocaleKeys.profile_display_name_title),
+              el.tr(PrjLocaleKeys.profile_display_name_title),
               textStyle: context.ccTextTheme.titleLarge?.copyWith(
                 fontWeight: CcTypographyParams.bold,
                 color: context.ccColorScheme.primary,
@@ -79,7 +79,7 @@ class _DisplayNameSheetState extends State<DisplayNameSheet> {
               maxLength: 20,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: el.tr(CcLocaleKeys.profile_display_name_hint),
+                hintText: el.tr(PrjLocaleKeys.profile_display_name_hint),
                 suffixIcon: _nameController.text.isNotEmpty
                     ? IconButton(
                         icon: Icon(
@@ -96,7 +96,7 @@ class _DisplayNameSheetState extends State<DisplayNameSheet> {
             const CcSpaceMD(),
             CcSaveButton(
               onPressed: _isValid ? _onSave : null,
-              label: el.tr(CcLocaleKeys.profile_display_name_save),
+              label: el.tr(PrjLocaleKeys.profile_display_name_save),
             ),
           ],
         ),

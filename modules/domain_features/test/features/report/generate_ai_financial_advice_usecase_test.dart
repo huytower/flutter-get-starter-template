@@ -10,7 +10,7 @@ void main() {
         const CcAiFailure(CcAiFailureKind.deviceAttestation),
       );
 
-      expect(failure, isA<ValidationFailure>());
+      expect(failure, isA<CcValidationFailure>());
       expect(
         failure.message,
         GenerateAiFinancialAdviceUseCase.deviceNotGenuineReason,
@@ -24,7 +24,7 @@ void main() {
       ]) {
         final failure = GenerateAiFinancialAdviceUseCase.failureFor(aiFailure);
 
-        expect(failure, isA<ServerFailure>());
+        expect(failure, isA<CcServerFailure>());
         expect(
           failure.message,
           GenerateAiFinancialAdviceUseCase.emptyResponseReason,

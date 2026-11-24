@@ -32,7 +32,7 @@ class InvestmentAssetSelector extends StatelessWidget {
           child: CcSymmetricPadding(
             horizontal: CcPaddingParams.PAGE_XS,
             child: CcText(
-              el.tr(CcLocaleKeys.transaction_category),
+              el.tr(PrjLocaleKeys.transaction_category),
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
                 color: context.ccColorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.bold,
@@ -60,14 +60,14 @@ class InvestmentAssetSelector extends StatelessWidget {
           if (items.isEmpty) {
             return CcContentPadding(
               child: CategoryCustomizeEmptyState(
-                hint: el.tr(CcLocaleKeys.transaction_no_investment_items_hint),
+                hint: el.tr(PrjLocaleKeys.transaction_no_investment_items_hint),
                 onCustomize: () =>
                     InvestmentListPage.open(context, openAdd: true),
               ),
             );
           }
 
-          return HorizontalFadeScrollView(
+          return CcHorizontalFadeScrollView(
             height: context.respDim(100),
             scrollController: controller.assetRowScrollController,
             builder: (scrollController) => ListView.separated(

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
@@ -12,7 +12,7 @@ part 'category_model.g.dart';
 ///
 /// Keeps the domain entity pure: the `Color` field is stored as a primitive
 /// ARGB int (`colorValue`) so Hive can serialize it without a custom adapter.
-@HiveType(typeId: CcHiveBox.CATEGORY_TYPE_ID)
+@HiveType(typeId: PrjHiveBox.CATEGORY_TYPE_ID)
 class CategoryModel {
   @HiveField(0)
   final String id;

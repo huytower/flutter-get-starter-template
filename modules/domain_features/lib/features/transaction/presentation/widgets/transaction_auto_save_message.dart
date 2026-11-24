@@ -28,7 +28,7 @@ class TransactionAutoSaveMessage extends StatelessWidget {
         const CcSpaceXS(),
         CcText(
           el.tr(
-            CcLocaleKeys.transaction_auto_save_countdown,
+            PrjLocaleKeys.transaction_auto_save_countdown,
             namedArgs: {'countdown': countdown.toString()},
           ),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(

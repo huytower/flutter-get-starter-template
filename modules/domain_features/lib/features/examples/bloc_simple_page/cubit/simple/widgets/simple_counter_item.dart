@@ -23,7 +23,7 @@ class SimpleCounterItem extends StatelessWidget {
         },
         useDebounce: true,
         isBouncing: true,
-        child: CcCloseBtn(
+        child: CcCloseButton(
           onTap: () {
             'cubit : close() :'.Log();
             cubit.increase();

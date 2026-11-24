@@ -18,7 +18,7 @@ class RequestInterceptor extends Interceptor {
     /// Check internet connection
     final hasInternet = await CcNetworkHelper(_connection).hasInternet;
     if (!hasInternet) {
-      final errorMsg = el.tr(CcLocaleKeys.app_error_network);
+      final errorMsg = el.tr(PrjLocaleKeys.app_error_network);
       errorMsg.Log();
       return handler.reject(
         DioException(

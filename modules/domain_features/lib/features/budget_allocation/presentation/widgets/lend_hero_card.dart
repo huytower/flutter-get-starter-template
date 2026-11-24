@@ -26,9 +26,9 @@ class LendHeroCard extends StatelessWidget {
     final color = scheme.liability.withValues(alpha: 0.9);
 
     return BaseHeroBannerCard(
-      titleKey: CcLocaleKeys.liability_lend,
+      titleKey: PrjLocaleKeys.liability_lend,
       balance: balance,
-      subtitleKey: CcLocaleKeys.transaction_liability_category_lend_label,
+      subtitleKey: PrjLocaleKeys.transaction_liability_category_lend_label,
       balanceIcon: Icons.handshake_outlined,
       bannerIconAsset: 'assets/icon/ic_lend.webp',
       color: color,

@@ -397,8 +397,8 @@ class BorrowFormController extends LiabilityBaseFormController {
   String? composeNote() {
     final userNote = super.composeNote();
     final subsegment = action.value == LiabilityDirectionForm.increase
-        ? el.tr(CcLocaleKeys.transaction_liability_direction_borrow)
-        : el.tr(CcLocaleKeys.transaction_record_repay);
+        ? el.tr(PrjLocaleKeys.transaction_liability_direction_borrow)
+        : el.tr(PrjLocaleKeys.transaction_record_repay);
 
     if (userNote == null || userNote.isEmpty) return subsegment;
     return '$subsegment · $userNote';
@@ -459,7 +459,7 @@ class BorrowFormController extends LiabilityBaseFormController {
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
-            CcLocaleKeys.transaction_liability_payment_saved,
+            PrjLocaleKeys.transaction_liability_payment_saved,
             namedArgs: {'amount': savedAmount},
           ),
         );

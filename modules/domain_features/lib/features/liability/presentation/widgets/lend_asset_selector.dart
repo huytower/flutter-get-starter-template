@@ -30,7 +30,7 @@ class LendAssetSelector extends StatelessWidget {
           child: CcSymmetricPadding(
             horizontal: CcPaddingParams.PAGE_XS,
             child: CcText(
-              el.tr(CcLocaleKeys.transaction_category),
+              el.tr(PrjLocaleKeys.transaction_category),
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
                 color: context.ccColorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.bold,
@@ -53,13 +53,13 @@ class LendAssetSelector extends StatelessWidget {
           if (items.isEmpty) {
             return CcContentPadding(
               child: CategoryCustomizeEmptyState(
-                hint: el.tr(CcLocaleKeys.liability_empty_state),
+                hint: el.tr(PrjLocaleKeys.liability_empty_state),
                 onCustomize: () => LendListPage.open(context, openAdd: true),
               ),
             );
           }
 
-          return HorizontalFadeScrollView(
+          return CcHorizontalFadeScrollView(
             height: context.respDim(100),
             scrollController: controller.assetRowScrollController,
             builder: (scrollController) => ListView.separated(

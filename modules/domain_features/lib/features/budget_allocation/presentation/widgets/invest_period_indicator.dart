@@ -29,7 +29,7 @@ class InvestPeriodIndicator extends StatelessWidget {
       ),
       child: CcText(
         el.tr(
-          CcLocaleKeys.budget_month_indicator,
+          PrjLocaleKeys.budget_month_indicator,
           namedArgs: {'month': monthName},
         ),
         textStyle: context.ccTextTheme.labelSmall?.copyWith(

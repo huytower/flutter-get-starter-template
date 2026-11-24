@@ -58,7 +58,7 @@ class RecordCurrencyRebaser {
         if (rebase.needs(r.currencyCode)) await _reconciliation(r, rebase),
     ];
     if (rebase.failed) {
-      return Error(ValidationFailure('No exchange rate into $target'));
+      return Error(CcValidationFailure('No exchange rate into $target'));
     }
 
     for (final l in liabilities) {

@@ -36,7 +36,7 @@ class ReportLiabilitySection extends StatelessWidget {
       if (data.totalExpense > 0) {
         children.add(
           TrendCard(
-            title: el.tr(CcLocaleKeys.report_liability_out),
+            title: el.tr(PrjLocaleKeys.report_liability_out),
             amount: data.totalExpense,
             points: data.points,
             color: context.borrowAccent.secondaryShade,
@@ -50,7 +50,7 @@ class ReportLiabilitySection extends StatelessWidget {
       if (data.totalIncome > 0) {
         children.add(
           TrendCard(
-            title: el.tr(CcLocaleKeys.report_liability_in),
+            title: el.tr(PrjLocaleKeys.report_liability_in),
             amount: data.totalIncome,
             points: data.points,
             color: context.borrowAccent,

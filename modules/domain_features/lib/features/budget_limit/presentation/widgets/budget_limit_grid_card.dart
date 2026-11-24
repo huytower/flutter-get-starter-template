@@ -266,7 +266,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
       children: [
         CcText(
           el.tr(
-            CcLocaleKeys.budget_percent_used,
+            PrjLocaleKeys.budget_percent_used,
             namedArgs: {'percent': '$pct'},
           ),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(

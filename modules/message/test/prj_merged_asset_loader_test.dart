@@ -15,12 +15,12 @@ void main() {
   };
 
   test('without package maps it returns the app map unchanged', () async {
-    final map = await const CcMergedAssetLoader().load('', const Locale('en'));
+    final map = await const PrjMergedAssetLoader().load('', const Locale('en'));
     expect(map, same(CodegenLoader.mapLocales['en']));
   });
 
   test('merges package keys and lets the app override them', () async {
-    final map = await const CcMergedAssetLoader(
+    final map = await const PrjMergedAssetLoader(
       packageTranslations: [package],
     ).load('', const Locale('en'));
 
@@ -32,7 +32,7 @@ void main() {
   });
 
   test('uses the package locale when present', () async {
-    final map = await const CcMergedAssetLoader(
+    final map = await const PrjMergedAssetLoader(
       packageTranslations: [package],
     ).load('', const Locale('vi'));
 
@@ -40,7 +40,7 @@ void main() {
   });
 
   test('falls back to the package en map for a locale it lacks', () async {
-    final map = await const CcMergedAssetLoader(
+    final map = await const PrjMergedAssetLoader(
       packageTranslations: [package],
     ).load('', const Locale('ja'));
 
@@ -48,7 +48,7 @@ void main() {
   });
 
   test('does not mutate the package maps', () async {
-    await const CcMergedAssetLoader(
+    await const PrjMergedAssetLoader(
       packageTranslations: [package],
     ).load('', const Locale('en'));
 

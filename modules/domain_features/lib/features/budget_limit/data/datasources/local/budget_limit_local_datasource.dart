@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,10 +8,10 @@ import '../../models/budget_limit_model.dart';
 @lazySingleton
 class BudgetLimitLocalDataSource {
   Future<Box<BudgetLimitModel>> get _box async {
-    if (Hive.isBoxOpen(CcHiveBox.BUDGET_BOX_NAME)) {
-      return Hive.box<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    if (Hive.isBoxOpen(PrjHiveBox.BUDGET_BOX_NAME)) {
+      return Hive.box<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME);
     }
-    return Hive.openBox<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    return Hive.openBox<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME);
   }
 
   Future<List<BudgetLimitModel>> getAll() async {

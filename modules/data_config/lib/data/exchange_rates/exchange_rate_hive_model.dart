@@ -1,10 +1,10 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_table.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 part 'exchange_rate_hive_model.g.dart';
 
-@HiveType(typeId: CcHiveBox.EXCHANGE_RATE_TYPE_ID)
+@HiveType(typeId: PrjHiveBox.EXCHANGE_RATE_TYPE_ID)
 class ExchangeRateHiveModel extends HiveObject {
   @HiveField(0)
   final String baseCurrency;

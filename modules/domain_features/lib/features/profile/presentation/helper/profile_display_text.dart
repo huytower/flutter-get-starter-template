@@ -6,11 +6,11 @@ import 'package:message/export_message.dart';
 abstract final class ProfileDisplayText {
   /// Full name, else email, else phone, else "Guest".
   static String displayName(CcUserEntity? user) {
-    if (user == null) return el.tr(CcLocaleKeys.profile_guest);
+    if (user == null) return el.tr(PrjLocaleKeys.profile_guest);
     final name = fullName(user);
     if (name.isNotEmpty) return name;
     if (user.email.isNotEmpty) return user.email;
-    return user.phoneNumber ?? el.tr(CcLocaleKeys.profile_guest);
+    return user.phoneNumber ?? el.tr(PrjLocaleKeys.profile_guest);
   }
 
   static String fullName(CcUserEntity? user) => [
@@ -24,7 +24,7 @@ abstract final class ProfileDisplayText {
       (auditDayIndex + 1 - today.weekday) % 7;
 
   static String weeklyAuditDayName(int auditDayIndex) {
-    final names = el.tr(CcLocaleKeys.common_weekday_names).split('|');
+    final names = el.tr(PrjLocaleKeys.common_weekday_names).split('|');
     return auditDayIndex >= 0 &&
             auditDayIndex < 7 &&
             auditDayIndex < names.length
@@ -33,10 +33,10 @@ abstract final class ProfileDisplayText {
   }
 
   static String languageName(String languageCode) => switch (languageCode) {
-    'vi' => el.tr(CcLocaleKeys.settings_language_vietnamese),
-    'ko' => el.tr(CcLocaleKeys.settings_language_korean),
-    'ja' => el.tr(CcLocaleKeys.settings_language_japanese),
-    'zh' => el.tr(CcLocaleKeys.settings_language_chinese),
-    _ => el.tr(CcLocaleKeys.settings_language_english),
+    'vi' => el.tr(PrjLocaleKeys.settings_language_vietnamese),
+    'ko' => el.tr(PrjLocaleKeys.settings_language_korean),
+    'ja' => el.tr(PrjLocaleKeys.settings_language_japanese),
+    'zh' => el.tr(PrjLocaleKeys.settings_language_chinese),
+    _ => el.tr(PrjLocaleKeys.settings_language_english),
   };
 }

@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import '../../../liability/presentation/widgets/borrow_form.dart';
 import '../../../liability/presentation/widgets/lend_form.dart';
 import '../get_x/transaction_controller.dart';
-import 'cc_level_lock_placeholder.dart';
 import 'expense_form.dart';
 import 'income_form.dart';
 import 'investment_form.dart';
+import 'prj_level_lock_placeholder.dart';
 import 'transaction_tab_bar.dart';
 
 class TransactionTabBarView extends StatelessWidget {
@@ -58,7 +58,7 @@ class TransactionTabBarView extends StatelessWidget {
   Widget _buildPage(BuildContext context, TransactionTabKind tab) {
     final isUnlocked = controller.isTabUnlocked(tab);
     if (!isUnlocked) {
-      return CcContentPadding(child: CcLevelLockPlaceholder(tab: tab));
+      return CcContentPadding(child: PrjLevelLockPlaceholder(tab: tab));
     }
 
     return switch (tab) {

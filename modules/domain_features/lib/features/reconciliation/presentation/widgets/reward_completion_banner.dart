@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// shown when a reconciliation finishes.
 ///
 /// ```dart
-/// RewardCompletionBanner(message: el.tr(CcLocaleKeys.reconciliation_success_message), onClose: close)
+/// RewardCompletionBanner(message: el.tr(PrjLocaleKeys.reconciliation_success_message), onClose: close)
 /// ```
 class RewardCompletionBanner extends StatefulWidget {
   const RewardCompletionBanner({

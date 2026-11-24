@@ -78,12 +78,12 @@ class SmartEntryPreviewSheet extends StatelessWidget {
     return SmartEntrySheetHeader(
       title: count > 1
           ? el.tr(
-              CcLocaleKeys.smart_entry_preview_title_many,
+              PrjLocaleKeys.smart_entry_preview_title_many,
               namedArgs: {'count': '$count'},
             )
-          : el.tr(CcLocaleKeys.smart_entry_preview_title_one),
-      subtitle: el.tr(CcLocaleKeys.smart_entry_preview_subtitle),
-      trailing: CcCancelBtn.bouncing(
+          : el.tr(PrjLocaleKeys.smart_entry_preview_title_one),
+      subtitle: el.tr(PrjLocaleKeys.smart_entry_preview_subtitle),
+      trailing: CcCancelButton.bouncing(
         onTap: () {
           if (!state.isCommitting.value) Navigator.of(context).pop(false);
         },
@@ -179,15 +179,15 @@ class SmartEntryPreviewSheet extends StatelessWidget {
 
   String _confirmLabel() {
     if (state.config.appliesToForm) {
-      return el.tr(CcLocaleKeys.smart_entry_preview_apply_form);
+      return el.tr(PrjLocaleKeys.smart_entry_preview_apply_form);
     }
     final count = state.rows.length;
     return count > 1
         ? el.tr(
-            CcLocaleKeys.smart_entry_preview_confirm_many,
+            PrjLocaleKeys.smart_entry_preview_confirm_many,
             namedArgs: {'count': '$count'},
           )
-        : el.tr(CcLocaleKeys.smart_entry_preview_confirm_one);
+        : el.tr(PrjLocaleKeys.smart_entry_preview_confirm_one);
   }
 
   Future<void> _confirm(BuildContext context) async {

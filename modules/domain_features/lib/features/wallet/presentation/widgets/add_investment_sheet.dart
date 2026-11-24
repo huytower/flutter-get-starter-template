@@ -21,7 +21,7 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
   Widget build(BuildContext context) {
     return GetX<AddInvestmentSheetController>(
       init: getIt<AddInvestmentSheetController>()
-        ..init(wallet, category: category),
+        ..prepareForm(wallet, category: category),
       dispose: (_) => Get.delete<AddInvestmentSheetController>(),
       builder: (controller) {
         return SafeArea(
@@ -88,8 +88,8 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
   ) {
     return CcFormLabel(
       text: controller.isEditing
-          ? el.tr(CcLocaleKeys.wallet_investment_edit_title)
-          : el.tr(CcLocaleKeys.transaction_record_investment),
+          ? el.tr(PrjLocaleKeys.wallet_investment_edit_title)
+          : el.tr(PrjLocaleKeys.transaction_record_investment),
       color: context.ccColorScheme.primary,
     );
   }
@@ -104,14 +104,14 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcText(
-            el.tr(CcLocaleKeys.transaction_category),
+            el.tr(PrjLocaleKeys.transaction_category),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: context.ccColorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
           const CcSpaceSM(),
-          HorizontalFadeScrollView(
+          CcHorizontalFadeScrollView(
             height: context.respDim(80),
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
@@ -147,12 +147,12 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
     return Obx(
       () => CcNameInputField(
         controller: controller.nameController,
-        labelText: el.tr(CcLocaleKeys.wallet_investment_name),
-        hintText: el.tr(CcLocaleKeys.wallet_investment_name_hint),
+        labelText: el.tr(PrjLocaleKeys.wallet_investment_name),
+        hintText: el.tr(PrjLocaleKeys.wallet_investment_name_hint),
         errorText: controller.nameError.value,
         maxLength: 20,
         maxLengthWarningText: el.tr(
-          CcLocaleKeys.validation_max_length_reached,
+          PrjLocaleKeys.validation_max_length_reached,
           namedArgs: {'count': '20'},
         ),
         onClear: () {
@@ -175,7 +175,7 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
 
     return CcSaveButton(
       onPressed: canSave ? () => controller.save(context) : null,
-      label: el.tr(CcLocaleKeys.common_save),
+      label: el.tr(PrjLocaleKeys.common_save),
     );
   }
 }

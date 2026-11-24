@@ -162,7 +162,7 @@ class WalletReconcileTile extends StatelessWidget {
     return Row(
       children: [
         CcText(
-          el.tr(CcLocaleKeys.reconciliation_book),
+          el.tr(PrjLocaleKeys.reconciliation_book),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
             color: scheme.onSurfaceVariant,
           ),
@@ -262,7 +262,7 @@ class _WalletActualBalanceInputState extends State<WalletActualBalanceInput> {
           child: AbsorbPointer(
             child: CcTextField(
               controller: _controller,
-              hintText: el.tr(CcLocaleKeys.reconciliation_actual),
+              hintText: el.tr(PrjLocaleKeys.reconciliation_actual),
               margin: EdgeInsets.zero,
               textAlign: TextAlign.end,
               color: scheme.surface,
@@ -339,7 +339,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
           ),
           const CcSpaceXS(),
           CcText(
-            el.tr(CcLocaleKeys.reconciliation_not_counted),
+            el.tr(PrjLocaleKeys.reconciliation_not_counted),
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: scheme.onSurfaceVariant,
             ),
@@ -354,7 +354,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
           const CcIconToken(Icons.check_circle_outline, size: 16),
           const CcSpaceXS(),
           CcText(
-            el.tr(CcLocaleKeys.reconciliation_matched),
+            el.tr(PrjLocaleKeys.reconciliation_matched),
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: scheme.primary,
               fontWeight: FontWeight.w600,
@@ -374,7 +374,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
         const CcSpaceXS(),
         CcText(
           el.tr(
-            CcLocaleKeys.reconciliation_lech,
+            PrjLocaleKeys.reconciliation_lech,
             namedArgs: {
               'amount':
                   '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}',
@@ -394,7 +394,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
           CcBouncing(
             onTap: onAcknowledge,
             child: CcText(
-              el.tr(CcLocaleKeys.reconciliation_create_adjustment),
+              el.tr(PrjLocaleKeys.reconciliation_create_adjustment),
               textStyle: context.ccTextTheme.bodySmall?.copyWith(
                 color: scheme.error,
                 fontWeight: FontWeight.w600,
@@ -405,7 +405,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
           )
         else
           CcText(
-            el.tr(CcLocaleKeys.common_done),
+            el.tr(PrjLocaleKeys.common_done),
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: scheme.primary,
               fontWeight: FontWeight.w600,
@@ -419,7 +419,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
           ),
           height: context.respDim(28),
           width: context.respDim(28),
-          tooltip: el.tr(CcLocaleKeys.reconciliation_review_transactions),
+          tooltip: el.tr(PrjLocaleKeys.reconciliation_review_transactions),
           onTap: onReview,
         ),
       ],

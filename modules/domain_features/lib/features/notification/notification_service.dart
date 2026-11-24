@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
@@ -18,13 +18,13 @@ class NotificationService {
   // Channel name/description are OS-level metadata (Android Settings ->
   // Apps -> Notifications), not in-app UI, but still user-facing text, so
   // still routed through el.tr() rather than hardcoded. Safe to call here:
-  // main.dart only triggers init() (which creates the channel) after the
-  // parallel boot barrier that includes CcLocalization.initialize().
+  // main.dart only triggers ensureInitialized() (which creates the channel) after the
+  // parallel boot barrier that includes PrjLocalization.initialize().
   static String get _channelName =>
-      el.tr(CcLocaleKeys.notification_channel_name);
+      el.tr(PrjLocaleKeys.notification_channel_name);
 
   static String get _channelDescription =>
-      el.tr(CcLocaleKeys.notification_channel_description);
+      el.tr(PrjLocaleKeys.notification_channel_description);
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
@@ -33,9 +33,9 @@ class NotificationService {
 
   /// Idempotent and safe to call concurrently — repeated/overlapping calls
   /// all await the same underlying initialization.
-  Future<void> init() => _initFuture ??= _doInit();
+  Future<void> ensureInitialized() => _initFuture ??= _initialize();
 
-  Future<void> _doInit() async {
+  Future<void> _initialize() async {
     tz_data.initializeTimeZones();
     try {
       final localTz = await FlutterTimezone.getLocalTimezone();
@@ -103,7 +103,7 @@ class NotificationService {
     String? payload,
   }) async {
     if (dateTime.isBefore(DateTime.now())) return;
-    await init();
+    await ensureInitialized();
     if (!await requestPermission()) return;
 
     await _plugin.zonedSchedule(
@@ -124,7 +124,7 @@ class NotificationService {
     required String body,
     String? payload,
   }) async {
-    await init();
+    await ensureInitialized();
     if (!await requestPermission()) return;
     await _plugin.show(
       id: id,

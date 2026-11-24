@@ -25,8 +25,8 @@ class LoginSocialButtons extends StatelessWidget {
         ignoring: isDisabled,
         child: Column(
           children: [
-            CcSocialLoginBtn(
-              type: SocialLoginType.google,
+            CcSocialLoginButton(
+              type: CcSocialLoginType.google,
               label: el.tr(CcMfLocaleKeys.auth_login_google),
               onTap: () {
                 context.read<LoginBloc>().add(
@@ -39,8 +39,8 @@ class LoginSocialButtons extends StatelessWidget {
 
             if (Platform.isIOS) ...[
               const CcSpaceMD(),
-              CcSocialLoginBtn(
-                type: SocialLoginType.apple,
+              CcSocialLoginButton(
+                type: CcSocialLoginType.apple,
                 label: el.tr(CcMfLocaleKeys.auth_login_apple),
                 onTap: () {
                   context.read<LoginBloc>().add(

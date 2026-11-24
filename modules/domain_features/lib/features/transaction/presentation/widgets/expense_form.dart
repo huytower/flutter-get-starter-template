@@ -192,8 +192,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
   ) {
     return EntrySubmitButton(
       text: controller.isEditing
-          ? el.tr(CcLocaleKeys.common_save)
-          : el.tr(CcLocaleKeys.transaction_record_expense),
+          ? el.tr(PrjLocaleKeys.common_save)
+          : el.tr(PrjLocaleKeys.transaction_record_expense),
       isSubmitting: controller.isSubmitting.value,
       isEnabled: controller.canSubmit,
       onTap: () => controller.submitForm(context),
@@ -243,7 +243,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   ) {
     return FormAmountSection(
       controller: controller,
-      label: el.tr(CcLocaleKeys.transaction_amount),
+      label: el.tr(PrjLocaleKeys.transaction_amount),
       activeColor: accentColor,
       fieldKey: _amountFieldKey,
     );
@@ -256,7 +256,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   ) {
     return FormWalletSection(
       controller: controller,
-      label: el.tr(CcLocaleKeys.transaction_source_expense),
+      label: el.tr(PrjLocaleKeys.transaction_source_expense),
       activeColor: accentColor,
     );
   }

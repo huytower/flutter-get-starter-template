@@ -92,7 +92,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcText(
-            el.tr(CcLocaleKeys.wallet_total_assets),
+            el.tr(PrjLocaleKeys.wallet_total_assets),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(0.8),
             ),

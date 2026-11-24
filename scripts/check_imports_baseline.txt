@@ -2,7 +2,7 @@
 # <rule> <path> <count>. Only ever lower these numbers or delete lines;
 # a new violation is fixed, never added here. See AGENTS.md section VI.
 di-composition-root modules/bridge/lib/src/impl/app_lifecycle_provider_impl.dart 7
-di-composition-root modules/domain_features/lib/core/get_x/cc_get_controller.dart 1
+di-composition-root modules/domain_features/lib/core/get_x/prj_get_controller.dart 1
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart 1
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/budget_limit_preview_section.dart 2
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/edit_wallet_sheet.dart 2
@@ -27,7 +27,7 @@ di-composition-root modules/domain_features/lib/features/transaction/presentatio
 di-composition-root modules/domain_features/lib/features/transaction/presentation/get_x/transaction_controller.dart 6
 di-composition-root modules/domain_features/lib/features/transaction/presentation/get_x/transaction_form_controller.dart 2
 di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/category_selection_section.dart 1
-di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/cc_level_lock_placeholder.dart 2
+di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/prj_level_lock_placeholder.dart 2
 di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/expense_form.dart 1
 di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/income_form.dart 1
 di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/investment_form.dart 2

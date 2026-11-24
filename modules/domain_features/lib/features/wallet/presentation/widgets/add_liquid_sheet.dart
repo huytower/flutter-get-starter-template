@@ -1,8 +1,8 @@
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/prj_amount_input_section.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +23,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
   @override
   Widget build(BuildContext context) {
     return GetX<AddLiquidSheetController>(
-      init: getIt<AddLiquidSheetController>()..init(wallet),
+      init: getIt<AddLiquidSheetController>()..prepareForm(wallet),
       dispose: (_) => Get.delete<AddLiquidSheetController>(),
       builder: (controller) {
         return SafeArea(
@@ -109,8 +109,8 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
   ) {
     return CcFormLabel(
       text: controller.isEditing
-          ? el.tr(CcLocaleKeys.wallet_edit_title)
-          : el.tr(CcLocaleKeys.wallet_add_title),
+          ? el.tr(PrjLocaleKeys.wallet_edit_title)
+          : el.tr(PrjLocaleKeys.wallet_add_title),
       color: context.ccColorScheme.primary,
     );
   }
@@ -122,12 +122,12 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     return Obx(() {
       final field = CcNameInputField(
         controller: controller.nameController,
-        labelText: el.tr(CcLocaleKeys.wallet_name),
-        hintText: el.tr(CcLocaleKeys.wallet_name_hint),
+        labelText: el.tr(PrjLocaleKeys.wallet_name),
+        hintText: el.tr(PrjLocaleKeys.wallet_name_hint),
         errorText: controller.nameError.value,
         maxLength: 15,
         maxLengthWarningText: el.tr(
-          CcLocaleKeys.validation_max_length_reached,
+          PrjLocaleKeys.validation_max_length_reached,
           namedArgs: {'count': '15'},
         ),
         onClear: () {
@@ -153,9 +153,9 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       clipBehavior: Clip.none,
       children: [
         Obx(
-          () => CcAmountInputSection(
+          () => PrjAmountInputSection(
             key: const Key('wallet_balance'),
-            label: el.tr(CcLocaleKeys.wallet_initial_balance),
+            label: el.tr(PrjLocaleKeys.wallet_initial_balance),
             amountStr: controller.amountStr.value,
             quickAmounts: MoneyConstants.getWalletQuickAmounts(
               currencyCode: controller.currencyCode.value,
@@ -205,7 +205,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
 
       return CcSaveButton(
         onPressed: canSave ? () => controller.save(context) : null,
-        label: el.tr(CcLocaleKeys.wallet_save_info),
+        label: el.tr(PrjLocaleKeys.wallet_save_info),
       );
     });
   }
@@ -218,7 +218,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcText(
-          el.tr(CcLocaleKeys.wallet_initial_balance),
+          el.tr(PrjLocaleKeys.wallet_initial_balance),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
             fontWeight: CcTypographyParams.bold,
@@ -250,7 +250,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
         ),
         const CcSpaceXS(),
         CcText(
-          el.tr(CcLocaleKeys.wallet_balance_locked_hint),
+          el.tr(PrjLocaleKeys.wallet_balance_locked_hint),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
           ),
@@ -286,14 +286,14 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CcText(
-                  el.tr(CcLocaleKeys.wallet_emergency_fund_locked_hint),
+                  el.tr(PrjLocaleKeys.wallet_emergency_fund_locked_hint),
                   textStyle: context.ccTextTheme.bodySmall,
                 ),
                 const CcSpaceXS(),
                 CcBouncing(
                   onTap: () => controller.openEmergencyFundEbook(context),
                   child: CcText(
-                    el.tr(CcLocaleKeys.wallet_emergency_fund_view_ebook),
+                    el.tr(PrjLocaleKeys.wallet_emergency_fund_view_ebook),
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
                       color: context.ccColorScheme.primary,
                       fontWeight: CcTypographyParams.bold,
@@ -321,12 +321,12 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     final isEmergencyFundVisible = controller.isEmergencyFundOffered;
 
     final options = [
-      (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
-      (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),
+      (WalletType.bank, el.tr(PrjLocaleKeys.wallet_bank)),
+      (WalletType.ewallet, el.tr(PrjLocaleKeys.wallet_ewallet)),
       if (isEmergencyFundVisible)
-        (WalletType.emergencyFund, el.tr(CcLocaleKeys.wallet_emergency_fund)),
+        (WalletType.emergencyFund, el.tr(PrjLocaleKeys.wallet_emergency_fund)),
     ];
-    return HorizontalFadeScrollView(
+    return CcHorizontalFadeScrollView(
       height: context.respDim(44),
       builder: (scrollController) => ListView.builder(
         scrollDirection: Axis.horizontal,

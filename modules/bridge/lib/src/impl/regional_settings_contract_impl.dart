@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:injectable/injectable.dart';
@@ -13,7 +13,7 @@ class RegionalSettingsContractImpl implements RegionalSettingsContract {
       .stream
       .map(
         (_) => CurrencyCatalog.languageCodeForCountry(
-          CcAppStorage.instance.currencyDetectionCountryCode,
+          PrjAppStorage.instance.currencyDetectionCountryCode,
         ),
       )
       .where((code) => code != null)

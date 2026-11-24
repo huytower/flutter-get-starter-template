@@ -51,7 +51,7 @@ class ProfileSignInReminder extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CcText(
-                    el.tr(CcLocaleKeys.profile_sign_in_reminder_title),
+                    el.tr(PrjLocaleKeys.profile_sign_in_reminder_title),
                     maxLines: 2,
                     textStyle: context.ccTextTheme.titleSmall?.copyWith(
                       fontWeight: CcTypographyParams.bold,
@@ -60,7 +60,7 @@ class ProfileSignInReminder extends StatelessWidget {
                   ),
                   const CcSpaceXS(),
                   CcText(
-                    el.tr(CcLocaleKeys.profile_sign_in_reminder_body),
+                    el.tr(PrjLocaleKeys.profile_sign_in_reminder_body),
                     maxLines: 4,
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
                       color: scheme.onPrimary.withOpacity(0.85),

@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
@@ -7,7 +7,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'transaction_model.g.dart';
 
-@HiveType(typeId: CcHiveBox.TRANSACTION_TYPE_ID)
+@HiveType(typeId: PrjHiveBox.TRANSACTION_TYPE_ID)
 @JsonSerializable()
 class TransactionModel {
   @HiveField(0)

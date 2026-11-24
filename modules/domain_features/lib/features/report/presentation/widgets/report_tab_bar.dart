@@ -61,9 +61,9 @@ class ReportTabBar extends StatelessWidget {
       ),
       labelPadding: EdgeInsets.zero,
       tabs: [
-        Tab(text: el.tr(CcLocaleKeys.report_weekly)),
-        Tab(text: el.tr(CcLocaleKeys.report_three_months)),
-        Tab(text: el.tr(CcLocaleKeys.report_yearly)),
+        Tab(text: el.tr(PrjLocaleKeys.report_weekly)),
+        Tab(text: el.tr(PrjLocaleKeys.report_three_months)),
+        Tab(text: el.tr(PrjLocaleKeys.report_yearly)),
       ],
     );
   }

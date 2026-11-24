@@ -65,7 +65,7 @@ class _ReconciliationSuccessSheetState
           ),
           child: RewardCompletionBanner(
             message: el.tr(
-              CcLocaleKeys.reconciliation_success_message,
+              PrjLocaleKeys.reconciliation_success_message,
               namedArgs: {'count': count.toString()},
             ),
             onClose: _dismiss,
@@ -115,7 +115,7 @@ class ReconciliationUndoSheet extends StatelessWidget {
             ),
             const CcSpaceMD(),
             CcText(
-              el.tr(CcLocaleKeys.reconciliation_undo_title),
+              el.tr(PrjLocaleKeys.reconciliation_undo_title),
               align: Alignment.center,
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleLarge?.copyWith(
@@ -125,7 +125,7 @@ class ReconciliationUndoSheet extends StatelessWidget {
             ),
             const CcSpaceSM(),
             CcText(
-              el.tr(CcLocaleKeys.reconciliation_undo_confirm),
+              el.tr(PrjLocaleKeys.reconciliation_undo_confirm),
               align: Alignment.center,
               maxLines: 5,
               textAlign: TextAlign.center,
@@ -137,8 +137,8 @@ class ReconciliationUndoSheet extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: CcBaseBtn(
-                    title: el.tr(CcLocaleKeys.common_cancel),
+                  child: CcBaseButton(
+                    title: el.tr(PrjLocaleKeys.common_cancel),
                     bgColor: [
                       scheme.surfaceContainerHighest,
                       scheme.surfaceContainerHighest,
@@ -149,8 +149,8 @@ class ReconciliationUndoSheet extends StatelessWidget {
                 ),
                 const CcSpaceMD(),
                 Expanded(
-                  child: CcBaseBtn(
-                    title: el.tr(CcLocaleKeys.reconciliation_undo),
+                  child: CcBaseButton(
+                    title: el.tr(PrjLocaleKeys.reconciliation_undo),
                     bgColor: [scheme.primary, scheme.primaryContainer],
                     textColor: scheme.onPrimary,
                     onTap: () async {

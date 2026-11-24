@@ -59,7 +59,7 @@ class InvestHeroBanner extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CcText(
-                      el.tr(CcLocaleKeys.wallet_investments),
+                      el.tr(PrjLocaleKeys.wallet_investments),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
                         color: scheme.onPrimary.withOpacity(0.85),
                       ),
@@ -120,7 +120,7 @@ class InvestHeroBanner extends StatelessWidget {
                     ),
                     const CcSpaceXS(),
                     CcText(
-                      el.tr(CcLocaleKeys.wallet_investments_desc),
+                      el.tr(PrjLocaleKeys.wallet_investments_desc),
                       maxLines: 2,
                       textStyle: context.ccTextTheme.labelSmall?.copyWith(
                         color: scheme.onPrimary.withOpacity(0.7),
@@ -182,7 +182,7 @@ class InvestHeroBanner extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           CompactStatRow(
-            label: el.tr(CcLocaleKeys.wallet_investment_breakeven),
+            label: el.tr(PrjLocaleKeys.wallet_investment_breakeven),
             value: isVisible ? '${breakeven.toStringAsFixed(1)}%' : '***%',
             color: scheme.onPrimary.withOpacity(0.9),
           ),

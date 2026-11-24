@@ -53,9 +53,9 @@ class _BorrowDirectionToggleState extends State<BorrowDirectionToggle>
     final scheme = context.ccColorScheme;
 
     final firstLabel = el.tr(
-      CcLocaleKeys.transaction_liability_direction_borrow,
+      PrjLocaleKeys.transaction_liability_direction_borrow,
     );
-    final secondLabel = el.tr(CcLocaleKeys.transaction_record_repay);
+    final secondLabel = el.tr(PrjLocaleKeys.transaction_record_repay);
 
     return Center(
       child: SizedBox(

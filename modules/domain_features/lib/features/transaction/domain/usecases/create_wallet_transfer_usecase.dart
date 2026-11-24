@@ -45,22 +45,22 @@ class CreateWalletTransferUseCase {
   ) async {
     if (params.amount <= 0) {
       return const Error(
-        ValidationFailure('transaction.validation.amount_required'),
+        CcValidationFailure('transaction.validation.amount_required'),
       );
     }
     if (params.sourceWalletId.isEmpty || params.destinationWalletId.isEmpty) {
       return const Error(
-        ValidationFailure('transaction.validation.wallet_required'),
+        CcValidationFailure('transaction.validation.wallet_required'),
       );
     }
     if (params.sourceWalletId == params.destinationWalletId) {
       return const Error(
-        ValidationFailure('transaction.validation.transfer_wallets_different'),
+        CcValidationFailure('transaction.validation.transfer_wallets_different'),
       );
     }
     if (params.date.isAfter(DateTime.now())) {
       return const Error(
-        ValidationFailure('transaction.validation.future_date'),
+        CcValidationFailure('transaction.validation.future_date'),
       );
     }
 
@@ -80,7 +80,7 @@ class CreateWalletTransferUseCase {
     if (source.type == WalletType.investment ||
         destination.type == WalletType.investment) {
       return const Error(
-        ValidationFailure('transaction.validation.transfer_liquid_wallets'),
+        CcValidationFailure('transaction.validation.transfer_liquid_wallets'),
       );
     }
 
@@ -98,7 +98,7 @@ class CreateWalletTransferUseCase {
 
     if (sourceAmount > currentBookBal) {
       return const Error(
-        ValidationFailure('transaction.validation.insufficient_balance'),
+        CcValidationFailure('transaction.validation.insufficient_balance'),
       );
     }
 

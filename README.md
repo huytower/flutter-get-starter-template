@@ -69,8 +69,8 @@ flutter-get-starter-template/
 │   ├── data_config/              # App-specific data implementations (network config, sync helpers, exchange rates)
 │   ├── app_config/               # Env management, storage, DI discovery
 │   ├── bridge/                   # App Shell gateway to features (shell contracts + coordinator impls)
-│   ├── theme/                    # Colors and typography (PrjColors, CcTextStyle, CcThemes)
-│   └── message/                  # i18n strings (en.json, vi.json, CcLocaleKeys)
+│   ├── theme/                    # Colors and typography (PrjColors, PrjTextStyle, CcThemes)
+│   └── message/                  # i18n strings (en.json, vi.json, PrjLocaleKeys)
 ├── shared/
 │   ├── cc_micro_features/        # auth, biometric, crash_log, messaging, splash, web
 │   └── cc_core_sdk/              # GIT SUBMODULE: cc_sdk, cc_sdk_ui, cc_mixin, cc_sdk_data

@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
@@ -23,7 +23,7 @@ import 'lend_form_controller.dart';
 import 'liability_list_controller.dart';
 
 @injectable
-class AddLiabilitySheetController extends CcGetController {
+class AddLiabilitySheetController extends PrjGetController {
   AddLiabilitySheetController(
     this._getCategories,
     this._getProfileSettings,
@@ -55,7 +55,7 @@ class AddLiabilitySheetController extends CcGetController {
 
   final RxBool showDirectionToggle = false.obs;
 
-  void init({
+  void prepareForm({
     String initialDirection = LiabilityDirection.borrow,
     bool showDirectionToggle = false,
   }) {
@@ -170,7 +170,7 @@ class AddLiabilitySheetController extends CcGetController {
         );
         if (isDuplicate) {
           nameError.value = el.tr(
-            CcLocaleKeys.transaction_liability_name_duplicate_error,
+            PrjLocaleKeys.transaction_liability_name_duplicate_error,
           );
           return;
         }
@@ -214,7 +214,7 @@ class AddLiabilitySheetController extends CcGetController {
             Navigator.pop(context);
             CcSnackBarHelper.showSuccessSnackBar(
               context: context,
-              message: el.tr(CcLocaleKeys.common_done),
+              message: el.tr(PrjLocaleKeys.common_done),
             );
 
             // Guideline: update status so the badge moves to the Transaction tab

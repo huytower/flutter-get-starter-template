@@ -25,7 +25,7 @@ class ReportDailyList extends StatelessWidget {
     }).toList();
     if (filtered.isEmpty) {
       return CcSectionEmptyState(
-        message: el.tr(CcLocaleKeys.report_no_expense),
+        message: el.tr(PrjLocaleKeys.report_no_expense),
       );
     }
 

@@ -24,7 +24,7 @@ class ProfileSettingsActions {
   final UpdateProfileSettingsUseCase _updateSettings;
   final NotificationService _notificationService;
   final ThemeProvider _themeProvider;
-  final CcDeviceInfoHelper _deviceInfo;
+  final CcDeviceInfoService _deviceInfo;
 
   Future<ProfileSettingsEntity> load() => _getSettings();
 

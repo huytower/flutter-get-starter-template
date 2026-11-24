@@ -29,10 +29,10 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
             label: CcFormLabel(
               text: isBorrowSide
                   ? el.tr(
-                      CcLocaleKeys.transaction_liability_repayment_method_label,
+                      PrjLocaleKeys.transaction_liability_repayment_method_label,
                     )
                   : el.tr(
-                      CcLocaleKeys
+                      PrjLocaleKeys
                           .transaction_liability_collection_method_label,
                     ),
             ),
@@ -44,15 +44,15 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
                   ? 0
                   : 1,
               firstLabel: isBorrowSide
-                  ? el.tr(CcLocaleKeys.transaction_liability_method_installment)
+                  ? el.tr(PrjLocaleKeys.transaction_liability_method_installment)
                   : el.tr(
-                      CcLocaleKeys
+                      PrjLocaleKeys
                           .transaction_liability_method_installment_lend,
                     ),
               secondLabel: isBorrowSide
-                  ? el.tr(CcLocaleKeys.transaction_liability_method_lump_sum)
+                  ? el.tr(PrjLocaleKeys.transaction_liability_method_lump_sum)
                   : el.tr(
-                      CcLocaleKeys.transaction_liability_method_lump_sum_lend,
+                      PrjLocaleKeys.transaction_liability_method_lump_sum_lend,
                     ),
               activeColor: accentColor,
               onChanged: (index) => controller.setRepaymentMethod(

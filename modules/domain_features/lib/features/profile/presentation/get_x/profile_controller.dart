@@ -12,7 +12,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/contracts/guideline_provider.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../category/export_category.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../domain/entities/profile_settings_entity.dart';
@@ -26,7 +26,7 @@ import '../helper/profile_routes.dart';
 import '../helper/profile_sheets.dart';
 
 @lazySingleton
-class ProfileController extends CcGetController {
+class ProfileController extends PrjGetController {
   ProfileController(
     this._settingsActions,
     this._account,
@@ -290,7 +290,7 @@ class ProfileController extends CcGetController {
         if (context.mounted) {
           CcSnackBarHelper.showSuccessSnackBar(
             context: context,
-            message: el.tr(CcLocaleKeys.profile_display_name_updated),
+            message: el.tr(PrjLocaleKeys.profile_display_name_updated),
           );
         }
       },
@@ -321,11 +321,11 @@ class ProfileController extends CcGetController {
       final confirmed = await CcDialogHelper.showMessageBottomSheet(
         context: context,
         title: el.tr(
-          CcLocaleKeys.profile_currency_convert_title,
+          PrjLocaleKeys.profile_currency_convert_title,
           namedArgs: {'to': picked},
         ),
         content: el.tr(
-          CcLocaleKeys.profile_currency_convert_message,
+          PrjLocaleKeys.profile_currency_convert_message,
           namedArgs: {'from': current, 'to': picked},
         ),
       );

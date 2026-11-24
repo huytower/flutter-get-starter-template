@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../transaction/domain/usecases/create_wallet_transfer_usecase.dart';
 import '../get_x/wallet_controller.dart';
@@ -40,7 +40,7 @@ class _LiquidWalletListPageState extends State<LiquidWalletListPage> {
   }
 }
 
-class _LiquidWalletListView extends CcGetView<WalletController> {
+class _LiquidWalletListView extends PrjGetView<WalletController> {
   const _LiquidWalletListView({required this.controller});
 
   @override
@@ -67,7 +67,7 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
       ),
       title: Center(
         child: CcText(
-          el.tr(CcLocaleKeys.wallet_your_wallets),
+          el.tr(PrjLocaleKeys.wallet_your_wallets),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
@@ -81,7 +81,7 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
             color: context.ccColorScheme.onPrimary,
             size: context.respIconSize(baseSize: 24),
           ),
-          tooltip: el.tr(CcLocaleKeys.wallet_add_title),
+          tooltip: el.tr(PrjLocaleKeys.wallet_add_title),
           onTap: () => controller.openForm(context),
         ),
         Obx(() {
@@ -91,8 +91,8 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
               CcIconButton.bouncing(
                 onTap: controller.toggleEditMode,
                 tooltip: controller.isEditMode.value
-                    ? el.tr(CcLocaleKeys.common_done)
-                    : el.tr(CcLocaleKeys.common_edit),
+                    ? el.tr(PrjLocaleKeys.common_done)
+                    : el.tr(PrjLocaleKeys.common_edit),
                 icon: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
@@ -137,7 +137,7 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
 
       if (liquidWallets.isEmpty) {
         return CcText(
-          el.tr(CcLocaleKeys.wallet_empty),
+          el.tr(PrjLocaleKeys.wallet_empty),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.bodySmall?.copyWith(

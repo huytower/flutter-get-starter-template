@@ -55,15 +55,15 @@ class ParseSmartEntryUseCase {
     ParsedTransactionEntity? localResult,
   }) async {
     if (!await _aiPreferences.isGeminiEnabled()) {
-      return const Error(ValidationFailure(geminiDisabledReason));
+      return const Error(CcValidationFailure(geminiDisabledReason));
     }
     if (input is SmartEntryImagesInput && input.images.isEmpty) {
-      return const Error(ValidationFailure('no_input'));
+      return const Error(CcValidationFailure('no_input'));
     }
 
     final categories = await _loadCategories(categoryTypes, groupIds);
     if (categories.isEmpty) {
-      return const Error(ValidationFailure('no_categories'));
+      return const Error(CcValidationFailure('no_categories'));
     }
     final wallets = liquidWallets(
       (await _walletRepository.getWallets()).tryGetSuccess() ?? [],
@@ -82,7 +82,7 @@ class ParseSmartEntryUseCase {
     );
 
     if (!await _aiPreferences.tryConsumeDailyCall()) {
-      return const Error(ValidationFailure(dailyLimitReachedReason));
+      return const Error(CcValidationFailure(dailyLimitReachedReason));
     }
 
     final result = await _generate(input, context, maxTransactions);
@@ -92,9 +92,9 @@ class ParseSmartEntryUseCase {
         'ParseSmartEntryUseCase',
       );
       if (result.failure?.kind == CcAiFailureKind.deviceAttestation) {
-        return const Error(ValidationFailure(deviceNotGenuineReason));
+        return const Error(CcValidationFailure(deviceNotGenuineReason));
       }
-      return const Error(ServerFailure('empty_response'));
+      return const Error(CcServerFailure('empty_response'));
     }
     '[AI_PARSING] [GEMINI] 📥 Gemini Response: $response'.Log(
       'ParseSmartEntryUseCase',
@@ -105,7 +105,7 @@ class ParseSmartEntryUseCase {
       context,
       maxTransactions: maxTransactions,
     );
-    if (raw == null) return const Error(UnknownFailure('invalid_response'));
+    if (raw == null) return const Error(CcUnknownFailure('invalid_response'));
 
     return Success(
       await finalize(

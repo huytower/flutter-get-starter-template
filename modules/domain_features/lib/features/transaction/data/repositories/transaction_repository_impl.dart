@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cc_sdk/export_cc_sdk.dart' show CcCrashReporter;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:domain_features/core/data/repositories/cc_base_repository.dart';
+import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
 import 'package:injectable/injectable.dart';
@@ -13,7 +13,7 @@ import '../datasources/transaction_sync_datasource.dart';
 
 @LazySingleton(as: TransactionRepository)
 class TransactionRepositoryImpl
-    with CcBaseRepository
+    with PrjBaseRepository
     implements TransactionRepository {
   @factoryMethod
   TransactionRepositoryImpl({
@@ -52,7 +52,7 @@ class TransactionRepositoryImpl
 
   @override
   Future<Result<List<TransactionEntity>, CcFailure>> getTransactions(
-    PaginationRequest request, {
+    CcPaginationRequest request, {
     String? type,
   }) {
     return safeRequest(() async {

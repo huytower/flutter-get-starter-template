@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
 import 'package:hive_ce/hive_ce.dart';
@@ -8,7 +8,7 @@ import '../../domain/entities/budget_limit_entity.dart';
 part 'budget_limit_model.g.dart';
 
 /// Hive-persistable data model for [BudgetLimitEntity].
-@HiveType(typeId: CcHiveBox.BUDGET_TYPE_ID)
+@HiveType(typeId: PrjHiveBox.BUDGET_TYPE_ID)
 class BudgetLimitModel {
   @HiveField(0)
   final String id;

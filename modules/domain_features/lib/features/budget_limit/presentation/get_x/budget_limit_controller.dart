@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
@@ -16,7 +16,7 @@ import '../../domain/usecases/update_budget_limit_orders_usecase.dart';
 import '../../domain/usecases/update_budget_limit_usecase.dart';
 
 @lazySingleton
-class BudgetLimitController extends CcGetController {
+class BudgetLimitController extends PrjGetController {
   BudgetLimitController(
     this._getBudgetStats,
     this._createBudget,

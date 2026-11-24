@@ -1,8 +1,8 @@
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/prj_amount_input_section.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,7 +25,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
   @override
   Widget build(BuildContext context) {
     return GetX<AddBudgetLimitSheetController>(
-      init: getIt<AddBudgetLimitSheetController>()..init(editTarget),
+      init: getIt<AddBudgetLimitSheetController>()..prepareForm(editTarget),
       dispose: (_) => Get.delete<AddBudgetLimitSheetController>(),
       builder: (controller) {
         return SafeArea(
@@ -121,8 +121,8 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
           const BudgetLimitLockNotice()
         else
           Obx(
-            () => CcAmountInputSection(
-              label: el.tr(CcLocaleKeys.budget_limit),
+            () => PrjAmountInputSection(
+              label: el.tr(PrjLocaleKeys.budget_limit),
               amountStr: controller.limitStr.value,
               quickAmounts: controller.quickAmounts,
               currencyCode: controller.currencyCode.value,
@@ -155,7 +155,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
             onPressed: controller.isValid
                 ? () => controller.save(context)
                 : null,
-            label: el.tr(CcLocaleKeys.common_save),
+            label: el.tr(PrjLocaleKeys.common_save),
             isLoading: controller.isSubmitting.value,
           ),
         ),
@@ -169,8 +169,8 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
   ) {
     return CcFormLabel(
       text: controller.isEdit
-          ? el.tr(CcLocaleKeys.budget_edit_title)
-          : el.tr(CcLocaleKeys.budget_add_title),
+          ? el.tr(PrjLocaleKeys.budget_edit_title)
+          : el.tr(PrjLocaleKeys.budget_add_title),
       color: context.ccColorScheme.primary,
     );
   }
@@ -189,7 +189,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
           onTap: controller.toggleFixedPrice,
           borderRadius: context.brSm,
           child: Tooltip(
-            message: el.tr(CcLocaleKeys.budget_fixed_price),
+            message: el.tr(PrjLocaleKeys.budget_fixed_price),
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: context.respDim(8),
@@ -275,7 +275,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
               Expanded(
                 child: CcText(
                   el.tr(
-                    CcLocaleKeys.budget_estimate_hint,
+                    PrjLocaleKeys.budget_estimate_hint,
                     namedArgs: {
                       'amount': MoneyFormatter.formatWithSymbol(
                         controller.estimatedLimit.value ?? 0,

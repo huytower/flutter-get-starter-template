@@ -26,8 +26,8 @@ class LiabilityInstallmentScheduleSection extends StatelessWidget {
       children: [
         CcFormLabel(
           text: isBorrowSide
-              ? el.tr(CcLocaleKeys.transaction_liability_schedule_label)
-              : el.tr(CcLocaleKeys.transaction_liability_schedule_lend_label),
+              ? el.tr(PrjLocaleKeys.transaction_liability_schedule_label)
+              : el.tr(PrjLocaleKeys.transaction_liability_schedule_lend_label),
         ),
         const CcSpaceXS(),
         LiabilityInstallmentScheduleEditor(
@@ -39,7 +39,7 @@ class LiabilityInstallmentScheduleSection extends StatelessWidget {
           controller: controller,
           accentColor: accentColor,
           label: el.tr(
-            CcLocaleKeys.transaction_liability_reminder_recurring_label,
+            PrjLocaleKeys.transaction_liability_reminder_recurring_label,
           ),
         ),
       ],

@@ -130,7 +130,7 @@ class ReviewsSummaryCard extends StatelessWidget {
             right: 0,
             child: CcIconButton.bouncing(
               onTap: onStoreTap ?? _openStoreForRating,
-              tooltip: el.tr(CcLocaleKeys.profile_rate_app),
+              tooltip: el.tr(PrjLocaleKeys.profile_rate_app),
               icon: Icon(
                 Icons.storefront_rounded,
                 color: context.ccColorScheme.primary,
@@ -160,7 +160,7 @@ class ReviewsSummaryCard extends StatelessWidget {
   Widget _buildTotalRatings(BuildContext context) {
     return CcText(
       el.tr(
-        CcLocaleKeys.profile_customer_ratings_count,
+        PrjLocaleKeys.profile_customer_ratings_count,
         namedArgs: {'count': '$totalRatings'},
       ),
       align: Alignment.center,
@@ -182,7 +182,7 @@ class ReviewsSummaryCard extends StatelessWidget {
             vertical: context.respPadding(4),
           ),
           child: CcText(
-            el.tr(CcLocaleKeys.profile_calculate_ratings_info),
+            el.tr(PrjLocaleKeys.profile_calculate_ratings_info),
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.primary,

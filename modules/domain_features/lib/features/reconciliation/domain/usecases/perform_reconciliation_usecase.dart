@@ -4,7 +4,7 @@ import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/repositories/transaction_repository.dart';
@@ -91,11 +91,11 @@ class PerformReconciliationUseCase {
           id: '${stamp}_${balance.wallet.id}',
           type: isSurplus ? TransactionType.income : TransactionType.expense,
           amount: diff.abs(),
-          category: el.tr(CcLocaleKeys.reconciliation_adjustment_category),
+          category: el.tr(PrjLocaleKeys.reconciliation_adjustment_category),
           note: el.tr(
             isSurplus
-                ? CcLocaleKeys.reconciliation_adjustment_surplus
-                : CcLocaleKeys.reconciliation_adjustment_shortfall,
+                ? PrjLocaleKeys.reconciliation_adjustment_surplus
+                : PrjLocaleKeys.reconciliation_adjustment_shortfall,
           ),
           date: now,
           walletId: balance.wallet.id,

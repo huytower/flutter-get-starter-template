@@ -127,7 +127,7 @@ Dependency direction (verified from `pubspec.yaml` and imports): `cc_sdk` → `c
 `cc_sdk_ui` → Flutter only (no SDK package); `cc_mixin` → `cc_sdk_data`; capability packages (`cc_sdk_firebase`, `cc_sdk_catcher`, `cc_sdk_slack`,
 `cc_sdk_device`, `cc_sdk_phone`) → `cc_sdk`. Never the reverse, never a cycle. A mixin that builds widgets goes in
 `cc_sdk_ui/lib/src/mixins/`; `cc_mixin` stays free of the design system (presentation goes through an overridable
-hook, e.g. `DoubleBackToExitMixin.showBackPressHint`).
+hook, e.g. `CcDoubleBackToExitMixin.showBackPressHint`).
 
 Third-party widget code: prefer writing it in the SDK over adding a small, rarely maintained widget package. When
 adapting an existing package's code, keep its license notice on each file and a `LICENSE` in the folder
@@ -160,7 +160,7 @@ consumers need is exported from the barrel.
    constructor; `getIt` is used only in the package's `di.dart` (root `AGENTS.md` section IV).
 9. **Naming and files.** Suffix-first `lower_snake_case`, `Cc` class prefix, ~200–300 lines per file, `const`
    wherever possible, export through the package's `export_*.dart` barrel only. File = type, no
-   abbreviations (`Btn`, `Bg`), boolean `is/has/can/should` prefixes: root `AGENTS.md` rule 12.
+   abbreviations (`Btn`, `Bg`), boolean `has` prefix: root `AGENTS.md` rule 12.
 
 ## Reuse-first workflow
 
@@ -243,7 +243,7 @@ the parent repo.
 
 - Logging: `value.Log('tag')` (maps and lists as JSON). No serializer in the SDK: models use `json_serializable`.
 - Uncaught errors: `CcCatcherBootstrap` (`cc_sdk_catcher`) → `CcCrashReporter`; caught ones: `recordError`.
-- Paged lists: `PaginationMixin` (`cc_mixin`) + `CcLoadMoreList` / `CcLoadMoreMixin` (`cc_sdk_ui`).
+- Paged lists: `CcPaginationMixin` (`cc_mixin`) + `CcLoadMoreList` / `CcLoadMoreMixin` (`cc_sdk_ui`).
 - Spacing tokens: `CcSpaceXS/SM/MD/LG/XL` (4/8/12/16/24).
 - Content cap: `CcMaxWidth.content` (840 dp); scroll views use `padding: CcMaxWidth.insetFor(width)`.
 - Landscape tablets: `CcTwoColumn` (check `CcTwoColumn.shouldUse(context)`); list pages: `CcMultiColumn`.

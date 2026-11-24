@@ -205,9 +205,9 @@ class ProfileInfoCard extends StatelessWidget {
       child: _buildAuditDayCell(
         context,
         icon: Icons.access_time_rounded,
-        label: el.tr(CcLocaleKeys.profile_weekly_audit),
+        label: el.tr(PrjLocaleKeys.profile_weekly_audit),
         value: el.tr(
-          CcLocaleKeys.profile_days_left,
+          PrjLocaleKeys.profile_days_left,
           namedArgs: {'count': '$daysToNextAudit'},
         ),
         valueColor: context.ccColorScheme.onPrimary,
@@ -241,7 +241,7 @@ class ProfileInfoCard extends StatelessWidget {
           size: iconSize,
           color: iconColor,
         );
-        tooltip = el.tr(CcLocaleKeys.sync_offline_tooltip);
+        tooltip = el.tr(PrjLocaleKeys.sync_offline_tooltip);
         flagged = true;
         tappable = false;
       } else if (syncing) {
@@ -253,7 +253,7 @@ class ProfileInfoCard extends StatelessWidget {
             valueColor: AlwaysStoppedAnimation<Color>(iconColor),
           ),
         );
-        tooltip = el.tr(CcLocaleKeys.sync_syncing_tooltip);
+        tooltip = el.tr(PrjLocaleKeys.sync_syncing_tooltip);
         // Not an error and not actionable while the sync is in flight.
         flagged = false;
         tappable = false;
@@ -264,7 +264,7 @@ class ProfileInfoCard extends StatelessWidget {
           color: iconColor,
         );
         tooltip = el.tr(
-          CcLocaleKeys.sync_pending_tooltip,
+          PrjLocaleKeys.sync_pending_tooltip,
           namedArgs: {'count': '$pending'},
         );
         flagged = true;
@@ -275,7 +275,7 @@ class ProfileInfoCard extends StatelessWidget {
           size: iconSize,
           color: iconColor,
         );
-        tooltip = el.tr(CcLocaleKeys.sync_synced_tooltip);
+        tooltip = el.tr(PrjLocaleKeys.sync_synced_tooltip);
         flagged = false;
         tappable = false;
       }
@@ -399,7 +399,7 @@ class ProfileInfoCard extends StatelessWidget {
       return CcBouncing(
         onTap: onEdit,
         child: CcText(
-          el.tr(CcLocaleKeys.profile_default_account_name),
+          el.tr(PrjLocaleKeys.profile_default_account_name),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
             color: context.ccColorScheme.onPrimary.withOpacity(0.85),
           ),
@@ -414,7 +414,7 @@ class ProfileInfoCard extends StatelessWidget {
       children: [
         // Guest (not signed in): neutral state, never a prompt.
         CcText(
-          fullName.isEmpty ? el.tr(CcLocaleKeys.common_not_set) : fullName,
+          fullName.isEmpty ? el.tr(PrjLocaleKeys.common_not_set) : fullName,
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
             color: context.ccColorScheme.onPrimary.withOpacity(
               fullName.isEmpty ? 0.5 : 0.85,
@@ -451,7 +451,7 @@ class ProfileInfoCard extends StatelessWidget {
             isEmpty
                 ? 'Email'
                 : _isApplePrivateRelay(email)
-                ? el.tr(CcLocaleKeys.profile_apple_private_email)
+                ? el.tr(PrjLocaleKeys.profile_apple_private_email)
                 : email,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(
@@ -486,7 +486,7 @@ class ProfileInfoCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           CcText(
-            isEmpty ? el.tr(CcLocaleKeys.auth_phone_number) : phoneNumber,
+            isEmpty ? el.tr(PrjLocaleKeys.auth_phone_number) : phoneNumber,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(
                 isEmpty ? 0.5 : 0.85,

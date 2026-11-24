@@ -185,8 +185,8 @@ class _LendFormState extends State<LendForm> {
 
     final label =
         (isCollect || (liability != null && liability.principalAmount > 0))
-        ? el.tr(CcLocaleKeys.transaction_amount)
-        : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label);
+        ? el.tr(PrjLocaleKeys.transaction_amount)
+        : el.tr(PrjLocaleKeys.transaction_liability_amount_lend_label);
 
     return FormAmountSection(
       controller: controller,
@@ -204,8 +204,8 @@ class _LendFormState extends State<LendForm> {
     final isCollect =
         controller.action.value == LiabilityDirectionForm.decrease;
     final text = isCollect
-        ? el.tr(CcLocaleKeys.transaction_source_debt)
-        : el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label);
+        ? el.tr(PrjLocaleKeys.transaction_source_debt)
+        : el.tr(PrjLocaleKeys.transaction_liability_wallet_lend_label);
 
     return FormWalletSection(
       controller: controller,
@@ -231,12 +231,12 @@ class _LendFormState extends State<LendForm> {
     final IconData icon;
 
     if (isCollect) {
-      text = el.tr(CcLocaleKeys.transaction_record_collect);
+      text = el.tr(PrjLocaleKeys.transaction_record_collect);
       icon = Icons.arrow_circle_up;
     } else {
       text = (liability != null && liability.principalAmount > 0)
-          ? el.tr(CcLocaleKeys.transaction_record_liability) // Lend more
-          : el.tr(CcLocaleKeys.transaction_liability_direction_lend);
+          ? el.tr(PrjLocaleKeys.transaction_record_liability) // Lend more
+          : el.tr(PrjLocaleKeys.transaction_liability_direction_lend);
       icon = Icons.arrow_circle_down;
     }
 

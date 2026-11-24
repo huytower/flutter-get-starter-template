@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_table.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
@@ -10,12 +10,12 @@ class ExchangeRateLocalDataSource {
   ExchangeRateLocalDataSource();
 
   Future<Box<ExchangeRateHiveModel>> get _box async {
-    if (!Hive.isBoxOpen(CcHiveBox.EXCHANGE_RATE_BOX_NAME)) {
+    if (!Hive.isBoxOpen(PrjHiveBox.EXCHANGE_RATE_BOX_NAME)) {
       await Hive.openBox<ExchangeRateHiveModel>(
-        CcHiveBox.EXCHANGE_RATE_BOX_NAME,
+        PrjHiveBox.EXCHANGE_RATE_BOX_NAME,
       );
     }
-    return Hive.box<ExchangeRateHiveModel>(CcHiveBox.EXCHANGE_RATE_BOX_NAME);
+    return Hive.box<ExchangeRateHiveModel>(PrjHiveBox.EXCHANGE_RATE_BOX_NAME);
   }
 
   Future<void> cacheRates(ExchangeRateTable table, List<String> quotes) async {

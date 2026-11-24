@@ -175,7 +175,7 @@ class QuickEntrySession with WidgetsBindingObserver {
   /// into. Returns true when auto-save was blocked.
   ///
   /// No snackbar, no error key: the published suggestion chip already renders
-  /// [CcLocaleKeys.quick_entry_category_missing] once this form reports
+  /// [PrjLocaleKeys.quick_entry_category_missing] once this form reports
   /// [isQuickEntryCategoryInvalid], so the user still gets the message — a
   /// second copy on top of it would just be noise.
   bool _blockAutoSaveWhenNoCategory(String stage) {
@@ -308,11 +308,11 @@ class QuickEntrySession with WidgetsBindingObserver {
       rows: result.tryGetSuccess() ?? const [],
       errorKey: switch (failure?.message) {
         ParseSmartEntryUseCase.geminiDisabledReason =>
-          CcLocaleKeys.report_ai_advice_gemini_disabled,
+          PrjLocaleKeys.report_ai_advice_gemini_disabled,
         ParseSmartEntryUseCase.deviceNotGenuineReason =>
-          CcLocaleKeys.quick_entry_device_not_genuine,
+          PrjLocaleKeys.quick_entry_device_not_genuine,
         ParseSmartEntryUseCase.dailyLimitReachedReason =>
-          CcLocaleKeys.quick_entry_daily_limit_reached,
+          PrjLocaleKeys.quick_entry_daily_limit_reached,
         _ => null,
       },
     );

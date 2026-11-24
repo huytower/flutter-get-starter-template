@@ -36,7 +36,7 @@ class CurrencyConversionService {
     final toDef = CurrencyCatalog.tryGetDefinition(toUpper);
     if (fromDef == null || toDef == null) {
       return const Error(
-        ValidationFailure('Unsupported currency code for conversion'),
+        CcValidationFailure('Unsupported currency code for conversion'),
       );
     }
 
@@ -58,8 +58,8 @@ class CurrencyConversionService {
       final failure = result.tryGetError()!;
       return Error(
         failure is NetworkExchangeRateFailure
-            ? ServerFailure(failure.message ?? 'Failed to fetch exchange rates')
-            : CacheFailure(
+            ? CcServerFailure(failure.message ?? 'Failed to fetch exchange rates')
+            : CcCacheFailure(
                 failure is CacheExchangeRateFailure
                     ? failure.message ?? 'Failed to load cached exchange rates'
                     : 'Exchange rate error',
@@ -74,14 +74,14 @@ class CurrencyConversionService {
     };
     if (!allowed) {
       return const Error(
-        CacheFailure('No sufficiently fresh exchange rate is available'),
+        CcCacheFailure('No sufficiently fresh exchange rate is available'),
       );
     }
 
     final rate = rateResult.table.rates[toDef.code];
     if (rate == null) {
       return Error(
-        ValidationFailure('Exchange rate not available for ${toDef.code}'),
+        CcValidationFailure('Exchange rate not available for ${toDef.code}'),
       );
     }
 
@@ -103,7 +103,7 @@ class CurrencyConversionService {
   }) async {
     final baseDef = CurrencyCatalog.tryGetDefinition(baseCurrency);
     if (baseDef == null) {
-      return const Error(ValidationFailure('Unsupported base currency'));
+      return const Error(CcValidationFailure('Unsupported base currency'));
     }
 
     final uniqueTargets = targetCurrencies
@@ -130,8 +130,8 @@ class CurrencyConversionService {
       final failure = result.tryGetError()!;
       return Error(
         failure is NetworkExchangeRateFailure
-            ? ServerFailure(failure.message ?? 'Failed to fetch exchange rates')
-            : const CacheFailure('Exchange rate error'),
+            ? CcServerFailure(failure.message ?? 'Failed to fetch exchange rates')
+            : const CcCacheFailure('Exchange rate error'),
       );
     }
 
@@ -142,7 +142,7 @@ class CurrencyConversionService {
     };
     if (!allowed) {
       return const Error(
-        CacheFailure('No sufficiently fresh exchange rate is available'),
+        CcCacheFailure('No sufficiently fresh exchange rate is available'),
       );
     }
 
@@ -188,7 +188,7 @@ class CurrencyConversionService {
     final targetDef = CurrencyCatalog.tryGetDefinition(targetCurrency);
     if (targetDef == null) {
       return const Error(
-        ValidationFailure('Unsupported target currency code for conversion'),
+        CcValidationFailure('Unsupported target currency code for conversion'),
       );
     }
 
@@ -204,7 +204,7 @@ class CurrencyConversionService {
     for (final c in uniqueCurrencies) {
       final qDef = CurrencyCatalog.tryGetDefinition(c);
       if (qDef == null) {
-        return Error(ValidationFailure('Unsupported currency code: $c'));
+        return Error(CcValidationFailure('Unsupported currency code: $c'));
       }
       quoteDefs.add(qDef);
     }
@@ -219,8 +219,8 @@ class CurrencyConversionService {
       final failure = result.tryGetError()!;
       return Error(
         failure is NetworkExchangeRateFailure
-            ? ServerFailure(failure.message ?? 'Failed to fetch exchange rates')
-            : CacheFailure(
+            ? CcServerFailure(failure.message ?? 'Failed to fetch exchange rates')
+            : CcCacheFailure(
                 failure is CacheExchangeRateFailure
                     ? failure.message ?? 'Failed to load cached exchange rates'
                     : 'Exchange rate error',
@@ -235,7 +235,7 @@ class CurrencyConversionService {
     };
     if (!allowed) {
       return const Error(
-        CacheFailure('No sufficiently fresh exchange rate is available'),
+        CcCacheFailure('No sufficiently fresh exchange rate is available'),
       );
     }
 
@@ -255,7 +255,7 @@ class CurrencyConversionService {
       final rate = table.rates[currDef.code];
       if (rate == null) {
         return Error(
-          ValidationFailure('Exchange rate not available for $currency'),
+          CcValidationFailure('Exchange rate not available for $currency'),
         );
       }
 
@@ -277,7 +277,7 @@ class CurrencyConversionService {
     final targetDef = CurrencyCatalog.tryGetDefinition(targetCurrency);
     if (targetDef == null) {
       return const Error(
-        ValidationFailure('Unsupported target currency code for conversion'),
+        CcValidationFailure('Unsupported target currency code for conversion'),
       );
     }
 
@@ -286,7 +286,7 @@ class CurrencyConversionService {
       final definition = CurrencyCatalog.tryGetDefinition(entry.key);
       if (definition == null) {
         return Error(
-          ValidationFailure('Unsupported currency code: ${entry.key}'),
+          CcValidationFailure('Unsupported currency code: ${entry.key}'),
         );
       }
       grouped.update(
@@ -327,7 +327,7 @@ class CurrencyConversionService {
       final code = CurrencyCatalog.tryGetDefinition(item.currencyCode)?.code;
       if (code == null) {
         return Error(
-          ValidationFailure('Unsupported currency code: ${item.currencyCode}'),
+          CcValidationFailure('Unsupported currency code: ${item.currencyCode}'),
         );
       }
       totals.update(

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/budget_limit_controller.dart';
@@ -38,7 +38,7 @@ class _BudgetLimitListPageState extends State<BudgetLimitListPage> {
   }
 }
 
-class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
+class _BudgetLimitListView extends PrjGetView<BudgetLimitController> {
   const _BudgetLimitListView({required this.controller});
 
   @override
@@ -65,7 +65,7 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
       ),
       title: Center(
         child: CcText(
-          el.tr(CcLocaleKeys.budget_title),
+          el.tr(PrjLocaleKeys.budget_title),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
@@ -75,7 +75,7 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
       actions: [
         CcIconButton.bouncing(
           onTap: () => _openAddBudgetLimitSheet(context),
-          tooltip: el.tr(CcLocaleKeys.budget_add_title),
+          tooltip: el.tr(PrjLocaleKeys.budget_add_title),
           icon: Icon(
             Icons.add_rounded,
             color: context.ccColorScheme.onPrimary,
@@ -86,8 +86,8 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
           () => CcIconButton.bouncing(
             onTap: controller.toggleEditMode,
             tooltip: controller.isEditMode.value
-                ? el.tr(CcLocaleKeys.common_done)
-                : el.tr(CcLocaleKeys.common_edit),
+                ? el.tr(PrjLocaleKeys.common_done)
+                : el.tr(PrjLocaleKeys.common_edit),
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: Icon(
@@ -182,11 +182,11 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
   }
 
   Widget _buildSeeMoreDescription(BuildContext context) {
-    final text = el.tr(CcLocaleKeys.budget_description);
+    final text = el.tr(PrjLocaleKeys.budget_description);
     return CcBouncing(
       onTap: () => CcDialogHelper.showMessageBottomSheet(
         context: context,
-        title: el.tr(CcLocaleKeys.budget_title),
+        title: el.tr(PrjLocaleKeys.budget_title),
         isOnlyConfirm: true,
         customWidget: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,19 +195,19 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
             _buildDescriptionItem(
               context,
               icon: Icons.pie_chart_outline_rounded,
-              text: el.tr(CcLocaleKeys.budget_description),
+              text: el.tr(PrjLocaleKeys.budget_description),
             ),
             const CcSpaceMD(),
             _buildDescriptionItem(
               context,
               icon: Icons.bolt_rounded,
-              text: el.tr(CcLocaleKeys.budget_fixed_price_description),
+              text: el.tr(PrjLocaleKeys.budget_fixed_price_description),
             ),
             const CcSpaceMD(),
             _buildDescriptionItem(
               context,
               icon: Icons.drag_indicator_rounded,
-              text: el.tr(CcLocaleKeys.budget_drag_reorder_hint),
+              text: el.tr(PrjLocaleKeys.budget_drag_reorder_hint),
             ),
           ],
         ),

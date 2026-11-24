@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
@@ -8,7 +8,7 @@ import 'liability_installment_model.dart';
 
 part 'liability_model.g.dart';
 
-@HiveType(typeId: CcHiveBox.LIABILITY_TYPE_ID)
+@HiveType(typeId: PrjHiveBox.LIABILITY_TYPE_ID)
 class LiabilityModel {
   @HiveField(0)
   final String id;

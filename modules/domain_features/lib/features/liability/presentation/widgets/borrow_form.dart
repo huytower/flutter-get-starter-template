@@ -259,8 +259,8 @@ class _BorrowFormState extends State<BorrowForm> {
 
     final label =
         (isRepay || (liability != null && liability.principalAmount > 0))
-        ? el.tr(CcLocaleKeys.transaction_amount)
-        : el.tr(CcLocaleKeys.transaction_liability_amount_borrow_label);
+        ? el.tr(PrjLocaleKeys.transaction_amount)
+        : el.tr(PrjLocaleKeys.transaction_liability_amount_borrow_label);
 
     return FormAmountSection(
       controller: controller,
@@ -277,8 +277,8 @@ class _BorrowFormState extends State<BorrowForm> {
   ) {
     final isRepay = controller.action.value == LiabilityDirectionForm.decrease;
     final text = isRepay
-        ? el.tr(CcLocaleKeys.transaction_source_debt)
-        : el.tr(CcLocaleKeys.transaction_liability_wallet_borrow_label);
+        ? el.tr(PrjLocaleKeys.transaction_source_debt)
+        : el.tr(PrjLocaleKeys.transaction_liability_wallet_borrow_label);
 
     return FormWalletSection(
       controller: controller,
@@ -303,13 +303,13 @@ class _BorrowFormState extends State<BorrowForm> {
     final IconData icon;
 
     if (isRepay) {
-      text = el.tr(CcLocaleKeys.transaction_record_repay);
+      text = el.tr(PrjLocaleKeys.transaction_record_repay);
       icon = Icons.arrow_circle_down;
     } else {
       text = (liability != null && liability.principalAmount > 0)
-          ? el.tr(CcLocaleKeys.transaction_record_liability) // Borrow more
+          ? el.tr(PrjLocaleKeys.transaction_record_liability) // Borrow more
           : el.tr(
-              CcLocaleKeys.transaction_liability_direction_borrow,
+              PrjLocaleKeys.transaction_liability_direction_borrow,
             ); // Initiate
       icon = Icons.arrow_circle_up;
     }

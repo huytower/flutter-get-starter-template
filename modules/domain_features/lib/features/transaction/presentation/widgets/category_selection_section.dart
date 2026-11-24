@@ -111,7 +111,7 @@ class CategorySelectionSection extends StatelessWidget {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
       child: CcText(
-        title ?? el.tr(CcLocaleKeys.transaction_category),
+        title ?? el.tr(PrjLocaleKeys.transaction_category),
         textStyle: context.ccTextTheme.labelMedium?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant,
           fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class CategorySelectionSection extends StatelessWidget {
     BuildContext context,
     CategorySelectionController controller,
   ) {
-    return HorizontalFadeScrollView(
+    return CcHorizontalFadeScrollView(
       height: context.respDim(80),
       builder: (scrollController) => Obx(() {
         if (controller.pendingReveal) {

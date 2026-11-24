@@ -24,13 +24,13 @@ class ReconciliationSummary extends StatelessWidget {
       final currencyCode = walletController.currencyCode.value;
       final diff = controller.difference;
       final diffText = diff == 0
-          ? el.tr(CcLocaleKeys.reconciliation_balanced)
+          ? el.tr(PrjLocaleKeys.reconciliation_balanced)
           : '${diff < 0 ? '-' : '+'}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}';
       return Column(
         children: [
           _summaryRow(
             context,
-            el.tr(CcLocaleKeys.reconciliation_book_total),
+            el.tr(PrjLocaleKeys.reconciliation_book_total),
             formatCurrencyWithSymbol(
               controller.systemTotal.value,
               currencyCode: currencyCode,
@@ -38,7 +38,7 @@ class ReconciliationSummary extends StatelessWidget {
           ),
           _summaryRow(
             context,
-            el.tr(CcLocaleKeys.reconciliation_actual_total),
+            el.tr(PrjLocaleKeys.reconciliation_actual_total),
             formatCurrencyWithSymbol(
               controller.actualTotal.value,
               currencyCode: currencyCode,
@@ -47,7 +47,7 @@ class ReconciliationSummary extends StatelessWidget {
           const CcSpaceXS(),
           _summaryRow(
             context,
-            el.tr(CcLocaleKeys.reconciliation_difference),
+            el.tr(PrjLocaleKeys.reconciliation_difference),
             diffText,
             color: diff == 0 ? scheme.primary : scheme.error,
           ),

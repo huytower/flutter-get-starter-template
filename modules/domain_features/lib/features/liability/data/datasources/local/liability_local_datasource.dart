@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,10 +8,10 @@ import '../../models/liability_model.dart';
 @lazySingleton
 class LiabilityLocalDatasource {
   Future<Box<LiabilityModel>> get _box async {
-    if (Hive.isBoxOpen(CcHiveBox.LIABILITY_BOX_NAME)) {
-      return Hive.box<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
+    if (Hive.isBoxOpen(PrjHiveBox.LIABILITY_BOX_NAME)) {
+      return Hive.box<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME);
     }
-    return Hive.openBox<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
+    return Hive.openBox<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME);
   }
 
   Future<List<LiabilityModel>> getAll() async {

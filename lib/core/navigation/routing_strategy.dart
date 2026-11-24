@@ -30,7 +30,7 @@ abstract class RoutingStrategy {
       value: _themeProvider,
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
-          return CcLocalization.wrapWithLocalization(
+          return PrjLocalization.wrapWithLocalization(
             packageTranslations: const [CcMfTranslations.mapLocales],
             child: Builder(
               builder: (context) => routerBuilder(context, themeProvider),

@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 
 import '../../../budget_limit/domain/entities/budget_limit_stats_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_limit_stats_usecase.dart';
@@ -54,13 +54,13 @@ class CheckBudgetThresholdUseCase {
       id: ReminderIds.budgetThreshold(stat.budget.id, tier),
       title: el.tr(
         isOver
-            ? CcLocaleKeys.budget_over_limit
-            : CcLocaleKeys.budget_near_limit,
+            ? PrjLocaleKeys.budget_over_limit
+            : PrjLocaleKeys.budget_near_limit,
       ),
       body: el.tr(
         isOver
-            ? CcLocaleKeys.notification_budget_over_body
-            : CcLocaleKeys.notification_budget_near_limit_body,
+            ? PrjLocaleKeys.notification_budget_over_body
+            : PrjLocaleKeys.notification_budget_near_limit_body,
         namedArgs: {'name': stat.budget.name},
       ),
     );

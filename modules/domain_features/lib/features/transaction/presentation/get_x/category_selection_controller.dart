@@ -4,13 +4,13 @@ import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
 
 @injectable
-class CategorySelectionController extends CcGetController {
+class CategorySelectionController extends PrjGetController {
   CategorySelectionController(this._getCategories);
 
   final GetCategoriesUseCase _getCategories;

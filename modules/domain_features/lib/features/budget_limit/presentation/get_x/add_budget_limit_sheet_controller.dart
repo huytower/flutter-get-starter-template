@@ -13,7 +13,7 @@ import 'package:message/export_message.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
@@ -22,7 +22,7 @@ import '../../domain/usecases/update_budget_limit_usecase.dart';
 import '../get_x/budget_limit_controller.dart';
 
 @injectable
-class AddBudgetLimitSheetController extends CcGetController {
+class AddBudgetLimitSheetController extends PrjGetController {
   AddBudgetLimitSheetController(
     this._getCategories,
     this._getAverageSpend,
@@ -82,7 +82,7 @@ class AddBudgetLimitSheetController extends CcGetController {
     quickAmounts.assignAll(amounts);
   }
 
-  void init(BudgetLimitEntity? editTarget) {
+  void prepareForm(BudgetLimitEntity? editTarget) {
     _editTarget = editTarget;
     nameController.text = editTarget?.name ?? '';
     nameController.removeListener(_onNameChanged);
@@ -200,7 +200,7 @@ class AddBudgetLimitSheetController extends CcGetController {
     });
 
     if (isDuplicate) {
-      nameError.value = el.tr(CcLocaleKeys.budget_name_duplicate_error);
+      nameError.value = el.tr(PrjLocaleKeys.budget_name_duplicate_error);
       isSubmitting.value = false;
       return;
     }
@@ -243,8 +243,8 @@ class AddBudgetLimitSheetController extends CcGetController {
     CcSnackBarHelper.showSuccessSnackBar(
       context: context,
       message: isEdit
-          ? el.tr(CcLocaleKeys.budget_updated, namedArgs: {'name': budgetName})
-          : el.tr(CcLocaleKeys.budget_added, namedArgs: {'name': budgetName}),
+          ? el.tr(PrjLocaleKeys.budget_updated, namedArgs: {'name': budgetName})
+          : el.tr(PrjLocaleKeys.budget_added, namedArgs: {'name': budgetName}),
     );
     Navigator.pop(context);
     if (!isEdit && context.mounted) {

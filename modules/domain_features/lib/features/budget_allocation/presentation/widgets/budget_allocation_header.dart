@@ -13,7 +13,7 @@ PreferredSizeWidget buildBudgetAllocationHeader(BuildContext context) {
   return buildDomainGradientAppBar(
     context,
     title: CcText(
-      el.tr(CcLocaleKeys.nav_budget_allocation),
+      el.tr(PrjLocaleKeys.nav_budget_allocation),
       textStyle: context.ccTextTheme.titleMedium?.copyWith(
         color: context.ccColorScheme.onPrimary,
         fontWeight: CcTypographyParams.bold,
@@ -26,7 +26,7 @@ PreferredSizeWidget buildBudgetAllocationHeader(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           children: [
             CcText(
-              el.tr(CcLocaleKeys.reconciliation_title),
+              el.tr(PrjLocaleKeys.reconciliation_title),
               textStyle: context.ccTextTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,

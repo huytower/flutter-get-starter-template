@@ -52,8 +52,8 @@ class _LendDirectionToggleState extends State<LendDirectionToggle>
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    final firstLabel = el.tr(CcLocaleKeys.transaction_liability_direction_lend);
-    final secondLabel = el.tr(CcLocaleKeys.transaction_record_collect);
+    final firstLabel = el.tr(PrjLocaleKeys.transaction_liability_direction_lend);
+    final secondLabel = el.tr(PrjLocaleKeys.transaction_record_collect);
 
     return Center(
       child: SizedBox(

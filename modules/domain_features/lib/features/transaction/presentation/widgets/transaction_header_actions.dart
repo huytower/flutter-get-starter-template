@@ -69,7 +69,7 @@ class TransactionHeaderActions extends StatelessWidget {
         size: context.respIconSize(baseSize: 28),
         color: context.ccColorScheme.primary.withValues(alpha: 85),
       ),
-      tooltip: el.tr(CcLocaleKeys.report_title),
+      tooltip: el.tr(PrjLocaleKeys.report_title),
     );
   }
 

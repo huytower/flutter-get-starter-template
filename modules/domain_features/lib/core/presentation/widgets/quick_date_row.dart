@@ -30,7 +30,7 @@ class QuickDateRow extends StatelessWidget {
       runSpacing: context.respDim(8),
       children: [
         CcText(
-          el.tr(CcLocaleKeys.transaction_time),
+          el.tr(PrjLocaleKeys.transaction_time),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: scheme.onSurfaceVariant,
             fontWeight: FontWeight.bold,
@@ -41,13 +41,13 @@ class QuickDateRow extends StatelessWidget {
           children: [
             _buildQuickDateButton(
               context,
-              el.tr(CcLocaleKeys.transaction_today),
+              el.tr(PrjLocaleKeys.transaction_today),
               DateTime.now(),
             ),
             const CcSpaceSM(),
             _buildQuickDateButton(
               context,
-              el.tr(CcLocaleKeys.transaction_yesterday),
+              el.tr(PrjLocaleKeys.transaction_yesterday),
               DateTime.now().subtract(const Duration(days: 1)),
             ),
             const CcSpaceSM(),

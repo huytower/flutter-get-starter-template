@@ -64,7 +64,7 @@ class _RatingPillState extends State<RatingPill> {
             const CcSpaceSM(),
             CcText(
               el.tr(
-                CcLocaleKeys.profile_out_of_5,
+                PrjLocaleKeys.profile_out_of_5,
                 namedArgs: {'rating': '$_selectedRating.0'},
               ),
               textStyle: context.ccTextTheme.bodyMedium?.copyWith(

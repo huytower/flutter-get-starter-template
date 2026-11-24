@@ -60,7 +60,7 @@ class QuickEntryImageInput {
       );
       resetParsingIfCurrent();
       _session.quickEntryErrorKey.value =
-          CcLocaleKeys.report_ai_advice_gemini_disabled;
+          PrjLocaleKeys.report_ai_advice_gemini_disabled;
       return;
     }
 
@@ -78,7 +78,7 @@ class QuickEntryImageInput {
       // A denied permission gets explicit feedback; a plain cancel stays silent.
       if (pickResult.permissionDenied) {
         _session.quickEntryErrorKey.value =
-            CcLocaleKeys.quick_entry_photo_permission_denied;
+            PrjLocaleKeys.quick_entry_photo_permission_denied;
       }
       return;
     }
@@ -133,6 +133,6 @@ class QuickEntryImageInput {
       'QuickEntryInput',
     );
     _session.quickEntryErrorKey.value =
-        CcLocaleKeys.quick_entry_could_not_parse;
+        PrjLocaleKeys.quick_entry_could_not_parse;
   }
 }

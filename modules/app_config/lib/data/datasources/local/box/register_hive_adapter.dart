@@ -3,8 +3,8 @@ import 'package:app_config/data/adapters/domain_user_entity_adapter.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:hive_ce/hive_ce.dart';
 
-import 'app_storage/cc_app_storage.dart';
-import 'device_info/cc_device_info.dart';
+import 'app_storage/prj_app_storage.dart';
+import 'device_info/prj_device_info.dart';
 
 /// Registers all Hive adapters used in the application.
 ///
@@ -27,13 +27,13 @@ Future<void> registerHiveAdapter() async {
     Hive.registerAdapter(DomainUserEntityAdapter());
 
     await _registerAdapterWithErrorHandling(
-      'CcAppStorage',
-      () => CcAppStorage.register(),
+      'PrjAppStorage',
+      () => PrjAppStorage.register(),
     );
 
     await _registerAdapterWithErrorHandling(
-      'CcDeviceInfo',
-      () => CcDeviceInfo.register(),
+      'PrjDeviceInfo',
+      () => PrjDeviceInfo.register(),
     );
   } catch (e, stackTrace) {
     'Failed to register one or more Hive adapters: $e\n$stackTrace'.Log('Hive');

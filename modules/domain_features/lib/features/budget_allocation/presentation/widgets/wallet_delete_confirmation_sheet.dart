@@ -64,7 +64,7 @@ class WalletDeleteConfirmationSheet extends StatelessWidget {
               ),
               const CcSpaceMD(),
               CcText(
-                el.tr(CcLocaleKeys.wallet_delete_title),
+                el.tr(PrjLocaleKeys.wallet_delete_title),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleLarge?.copyWith(
@@ -74,7 +74,7 @@ class WalletDeleteConfirmationSheet extends StatelessWidget {
               ),
               const CcSpaceSM(),
               CcText(
-                el.tr(CcLocaleKeys.wallet_delete_confirm_msg),
+                el.tr(PrjLocaleKeys.wallet_delete_confirm_msg),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -85,8 +85,8 @@ class WalletDeleteConfirmationSheet extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.common_cancel),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.common_cancel),
                       bgColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
@@ -97,8 +97,8 @@ class WalletDeleteConfirmationSheet extends StatelessWidget {
                   ),
                   const CcSpaceMD(),
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.common_delete),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.common_delete),
                       bgColor: [scheme.error, scheme.error],
                       textColor: scheme.onError,
                       onTap: () {

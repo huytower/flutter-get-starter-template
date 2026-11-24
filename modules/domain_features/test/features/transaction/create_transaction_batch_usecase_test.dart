@@ -21,7 +21,7 @@ class _FakeCreateTransaction implements CreateTransactionUseCase {
   ) async {
     received.add(params);
     if (received.length - 1 == failAt) {
-      return const Error(ValidationFailure('boom'));
+      return const Error(CcValidationFailure('boom'));
     }
     return Success(
       TransactionEntity(
@@ -49,7 +49,7 @@ class _FakeWalletRepository implements WalletRepository {
   Future<Result<WalletEntity, CcFailure>> getWallet(String id) async {
     final wallet = _wallets[id];
     return wallet == null
-        ? const Error(ValidationFailure('missing'))
+        ? const Error(CcValidationFailure('missing'))
         : Success(wallet);
   }
 

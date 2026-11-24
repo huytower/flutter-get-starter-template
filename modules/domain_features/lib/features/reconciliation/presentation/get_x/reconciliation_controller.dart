@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
@@ -18,7 +18,7 @@ import '../../domain/usecases/undo_reconciliation_usecase.dart';
 import '../widgets/reconciliation_success_sheet.dart';
 
 @injectable
-class ReconciliationController extends CcGetController {
+class ReconciliationController extends PrjGetController {
   ReconciliationController(
     this._getWalletBalances,
     this._performReconciliation,

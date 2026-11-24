@@ -1,8 +1,8 @@
 import 'package:package_info_plus/package_info_plus.dart';
 
-class CcAppConfig {
+class PrjAppConfig {
   /// Creates a new immutable configuration instance.
-  const CcAppConfig();
+  const PrjAppConfig();
 
   // Version Information
 

@@ -29,7 +29,7 @@ class PrjVipLockBanner extends StatelessWidget {
           const CcSpaceSM(),
           Expanded(
             child: CcText(
-              el.tr(CcLocaleKeys.profile_vip_subtitle),
+              el.tr(PrjLocaleKeys.profile_vip_subtitle),
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
                 color: context.ccColorScheme.onSurface,
               ),

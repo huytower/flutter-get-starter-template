@@ -56,9 +56,9 @@ class QuickEntryBatchSession extends QuickEntrySession {
       resetParsingIfCurrent();
       if (pickResult.permissionDenied) {
         quickEntryErrorKey.value =
-            CcLocaleKeys.quick_entry_photo_permission_denied;
+            PrjLocaleKeys.quick_entry_photo_permission_denied;
       } else if (pickResult.failed) {
-        quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
+        quickEntryErrorKey.value = PrjLocaleKeys.quick_entry_could_not_parse;
       }
       return;
     }
@@ -90,7 +90,7 @@ class QuickEntryBatchSession extends QuickEntrySession {
       '[AI_PARSING] [GEMINI] ⚠️ Gemini AI batch parsing returned 0 rows'.Log(
         'QuickEntryBatchSession',
       );
-      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
+      quickEntryErrorKey.value = PrjLocaleKeys.quick_entry_could_not_parse;
       return;
     }
     '[AI_PARSING] [GEMINI] ✅ Gemini AI batch parsing succeeded | rowsCount=${cloud.rows.length} rows=${cloud.rows.map((r) => r.toJson()).toList()}'
@@ -134,8 +134,8 @@ class QuickEntryBatchSession extends QuickEntrySession {
       saved: result.saved,
       error: el.tr(
         result.saved == 0
-            ? CcLocaleKeys.smart_entry_preview_save_failed
-            : CcLocaleKeys.smart_entry_preview_save_partial,
+            ? PrjLocaleKeys.smart_entry_preview_save_failed
+            : PrjLocaleKeys.smart_entry_preview_save_partial,
         namedArgs: {
           'saved': '${result.saved}',
           'total': '${params.length}',
@@ -193,10 +193,10 @@ class QuickEntryBatchSession extends QuickEntrySession {
       context: context,
       message: count > 1
           ? el.tr(
-              CcLocaleKeys.smart_entry_preview_saved_many,
+              PrjLocaleKeys.smart_entry_preview_saved_many,
               namedArgs: {'count': '$count'},
             )
-          : el.tr(CcLocaleKeys.smart_entry_preview_saved_one),
+          : el.tr(PrjLocaleKeys.smart_entry_preview_saved_one),
     );
   }
 }

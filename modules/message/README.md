@@ -36,7 +36,7 @@ dependencies:
 modules/
   message/
     lib/
-      cc_localization.  # Main localization service
+      prj_localization.  # Main localization service
     assets/
       translations/         # Translation files
         en.json            # English translations
@@ -51,7 +51,7 @@ modules/
 In your `main.dart`, follow the **Turbo Parallel Boot** pattern:
 
 ```
-import 'package:message/cc_localization.' as localization;
+import 'package:message/prj_localization.' as localization;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,12 +59,12 @@ void main() async {
   // Part of parallel boot sequence
   await Future.wait([
     // ... other parallel inits
-    localization.CcLocalization.initialize(),
+    localization.PrjLocalization.initialize(),
     // ... other parallel inits
   ]);
   
   runApp(
-    localization.CcLocalization.wrapWithLocalization(
+    localization.PrjLocalization.wrapWithLocalization(
       child: const MyApp(),
     ),
   );
@@ -105,7 +105,7 @@ await context.setLocale(const Locale('vi'));  // Switch to Vietnamese
 }
 ```
 
-2. Add the new language code to `supportedLocales` in `cc_localization.` if needed.
+2. Add the new language code to `supportedLocales` in `prj_localization.` if needed.
 
 ## Best Practices
 

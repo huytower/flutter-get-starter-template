@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
@@ -11,7 +11,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../../core/quick_entry/quick_entry_intent.dart';
 import '../../../liability/presentation/get_x/borrow_form_controller.dart';
@@ -26,7 +26,7 @@ import 'transaction_form_controller.dart';
 enum TransactionTabKind { expense, income, investment, borrow, lend }
 
 @injectable
-class TransactionController extends CcGetController {
+class TransactionController extends PrjGetController {
   TransactionController(
     this._getWalletBalances,
     this._walletRepository,
@@ -46,7 +46,7 @@ class TransactionController extends CcGetController {
   final RxBool isSecondaryCardFront = false.obs;
 
   /// Whether the user has interacted with the card stack at least once.
-  /// Persisted in [CcAppStorage] to hide the interaction hint.
+  /// Persisted in [PrjAppStorage] to hide the interaction hint.
   final RxBool hasInteractedWithCardStack = false.obs;
 
   /// Tabs currently visible, in display order.
@@ -200,8 +200,8 @@ class TransactionController extends CcGetController {
   void markStackInteracted() {
     if (!hasInteractedWithCardStack.value) {
       hasInteractedWithCardStack.value = true;
-      CcAppStorage.instance.hasInteractedWithTransactionCardStack = true;
-      CcAppStorage.instance.save();
+      PrjAppStorage.instance.hasInteractedWithTransactionCardStack = true;
+      PrjAppStorage.instance.save();
     }
   }
 
@@ -213,7 +213,7 @@ class TransactionController extends CcGetController {
 
     // Load persisted interaction state
     hasInteractedWithCardStack.value =
-        CcAppStorage.instance.hasInteractedWithTransactionCardStack ?? false;
+        PrjAppStorage.instance.hasInteractedWithTransactionCardStack ?? false;
 
     // Register controllers lazily to avoid heavy waterfall initialization
     // during app startup. They will be created only when their respective

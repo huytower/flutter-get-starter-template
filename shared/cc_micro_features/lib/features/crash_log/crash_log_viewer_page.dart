@@ -25,7 +25,7 @@ class _CrashLogViewerPageState extends State<CrashLogViewerPage> {
   }
 
   Future<void> _load() async {
-    final version = await getIt<CcDeviceInfoHelper>().getAppVersion();
+    final version = await getIt<CcDeviceInfoService>().getAppVersion();
     final logs = await CcCrashLogPaths.readLogContent();
     if (!mounted) return;
     setState(() {
@@ -44,12 +44,12 @@ class _CrashLogViewerPageState extends State<CrashLogViewerPage> {
         Row(
           children: [
             Expanded(
-              child: AppNameWidget(
+              child: CcAppNameWidget(
                 _appInfo,
                 fontSize: CcTypographyParams.bodySmall,
               ),
             ),
-            CcCopyBtn(onTap: () => CcStringHelper.copyToClipboard(_appInfo)),
+            CcCopyButton(onTap: () => CcStringHelper.copyToClipboard(_appInfo)),
           ],
         ),
         const CcSpaceSM(),
@@ -78,7 +78,7 @@ class _CrashLogViewerPageState extends State<CrashLogViewerPage> {
                 align: Alignment.center,
               ),
             ),
-            CcCopyBtn(
+            CcCopyButton(
               onTap: () =>
                   CcStringHelper.copyToClipboard(CcCrashLogPaths.logFileName),
             ),
@@ -125,7 +125,7 @@ class _CrashLogViewerPageState extends State<CrashLogViewerPage> {
           Positioned(
             top: 8,
             right: 8,
-            child: CcCopyBtn(
+            child: CcCopyButton(
               onTap: () => CcStringHelper.copyToClipboard(_logContent),
             ),
           ),

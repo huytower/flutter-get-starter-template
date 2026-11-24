@@ -19,8 +19,8 @@ export 'core/contracts/financial_refresh_provider.dart';
 export 'core/contracts/guideline_provider.dart';
 export 'core/contracts/user_level_provider.dart';
 export 'core/di/di.dart';
-export 'core/get_x/cc_get_controller.dart';
-export 'core/get_x/cc_get_view.dart';
+export 'core/get_x/prj_get_controller.dart';
+export 'core/get_x/prj_get_view.dart';
 // Budget Allocation (composite: Wallet + Budget Limit)
 export 'features/budget_allocation/export_budget_allocation.dart';
 // Budget Limit

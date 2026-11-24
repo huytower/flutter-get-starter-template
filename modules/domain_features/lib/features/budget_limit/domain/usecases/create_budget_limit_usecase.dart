@@ -37,15 +37,15 @@ class CreateBudgetLimitUseCase {
     final name = params.name.trim();
     if (name.isEmpty) {
       return const Error(
-        ValidationFailure('Tên ngân sách không được để trống!'),
+        CcValidationFailure('Tên ngân sách không được để trống!'),
       );
     }
     if (params.categoryId.isEmpty) {
-      return const Error(ValidationFailure('Vui lòng chọn hạng mục!'));
+      return const Error(CcValidationFailure('Vui lòng chọn hạng mục!'));
     }
     if (params.limit <= 0) {
       return const Error(
-        ValidationFailure('Định mức ngân sách phải lớn hơn 0!'),
+        CcValidationFailure('Định mức ngân sách phải lớn hơn 0!'),
       );
     }
 

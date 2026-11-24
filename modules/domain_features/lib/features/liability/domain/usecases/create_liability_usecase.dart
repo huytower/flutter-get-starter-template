@@ -2,7 +2,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/constant/currency_constants.dart';
@@ -69,19 +69,19 @@ class CreateLiabilityUseCase {
   ) async {
     if (params.walletId.isEmpty) {
       return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_wallet_required),
+        CcValidationFailure(PrjLocaleKeys.transaction_validation_wallet_required),
       );
     }
     if (params.categoryId.isEmpty) {
       return const Error(
-        ValidationFailure(
-          CcLocaleKeys.transaction_validation_category_required,
+        CcValidationFailure(
+          PrjLocaleKeys.transaction_validation_category_required,
         ),
       );
     }
     if (params.date.isAfter(DateTime.now())) {
       return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_future_date),
+        CcValidationFailure(PrjLocaleKeys.transaction_validation_future_date),
       );
     }
 
@@ -116,8 +116,8 @@ class CreateLiabilityUseCase {
       final availableBalance = balanceResult.tryGetSuccess()!;
       if (finalAmount > availableBalance) {
         return const Error(
-          ValidationFailure(
-            CcLocaleKeys.transaction_validation_insufficient_balance,
+          CcValidationFailure(
+            PrjLocaleKeys.transaction_validation_insufficient_balance,
           ),
         );
       }

@@ -48,7 +48,7 @@ class QuickEntryVoiceInput {
 
     if (!status.isGranted) {
       _session.quickEntryErrorKey.value =
-          CcLocaleKeys.quick_entry_mic_permission_denied;
+          PrjLocaleKeys.quick_entry_mic_permission_denied;
       return;
     }
 
@@ -90,7 +90,7 @@ class QuickEntryVoiceInput {
         );
         _session.isListeningQuickEntry.value = false;
         _session.quickEntryErrorKey.value =
-            CcLocaleKeys.quick_entry_mic_permission_denied;
+            PrjLocaleKeys.quick_entry_mic_permission_denied;
       }
     }
   }

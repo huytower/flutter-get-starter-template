@@ -41,7 +41,7 @@ class UpdateBudgetLimitUseCase {
       final trimmed = name.trim();
       if (trimmed.isEmpty) {
         return const Error(
-          ValidationFailure('Tên ngân sách không được để trống!'),
+          CcValidationFailure('Tên ngân sách không được để trống!'),
         );
       }
       budget = budget.copyWith(name: trimmed);
@@ -50,14 +50,14 @@ class UpdateBudgetLimitUseCase {
     if (limit != null && limit != budget.limit) {
       if (!isLimitEditable) {
         return const Error(
-          ValidationFailure(
+          CcValidationFailure(
             'Chỉ có thể thay đổi định mức trong 7 ngày đầu tháng.',
           ),
         );
       }
       if (limit <= 0) {
         return const Error(
-          ValidationFailure('Định mức ngân sách phải lớn hơn 0!'),
+          CcValidationFailure('Định mức ngân sách phải lớn hơn 0!'),
         );
       }
       budget = budget.copyWith(limit: limit);

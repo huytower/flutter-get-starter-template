@@ -58,7 +58,7 @@ class DeleteTransactionSheet extends StatelessWidget {
               ),
               const CcSpaceMD(),
               CcText(
-                el.tr(CcLocaleKeys.transaction_delete_title),
+                el.tr(PrjLocaleKeys.transaction_delete_title),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleLarge?.copyWith(
@@ -68,7 +68,7 @@ class DeleteTransactionSheet extends StatelessWidget {
               ),
               const CcSpaceSM(),
               CcText(
-                el.tr(CcLocaleKeys.transaction_delete_confirm_desc),
+                el.tr(PrjLocaleKeys.transaction_delete_confirm_desc),
                 align: Alignment.center,
                 maxLines: 5,
                 textAlign: TextAlign.center,
@@ -80,8 +80,8 @@ class DeleteTransactionSheet extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.common_cancel),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.common_cancel),
                       bgColor: [
                         scheme.surfaceContainerHighest,
                         scheme.surfaceContainerHighest,
@@ -92,8 +92,8 @@ class DeleteTransactionSheet extends StatelessWidget {
                   ),
                   const CcSpaceMD(),
                   Expanded(
-                    child: CcBaseBtn(
-                      title: el.tr(CcLocaleKeys.common_delete),
+                    child: CcBaseButton(
+                      title: el.tr(PrjLocaleKeys.common_delete),
                       bgColor: [scheme.error, scheme.error],
                       textColor: scheme.onError,
                       onTap: () async {
@@ -104,7 +104,7 @@ class DeleteTransactionSheet extends StatelessWidget {
                             context: context,
                             message:
                                 result.tryGetError()?.message ??
-                                el.tr(CcLocaleKeys.app_error_general),
+                                el.tr(PrjLocaleKeys.app_error_general),
                           );
                         }
                       },
@@ -126,7 +126,7 @@ class DeleteTransactionSheet extends StatelessWidget {
     if (result.isSuccess() && context.mounted) {
       CcSnackBarHelper.showSuccessSnackBar(
         context: context,
-        message: el.tr(CcLocaleKeys.common_delete),
+        message: el.tr(PrjLocaleKeys.common_delete),
       );
       final refresh = getIt<FinancialRefreshProvider>();
       await refresh.refreshTransactions();

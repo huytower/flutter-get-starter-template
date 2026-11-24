@@ -190,8 +190,8 @@ class _IncomeFormState extends State<IncomeForm> {
   ) {
     return EntrySubmitButton(
       text: controller.isEditing
-          ? el.tr(CcLocaleKeys.common_save)
-          : el.tr(CcLocaleKeys.transaction_record_income),
+          ? el.tr(PrjLocaleKeys.common_save)
+          : el.tr(PrjLocaleKeys.transaction_record_income),
       isSubmitting: controller.isSubmitting.value,
       isEnabled: controller.canSubmit,
       onTap: () => controller.submitForm(context),
@@ -240,7 +240,7 @@ class _IncomeFormState extends State<IncomeForm> {
   ) {
     return FormAmountSection(
       controller: controller,
-      label: el.tr(CcLocaleKeys.transaction_amount),
+      label: el.tr(PrjLocaleKeys.transaction_amount),
       activeColor: accentColor,
       fieldKey: _amountFieldKey,
     );
@@ -253,7 +253,7 @@ class _IncomeFormState extends State<IncomeForm> {
   ) {
     return FormWalletSection(
       controller: controller,
-      label: el.tr(CcLocaleKeys.transaction_source_income),
+      label: el.tr(PrjLocaleKeys.transaction_source_income),
       activeColor: accentColor,
     );
   }

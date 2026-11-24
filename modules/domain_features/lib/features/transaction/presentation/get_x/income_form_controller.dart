@@ -158,7 +158,7 @@ class IncomeFormController extends TransactionFormController
 
   Future<void> _loadRecentIncomes() async {
     final result = await _transactionRepository.getTransactions(
-      const PaginationRequest(page: 1, itemsPerPage: 100),
+      const CcPaginationRequest(page: 1, itemsPerPage: 100),
       type: TransactionType.income,
     );
     result.when((transactions) {
@@ -208,7 +208,7 @@ class IncomeFormController extends TransactionFormController
     return SmartSuggestion(
       match: billMatch,
       icon: Icons.event_repeat,
-      hintKey: CcLocaleKeys.transaction_monthly_income_match_hint,
+      hintKey: PrjLocaleKeys.transaction_monthly_income_match_hint,
     );
   }
 
@@ -484,8 +484,8 @@ class IncomeFormController extends TransactionFormController
     );
     final messageText = el.tr(
       isEditing
-          ? CcLocaleKeys.transaction_income_updated
-          : CcLocaleKeys.transaction_income_saved,
+          ? PrjLocaleKeys.transaction_income_updated
+          : PrjLocaleKeys.transaction_income_saved,
       namedArgs: {'amount': savedAmount},
     );
 

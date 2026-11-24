@@ -75,24 +75,24 @@ extension WalletSheets on WalletController {
         effects.deletionConfirmed();
         CcSnackBarHelper.showSuccessSnackBar(
           context: activeContext,
-          message: el.tr(CcLocaleKeys.common_done),
+          message: el.tr(PrjLocaleKeys.common_done),
         );
       case WalletDeleteOutcome.notEmpty:
         CcSnackBarHelper.showErrorSnackBar(
           context: activeContext,
-          message: el.tr(CcLocaleKeys.wallet_delete_error_not_empty),
+          message: el.tr(PrjLocaleKeys.wallet_delete_error_not_empty),
         );
       case WalletDeleteOutcome.protected:
         CcSnackBarHelper.showErrorSnackBar(
           context: activeContext,
-          message: el.tr(CcLocaleKeys.wallet_delete_error_protected),
+          message: el.tr(PrjLocaleKeys.wallet_delete_error_protected),
         );
       case WalletDeleteOutcome.error:
         CcSnackBarHelper.showErrorSnackBar(
           context: activeContext,
           message: errorMessage.value.isNotEmpty
               ? errorMessage.value
-              : el.tr(CcLocaleKeys.app_error_general),
+              : el.tr(PrjLocaleKeys.app_error_general),
         );
     }
   }

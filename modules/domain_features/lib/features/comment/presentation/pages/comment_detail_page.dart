@@ -20,7 +20,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
       leading: BackButton(color: context.ccColorScheme.onPrimary),
       title: Center(
         child: CcText(
-          el.tr(CcLocaleKeys.comment_detail_title),
+          el.tr(PrjLocaleKeys.comment_detail_title),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
@@ -119,7 +119,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
             ),
             const CcSpaceSM(),
             CcText(
-              el.tr(CcLocaleKeys.comment_detail_content),
+              el.tr(PrjLocaleKeys.comment_detail_content),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 fontWeight: CcTypographyParams.bold,
               ),
@@ -144,13 +144,13 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
       children: [
         _buildInfoChip(
           context,
-          label: el.tr(CcLocaleKeys.comment_detail_post_id),
+          label: el.tr(PrjLocaleKeys.comment_detail_post_id),
           value: '#${comment.postId}',
           icon: Icons.tag,
         ),
         _buildInfoChip(
           context,
-          label: el.tr(CcLocaleKeys.comment_detail_id),
+          label: el.tr(PrjLocaleKeys.comment_detail_id),
           value: '#${comment.id}',
           icon: Icons.numbers,
         ),

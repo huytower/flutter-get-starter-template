@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 /// A horizontal scrollable strip of chip-like buttons for selecting
 /// common monetary amounts.
-class CcQuickAmountChips extends StatelessWidget {
-  const CcQuickAmountChips({
+class PrjQuickAmountChips extends StatelessWidget {
+  const PrjQuickAmountChips({
     super.key,
     required this.amounts,
     required this.onSelected,
@@ -25,7 +25,7 @@ class CcQuickAmountChips extends StatelessWidget {
   Widget build(BuildContext context) {
     if (amounts.isEmpty) return const SizedBox.shrink();
 
-    return HorizontalFadeScrollView(
+    return CcHorizontalFadeScrollView(
       height: context.respDim(35),
       builder: (scrollController) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,

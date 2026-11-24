@@ -42,7 +42,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
   Widget build(BuildContext context) {
     return GetBuilder<AddLiabilitySheetController>(
       init: getIt<AddLiabilitySheetController>()
-        ..init(
+        ..prepareForm(
           initialDirection: initialDirection,
           showDirectionToggle: showDirectionToggle,
         ),
@@ -112,8 +112,8 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
   ) {
     return Obx(() {
       final titleKey = controller.direction.value == LiabilityDirection.lend
-          ? CcLocaleKeys.transaction_liability_direction_lend
-          : CcLocaleKeys.transaction_record_debt;
+          ? PrjLocaleKeys.transaction_liability_direction_lend
+          : PrjLocaleKeys.transaction_record_debt;
 
       return CcFormLabel(
         text: el.tr(titleKey),
@@ -134,7 +134,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
               context,
               controller,
               LiabilityDirection.borrow,
-              el.tr(CcLocaleKeys.transaction_liability_direction_borrow),
+              el.tr(PrjLocaleKeys.transaction_liability_direction_borrow),
               Icons.waving_hand,
             ),
           ),
@@ -146,7 +146,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
               context,
               controller,
               LiabilityDirection.lend,
-              el.tr(CcLocaleKeys.transaction_liability_direction_lend),
+              el.tr(PrjLocaleKeys.transaction_liability_direction_lend),
               Icons.handshake_outlined,
             ),
           ),
@@ -218,14 +218,14 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcText(
-            el.tr(CcLocaleKeys.transaction_category),
+            el.tr(PrjLocaleKeys.transaction_category),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: context.ccColorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
           const CcSpaceSM(),
-          HorizontalFadeScrollView(
+          CcHorizontalFadeScrollView(
             height: context.respDim(80),
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
@@ -261,12 +261,12 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     return Obx(
       () => CcNameInputField(
         controller: controller.nameController,
-        labelText: el.tr(CcLocaleKeys.transaction_liability_name_label),
-        hintText: el.tr(CcLocaleKeys.transaction_liability_name_hint),
+        labelText: el.tr(PrjLocaleKeys.transaction_liability_name_label),
+        hintText: el.tr(PrjLocaleKeys.transaction_liability_name_hint),
         errorText: controller.nameError.value,
         maxLength: 25,
         maxLengthWarningText: el.tr(
-          CcLocaleKeys.validation_max_length_reached,
+          PrjLocaleKeys.validation_max_length_reached,
           namedArgs: {'count': '25'},
         ),
         onClear: () {
@@ -289,7 +289,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
 
       return CcSaveButton(
         onPressed: canSave ? () => controller.save(context) : null,
-        label: el.tr(CcLocaleKeys.common_save),
+        label: el.tr(PrjLocaleKeys.common_save),
         isLoading: controller.isSubmitting.value,
       );
     });

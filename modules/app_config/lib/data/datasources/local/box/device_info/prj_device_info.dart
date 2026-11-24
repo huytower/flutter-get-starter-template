@@ -1,38 +1,38 @@
 import 'package:hive_ce/hive_ce.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../cc_hive_box.dart';
+import '../prj_hive_box.dart';
 
-part 'cc_device_info.g.dart';
+part 'prj_device_info.g.dart';
 
 ///
 ///[example update]-------------------------------------------------------------
-///   CcAppStorage.instance.apply((_this) {
+///   PrjAppStorage.instance.apply((_this) {
 ///       _this.token = "token_123";
 ///       _this.uuid = "uuid_123";
 ///
 ///       _this.save();
 ///   });
 ///[example logger]-------------------------------------------------------------
-///   CcAppStorage.instance.Log();
+///   PrjAppStorage.instance.Log();
 ///
 ///
 
 /// width, height, device name, imei, id...
 @JsonSerializable()
-@HiveType(typeId: CcHiveBox.DEVICE_TYPE_ID)
-class CcDeviceInfo extends HiveObject {
-  static late CcDeviceInfo instance;
+@HiveType(typeId: PrjHiveBox.DEVICE_TYPE_ID)
+class PrjDeviceInfo extends HiveObject {
+  static late PrjDeviceInfo instance;
 
-  static Future<CcDeviceInfo?> register() async {
-    Hive.registerAdapter(CcDeviceInfoAdapter());
-    Box<CcDeviceInfo> box = await Hive.openBox<CcDeviceInfo>(
-      CcHiveBox.DEVICE_BOX_NAME,
+  static Future<PrjDeviceInfo?> register() async {
+    Hive.registerAdapter(PrjDeviceInfoAdapter());
+    Box<PrjDeviceInfo> box = await Hive.openBox<PrjDeviceInfo>(
+      PrjHiveBox.DEVICE_BOX_NAME,
     );
-    CcDeviceInfo? model = box.get(CcHiveBox.keyDefault);
+    PrjDeviceInfo? model = box.get(PrjHiveBox.keyDefault);
     if (model == null) {
-      model = CcDeviceInfo();
-      box.put(CcHiveBox.keyDefault, model);
+      model = PrjDeviceInfo();
+      box.put(PrjHiveBox.keyDefault, model);
     }
     instance = model;
     return model;
@@ -57,7 +57,7 @@ class CcDeviceInfo extends HiveObject {
   @HiveField(4)
   double? deviceHeight;
 
-  CcDeviceInfo({
+  PrjDeviceInfo({
     this.appVersion,
     this.deviceId,
     this.serialNumber,
@@ -65,5 +65,5 @@ class CcDeviceInfo extends HiveObject {
     this.deviceHeight,
   });
 
-  Map<String, dynamic> toJson() => _$CcDeviceInfoToJson(this);
+  Map<String, dynamic> toJson() => _$PrjDeviceInfoToJson(this);
 }

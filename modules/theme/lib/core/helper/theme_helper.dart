@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../presentation/style/cc_text_style.dart';
 import '../../presentation/style/prj_colors.dart';
+import '../../presentation/style/prj_text_style.dart';
 
 /// Creates a `ColorScheme` based on the provided `brightness`.
 ///
@@ -46,7 +46,7 @@ ThemeData createLightTheme() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: createColorScheme(Brightness.light),
-    extensions: <ThemeExtension<dynamic>>[CcTextStyle.light()],
+    extensions: <ThemeExtension<dynamic>>[PrjTextStyle.light()],
   );
 }
 
@@ -55,6 +55,6 @@ ThemeData createDarkTheme() {
   return ThemeData.dark().copyWith(
     useMaterial3: true,
     colorScheme: createColorScheme(Brightness.dark),
-    extensions: <ThemeExtension<dynamic>>[CcTextStyle.dark()],
+    extensions: <ThemeExtension<dynamic>>[PrjTextStyle.dark()],
   );
 }

@@ -124,7 +124,7 @@ class ProfileExperienceCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CcText(
-            el.tr(CcLocaleKeys.profile_experience_level_progress),
+            el.tr(PrjLocaleKeys.profile_experience_level_progress),
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: context.ccColorScheme.onSurface,
@@ -134,7 +134,7 @@ class ProfileExperienceCard extends StatelessWidget {
             children: [
               CcText(
                 el.tr(
-                  CcLocaleKeys.profile_level_title,
+                  PrjLocaleKeys.profile_level_title,
                   namedArgs: {'level': '$level', 'title': _getLevelTitle()},
                 ),
                 textStyle: context.ccTextTheme.titleLarge?.copyWith(
@@ -147,7 +147,7 @@ class ProfileExperienceCard extends StatelessWidget {
             ],
           ),
           CcText(
-            el.tr(CcLocaleKeys.profile_tap_to_return),
+            el.tr(PrjLocaleKeys.profile_tap_to_return),
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: context.ccColorScheme.onSurfaceVariant,
             ),
@@ -163,7 +163,7 @@ class ProfileExperienceCard extends StatelessWidget {
 
     if (levelStatus.isVip) {
       progress = 1.0;
-      progressText = el.tr(CcLocaleKeys.profile_unlocked);
+      progressText = el.tr(PrjLocaleKeys.profile_unlocked);
     } else if (level < 2) {
       // LV1 -> LV2: 6 guideline tasks + 2 reconciliations = 8 steps
       final streak = levelStatus.reconciliationStreak.clamp(0, 2);
@@ -178,7 +178,7 @@ class ProfileExperienceCard extends StatelessWidget {
           .Log('ProfileExperienceCard');
 
       progressText = el.tr(
-        CcLocaleKeys.profile_progress_steps,
+        PrjLocaleKeys.profile_progress_steps,
         namedArgs: {'completed': '$completed', 'total': '8'},
       );
     } else {
@@ -188,7 +188,7 @@ class ProfileExperienceCard extends StatelessWidget {
           UserLevelStatusEntity.lv3RequiredStreak;
 
       progressText = el.tr(
-        CcLocaleKeys.profile_streak_weeks,
+        PrjLocaleKeys.profile_streak_weeks,
         namedArgs: {'count': '${levelStatus.reconciliationStreak}'},
       );
     }
@@ -242,8 +242,8 @@ class ProfileExperienceCard extends StatelessWidget {
   }
 
   String _getLevelTitle() {
-    if (level >= 3) return el.tr(CcLocaleKeys.profile_level_master);
-    if (level >= 2) return el.tr(CcLocaleKeys.profile_level_intermediate);
-    return el.tr(CcLocaleKeys.profile_level_novice);
+    if (level >= 3) return el.tr(PrjLocaleKeys.profile_level_master);
+    if (level >= 2) return el.tr(PrjLocaleKeys.profile_level_intermediate);
+    return el.tr(PrjLocaleKeys.profile_level_novice);
   }
 }

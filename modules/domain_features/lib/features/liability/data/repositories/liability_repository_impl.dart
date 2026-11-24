@@ -1,6 +1,6 @@
 import 'package:cc_sdk/export_cc_sdk.dart' show CcCrashReporter;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:domain_features/core/data/repositories/cc_base_repository.dart';
+import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
@@ -13,7 +13,7 @@ import '../models/liability_model.dart';
 
 @LazySingleton(as: LiabilityRepository)
 class LiabilityRepositoryImpl
-    with CcBaseRepository
+    with PrjBaseRepository
     implements LiabilityRepository {
   @factoryMethod
   LiabilityRepositoryImpl({

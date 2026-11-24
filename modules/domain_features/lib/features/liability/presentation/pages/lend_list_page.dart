@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../get_x/liability_list_controller.dart';
@@ -61,7 +61,7 @@ class _LendListPageState extends State<LendListPage> {
   }
 }
 
-class _LendListView extends CcGetView<LiabilityListController> {
+class _LendListView extends PrjGetView<LiabilityListController> {
   const _LendListView({required this.controller});
 
   @override
@@ -84,7 +84,7 @@ class _LendListView extends CcGetView<LiabilityListController> {
         ),
       ),
       title: CcText(
-        el.tr(CcLocaleKeys.liability_lend),
+        el.tr(PrjLocaleKeys.liability_lend),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           fontWeight: CcTypographyParams.bold,
           color: context.ccColorScheme.onPrimary,
@@ -103,8 +103,8 @@ class _LendListView extends CcGetView<LiabilityListController> {
           return CcIconButton.bouncing(
             onTap: controller.toggleEditMode,
             tooltip: controller.isEditMode.value
-                ? el.tr(CcLocaleKeys.common_done)
-                : el.tr(CcLocaleKeys.common_edit),
+                ? el.tr(PrjLocaleKeys.common_done)
+                : el.tr(PrjLocaleKeys.common_edit),
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: Icon(
@@ -131,7 +131,7 @@ class _LendListView extends CcGetView<LiabilityListController> {
 
       if (balances.isEmpty) {
         return CcText(
-          el.tr(CcLocaleKeys.liability_empty_state_v2),
+          el.tr(PrjLocaleKeys.liability_empty_state_v2),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.bodyMedium?.copyWith(

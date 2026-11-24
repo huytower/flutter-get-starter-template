@@ -39,7 +39,7 @@ class InvestmentWalletsSection extends StatelessWidget {
           children: [
             CcPadding(
               CcSectionHeader(
-                title: el.tr(CcLocaleKeys.wallet_investments),
+                title: el.tr(PrjLocaleKeys.wallet_investments),
                 icon: Icons.trending_up_outlined,
                 actions: [
                   CcBouncing(
@@ -52,7 +52,7 @@ class InvestmentWalletsSection extends StatelessWidget {
                   if (wallets.isNotEmpty) ...[
                     const CcSpaceSM(),
                     CcTextButton(
-                      text: el.tr(CcLocaleKeys.wallet_see_all),
+                      text: el.tr(PrjLocaleKeys.wallet_see_all),
                       onTap: onSeeAll,
                     ),
                   ],
@@ -88,14 +88,14 @@ class InvestmentWalletsSection extends StatelessWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return CcSectionEmptyState(
-      message: el.tr(CcLocaleKeys.wallet_investment_empty),
+      message: el.tr(PrjLocaleKeys.wallet_investment_empty),
       verticalPadding: 12,
       horizontalPadding: CcPaddingParams.SPACE_LG,
     );
   }
 
   Widget _buildHorizontalList(BuildContext context) {
-    return HorizontalFadeScrollView(
+    return CcHorizontalFadeScrollView(
       height: context.respDim(95),
       builder: (scrollController) => ListView.builder(
         scrollDirection: Axis.horizontal,

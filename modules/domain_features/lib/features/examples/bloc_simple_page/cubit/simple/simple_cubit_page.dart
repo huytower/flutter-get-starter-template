@@ -24,7 +24,7 @@ class SimpleCubitPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.ccColorScheme.surface,
       body: SafeArea(
-        child: FadePageWrapper(
+        child: CcFadePageWrapper(
           child: BlocProvider<SimpleCubitInterface>(
             create: (BuildContext context) => getIt<SimpleCubitInterface>(),
             child: Builder(builder: (context) => buildPage(context)),

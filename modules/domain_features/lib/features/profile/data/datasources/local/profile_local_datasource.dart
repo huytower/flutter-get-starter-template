@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:app_config/core/config/app/prj_feature_flags.dart';
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/features/profile/domain/entities/profile_settings_entity.dart';
@@ -41,7 +41,7 @@ class ProfileLocalDataSource {
   final Duration _gpsTimeout;
 
   Future<ProfileSettingsEntity> getSettings() async {
-    final s = CcAppStorage.instance;
+    final storage = PrjAppStorage.instance;
 
     // Run versioned migration to annotate existing financial records with currencyCode (default VND)
     await FinancialSchemaMigration.runMigrationIfNeeded();
@@ -50,45 +50,45 @@ class ProfileLocalDataSource {
     // read after this feature shipped. Pre-existing reconciliation/budget
     // data must not count toward level progress, so anything dated before
     // this anchor is excluded by the level-computation use case.
-    if (s.levelFeatureAnchorAt == null) {
-      s.levelFeatureAnchorAt = DateTime.now();
-      await s.save();
+    if (storage.levelFeatureAnchorAt == null) {
+      storage.levelFeatureAnchorAt = DateTime.now();
+      await storage.save();
     }
 
     // Stamp the first-launch anchor once, the first time settings are ever
     // read on this install. Anchors the "2 weeks after install" Cloud-backup
     // reminder (see CheckCloudBackupReminderUseCase).
-    if (s.firstLaunchAt == null) {
-      s.firstLaunchAt = DateTime.now();
-      await s.save();
+    if (storage.firstLaunchAt == null) {
+      storage.firstLaunchAt = DateTime.now();
+      await storage.save();
     }
 
-    if (s.currencyCode == null) {
+    if (storage.currencyCode == null) {
       final fallback = CurrencyCatalog.detectSuggestedCurrencyWithDetails();
-      s.currencyCode = CurrencyConstants.validateCurrencyCode(
+      storage.currencyCode = CurrencyConstants.validateCurrencyCode(
         fallback.currencyCode,
       );
-      s.currencyDetectionCountryCode = fallback.countryCode;
-      s.currencySelectionSource = CurrencySelectionSources.detected;
-      await s.save();
+      storage.currencyDetectionCountryCode = fallback.countryCode;
+      storage.currencySelectionSource = CurrencySelectionSources.detected;
+      await storage.save();
       unawaited(_refineCurrencyFromGps());
     } else {
       // Validate existing currency code and source
       final validatedCurrencyCode = CurrencyConstants.validateCurrencyCode(
-        s.currencyCode,
+        storage.currencyCode,
       );
       final validatedSource = CurrencySelectionSources.validate(
-        s.currencySelectionSource,
+        storage.currencySelectionSource,
       );
-      if (s.currencyCode != validatedCurrencyCode ||
-          s.currencySelectionSource != validatedSource) {
-        s.currencyCode = validatedCurrencyCode;
-        s.currencySelectionSource = validatedSource;
-        await s.save();
+      if (storage.currencyCode != validatedCurrencyCode ||
+          storage.currencySelectionSource != validatedSource) {
+        storage.currencyCode = validatedCurrencyCode;
+        storage.currencySelectionSource = validatedSource;
+        await storage.save();
       }
 
       // If currency was auto-detected (not manually selected by user), refine via GPS in background
-      if (s.currencySelectionSource == CurrencySelectionSources.detected) {
+      if (storage.currencySelectionSource == CurrencySelectionSources.detected) {
         unawaited(_refineCurrencyFromGps());
       }
     }
@@ -96,24 +96,24 @@ class ProfileLocalDataSource {
     // Don't default isDarkMode to false - keep it null if not set
     // This allows the system theme to be used as default
     return ProfileSettingsEntity(
-      reminderEnabled: s.reminderEnabled ?? false,
-      weeklyAuditDayIndex: s.weeklyAuditDayIndex ?? 6,
-      currencyCode: s.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
-      currencySelectionSource: s.currencySelectionSource,
-      currencyDetectionCountryCode: s.currencyDetectionCountryCode,
-      birthYear: s.birthYear,
-      isDarkMode: s.isDarkMode,
-      weeklyAuditDayChangedAt: s.weeklyAuditDayChangedAt,
-      levelFeatureAnchorAt: s.levelFeatureAnchorAt,
-      isVip: s.isVip ?? PrjFeatureFlags.isVipModeEnabled,
-      highestUserLevelReached: s.highestUserLevelReached ?? 1,
-      firstLaunchAt: s.firstLaunchAt,
-      cloudBackupReminderSentAt: s.cloudBackupReminderSentAt,
-      hasViewedEmergencyFundEbook: s.hasViewedEmergencyFundEbook ?? false,
-      hasSeenTutorial: s.hasSeenTutorial ?? false,
-      isHeaderFlipped: s.isProfileHeaderFlipped ?? false,
-      hasCustomizedCategories: s.hasCustomizedCategories ?? false,
-      completedGuidelineTaskIds: s.completedGuidelineTaskIds ?? const [],
+      reminderEnabled: storage.reminderEnabled ?? false,
+      weeklyAuditDayIndex: storage.weeklyAuditDayIndex ?? 6,
+      currencyCode: storage.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
+      currencySelectionSource: storage.currencySelectionSource,
+      currencyDetectionCountryCode: storage.currencyDetectionCountryCode,
+      birthYear: storage.birthYear,
+      isDarkMode: storage.isDarkMode,
+      weeklyAuditDayChangedAt: storage.weeklyAuditDayChangedAt,
+      levelFeatureAnchorAt: storage.levelFeatureAnchorAt,
+      isVip: storage.isVip ?? PrjFeatureFlags.isVipModeEnabled,
+      highestUserLevelReached: storage.highestUserLevelReached ?? 1,
+      firstLaunchAt: storage.firstLaunchAt,
+      cloudBackupReminderSentAt: storage.cloudBackupReminderSentAt,
+      hasViewedEmergencyFundEbook: storage.hasViewedEmergencyFundEbook ?? false,
+      hasSeenTutorial: storage.hasSeenTutorial ?? false,
+      isHeaderFlipped: storage.isProfileHeaderFlipped ?? false,
+      hasCustomizedCategories: storage.hasCustomizedCategories ?? false,
+      completedGuidelineTaskIds: storage.completedGuidelineTaskIds ?? const [],
     );
   }
 
@@ -130,27 +130,27 @@ class ProfileLocalDataSource {
   }
 
   Future<void> _doRefineCurrencyFromGps() async {
-    final s = CcAppStorage.instance;
+    final storage = PrjAppStorage.instance;
     try {
       final suggestion = await _detectFromGps().timeout(_gpsTimeout);
 
-      if (s.currencySelectionSource != CurrencySelectionSources.detected) {
+      if (storage.currencySelectionSource != CurrencySelectionSources.detected) {
         return;
       }
 
       final code = CurrencyConstants.validateCurrencyCode(
         suggestion.currencyCode,
       );
-      final currencyChanged = code != s.currencyCode;
+      final currencyChanged = code != storage.currencyCode;
 
       if (!currencyChanged &&
-          suggestion.countryCode == s.currencyDetectionCountryCode) {
+          suggestion.countryCode == storage.currencyDetectionCountryCode) {
         return;
       }
 
-      s.currencyCode = code;
-      s.currencyDetectionCountryCode = suggestion.countryCode;
-      await s.save();
+      storage.currencyCode = code;
+      storage.currencyDetectionCountryCode = suggestion.countryCode;
+      await storage.save();
 
       if (currencyChanged) {
         CurrencyConstants.onCurrencyChanged.value++;
@@ -165,8 +165,8 @@ class ProfileLocalDataSource {
     final pos = _location.lastPosition.value;
     if (pos == null) return;
 
-    final s = CcAppStorage.instance;
-    if (s.currencySelectionSource != CurrencySelectionSources.detected) {
+    final storage = PrjAppStorage.instance;
+    if (storage.currencySelectionSource != CurrencySelectionSources.detected) {
       return;
     }
 
@@ -179,16 +179,16 @@ class ProfileLocalDataSource {
 
       final currency = CurrencyCatalog.countryCodeToCurrency[isoCountryCode]!;
       final code = CurrencyConstants.validateCurrencyCode(currency);
-      final currencyChanged = code != s.currencyCode;
+      final currencyChanged = code != storage.currencyCode;
 
       if (!currencyChanged &&
-          isoCountryCode == s.currencyDetectionCountryCode) {
+          isoCountryCode == storage.currencyDetectionCountryCode) {
         return;
       }
 
-      s.currencyCode = code;
-      s.currencyDetectionCountryCode = isoCountryCode;
-      await s.save();
+      storage.currencyCode = code;
+      storage.currencyDetectionCountryCode = isoCountryCode;
+      await storage.save();
 
       if (currencyChanged) {
         CurrencyConstants.onCurrencyChanged.value++;
@@ -198,29 +198,29 @@ class ProfileLocalDataSource {
   }
 
   Future<void> saveSettings(ProfileSettingsEntity entity) async {
-    final s = CcAppStorage.instance;
-    s.reminderEnabled = entity.reminderEnabled;
-    s.weeklyAuditDayIndex = entity.weeklyAuditDayIndex;
-    s.currencyCode = CurrencyConstants.validateCurrencyCode(
+    final storage = PrjAppStorage.instance;
+    storage.reminderEnabled = entity.reminderEnabled;
+    storage.weeklyAuditDayIndex = entity.weeklyAuditDayIndex;
+    storage.currencyCode = CurrencyConstants.validateCurrencyCode(
       entity.currencyCode,
     );
-    s.currencySelectionSource = CurrencySelectionSources.validate(
+    storage.currencySelectionSource = CurrencySelectionSources.validate(
       entity.currencySelectionSource,
     );
-    s.currencyDetectionCountryCode = entity.currencyDetectionCountryCode;
-    s.birthYear = entity.birthYear;
-    s.isDarkMode = entity.isDarkMode;
-    s.weeklyAuditDayChangedAt = entity.weeklyAuditDayChangedAt;
-    s.levelFeatureAnchorAt = entity.levelFeatureAnchorAt;
-    s.isVip = entity.isVip;
-    s.highestUserLevelReached = entity.highestUserLevelReached;
-    s.firstLaunchAt = entity.firstLaunchAt;
-    s.cloudBackupReminderSentAt = entity.cloudBackupReminderSentAt;
-    s.hasViewedEmergencyFundEbook = entity.hasViewedEmergencyFundEbook;
-    s.hasSeenTutorial = entity.hasSeenTutorial;
-    s.isProfileHeaderFlipped = entity.isHeaderFlipped;
-    s.hasCustomizedCategories = entity.hasCustomizedCategories;
-    s.completedGuidelineTaskIds = entity.completedGuidelineTaskIds;
-    await s.save();
+    storage.currencyDetectionCountryCode = entity.currencyDetectionCountryCode;
+    storage.birthYear = entity.birthYear;
+    storage.isDarkMode = entity.isDarkMode;
+    storage.weeklyAuditDayChangedAt = entity.weeklyAuditDayChangedAt;
+    storage.levelFeatureAnchorAt = entity.levelFeatureAnchorAt;
+    storage.isVip = entity.isVip;
+    storage.highestUserLevelReached = entity.highestUserLevelReached;
+    storage.firstLaunchAt = entity.firstLaunchAt;
+    storage.cloudBackupReminderSentAt = entity.cloudBackupReminderSentAt;
+    storage.hasViewedEmergencyFundEbook = entity.hasViewedEmergencyFundEbook;
+    storage.hasSeenTutorial = entity.hasSeenTutorial;
+    storage.isProfileHeaderFlipped = entity.isHeaderFlipped;
+    storage.hasCustomizedCategories = entity.hasCustomizedCategories;
+    storage.completedGuidelineTaskIds = entity.completedGuidelineTaskIds;
+    await storage.save();
   }
 }

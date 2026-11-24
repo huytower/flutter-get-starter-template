@@ -9,7 +9,7 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../../../../core/presentation/widgets/category/prj_category_group_section.dart';
 import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_group_entity.dart';
@@ -81,7 +81,7 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
   /// Scrolls to the requested section header once it has been laid out.
   ///
   /// The header is not in the tree right after loading finishes: the list
-  /// sits inside a `FadePageWrapper`, which only builds its child ~50ms after
+  /// sits inside a `CcFadePageWrapper`, which only builds its child ~50ms after
   /// mounting. So keep retrying for a short while instead of giving up on the
   /// first miss.
   void _revealInitialSection([int attemptsLeft = 20]) {
@@ -126,7 +126,7 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
       _CategorySettingsView(sectionKeys: _sectionKeys);
 }
 
-class _CategorySettingsView extends CcGetView<CategorySettingsController> {
+class _CategorySettingsView extends PrjGetView<CategorySettingsController> {
   const _CategorySettingsView({required this.sectionKeys});
 
   final Map<String, GlobalKey> sectionKeys;
@@ -157,7 +157,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       ),
       title: Center(
         child: CcText(
-          el.tr(CcLocaleKeys.category_settings_title),
+          el.tr(PrjLocaleKeys.category_settings_title),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onPrimary,
@@ -172,7 +172,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       if (controller.layoutStatus.value == CcLayoutStatus.loading) {
         return const Center(child: CcLoadingIconWidget());
       }
-      return FadePageWrapper(
+      return CcFadePageWrapper(
         child: Column(
           children: [
             const CcSpaceMD(),
@@ -205,7 +205,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
       child: CcText(
-        el.tr(CcLocaleKeys.category_settings_subtitle),
+        el.tr(PrjLocaleKeys.category_settings_subtitle),
         textStyle: context.ccTextTheme.bodySmall?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant.withAlpha(80),
         ),
@@ -229,7 +229,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       sections.add(
         _buildHeader(
           context,
-          el.tr(CcLocaleKeys.category_expense_settings_title),
+          el.tr(PrjLocaleKeys.category_expense_settings_title),
           key: sectionKeys[CategoryType.expense],
         ),
       );
@@ -243,7 +243,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       sections.add(
         _buildHeader(
           context,
-          el.tr(CcLocaleKeys.category_income_settings_title),
+          el.tr(PrjLocaleKeys.category_income_settings_title),
           key: sectionKeys[CategoryType.income],
           topPadding: 24,
         ),
@@ -259,7 +259,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         sections.add(
           _buildHeader(
             context,
-            el.tr(CcLocaleKeys.category_investment_settings_title),
+            el.tr(PrjLocaleKeys.category_investment_settings_title),
             key: sectionKeys[CategoryType.investment],
             topPadding: 24,
           ),
@@ -276,7 +276,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         sections.add(
           _buildHeader(
             context,
-            el.tr(CcLocaleKeys.category_debt_loan_settings_title),
+            el.tr(PrjLocaleKeys.category_debt_loan_settings_title),
             key: sectionKeys[CategoryType.liability],
             topPadding: 24,
           ),

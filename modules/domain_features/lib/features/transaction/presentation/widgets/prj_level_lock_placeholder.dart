@@ -10,10 +10,10 @@ import '../../../../core/di/di.dart';
 import '../../../budget_limit/presentation/widgets/budget_limit_pie_chart.dart';
 import '../get_x/transaction_controller.dart';
 
-class CcLevelLockPlaceholder extends StatelessWidget {
+class PrjLevelLockPlaceholder extends StatelessWidget {
   final TransactionTabKind tab;
 
-  const CcLevelLockPlaceholder({super.key, required this.tab});
+  const PrjLevelLockPlaceholder({super.key, required this.tab});
 
   @override
   Widget build(BuildContext context) {
@@ -36,23 +36,23 @@ class CcLevelLockPlaceholder extends StatelessWidget {
         tasks = [
           _buildTaskItem(
             context,
-            label: el.tr(CcLocaleKeys.level_lock_task_setup_budget),
+            label: el.tr(PrjLocaleKeys.level_lock_task_setup_budget),
             isCompleted: guideline.isTaskCompleted('budget_limit'),
           ),
           _buildTaskItem(
             context,
-            label: el.tr(CcLocaleKeys.level_lock_task_record_transactions),
+            label: el.tr(PrjLocaleKeys.level_lock_task_record_transactions),
             isCompleted: guideline.isTaskCompleted('first_transaction'),
           ),
           _buildTaskItem(
             context,
-            label: el.tr(CcLocaleKeys.level_lock_task_setup_birth_year),
+            label: el.tr(PrjLocaleKeys.level_lock_task_setup_birth_year),
             isCompleted: guideline.isTaskCompleted('birth_year'),
           ),
           _buildTaskItem(
             context,
             label: el.tr(
-              CcLocaleKeys.level_lock_task_reconciliation_streak,
+              PrjLocaleKeys.level_lock_task_reconciliation_streak,
               namedArgs: {'current': streak.toString(), 'total': '2'},
             ),
             isCompleted: streak >= 2,
@@ -72,7 +72,7 @@ class CcLevelLockPlaceholder extends StatelessWidget {
           _buildTaskItem(
             context,
             label: el.tr(
-              CcLocaleKeys.level_lock_task_reconciliation_streak,
+              PrjLocaleKeys.level_lock_task_reconciliation_streak,
               namedArgs: {'current': streak.toString(), 'total': '4'},
             ),
             isCompleted: streak >= 4,
@@ -80,26 +80,26 @@ class CcLevelLockPlaceholder extends StatelessWidget {
           _buildTaskItem(
             context,
             label: el.tr(
-              CcLocaleKeys.level_lock_task_fixed_budgets,
+              PrjLocaleKeys.level_lock_task_fixed_budgets,
               namedArgs: {'current': budgets.toString(), 'total': '3'},
             ),
             isCompleted: budgets >= 3,
           ),
           _buildTaskItem(
             context,
-            label: el.tr(CcLocaleKeys.level_lock_task_positive_cash_flow),
+            label: el.tr(PrjLocaleKeys.level_lock_task_positive_cash_flow),
             isCompleted: cashFlow,
           ),
         ];
       }
 
       final title = (tab == TransactionTabKind.investment)
-          ? el.tr(CcLocaleKeys.level_lock_investment_title)
-          : el.tr(CcLocaleKeys.level_lock_liability_title);
+          ? el.tr(PrjLocaleKeys.level_lock_investment_title)
+          : el.tr(PrjLocaleKeys.level_lock_liability_title);
 
       final desc = (tab == TransactionTabKind.investment)
-          ? el.tr(CcLocaleKeys.level_lock_investment_desc)
-          : el.tr(CcLocaleKeys.level_lock_liability_desc);
+          ? el.tr(PrjLocaleKeys.level_lock_investment_desc)
+          : el.tr(PrjLocaleKeys.level_lock_liability_desc);
 
       return Center(
         child: SingleChildScrollView(
@@ -242,7 +242,7 @@ class CcLevelLockPlaceholder extends StatelessWidget {
       children: [
         CcText(
           el.tr(
-            CcLocaleKeys.level_lock_progress_archived,
+            PrjLocaleKeys.level_lock_progress_archived,
             namedArgs: {'percent': '$progress'},
           ),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(

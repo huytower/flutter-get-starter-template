@@ -1,14 +1,14 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/currency/money_formatter.dart';
-import 'package:domain_features/core/presentation/widgets/cc_quick_amount_chips.dart';
+import 'package:domain_features/core/presentation/widgets/prj_quick_amount_chips.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
 /// A specialized input section for transaction amounts, featuring a display box
 /// with a label prefix, formatted amount, action buttons, and quick-amount chips.
-class CcAmountInputSection extends StatelessWidget {
+class PrjAmountInputSection extends StatelessWidget {
   final String label;
   final String amountStr;
   final List<int> quickAmounts;
@@ -21,7 +21,7 @@ class CcAmountInputSection extends StatelessWidget {
   final VoidCallback? onCopy;
   final GlobalKey? fieldKey;
 
-  const CcAmountInputSection({
+  const PrjAmountInputSection({
     super.key,
     required this.label,
     required this.amountStr,
@@ -132,7 +132,7 @@ class CcAmountInputSection extends StatelessWidget {
                 size: context.respIconSize(baseSize: 14),
               ),
               onTap: onCopy!,
-              tooltip: el.tr(CcLocaleKeys.common_copy),
+              tooltip: el.tr(PrjLocaleKeys.common_copy),
             ),
           if (onClear != null)
             CcIconButton.bouncing(
@@ -144,7 +144,7 @@ class CcAmountInputSection extends StatelessWidget {
                 size: context.respIconSize(baseSize: 14),
               ),
               onTap: onClear!,
-              tooltip: el.tr(CcLocaleKeys.common_clear),
+              tooltip: el.tr(PrjLocaleKeys.common_clear),
             ),
         ],
       ),
@@ -152,7 +152,7 @@ class CcAmountInputSection extends StatelessWidget {
   }
 
   Widget _buildQuickChips(Color accent) {
-    return CcQuickAmountChips(
+    return PrjQuickAmountChips(
       amounts: quickAmounts,
       onSelected: onQuickAmountSelected,
       activeColor: accent,

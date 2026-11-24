@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../di/di.dart';
 import '../presentation/widgets/prj_page_background.dart';
-import 'cc_get_controller.dart';
+import 'prj_get_controller.dart';
 
 /// Base class for GetX views with built-in layout state management.
 ///
@@ -16,17 +16,17 @@ import 'cc_get_controller.dart';
 ///
 /// Example:
 /// ```dart
-/// class MyView extends CcGetView<MyController> {
+/// class MyView extends PrjGetView<MyController> {
 ///   @override
 ///   Widget? buildContent(BuildContext context) {
 ///     return Text('My Content'); // Your content here
 ///   }
 /// }
 /// ```
-abstract class CcGetView<T extends CcGetController> extends GetView<T>
+abstract class PrjGetView<T extends PrjGetController> extends GetView<T>
     with CcViewConfigMixin {
   //----------------------------------------------------------------------------
-  const CcGetView({super.key});
+  const PrjGetView({super.key});
 
   //----------------------------------------------------------------------------
   /// Ensures the controller is registered in GetX before the view is built.

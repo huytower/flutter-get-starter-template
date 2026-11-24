@@ -95,4 +95,4 @@ For **Turbo Boot** performance (startup < 2s):
 - If startup exceeds 2s, check if any `@singleton` is being eagerly instantiated. Convert to `@lazySingleton`.
 - **Deferred Telemetry**: Non-essential services (Logging, Performance) must be deferred to the NavigationBar shell via `NavigationLogicMixin`.
 - Use **Firebase Performance Monitoring** (enabled in `NavigationBar`) to track real-world startup metrics.
-- Review `CcAppConfig.serviceStartupLogEnabled` in `modules/app_config` for startup timing analysis.
+- Review `PrjAppConfig.serviceStartupLogEnabled` in `modules/app_config` for startup timing analysis.

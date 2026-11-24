@@ -4,10 +4,10 @@ import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/di/di.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../../../liability/export_liability.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_allocation_header.dart';
@@ -21,7 +21,7 @@ import '../widgets/liquid_hero_banner.dart';
 import '../widgets/liquid_wallets_section.dart';
 
 @RoutePage()
-class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
+class BudgetAllocationPage extends PrjGetView<BudgetAllocationController>
     with CcPullToRefreshMixin {
   const BudgetAllocationPage({super.key});
 
@@ -35,7 +35,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   @override
   Widget? buildContent(BuildContext context) {
-    return FadePageWrapper(
+    return CcFadePageWrapper(
       // The list scrolls across the full width; its content is centred and
       // capped at the content width on wide windows.
       child: LayoutBuilder(
@@ -178,9 +178,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   Widget _buildLiquidHeroBanner(BuildContext context) {
     return LiquidHeroBanner(
       walletController: controller.walletController,
-      titleKey: CcLocaleKeys.wallet_liquid_assets,
+      titleKey: PrjLocaleKeys.wallet_liquid_assets,
       balance: controller.walletController.liquidBalance,
-      subtitleKey: CcLocaleKeys.wallet_liquid_assets_desc,
+      subtitleKey: PrjLocaleKeys.wallet_liquid_assets_desc,
       icon: Icons.account_balance_wallet_outlined,
       color: PrjColors.primary,
     );

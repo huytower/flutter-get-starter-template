@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
@@ -16,7 +16,7 @@ import '../widgets/transaction_tab_bar.dart';
 import '../widgets/transaction_tab_bar_view.dart';
 
 @RoutePage()
-class TransactionPage extends CcGetView<TransactionController> {
+class TransactionPage extends PrjGetView<TransactionController> {
   const TransactionPage({super.key});
 
   @override
@@ -145,7 +145,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
     // but here we can just wrap our content with a TabController provider.
     return _TabControllerProvider(
       controller: _tabController,
-      child: FadePageWrapper(
+      child: CcFadePageWrapper(
         child: Stack(
           children: [
             Obx(() {

@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:flutter/material.dart';
@@ -31,9 +31,9 @@ class WalletLocalDataSource {
   );
 
   Future<Box<WalletHiveModel>> get _box async {
-    final box = Hive.isBoxOpen(CcHiveBox.WALLET_BOX_NAME)
-        ? Hive.box<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME)
-        : await Hive.openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    final box = Hive.isBoxOpen(PrjHiveBox.WALLET_BOX_NAME)
+        ? Hive.box<WalletHiveModel>(PrjHiveBox.WALLET_BOX_NAME)
+        : await Hive.openBox<WalletHiveModel>(PrjHiveBox.WALLET_BOX_NAME);
     if (_initialized && box.isNotEmpty) return box;
     _initialized = true;
 

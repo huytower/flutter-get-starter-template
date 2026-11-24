@@ -10,7 +10,7 @@ import 'package:multiple_result/multiple_result.dart';
 ///
 /// Using a mixin allows repository implementations to share this logic
 /// without using up their single inheritance slot.
-mixin CcBaseRepository {
+mixin PrjBaseRepository {
   /// Receives every unexpected exception [safeRequest] turns into a failure.
   /// The host repository gets it through its constructor (the mixin holds no
   /// dependency of its own).
@@ -30,14 +30,14 @@ mixin CcBaseRepository {
     } on CcServerException catch (e) {
       // Handle business failure thrown from the interceptor
       return Error(
-        ServerFailure(e.message, statusCode: int.tryParse(e.code ?? '')),
+        CcServerFailure(e.message, statusCode: int.tryParse(e.code ?? '')),
       );
     } on DioException catch (e) {
       // Check if it's a CcServerException wrapped inside DioException
       if (e.error is CcServerException) {
         final serverEx = e.error as CcServerException;
         return Error(
-          ServerFailure(
+          CcServerFailure(
             serverEx.message,
             statusCode: int.tryParse(serverEx.code ?? ''),
           ),
@@ -49,7 +49,7 @@ mixin CcBaseRepository {
       '❌ $reason | $e'.Log(runtimeType.toString());
       // Not awaited: reporting must not delay the failure reaching the UI.
       unawaited(crashReporter.recordError(e, stackTrace, reason: reason));
-      return Error(ServerFailure(e.toString()));
+      return Error(CcServerFailure(e.toString()));
     }
   }
 
@@ -62,13 +62,13 @@ mixin CcBaseRepository {
         error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout ||
         error.type == DioExceptionType.sendTimeout) {
-      return NetworkFailure(message);
+      return CcNetworkFailure(message);
     }
 
     if (error.response != null) {
-      return ServerFailure('Server error: $message', statusCode: statusCode);
+      return CcServerFailure('Server error: $message', statusCode: statusCode);
     }
 
-    return ServerFailure(message);
+    return CcServerFailure(message);
   }
 }

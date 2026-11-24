@@ -15,7 +15,7 @@ class LiquidWalletsSection extends StatelessWidget {
   const LiquidWalletsSection({
     required this.wallets,
     required this.onAddWallet,
-    this.titleKey = CcLocaleKeys.wallet_your_wallets,
+    this.titleKey = PrjLocaleKeys.wallet_your_wallets,
     this.showAddButton = true,
     this.emptyMessageKey,
     this.showGuidelineBadge = false,
@@ -57,7 +57,7 @@ class LiquidWalletsSection extends StatelessWidget {
                   if (wallets.isNotEmpty) ...[
                     if (showAddButton) const CcSpaceSM(),
                     CcTextButton(
-                      text: el.tr(CcLocaleKeys.wallet_see_all),
+                      text: el.tr(PrjLocaleKeys.wallet_see_all),
                       onTap: () =>
                           context.router.push(const LiquidWalletListRoute()),
                     ),

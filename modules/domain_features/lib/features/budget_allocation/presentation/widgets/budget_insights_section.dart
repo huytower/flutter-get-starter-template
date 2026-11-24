@@ -68,10 +68,10 @@ class BudgetInsightsSection extends StatelessWidget {
       cards.add(
         _buildConvertedInsightCard(
           context,
-          title: el.tr(CcLocaleKeys.budget_insights_title),
+          title: el.tr(PrjLocaleKeys.budget_insights_title),
           rawVndAmount: insights.deficitAmount,
           descriptionBuilder: (formattedAmount) => el.tr(
-            CcLocaleKeys.budget_deficit_warning,
+            PrjLocaleKeys.budget_deficit_warning,
             namedArgs: {'amount': formattedAmount},
           ),
           icon: Icons.error_outline_rounded,
@@ -85,10 +85,10 @@ class BudgetInsightsSection extends StatelessWidget {
       cards.add(
         _buildConvertedInsightCard(
           context,
-          title: el.tr(CcLocaleKeys.budget_insights_title),
+          title: el.tr(PrjLocaleKeys.budget_insights_title),
           rawVndAmount: insights.debtInflowAmount,
           descriptionBuilder: (formattedAmount) => el.tr(
-            CcLocaleKeys.budget_debt_inflow_warning,
+            PrjLocaleKeys.budget_debt_inflow_warning,
             namedArgs: {
               'percent': '${insights.debtInflowPercent}',
               'amount': formattedAmount,
@@ -105,10 +105,10 @@ class BudgetInsightsSection extends StatelessWidget {
       cards.add(
         _buildConvertedInsightCard(
           context,
-          title: el.tr(CcLocaleKeys.budget_insights_title),
+          title: el.tr(PrjLocaleKeys.budget_insights_title),
           rawVndAmount: insights.debtOutflowAmount,
           descriptionBuilder: (formattedAmount) => el.tr(
-            CcLocaleKeys.budget_debt_outflow_warning,
+            PrjLocaleKeys.budget_debt_outflow_warning,
             namedArgs: {
               'percent': '${insights.debtOutflowPercent}',
               'amount': formattedAmount,
@@ -132,7 +132,7 @@ class BudgetInsightsSection extends StatelessWidget {
             return BudgetInsightCard(
               title: name,
               description: el.tr(
-                CcLocaleKeys.budget_penalty_warning,
+                PrjLocaleKeys.budget_penalty_warning,
                 namedArgs: {'name': name, 'percent': '${warning.percentUsed}'},
               ),
               icon: Icons.warning_amber_rounded,
@@ -157,7 +157,7 @@ class BudgetInsightsSection extends StatelessWidget {
               title: name,
               rawVndAmount: warning.suggestedDailySpend,
               descriptionBuilder: (formattedAmount) => el.tr(
-                CcLocaleKeys.budget_pacing_hint,
+                PrjLocaleKeys.budget_pacing_hint,
                 namedArgs: {
                   'name': name,
                   'days': '${warning.daysRemaining}',
@@ -176,9 +176,9 @@ class BudgetInsightsSection extends StatelessWidget {
     if (insights.anomalyCount > 0) {
       cards.add(
         BudgetInsightCard(
-          title: el.tr(CcLocaleKeys.budget_insights_title),
+          title: el.tr(PrjLocaleKeys.budget_insights_title),
           description: el.tr(
-            CcLocaleKeys.budget_anomaly_hint,
+            PrjLocaleKeys.budget_anomaly_hint,
             namedArgs: {'count': '${insights.anomalyCount}'},
           ),
           icon: Icons.auto_awesome_outlined,

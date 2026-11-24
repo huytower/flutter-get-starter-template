@@ -15,7 +15,7 @@ class AdvanceBlocPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FadePageWrapper(
+    return CcFadePageWrapper(
       child: BlocProvider(
         create: (BuildContext context) => getIt<AdvanceBloc>(),
         child: Builder(builder: (context) => buildPage(context)),

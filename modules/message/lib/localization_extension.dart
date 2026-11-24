@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'cc_localization.dart';
+import 'prj_localization.dart';
 
 /// Extension to easily access localization methods on [BuildContext].
 extension LocalizationExtension on BuildContext {
-  /// Shortcut for [CcLocalization.translate].
+  /// Shortcut for [PrjLocalization.translate].
   String tr(String key, {List<String>? args, Map<String, String>? namedArgs}) {
-    return CcLocalization.translate(key, args: args, namedArgs: namedArgs);
+    return PrjLocalization.translate(key, args: args, namedArgs: namedArgs);
   }
 
-  /// Shortcut for [CcLocalization.plural].
+  /// Shortcut for [PrjLocalization.plural].
   String trPlural(String key, num count, {List<String>? args}) {
-    return CcLocalization.plural(key, count, args: args);
+    return PrjLocalization.plural(key, count, args: args);
   }
 }

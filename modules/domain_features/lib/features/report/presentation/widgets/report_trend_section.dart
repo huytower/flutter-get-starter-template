@@ -36,7 +36,7 @@ class ReportTrendSection extends StatelessWidget {
           filter == ReportFilterType.expense) {
         cards.add(
           TrendCard(
-            title: el.tr(CcLocaleKeys.common_expense),
+            title: el.tr(PrjLocaleKeys.common_expense),
             amount: data.totalExpense,
             points: data.points,
             color: context.expenseAccent,
@@ -49,7 +49,7 @@ class ReportTrendSection extends StatelessWidget {
       if (filter == ReportFilterType.all || filter == ReportFilterType.income) {
         cards.add(
           TrendCard(
-            title: el.tr(CcLocaleKeys.common_income),
+            title: el.tr(PrjLocaleKeys.common_income),
             amount: data.totalIncome,
             points: data.points,
             color: context.incomeAccent,

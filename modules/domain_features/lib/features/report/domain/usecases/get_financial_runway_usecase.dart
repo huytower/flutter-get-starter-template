@@ -113,7 +113,7 @@ class GetFinancialRunwayUseCase {
         FinancialRunwayEntity(
           months: 0,
           days: 0,
-          message: CcLocaleKeys.report_runway_insufficient,
+          message: PrjLocaleKeys.report_runway_insufficient,
           totalBalance: totalBalance,
           averageMonthlyExpense: averageMonthlyExpense,
           fixedMonthlyCost: fixedMonthlyCost,
@@ -127,7 +127,7 @@ class GetFinancialRunwayUseCase {
         FinancialRunwayEntity(
           months: 0,
           days: 0,
-          message: CcLocaleKeys.report_runway_caution,
+          message: PrjLocaleKeys.report_runway_caution,
           totalBalance: totalBalance,
           averageMonthlyExpense: averageMonthlyExpense,
           fixedMonthlyCost: fixedMonthlyCost,
@@ -144,18 +144,18 @@ class GetFinancialRunwayUseCase {
     String messageKey;
     FinancialRunwayStatus status = FinancialRunwayStatus.caution;
 
-    // Aligned with report_runway_* keys in CcLocaleKeys
+    // Aligned with report_runway_* keys in PrjLocaleKeys
     if (months >= 12) {
-      messageKey = CcLocaleKeys.report_runway_very_good;
+      messageKey = PrjLocaleKeys.report_runway_very_good;
       status = FinancialRunwayStatus.excellent;
     } else if (months >= 6) {
-      messageKey = CcLocaleKeys.report_runway_good;
+      messageKey = PrjLocaleKeys.report_runway_good;
       status = FinancialRunwayStatus.good;
     } else if (months >= 3) {
-      messageKey = CcLocaleKeys.report_runway_safe;
+      messageKey = PrjLocaleKeys.report_runway_safe;
       status = FinancialRunwayStatus.safe;
     } else {
-      messageKey = CcLocaleKeys.report_runway_caution;
+      messageKey = PrjLocaleKeys.report_runway_caution;
       status = FinancialRunwayStatus.caution;
     }
 

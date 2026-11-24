@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
@@ -11,9 +11,9 @@ import 'category_seed.dart';
 @lazySingleton
 class CategoryLocalDataSource {
   Future<Box<CategoryModel>> get _box async {
-    final box = Hive.isBoxOpen(CcHiveBox.CATEGORY_BOX_NAME)
-        ? Hive.box<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME)
-        : await Hive.openBox<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+    final box = Hive.isBoxOpen(PrjHiveBox.CATEGORY_BOX_NAME)
+        ? Hive.box<CategoryModel>(PrjHiveBox.CATEGORY_BOX_NAME)
+        : await Hive.openBox<CategoryModel>(PrjHiveBox.CATEGORY_BOX_NAME);
     if (box.isEmpty) {
       await box.putAll({for (final c in CategorySeed.categories) c.id: c});
     } else {

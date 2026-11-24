@@ -454,8 +454,8 @@ class InvestmentFormController extends TransactionFormController {
   String? composeNote() {
     final userNote = super.composeNote();
     final subsegment = direction.value == InvestmentDirection.contribute
-        ? el.tr(CcLocaleKeys.transaction_investment_contribution)
-        : el.tr(CcLocaleKeys.transaction_investment_return);
+        ? el.tr(PrjLocaleKeys.transaction_investment_contribution)
+        : el.tr(PrjLocaleKeys.transaction_investment_return);
 
     if (userNote == null || userNote.isEmpty) return subsegment;
     return '$subsegment · $userNote';
@@ -498,7 +498,7 @@ class InvestmentFormController extends TransactionFormController {
       if (context.mounted) {
         CcSnackBarHelper.showErrorSnackBar(
           context: context,
-          message: el.tr(CcLocaleKeys.transaction_validation_category_required),
+          message: el.tr(PrjLocaleKeys.transaction_validation_category_required),
         );
       }
       return;
@@ -548,7 +548,7 @@ class InvestmentFormController extends TransactionFormController {
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
-            CcLocaleKeys.transaction_investment_saved,
+            PrjLocaleKeys.transaction_investment_saved,
             namedArgs: {'amount': savedAmount},
           ),
         );

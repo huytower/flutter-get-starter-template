@@ -37,7 +37,7 @@ class ReportInvestmentSection extends StatelessWidget {
           ReportCardPair(
             cards: [
               TrendCard(
-                title: el.tr(CcLocaleKeys.report_investment_contributed),
+                title: el.tr(PrjLocaleKeys.report_investment_contributed),
                 amount: data.totalExpense,
                 points: data.points,
                 color: context.investmentAccent,
@@ -46,7 +46,7 @@ class ReportInvestmentSection extends StatelessWidget {
                 icon: Icons.arrow_circle_down,
               ),
               TrendCard(
-                title: el.tr(CcLocaleKeys.report_investment_returned),
+                title: el.tr(PrjLocaleKeys.report_investment_returned),
                 amount: data.totalIncome,
                 points: data.points,
                 color: context.investmentAccent.secondaryShade,

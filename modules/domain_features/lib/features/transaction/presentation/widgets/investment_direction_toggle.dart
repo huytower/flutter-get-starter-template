@@ -100,9 +100,9 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
             labelPadding: EdgeInsets.zero,
             tabs: [
               _buildTab(
-                el.tr(CcLocaleKeys.transaction_investment_contribution),
+                el.tr(PrjLocaleKeys.transaction_investment_contribution),
               ),
-              _buildTab(el.tr(CcLocaleKeys.transaction_investment_return)),
+              _buildTab(el.tr(PrjLocaleKeys.transaction_investment_return)),
             ],
           ),
         ),

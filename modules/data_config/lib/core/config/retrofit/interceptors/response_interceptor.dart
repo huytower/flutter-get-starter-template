@@ -1,7 +1,7 @@
 import 'package:cc_sdk/export_cc_sdk.dart' show CcServerException;
 import 'package:dio/dio.dart';
 
-import '../params/cc_rest_api_params.dart';
+import '../params/prj_rest_api_params.dart';
 import '../response/header/res_header_model.dart';
 
 /// Interceptor that standardizes all responses into the project's envelope format.
@@ -13,10 +13,10 @@ class ResponseInterceptor extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     // 2. Normalization Logic
     var rawData = response.data;
-    final statusKey = CcRestApiParams.status.name;
-    final dataKey = CcRestApiParams.data.name;
-    final messageKey = CcRestApiParams.message.name;
-    final totalKey = CcRestApiParams.total.name;
+    final statusKey = PrjRestApiParams.status.name;
+    final dataKey = PrjRestApiParams.data.name;
+    final messageKey = PrjRestApiParams.message.name;
+    final totalKey = PrjRestApiParams.total.name;
 
     // Determine if this is a "Foreign" response that needs wrapping
     // We check if it is a Map and if it has a BOOLEAN 'status' key.

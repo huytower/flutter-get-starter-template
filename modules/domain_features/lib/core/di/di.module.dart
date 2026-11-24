@@ -712,13 +712,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i944.ReconciliationRepository>(),
               gh<_i483.NotificationService>(),
             ));
-    gh.factory<_i470.ProfileSettingsActions>(() => _i470.ProfileSettingsActions(
-          gh<_i570.GetProfileSettingsUseCase>(),
-          gh<_i220.UpdateProfileSettingsUseCase>(),
-          gh<_i483.NotificationService>(),
-          gh<_i577.ThemeProvider>(),
-          gh<_i54.CcDeviceInfoHelper>(),
-        ));
     gh.lazySingleton<_i973.GetUserLevelStatusUseCase>(
         () => _i973.GetUserLevelStatusUseCase(
               gh<_i446.GetReconciliationHistoryUseCase>(),
@@ -734,13 +727,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1059.CategoryRepository>(),
               gh<_i570.GetProfileSettingsUseCase>(),
             ));
-    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
-          gh<_i470.ProfileSettingsActions>(),
-          gh<_i189.ProfileAccountActions>(),
-          gh<_i750.ProfileOnboardingActions>(),
-          gh<_i237.ProfileAppActions>(),
-          gh<_i811.UserLevelController>(),
-        ));
     gh.factory<_i1005.QuickEntryParser>(() => _i1005.QuickEntryParser(
           gh<_i224.GetCategoriesUseCase>(),
           gh<_i121.ParseQuickEntryUseCase>(),
@@ -773,6 +759,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i220.UpdateProfileSettingsUseCase>(),
               gh<_i373.GuidelineProvider>(),
             ));
+    gh.factory<_i470.ProfileSettingsActions>(() => _i470.ProfileSettingsActions(
+          gh<_i570.GetProfileSettingsUseCase>(),
+          gh<_i220.UpdateProfileSettingsUseCase>(),
+          gh<_i483.NotificationService>(),
+          gh<_i577.ThemeProvider>(),
+          gh<_i54.CcDeviceInfoService>(),
+        ));
     gh.factory<_i752.AddBudgetLimitSheetController>(
         () => _i752.AddBudgetLimitSheetController(
               gh<_i1041.GetCategoriesUseCase>(),
@@ -809,6 +802,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i430.WalletLedger>(),
           gh<_i427.EmergencyFundAccess>(),
           gh<_i606.WalletChangeEffects>(),
+        ));
+    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
+          gh<_i470.ProfileSettingsActions>(),
+          gh<_i189.ProfileAccountActions>(),
+          gh<_i750.ProfileOnboardingActions>(),
+          gh<_i237.ProfileAppActions>(),
+          gh<_i811.UserLevelController>(),
         ));
     gh.lazySingleton<_i451.BudgetAllocationController>(
         () => _i451.BudgetAllocationController(

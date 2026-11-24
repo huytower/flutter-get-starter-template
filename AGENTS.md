@@ -76,8 +76,8 @@ modules/
                                    # MainShellProvider, RegionalSettingsContract), every coordinator impl, and
                                    # the impls of the cross-feature *Provider contracts (see rule 4).
                                    # NOT a duplicate of cc_bridge (which holds project-blind contracts only).
-  theme/                          # SSOT for colors/typography (PrjColors, CcTextStyle, CcThemes)
-  message/                        # SSOT for i18n strings (CcLocaleKeys)
+  theme/                          # SSOT for colors/typography (PrjColors, PrjTextStyle, createLightTheme / createDarkTheme)
+  message/                        # SSOT for i18n strings (PrjLocaleKeys)
 shared/
   cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (app_update, auth,
                                    # biometric, crash_log, messaging, splash, web)
@@ -183,7 +183,7 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
 6. **Clean Bootstrap Integrity (CRITICAL PERF)** — `main.dart` stays a lean, service-only entry point. Startup
    target **< 2 seconds**. Boot sequence (STRICT):
     1. `await initEnv()` first and alone (hands `PrjEnv` values to `CcSdkConfig`, which DI and logging read).
-    2. `await Future.wait([Firebase.initializeApp(), initializeDependencies(), _initHive(), CcLocalization.initialize()])`
+    2. `await Future.wait([Firebase.initializeApp(), initializeDependencies(), _initHive(), PrjLocalization.initialize()])`
        — parallel, not sequential.
     3. `getIt<CcAppAttestation>().activate()` (App Check) and other non-critical services fire-and-forget,
        non-blocking.
@@ -227,17 +227,17 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
       on device type or `Platform`.
     - Check every new screen against the shared matrix in `modules/domain_features/test/adaptive/` (phones,
       foldables, 7"/10" tablets, landscape, web desktop): touch-target size, text overflow, no layout overflow.
-10. **Localization** — `el.tr(CcLocaleKeys.key)`, never hardcoded strings. New strings require all three kept in
+10. **Localization** — `el.tr(PrjLocaleKeys.key)`, never hardcoded strings. New strings require all three kept in
     sync (no build step enforces this — treat drift as a bug):
     1. `modules/message/assets/translations/en.json`
     2. `modules/message/assets/translations/vi.json`
-    3. `modules/message/lib/cc_locale_keys.dart` (the key constant **and** its `CodegenLoader` map entry).
+    3. `modules/message/lib/prj_locale_keys.dart` (the key constant **and** its `CodegenLoader` map entry).
 
     `message` is app-specific: `cc_core_sdk` and `cc_micro_features` must not import it (`cc_sdk` no longer
     re-exports it — import `package:message/export_message.dart` directly). Shared widgets take user-facing text
     as parameters; `cc_micro_features` owns its strings in `shared/cc_micro_features/lib/l10n/`
     (`CcMfLocaleKeys` + `CcMfTranslations`, all keys under `mf.*`), which the App Shell merges in through
-    `CcLocalization.wrapWithLocalization(packageTranslations: [...])`. Keys missing in a locale fall back to `en`.
+    `PrjLocalization.wrapWithLocalization(packageTranslations: [...])`. Keys missing in a locale fall back to `en`.
 11. **SDK-First Reuse** — prioritize extending `cc_core_sdk/cc_sdk_ui` components before hand-rolling new widgets.
 
 ## III. Code quality & naming
@@ -260,8 +260,9 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
       feature's carries its feature name (`ReportTransactionTile`, not `TransactionTile`).
     - **Say what it is:** no abbreviations in names (`button`, not `btn`; `repository`, not `repo`;
       `controller`, not `ctrl`; `background`, not `bg`); established API such as `respDim` stays.
-      Booleans read as a yes/no question: `isX`, `hasX`, `canX`, `shouldX` (widget flags such as
-      `dense` / `inline` are fine). No magic numbers in names (`guestLoginPrompt15Dismissed`).
+      Booleans the project names start with `has` (`hasDismissedFinalWarning`, `hasShownFirstReminder`), one
+      prefix for every flag; names fixed by Flutter or a package (`mounted`, `isEmpty`, an `@override`) stay
+      as they are, and widget flags such as `dense` / `inline` are fine. No magic numbers in names (`prompt15Dismissed` → `hasDismissedFinalWarning`).
       Avoid `Helper` / `Util` / `Manager` / `Data` / `Info` as a whole name or a catch-all suffix: name the
       job (`MoneyFormatter`, `MerchantMatcher`). Single-letter variables only for loop indices and math.
     - Enforced by `check:imports` (`naming-folder`, `naming-file-type`); the rest is review.
@@ -331,7 +332,7 @@ class ProfileAppActions {                      // one concern (AI consent + feed
 }
 
 @lazySingleton
-class ProfileController extends CcGetController {
+class ProfileController extends PrjGetController {
   ProfileController(this._settingsActions, this._account, this._onboarding, this._app, this.userLevel); // 5
   final ProfileAppActions _app;
   final ProfileAccountActions _account;
@@ -364,7 +365,7 @@ and the repository. Its sheets are an extension (`WalletSheets`), not a mixin.
     - [ ] Functional responsiveness (`context.resp*`) checked at all four breakpoints, both orientations.
     - [ ] Import hygiene and suffix-first naming.
     - [ ] Spacing uses `CcSpace*` (not raw `SizedBox(respDim(N))` gaps).
-    - [ ] Localization: JSONs + `CcLocaleKeys` + `CodegenLoader` updated and in sync.
+    - [ ] Localization: JSONs + `PrjLocaleKeys` + `CodegenLoader` updated and in sync.
     - [ ] `melos run analyze` (or package-local `flutter analyze`) is clean.
     - [ ] DI: new classes annotated in place, no per-feature module file added, `melos run gen` was run.
 

@@ -33,7 +33,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
 
   Widget _buildTitle(BuildContext context) {
     return CcText(
-      el.tr(CcLocaleKeys.budget_category),
+      el.tr(PrjLocaleKeys.budget_category),
       textStyle: context.ccTextTheme.labelMedium?.copyWith(
         color: context.ccColorScheme.onSurfaceVariant,
         fontWeight: FontWeight.bold,
@@ -42,7 +42,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
   }
 
   Widget _buildCategoryList(BuildContext context) {
-    return HorizontalFadeScrollView(
+    return CcHorizontalFadeScrollView(
       height: context.respDim(80),
       builder: (scrollController) {
         onScrollControllerCreated?.call(scrollController);

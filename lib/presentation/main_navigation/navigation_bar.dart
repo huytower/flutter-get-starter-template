@@ -26,7 +26,7 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<NavigationBar>
-    with CcCurvedNavigationMixin, DoubleBackToExitMixin, NavigationLogicMixin {
+    with CcCurvedNavigationMixin, CcDoubleBackToExitMixin, NavigationLogicMixin {
   // Bar index i is MainTab.values[i]; entry ("Giao dịch") is centred as the
   // raised "＋".
   static final int _indexEntry = MainTab.entry.index;
@@ -88,7 +88,7 @@ class _NavigationBarState extends State<NavigationBar>
 
   @override
   String get backPressMessage =>
-      el.tr(CcLocaleKeys.common_press_back_again_to_exit);
+      el.tr(PrjLocaleKeys.common_press_back_again_to_exit);
 
   @override
   void showBackPressHint(BuildContext context, String message) =>
@@ -109,20 +109,20 @@ class _NavigationBarState extends State<NavigationBar>
     CcCurvedNavigationItem(
       inactiveIcon: Icons.pie_chart_outline,
       activeIcon: Icons.pie_chart,
-      label: el.tr(CcLocaleKeys.nav_budget_allocation),
+      label: el.tr(PrjLocaleKeys.nav_budget_allocation),
       badgeWidget: mainShell.tabBadge(MainTab.budget),
     ),
     // Centre "＋" — opens the Chi/Thu entry form.
     CcCurvedNavigationItem(
       inactiveIcon: Icons.add,
       activeIcon: Icons.add,
-      label: el.tr(CcLocaleKeys.nav_transaction),
+      label: el.tr(PrjLocaleKeys.nav_transaction),
       badgeWidget: mainShell.tabBadge(MainTab.entry),
     ),
     CcCurvedNavigationItem(
       inactiveIcon: Icons.person_outline_rounded,
       activeIcon: Icons.person_rounded,
-      label: el.tr(CcLocaleKeys.nav_profile),
+      label: el.tr(PrjLocaleKeys.nav_profile),
       badgeWidget: mainShell.tabBadge(MainTab.profile),
     ),
   ];
@@ -238,6 +238,6 @@ class _NavigationBarState extends State<NavigationBar>
 
   Widget _buildBody(BuildContext context) {
     final content = buildContent(context) ?? const SizedBox.shrink();
-    return FadePageWrapper(child: content);
+    return CcFadePageWrapper(child: content);
   }
 }

@@ -1,11 +1,11 @@
 import 'package:domain_features/core/ai/ai_language.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:message/cc_localization.dart';
+import 'package:message/prj_localization.dart';
 
 void main() {
   group('AiLanguage.nameOf', () {
     test('names every language the app supports', () {
-      for (final locale in CcLocalization.supportedLocales) {
+      for (final locale in PrjLocalization.supportedLocales) {
         expect(
           AiLanguage.nameOf(locale.languageCode),
           isNot(locale.languageCode),

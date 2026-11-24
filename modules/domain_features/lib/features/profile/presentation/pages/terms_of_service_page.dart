@@ -61,7 +61,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
         ),
         title: Center(
           child: CcText(
-            el.tr(CcLocaleKeys.profile_terms),
+            el.tr(PrjLocaleKeys.profile_terms),
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: context.ccColorScheme.onPrimary,

@@ -1,6 +1,6 @@
 import 'package:cc_sdk/export_cc_sdk.dart' show CcCrashReporter;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:domain_features/core/data/repositories/cc_base_repository.dart';
+import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
 import 'package:injectable/injectable.dart';
@@ -13,7 +13,7 @@ import '../models/budget_limit_model.dart';
 
 @LazySingleton(as: BudgetLimitRepository)
 class BudgetLimitRepositoryImpl
-    with CcBaseRepository
+    with PrjBaseRepository
     implements BudgetLimitRepository {
   @factoryMethod
   BudgetLimitRepositoryImpl({

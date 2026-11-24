@@ -81,7 +81,7 @@ class GetCategorySpendingUseCase {
       final category = categories[entry.key];
       return CategorySpendingEntity(
         categoryId: entry.key,
-        nameKey: category?.nameKey ?? CcLocaleKeys.report_uncategorized,
+        nameKey: category?.nameKey ?? PrjLocaleKeys.report_uncategorized,
         iconCode: category?.iconCode ?? 0xe148,
         iconFamily: category?.iconFamily,
         color: category?.color,

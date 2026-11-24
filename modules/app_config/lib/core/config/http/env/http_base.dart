@@ -3,7 +3,7 @@ import 'dart:io' show Platform;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../app/cc_app_config.dart';
+import '../../app/prj_app_config.dart';
 
 /// Base class for application configuration across different environments.
 ///
@@ -16,7 +16,7 @@ import '../../app/cc_app_config.dart';
 ///
 /// Example usage:
 /// ```dart
-/// final http = CcAppConfig.instance;
+/// final http = PrjAppConfig.instance;
 /// final baseUrl = http.baseUrl;
 /// ```
 abstract class HttpBase extends Equatable {
@@ -96,8 +96,8 @@ abstract class HttpBase extends Equatable {
 
   @override
   List<Object?> get props => [
-    CcAppConfig.VERSION_IOS,
-    CcAppConfig.VERSION_ANDROID,
+    PrjAppConfig.VERSION_IOS,
+    PrjAppConfig.VERSION_ANDROID,
     versionApi,
     isLogger,
     isEnableLoggerDio,

@@ -25,7 +25,7 @@ abstract final class PrjColors {
   static const Color primaryGradientEnd = CcBaseColors.brand900;
 
   // ===========================================================================
-  // BRAND GRADIENT BACKGROUND (semantic tokens for BgGradientWidget)
+  // BRAND GRADIENT BACKGROUND (semantic tokens for CcGradientBackground)
   // ===========================================================================
   // Light mode: faint primary tint fading into the light surface.
   static const Color gradientTop = CcBaseColors.teal600;

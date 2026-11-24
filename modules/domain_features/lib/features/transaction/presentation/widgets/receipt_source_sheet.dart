@@ -49,7 +49,7 @@ class ReceiptSourceSheet extends StatelessWidget {
                 ),
               ),
               child: CcText(
-                el.tr(CcLocaleKeys.quick_entry_scan_receipt),
+                el.tr(PrjLocaleKeys.quick_entry_scan_receipt),
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
                   color: scheme.onPrimary,
                   fontWeight: CcTypographyParams.bold,
@@ -68,13 +68,13 @@ class ReceiptSourceSheet extends StatelessWidget {
                     _buildRow(
                       context,
                       icon: Icons.camera_alt_outlined,
-                      label: el.tr(CcLocaleKeys.quick_entry_take_photo),
+                      label: el.tr(PrjLocaleKeys.quick_entry_take_photo),
                       onTap: () => Navigator.of(context).pop(true),
                     ),
                     _buildRow(
                       context,
                       icon: Icons.photo_library_outlined,
-                      label: el.tr(CcLocaleKeys.quick_entry_choose_gallery),
+                      label: el.tr(PrjLocaleKeys.quick_entry_choose_gallery),
                       onTap: () => Navigator.of(context).pop(false),
                     ),
                     const CcSpaceXS(),

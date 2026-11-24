@@ -1,12 +1,12 @@
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/prj_amount_input_section.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../get_x/transaction_form_controller.dart';
 
 /// The amount field every entry form shows: the tappable amount, quick-amount
-/// chips, clear and copy. Wires [CcAmountInputSection] to [controller], so a
+/// chips, clear and copy. Wires [PrjAmountInputSection] to [controller], so a
 /// form only chooses its [label] and [activeColor].
 ///
 /// ```dart
@@ -29,7 +29,7 @@ class FormAmountSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => CcAmountInputSection(
+      () => PrjAmountInputSection(
         label: label,
         amountStr: controller.amountStr.value,
         quickAmounts: controller.quickAmounts,

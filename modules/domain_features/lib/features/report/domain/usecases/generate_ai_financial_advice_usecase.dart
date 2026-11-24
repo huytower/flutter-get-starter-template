@@ -52,21 +52,21 @@ class GenerateAiFinancialAdviceUseCase {
 
   static const int _maxHighlightsPerSection = 3;
 
-  /// The user turned AI features off ([ValidationFailure.message]).
+  /// The user turned AI features off ([CcValidationFailure.message]).
   static const String aiDisabledReason = 'ai_disabled';
 
   /// The device failed app attestation; same reason as the smart-entry flow.
   static const String deviceNotGenuineReason = 'device_not_genuine';
 
-  /// The model returned nothing usable ([ServerFailure.message]).
+  /// The model returned nothing usable ([CcServerFailure.message]).
   static const String emptyResponseReason = 'empty_response';
 
   /// The model answered, but no valid advice section could be read.
   static const String invalidResponseReason = 'invalid_response';
 
-  /// Never throws. Fails with a [ValidationFailure] when AI is off
+  /// Never throws. Fails with a [CcValidationFailure] when AI is off
   /// ([aiDisabledReason]) or the device is not genuine
-  /// ([deviceNotGenuineReason]), else a [ServerFailure] for an empty or
+  /// ([deviceNotGenuineReason]), else a [CcServerFailure] for an empty or
   /// unreadable answer. A failed local data source degrades to null/empty for
   /// that one input rather than blocking advice generation entirely.
   Future<Result<AiAdviceEntity, CcFailure>> call({
@@ -75,7 +75,7 @@ class GenerateAiFinancialAdviceUseCase {
     String? languageCode,
   }) async {
     if (!await _aiPreferences.isGeminiEnabled()) {
-      return const Error(ValidationFailure(aiDisabledReason));
+      return const Error(CcValidationFailure(aiDisabledReason));
     }
     final results = await Future.wait([
       _getInsights.call(),
@@ -163,7 +163,7 @@ class GenerateAiFinancialAdviceUseCase {
           ),
           StackTrace.current,
         );
-        return const Error(ServerFailure(invalidResponseReason));
+        return const Error(CcServerFailure(invalidResponseReason));
       }
 
       return Success(
@@ -171,7 +171,7 @@ class GenerateAiFinancialAdviceUseCase {
       );
     } catch (e, stack) {
       Catcher2.reportCheckedError(e, stack);
-      return const Error(ServerFailure(emptyResponseReason));
+      return const Error(CcServerFailure(emptyResponseReason));
     }
   }
 
@@ -179,8 +179,8 @@ class GenerateAiFinancialAdviceUseCase {
   @visibleForTesting
   static CcFailure failureFor(CcAiFailure? failure) =>
       failure?.kind == CcAiFailureKind.deviceAttestation
-      ? const ValidationFailure(deviceNotGenuineReason)
-      : const ServerFailure(emptyResponseReason);
+      ? const CcValidationFailure(deviceNotGenuineReason)
+      : const CcServerFailure(emptyResponseReason);
 
   /// False for failures that are expected and already handled in the UI:
   /// device attestation (App Check) failures, and any failure once the daily

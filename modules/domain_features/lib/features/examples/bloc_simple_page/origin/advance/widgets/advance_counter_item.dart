@@ -24,7 +24,7 @@ class AdvanceCounterItem extends StatelessWidget {
         },
         useDebounce: true,
         isBouncing: true,
-        child: CcCloseBtn(
+        child: CcCloseButton(
           onTap: () {
             'CloseButtonWidget() :'.Log();
             bloc.add(IncreaseEvent());

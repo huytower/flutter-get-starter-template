@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../get_x/wallet_controller.dart';
 import '../get_x/wallet_sheets.dart';
@@ -56,7 +56,7 @@ class _InvestmentListPageState extends State<InvestmentListPage> {
   }
 }
 
-class _InvestmentListView extends CcGetView<WalletController> {
+class _InvestmentListView extends PrjGetView<WalletController> {
   const _InvestmentListView({required this.controller});
 
   @override
@@ -79,7 +79,7 @@ class _InvestmentListView extends CcGetView<WalletController> {
         ),
       ),
       title: CcText(
-        el.tr(CcLocaleKeys.wallet_investments),
+        el.tr(PrjLocaleKeys.wallet_investments),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           fontWeight: CcTypographyParams.bold,
           color: context.ccColorScheme.onPrimary,
@@ -100,8 +100,8 @@ class _InvestmentListView extends CcGetView<WalletController> {
           return CcIconButton.bouncing(
             onTap: controller.toggleEditMode,
             tooltip: controller.isEditMode.value
-                ? el.tr(CcLocaleKeys.common_done)
-                : el.tr(CcLocaleKeys.common_edit),
+                ? el.tr(PrjLocaleKeys.common_done)
+                : el.tr(PrjLocaleKeys.common_edit),
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: Icon(
@@ -128,7 +128,7 @@ class _InvestmentListView extends CcGetView<WalletController> {
 
       if (wallets.isEmpty) {
         return CcText(
-          el.tr(CcLocaleKeys.wallet_investment_empty),
+          el.tr(PrjLocaleKeys.wallet_investment_empty),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.bodyMedium?.copyWith(

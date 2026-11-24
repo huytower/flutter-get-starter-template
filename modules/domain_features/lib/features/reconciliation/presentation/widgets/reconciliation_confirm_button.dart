@@ -17,7 +17,7 @@ class ReconciliationConfirmButton extends StatelessWidget {
       final busy = controller.isSubmitting.value;
 
       return EntrySubmitButton(
-        text: el.tr(CcLocaleKeys.reconciliation_confirm),
+        text: el.tr(PrjLocaleKeys.reconciliation_confirm),
         isSubmitting: busy,
         isEnabled: controller.canReconcile,
         onTap: () => controller.confirmReconciliation(context),

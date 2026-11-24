@@ -36,7 +36,7 @@ class ReconciliationMismatchWarning extends StatelessWidget {
             Expanded(
               child: CcText(
                 el.tr(
-                  CcLocaleKeys.reconciliation_mismatch_warning,
+                  PrjLocaleKeys.reconciliation_mismatch_warning,
                   namedArgs: {'count': count.toString()},
                 ),
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(

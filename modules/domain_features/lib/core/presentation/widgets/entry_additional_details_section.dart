@@ -54,7 +54,7 @@ class EntryAdditionalDetailsSection extends StatelessWidget {
         CcBouncing(
           onTap: onToggle,
           child: CcText(
-            el.tr(CcLocaleKeys.transaction_more_details),
+            el.tr(PrjLocaleKeys.transaction_more_details),
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
               color: context.ccColorScheme.onSurfaceVariant,
             ),
@@ -86,7 +86,7 @@ class EntryAdditionalDetailsSection extends StatelessWidget {
 
     return CcNoteInputField(
       controller: noteController,
-      hintText: el.tr(CcLocaleKeys.transaction_note_hint),
+      hintText: el.tr(PrjLocaleKeys.transaction_note_hint),
       maxLines: 3,
       onTap: onNoteTap,
       color: scheme.surfaceVariant.withAlpha(80),

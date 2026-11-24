@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../get_x/report_controller.dart';
 import '../widgets/report_daily_detail_section.dart';
 
@@ -17,7 +17,7 @@ class ReportDailyDetailPage extends StatelessWidget {
   Widget build(BuildContext context) => const _ReportDailyDetailView();
 }
 
-class _ReportDailyDetailView extends CcGetView<ReportController> {
+class _ReportDailyDetailView extends PrjGetView<ReportController> {
   const _ReportDailyDetailView();
 
   @override
@@ -41,7 +41,7 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
       ),
       title: Center(
         child: CcText(
-          el.tr(CcLocaleKeys.report_daily_detail),
+          el.tr(PrjLocaleKeys.report_daily_detail),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
@@ -56,7 +56,7 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
           }
           return CcIconButton.bouncing(
             onTap: () => controller.generateAiAdvice(context),
-            tooltip: el.tr(CcLocaleKeys.report_ai_advice_title),
+            tooltip: el.tr(PrjLocaleKeys.report_ai_advice_title),
             icon: Icon(
               Icons.auto_awesome,
               color: context.ccColorScheme.onPrimary,
@@ -72,8 +72,8 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
           return CcIconButton.bouncing(
             onTap: controller.toggleEditMode,
             tooltip: controller.isEditMode.value
-                ? el.tr(CcLocaleKeys.common_done)
-                : el.tr(CcLocaleKeys.common_edit),
+                ? el.tr(PrjLocaleKeys.common_done)
+                : el.tr(PrjLocaleKeys.common_edit),
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: Icon(

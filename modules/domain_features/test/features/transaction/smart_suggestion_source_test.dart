@@ -6,7 +6,7 @@ import 'package:domain_features/features/transaction/presentation/get_x/expense_
 import 'package:domain_features/features/transaction/presentation/get_x/income_form_controller.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/quick_entry_handler.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 
 class _FakeTransactionRepository implements TransactionRepository {
   @override
@@ -66,19 +66,19 @@ void main() {
       controller.locationMatchSuggestion.value = _match('3');
       expect(
         controller.activeSuggestion!.hintKey,
-        CcLocaleKeys.transaction_merchant_match_hint,
+        PrjLocaleKeys.transaction_merchant_match_hint,
       );
 
       controller.merchantMatchSuggestion.value = null;
       expect(
         controller.activeSuggestion!.hintKey,
-        CcLocaleKeys.transaction_bill_match_hint,
+        PrjLocaleKeys.transaction_bill_match_hint,
       );
 
       controller.billMatchSuggestion.value = null;
       expect(
         controller.activeSuggestion!.hintKey,
-        CcLocaleKeys.transaction_location_match_hint,
+        PrjLocaleKeys.transaction_location_match_hint,
       );
 
       controller.locationMatchSuggestion.value = null;
@@ -128,7 +128,7 @@ void main() {
 
       expect(
         suggestion.hintKey,
-        CcLocaleKeys.transaction_monthly_income_match_hint,
+        PrjLocaleKeys.transaction_monthly_income_match_hint,
       );
       expect(suggestion.match.id, '1');
     });

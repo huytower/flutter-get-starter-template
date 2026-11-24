@@ -7,7 +7,7 @@ import 'package:domain_features/core/exchange_rates/currency_conversion_service.
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/repositories/transaction_repository.dart';
@@ -73,17 +73,17 @@ class RecordLiabilityPaymentUseCase {
   ) async {
     if (params.amount <= 0) {
       return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
+        CcValidationFailure(PrjLocaleKeys.transaction_validation_amount_required),
       );
     }
     if (params.walletId.isEmpty) {
       return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_wallet_required),
+        CcValidationFailure(PrjLocaleKeys.transaction_validation_wallet_required),
       );
     }
     if (params.date.isAfter(DateTime.now())) {
       return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_future_date),
+        CcValidationFailure(PrjLocaleKeys.transaction_validation_future_date),
       );
     }
 
@@ -109,7 +109,7 @@ class RecordLiabilityPaymentUseCase {
         runtimeType.toString(),
       );
       return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_liability_not_found),
+        CcValidationFailure(PrjLocaleKeys.transaction_liability_not_found),
       );
     }
 
@@ -120,8 +120,8 @@ class RecordLiabilityPaymentUseCase {
       '[LIABILITY] ❌ Settlement ${params.amount} exceeds outstanding $outstanding | liabilityId=${liability.id}'
           .Log(runtimeType.toString());
       return const Error(
-        ValidationFailure(
-          CcLocaleKeys.transaction_liability_exceeds_outstanding,
+        CcValidationFailure(
+          PrjLocaleKeys.transaction_liability_exceeds_outstanding,
         ),
       );
     }
@@ -171,8 +171,8 @@ class RecordLiabilityPaymentUseCase {
       final availableBalance = balanceResult.tryGetSuccess()!;
       if (finalAmount > availableBalance) {
         return const Error(
-          ValidationFailure(
-            CcLocaleKeys.transaction_validation_insufficient_balance,
+          CcValidationFailure(
+            PrjLocaleKeys.transaction_validation_insufficient_balance,
           ),
         );
       }

@@ -8,7 +8,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
@@ -17,7 +17,7 @@ import '../../domain/usecases/get_liability_balances_usecase.dart';
 import 'borrow_form_controller.dart';
 
 @lazySingleton
-class LiabilityListController extends CcGetController {
+class LiabilityListController extends PrjGetController {
   LiabilityListController(
     this._getLiabilityBalances,
     this._deleteLiability,
@@ -153,7 +153,7 @@ class LiabilityListController extends CcGetController {
 
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
-          message: el.tr(CcLocaleKeys.common_done),
+          message: el.tr(PrjLocaleKeys.common_done),
         );
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(

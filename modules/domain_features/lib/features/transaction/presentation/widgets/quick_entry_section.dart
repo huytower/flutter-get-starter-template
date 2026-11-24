@@ -2,7 +2,7 @@ import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 
 import '../../../../core/ai/ai_fallback_preference_datasource.dart';
 import '../../../../core/constant/currency_constants.dart';
@@ -112,7 +112,7 @@ class QuickEntrySection extends StatelessWidget {
           decoration: InputDecoration(
             isCollapsed: true,
             border: InputBorder.none,
-            hintText: el.tr(CcLocaleKeys.quick_entry_hint),
+            hintText: el.tr(PrjLocaleKeys.quick_entry_hint),
             hintStyle: textTheme.labelSmall?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.4),
             ),
@@ -130,8 +130,8 @@ class QuickEntrySection extends StatelessWidget {
         CcSuggestionChip(
           label: el.tr(
             isCategoryMissing
-                ? CcLocaleKeys.quick_entry_category_missing
-                : CcLocaleKeys.quick_entry_parsed_result,
+                ? PrjLocaleKeys.quick_entry_category_missing
+                : PrjLocaleKeys.quick_entry_parsed_result,
             namedArgs: {'label': suggestionLabel!},
           ),
           accentColor: activeColor,
@@ -175,7 +175,7 @@ class QuickEntrySection extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (hasText)
-              CcClearBtn(
+              CcClearButton(
                 onTap: () {
                   controller.clear();
                   onClear?.call();

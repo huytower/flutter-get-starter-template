@@ -41,7 +41,7 @@ void main() async {
     final view = WidgetsBinding.instance.platformDispatcher.implicitView;
     if (view != null) {
       unawaited(
-        CcDeviceHelper.applyOrientationPolicy(
+        CcOrientationPolicy.apply(
           view.physicalSize / view.devicePixelRatio,
         ),
       );
@@ -70,15 +70,15 @@ void main() async {
     '❌ FATAL BOOTSTRAP ERROR | error=$error'.Log('Main');
     stackTrace.Log('Main');
     // Bootstrap failed before the app shell (and its MaterialApp) existed, so
-    // ErrorPage needs its own MaterialApp for Directionality/Theme/Overlay.
+    // CcErrorPage needs its own MaterialApp for Directionality/Theme/Overlay.
     runApp(
       MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: createLightTheme(),
-        home: ErrorPage(message: error.toString()),
+        home: CcErrorPage(message: error.toString()),
       ),
     );
-    '✅ ErrorPage launched'.Log('Main');
+    '✅ CcErrorPage launched'.Log('Main');
   }
 }
 
@@ -124,5 +124,5 @@ Future<void> _bootHive() async {
 }
 
 Future<void> _bootLocalization() async {
-  await CcLocalization.initialize();
+  await PrjLocalization.initialize();
 }

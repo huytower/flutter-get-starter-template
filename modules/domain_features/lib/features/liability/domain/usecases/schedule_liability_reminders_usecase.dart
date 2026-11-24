@@ -1,7 +1,7 @@
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 
 import '../../../notification/notification_service.dart';
 import '../../../notification/reminder_ids.dart';
@@ -49,9 +49,9 @@ class ScheduleLiabilityRemindersUseCase {
 
       await _notificationService.scheduleAt(
         id: ReminderIds.liabilityReminder(liability.id, i),
-        title: el.tr(CcLocaleKeys.notification_loan_due_title),
+        title: el.tr(PrjLocaleKeys.notification_loan_due_title),
         body: el.tr(
-          CcLocaleKeys.notification_loan_due_body,
+          PrjLocaleKeys.notification_loan_due_body,
           namedArgs: {
             'date': '${dueDate.day}/${dueDate.month}/${dueDate.year}',
           },

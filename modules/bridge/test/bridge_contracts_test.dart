@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
 import 'package:bridge/core/di/di.module.dart';
 import 'package:bridge/export_bridge.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
@@ -69,7 +69,7 @@ void main() {
       await getIt.reset();
       await BridgePackageModule().init(GetItHelper(getIt));
       regional = getIt<RegionalSettingsContract>();
-      CcAppStorage.instance = CcAppStorage();
+      PrjAppStorage.instance = PrjAppStorage();
     });
 
     tearDown(() => getIt.reset());
@@ -80,11 +80,11 @@ void main() {
         final emitted = expectLater(regional.detectedLanguageCode, emits('ja'));
 
         // FR has a currency but no app language: nothing is emitted.
-        CcAppStorage.instance.currencyDetectionCountryCode = 'FR';
+        PrjAppStorage.instance.currencyDetectionCountryCode = 'FR';
         CurrencyConstants.onRegionalSettingsChanged.value++;
         await Future<void>.delayed(Duration.zero);
 
-        CcAppStorage.instance.currencyDetectionCountryCode = 'JP';
+        PrjAppStorage.instance.currencyDetectionCountryCode = 'JP';
         CurrencyConstants.onRegionalSettingsChanged.value++;
 
         await emitted;

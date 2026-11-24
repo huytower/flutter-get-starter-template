@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
@@ -7,7 +7,7 @@ import 'package:hive_ce/hive_ce.dart';
 
 part 'wallet_hive_model.g.dart';
 
-@HiveType(typeId: CcHiveBox.WALLET_TYPE_ID)
+@HiveType(typeId: PrjHiveBox.WALLET_TYPE_ID)
 class WalletHiveModel extends HiveObject {
   @HiveField(0)
   final String id;

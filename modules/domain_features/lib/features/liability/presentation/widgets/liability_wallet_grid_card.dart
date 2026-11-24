@@ -144,7 +144,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
           ),
           const CcSpaceXS(),
           CcText(
-            el.tr(CcLocaleKeys.liability_remaining_balance),
+            el.tr(PrjLocaleKeys.liability_remaining_balance),
             align: Alignment.center,
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -179,7 +179,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              TextSpan(text: el.tr(CcLocaleKeys.liability_repaid_prefix)),
+              TextSpan(text: el.tr(PrjLocaleKeys.liability_repaid_prefix)),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   repaid,
@@ -215,7 +215,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              TextSpan(text: el.tr(CcLocaleKeys.liability_borrow_prefix)),
+              TextSpan(text: el.tr(PrjLocaleKeys.liability_borrow_prefix)),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   liability.principalAmount,

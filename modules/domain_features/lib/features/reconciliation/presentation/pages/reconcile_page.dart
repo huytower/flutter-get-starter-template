@@ -8,7 +8,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/get_x/prj_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/presentation/widgets/wallet_display_name.dart';
@@ -22,7 +22,7 @@ import '../widgets/reconciliation_summary.dart';
 import '../widgets/wallet_reconcile_tile.dart';
 
 @RoutePage()
-class ReconcilePage extends CcGetView<ReconciliationController> {
+class ReconcilePage extends PrjGetView<ReconciliationController> {
   const ReconcilePage({super.key});
 
   @override
@@ -38,7 +38,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         onTap: () => Navigator.of(context).pop(),
       ),
       title: CcText(
-        el.tr(CcLocaleKeys.reconciliation_title),
+        el.tr(PrjLocaleKeys.reconciliation_title),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: context.ccColorScheme.onPrimary,
           fontWeight: CcTypographyParams.bold,
@@ -182,7 +182,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   Widget _buildInstructionText(BuildContext context) {
     return CcPadding(
       CcText(
-        el.tr(CcLocaleKeys.reconciliation_instruction),
+        el.tr(PrjLocaleKeys.reconciliation_instruction),
         textStyle: context.ccTextTheme.labelMedium?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant,
           fontWeight: FontWeight.bold,
@@ -199,7 +199,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     // The one-line preview is plain text: drop the `**keyword**` markers that
     // the guide sheet turns into emphasis.
     final text = el
-        .tr(CcLocaleKeys.reconciliation_description_line_1)
+        .tr(PrjLocaleKeys.reconciliation_description_line_1)
         .replaceAll('**', '');
     return CcBouncing(
       onTap: () => ReconciliationGuideSheet.show(context),
@@ -230,7 +230,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
             ),
             const CcSpaceXS(),
             CcText(
-              el.tr(CcLocaleKeys.wallet_see_all),
+              el.tr(PrjLocaleKeys.wallet_see_all),
               textStyle: context.ccTextTheme.labelSmall?.copyWith(
                 color: context.ccColorScheme.primary,
                 fontSize: context.respFontSize(9),
@@ -283,7 +283,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
 /// daily transaction detail table, so the user can review that wallet's
 /// income/expense entries before committing a reconciliation adjustment.
 ///
-/// [ReportController] is a long-lived GetX singleton (see [CcGetView.build]),
+/// [ReportController] is a long-lived GetX singleton (see [PrjGetView.build]),
 /// so its filter must be set on the live instance before the route is
 /// pushed rather than passed as a route param — the same pattern other
 /// report entry points already use to force a refresh on re-entry.

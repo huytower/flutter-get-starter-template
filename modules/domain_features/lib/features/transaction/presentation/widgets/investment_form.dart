@@ -243,8 +243,8 @@ class _InvestmentFormState extends State<InvestmentForm> {
       () => EntrySubmitButton(
         text: el.tr(
           controller.direction.value == InvestmentDirection.contribute
-              ? CcLocaleKeys.transaction_record_investment
-              : CcLocaleKeys.transaction_record_investment_return,
+              ? PrjLocaleKeys.transaction_record_investment
+              : PrjLocaleKeys.transaction_record_investment_return,
         ),
         isSubmitting: controller.isSubmitting.value,
         isEnabled: controller.canSubmit,
@@ -276,7 +276,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcFormLabel(text: el.tr(CcLocaleKeys.transaction_investment_item)),
+        CcFormLabel(text: el.tr(PrjLocaleKeys.transaction_investment_item)),
         const CcSpaceXS(),
         TextField(
           controller: controller.newItemNameController,
@@ -284,7 +284,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
           onChanged: controller.setNewItemName,
           style: context.ccTextTheme.bodyLarge,
           decoration: InputDecoration(
-            hintText: el.tr(CcLocaleKeys.transaction_new_investment_item_hint),
+            hintText: el.tr(PrjLocaleKeys.transaction_new_investment_item_hint),
             border: context.inputBorderTextField,
             contentPadding: EdgeInsets.symmetric(
               horizontal: context.respDim(12),
@@ -293,7 +293,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
             suffixIcon: !controller.quickEntry.isVip.value
                 ? Tooltip(
                     message: el.tr(
-                      CcLocaleKeys.transaction_investment_item_vip_locked,
+                      PrjLocaleKeys.transaction_investment_item_vip_locked,
                       namedArgs: {'name': categoryName},
                     ),
                     child: Icon(
@@ -316,7 +316,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
   ) {
     return FormAmountSection(
       controller: controller,
-      label: el.tr(CcLocaleKeys.transaction_amount),
+      label: el.tr(PrjLocaleKeys.transaction_amount),
       activeColor: accentColor,
       fieldKey: _amountFieldKey,
     );
@@ -329,8 +329,8 @@ class _InvestmentFormState extends State<InvestmentForm> {
   ) {
     final labelKey =
         controller.direction.value == InvestmentDirection.contribute
-        ? CcLocaleKeys.transaction_source_investment
-        : CcLocaleKeys.transaction_destination_investment;
+        ? PrjLocaleKeys.transaction_source_investment
+        : PrjLocaleKeys.transaction_destination_investment;
     return FormWalletSection(
       controller: controller,
       label: el.tr(labelKey),

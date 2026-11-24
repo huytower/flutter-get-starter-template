@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
@@ -122,7 +122,7 @@ class FinancialDataSyncService {
 
   /// Starts watching connectivity in the background and seeds the initial
   /// [pendingCount]. Call once at app boot (mirrors `NotificationService
-  /// .init()`); safe to call more than once.
+  /// .ensureInitialized()`); safe to call more than once.
   void startWatching() {
     _connectivitySubscription ??= _connection.onStatusChange.listen((status) {
       final online = status == InternetStatus.connected;
@@ -202,7 +202,7 @@ class FinancialDataSyncService {
       if (_observedUserId != null && _observedUserId != nextUserId) {
         await _clearFinancialCache();
       }
-      final previousOwner = CcAppStorage.instance.financialDataOwnerId;
+      final previousOwner = PrjAppStorage.instance.financialDataOwnerId;
       await _ensureCacheOwner(nextUserId);
       _observedUserId = nextUserId;
       // A returning account may have local writes that were made while the
@@ -227,7 +227,7 @@ class FinancialDataSyncService {
       final userId = _userId;
       if (userId == null) return;
 
-      final previousOwner = CcAppStorage.instance.financialDataOwnerId;
+      final previousOwner = PrjAppStorage.instance.financialDataOwnerId;
       await _ensureCacheOwner(userId);
       _observedUserId = userId;
       if (previousOwner == userId) {
@@ -238,7 +238,7 @@ class FinancialDataSyncService {
   }
 
   Future<void> _ensureCacheOwner(String userId) async {
-    final previousOwner = CcAppStorage.instance.financialDataOwnerId;
+    final previousOwner = PrjAppStorage.instance.financialDataOwnerId;
     if (previousOwner != userId) {
       // `previousOwner == null` after a logout means the cache now holds the
       // guest account's own records. They have no cloud destination yet, so
@@ -247,30 +247,30 @@ class FinancialDataSyncService {
       // work disappear with no trace.
       await _clearFinancialCache();
     }
-    CcAppStorage.instance.financialDataOwnerId = userId;
-    await CcAppStorage.instance.save();
+    PrjAppStorage.instance.financialDataOwnerId = userId;
+    await PrjAppStorage.instance.save();
   }
 
   /// Box names wired into [_clearFinancialCache].
   ///
   /// `hive_ce` matches a box's registered model by **exact** `Type`
-  /// equality, so those two methods cannot iterate [CcHiveBox.financialBoxes]
+  /// equality, so those two methods cannot iterate [PrjHiveBox.financialBoxes]
   /// generically — the type argument has to be supplied per box. This set is
   /// what makes that wiring auditable: if a seventh financial box is added, the
   /// guard below reports it instead of silently leaving it behind.
   static const Set<String> _typedFinancialBoxes = {
-    CcHiveBox.WALLET_BOX_NAME,
-    CcHiveBox.CATEGORY_BOX_NAME,
-    CcHiveBox.TRANSACTION_BOX_NAME,
-    CcHiveBox.BUDGET_BOX_NAME,
-    CcHiveBox.RECONCILIATION_BOX_NAME,
-    CcHiveBox.LIABILITY_BOX_NAME,
+    PrjHiveBox.WALLET_BOX_NAME,
+    PrjHiveBox.CATEGORY_BOX_NAME,
+    PrjHiveBox.TRANSACTION_BOX_NAME,
+    PrjHiveBox.BUDGET_BOX_NAME,
+    PrjHiveBox.RECONCILIATION_BOX_NAME,
+    PrjHiveBox.LIABILITY_BOX_NAME,
   };
 
   /// Fails loudly when a financial box has no typed accessor, rather than
   /// letting it be skipped in silence on every logout.
   static void _assertAllFinancialBoxesWired() {
-    final unwired = CcHiveBox.financialBoxes
+    final unwired = PrjHiveBox.financialBoxes
         .where((name) => !_typedFinancialBoxes.contains(name))
         .toList(growable: false);
     if (unwired.isEmpty) return;
@@ -300,14 +300,14 @@ class FinancialDataSyncService {
 
   Future<void> _clearFinancialCache() async {
     _assertAllFinancialBoxesWired();
-    await _wipeBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
-    await _wipeBox<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
-    await _wipeBox<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
-    await _wipeBox<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
-    await _wipeBox<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
-    await _wipeBox<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
-    CcAppStorage.instance.financialDataOwnerId = null;
-    await CcAppStorage.instance.save();
+    await _wipeBox<WalletHiveModel>(PrjHiveBox.WALLET_BOX_NAME);
+    await _wipeBox<CategoryModel>(PrjHiveBox.CATEGORY_BOX_NAME);
+    await _wipeBox<TransactionModel>(PrjHiveBox.TRANSACTION_BOX_NAME);
+    await _wipeBox<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME);
+    await _wipeBox<ReconciliationModel>(PrjHiveBox.RECONCILIATION_BOX_NAME);
+    await _wipeBox<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME);
+    PrjAppStorage.instance.financialDataOwnerId = null;
+    await PrjAppStorage.instance.save();
     pendingCount.value = 0;
   }
 
@@ -459,27 +459,27 @@ class FinancialDataSyncService {
 
   int _countPending() {
     final walletPending = _countPendingInBox<WalletHiveModel>(
-      CcHiveBox.WALLET_BOX_NAME,
+      PrjHiveBox.WALLET_BOX_NAME,
       (m) => m.syncMetadata.status,
     );
     final txPending = _countPendingInBox<TransactionModel>(
-      CcHiveBox.TRANSACTION_BOX_NAME,
+      PrjHiveBox.TRANSACTION_BOX_NAME,
       (m) => m.syncMetadata.status,
     );
     final budgetPending = _countPendingInBox<BudgetLimitModel>(
-      CcHiveBox.BUDGET_BOX_NAME,
+      PrjHiveBox.BUDGET_BOX_NAME,
       (m) => m.syncMetadata.status,
     );
     final reconPending = _countPendingInBox<ReconciliationModel>(
-      CcHiveBox.RECONCILIATION_BOX_NAME,
+      PrjHiveBox.RECONCILIATION_BOX_NAME,
       (m) => m.syncMetadata.status,
     );
     final catPending = _countPendingInBox<CategoryModel>(
-      CcHiveBox.CATEGORY_BOX_NAME,
+      PrjHiveBox.CATEGORY_BOX_NAME,
       (m) => m.syncMetadata.status,
     );
     final liabilityPending = _countPendingInBox<LiabilityModel>(
-      CcHiveBox.LIABILITY_BOX_NAME,
+      PrjHiveBox.LIABILITY_BOX_NAME,
       (m) => m.syncMetadata.status,
     );
     final total =
@@ -540,10 +540,10 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingWallets(String userId) async {
-    if (!Hive.isBoxOpen(CcHiveBox.WALLET_BOX_NAME)) return;
+    if (!Hive.isBoxOpen(PrjHiveBox.WALLET_BOX_NAME)) return;
     Box<WalletHiveModel> box;
     try {
-      box = Hive.box<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+      box = Hive.box<WalletHiveModel>(PrjHiveBox.WALLET_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;
@@ -569,10 +569,10 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingTransactions(String userId) async {
-    if (!Hive.isBoxOpen(CcHiveBox.TRANSACTION_BOX_NAME)) return;
+    if (!Hive.isBoxOpen(PrjHiveBox.TRANSACTION_BOX_NAME)) return;
     Box<TransactionModel> box;
     try {
-      box = Hive.box<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
+      box = Hive.box<TransactionModel>(PrjHiveBox.TRANSACTION_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;
@@ -598,10 +598,10 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingBudgets(String userId) async {
-    if (!Hive.isBoxOpen(CcHiveBox.BUDGET_BOX_NAME)) return;
+    if (!Hive.isBoxOpen(PrjHiveBox.BUDGET_BOX_NAME)) return;
     Box<BudgetLimitModel> box;
     try {
-      box = Hive.box<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+      box = Hive.box<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;
@@ -627,10 +627,10 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingReconciliations(String userId) async {
-    if (!Hive.isBoxOpen(CcHiveBox.RECONCILIATION_BOX_NAME)) return;
+    if (!Hive.isBoxOpen(PrjHiveBox.RECONCILIATION_BOX_NAME)) return;
     Box<ReconciliationModel> box;
     try {
-      box = Hive.box<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
+      box = Hive.box<ReconciliationModel>(PrjHiveBox.RECONCILIATION_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;
@@ -656,10 +656,10 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingCategories(String userId) async {
-    if (!Hive.isBoxOpen(CcHiveBox.CATEGORY_BOX_NAME)) return;
+    if (!Hive.isBoxOpen(PrjHiveBox.CATEGORY_BOX_NAME)) return;
     Box<CategoryModel> box;
     try {
-      box = Hive.box<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+      box = Hive.box<CategoryModel>(PrjHiveBox.CATEGORY_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;
@@ -685,10 +685,10 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingLiabilities(String userId) async {
-    if (!Hive.isBoxOpen(CcHiveBox.LIABILITY_BOX_NAME)) return;
+    if (!Hive.isBoxOpen(PrjHiveBox.LIABILITY_BOX_NAME)) return;
     Box<LiabilityModel> box;
     try {
-      box = Hive.box<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
+      box = Hive.box<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;
@@ -714,7 +714,7 @@ class FinancialDataSyncService {
   }
 
   Future<void> _pullWallets(String userId) async {
-    final box = await _openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    final box = await _openBox<WalletHiveModel>(PrjHiveBox.WALLET_BOX_NAME);
     if (box == null) return;
     await _pullAndMerge<WalletHiveModel>(
       userId: userId,
@@ -726,7 +726,7 @@ class FinancialDataSyncService {
 
   Future<void> _pullTransactions(String userId) async {
     final box = await _openBox<TransactionModel>(
-      CcHiveBox.TRANSACTION_BOX_NAME,
+      PrjHiveBox.TRANSACTION_BOX_NAME,
     );
     if (box == null) return;
     await _pullAndMerge<TransactionModel>(
@@ -738,7 +738,7 @@ class FinancialDataSyncService {
   }
 
   Future<void> _pullBudgets(String userId) async {
-    final box = await _openBox<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    final box = await _openBox<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME);
     if (box == null) return;
     await _pullAndMerge<BudgetLimitModel>(
       userId: userId,
@@ -750,7 +750,7 @@ class FinancialDataSyncService {
 
   Future<void> _pullReconciliations(String userId) async {
     final box = await _openBox<ReconciliationModel>(
-      CcHiveBox.RECONCILIATION_BOX_NAME,
+      PrjHiveBox.RECONCILIATION_BOX_NAME,
     );
     if (box == null) return;
     await _pullAndMerge<ReconciliationModel>(
@@ -762,7 +762,7 @@ class FinancialDataSyncService {
   }
 
   Future<void> _pullCategories(String userId) async {
-    final box = await _openBox<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+    final box = await _openBox<CategoryModel>(PrjHiveBox.CATEGORY_BOX_NAME);
     if (box == null) return;
     await _pullAndMerge<CategoryModel>(
       userId: userId,
@@ -773,7 +773,7 @@ class FinancialDataSyncService {
   }
 
   Future<void> _pullLiabilities(String userId) async {
-    final box = await _openBox<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
+    final box = await _openBox<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME);
     if (box == null) return;
     await _pullAndMerge<LiabilityModel>(
       userId: userId,

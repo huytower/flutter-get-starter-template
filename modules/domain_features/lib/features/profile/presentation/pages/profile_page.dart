@@ -2,7 +2,7 @@ import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/export_micro_features.dart'
     show AuthCancelledFailure, authFailureMessage;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/get_x/cc_get_view.dart';
+import 'package:domain_features/core/get_x/prj_get_view.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +20,7 @@ import '../widgets/profile_page_header.dart';
 import '../widgets/profile_settings_tile.dart';
 import '../widgets/profile_sign_in_reminder.dart';
 
-class ProfilePage extends CcGetView<ProfileController> {
+class ProfilePage extends PrjGetView<ProfileController> {
   const ProfilePage({super.key});
 
   @override
@@ -217,8 +217,8 @@ class ProfilePage extends CcGetView<ProfileController> {
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.tune_rounded,
-          label: el.tr(CcLocaleKeys.category_settings_title),
-          subtitle: el.tr(CcLocaleKeys.category_settings_subtitle),
+          label: el.tr(PrjLocaleKeys.category_settings_title),
+          subtitle: el.tr(PrjLocaleKeys.category_settings_subtitle),
           onTap: () => controller.navigateToCategorySettings(context),
           badge: guideline.isTaskActive('categories')
               ? PrjGuidelineBadge(
@@ -233,11 +233,11 @@ class ProfilePage extends CcGetView<ProfileController> {
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.cake_rounded,
-          label: el.tr(CcLocaleKeys.profile_birth_year),
-          subtitle: el.tr(CcLocaleKeys.profile_birth_year_subtitle),
+          label: el.tr(PrjLocaleKeys.profile_birth_year),
+          subtitle: el.tr(PrjLocaleKeys.profile_birth_year_subtitle),
           trailingLabel:
               controller.settings.value.birthYear?.toString() ??
-              el.tr(CcLocaleKeys.common_not_set),
+              el.tr(PrjLocaleKeys.common_not_set),
           onTap: () => controller.pickBirthYear(context),
           badge: guideline.isTaskActive('birth_year')
               ? PrjGuidelineBadge(
@@ -252,8 +252,8 @@ class ProfilePage extends CcGetView<ProfileController> {
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.calendar_today_rounded,
-          label: el.tr(CcLocaleKeys.profile_weekly_audit_day),
-          subtitle: el.tr(CcLocaleKeys.profile_weekly_audit_day_subtitle),
+          label: el.tr(PrjLocaleKeys.profile_weekly_audit_day),
+          subtitle: el.tr(PrjLocaleKeys.profile_weekly_audit_day_subtitle),
           trailingLabel: controller.weeklyAuditDayName,
           onTap: () => controller.pickWeeklyAuditDay(context),
         ),
@@ -261,8 +261,8 @@ class ProfilePage extends CcGetView<ProfileController> {
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.lock_open_rounded,
-          label: el.tr(CcLocaleKeys.profile_force_full_access),
-          subtitle: el.tr(CcLocaleKeys.profile_force_full_access_subtitle),
+          label: el.tr(PrjLocaleKeys.profile_force_full_access),
+          subtitle: el.tr(PrjLocaleKeys.profile_force_full_access_subtitle),
           showChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
@@ -282,8 +282,8 @@ class ProfilePage extends CcGetView<ProfileController> {
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.auto_awesome_rounded,
-          label: el.tr(CcLocaleKeys.profile_ai_sharing),
-          subtitle: el.tr(CcLocaleKeys.profile_ai_sharing_subtitle),
+          label: el.tr(PrjLocaleKeys.profile_ai_sharing),
+          subtitle: el.tr(PrjLocaleKeys.profile_ai_sharing_subtitle),
           showChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
@@ -303,8 +303,8 @@ class ProfilePage extends CcGetView<ProfileController> {
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.notifications_rounded,
-          label: el.tr(CcLocaleKeys.profile_reminder),
-          subtitle: el.tr(CcLocaleKeys.profile_reminder_subtitle),
+          label: el.tr(PrjLocaleKeys.profile_reminder),
+          subtitle: el.tr(PrjLocaleKeys.profile_reminder_subtitle),
           showChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
@@ -328,9 +328,9 @@ class ProfilePage extends CcGetView<ProfileController> {
         return ProfileSettingsTile(
           icon: Icons.palette_rounded,
           label: isDarkMode
-              ? el.tr(CcLocaleKeys.settings_theme_dark)
-              : el.tr(CcLocaleKeys.settings_theme_light),
-          subtitle: el.tr(CcLocaleKeys.profile_theme_subtitle),
+              ? el.tr(PrjLocaleKeys.settings_theme_dark)
+              : el.tr(PrjLocaleKeys.settings_theme_light),
+          subtitle: el.tr(PrjLocaleKeys.profile_theme_subtitle),
           showChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
@@ -348,28 +348,28 @@ class ProfilePage extends CcGetView<ProfileController> {
       }),
       ProfileSettingsTile(
         icon: Icons.language_rounded,
-        label: el.tr(CcLocaleKeys.settings_language),
-        subtitle: el.tr(CcLocaleKeys.profile_language_subtitle),
+        label: el.tr(PrjLocaleKeys.settings_language),
+        subtitle: el.tr(PrjLocaleKeys.profile_language_subtitle),
         trailingLabel: controller.currentLanguageName(context),
         onTap: () => controller.pickLanguage(context),
       ),
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.attach_money_rounded,
-          label: el.tr(CcLocaleKeys.profile_currency),
-          subtitle: el.tr(CcLocaleKeys.profile_currency_subtitle),
+          label: el.tr(PrjLocaleKeys.profile_currency),
+          subtitle: el.tr(PrjLocaleKeys.profile_currency_subtitle),
           trailingLabel: controller.settings.value.currencyCode,
           onTap: () => controller.pickCurrency(context),
         ),
       ),
       ProfileSettingsTile(
         icon: Icons.play_circle_outline_rounded,
-        label: el.tr(CcLocaleKeys.profile_view_tutorial),
-        subtitle: el.tr(CcLocaleKeys.profile_view_tutorial_subtitle),
+        label: el.tr(PrjLocaleKeys.profile_view_tutorial),
+        subtitle: el.tr(PrjLocaleKeys.profile_view_tutorial_subtitle),
         onTap: () {
           final count = guideline.completedTasks.length;
           final desc = el.tr(
-            CcLocaleKeys.guideline_reset_confirm_desc,
+            PrjLocaleKeys.guideline_reset_confirm_desc,
             namedArgs: {'count': count.toString()},
           );
           GuidelineResetBottomSheet.show(
@@ -382,14 +382,14 @@ class ProfilePage extends CcGetView<ProfileController> {
       ),
       ProfileSettingsTile(
         icon: Icons.description_rounded,
-        label: el.tr(CcLocaleKeys.profile_terms),
-        subtitle: el.tr(CcLocaleKeys.profile_terms_subtitle),
+        label: el.tr(PrjLocaleKeys.profile_terms),
+        subtitle: el.tr(PrjLocaleKeys.profile_terms_subtitle),
         onTap: () => controller.navigateToTerms(context),
       ),
       ProfileSettingsTile(
         icon: Icons.star_rate_rounded,
-        label: el.tr(CcLocaleKeys.profile_rate_app),
-        subtitle: el.tr(CcLocaleKeys.profile_rate_app_subtitle),
+        label: el.tr(PrjLocaleKeys.profile_rate_app),
+        subtitle: el.tr(PrjLocaleKeys.profile_rate_app_subtitle),
         onTap: () => AppRatingSheet.show(context, controller.feedbackReporter),
       ),
     ];
@@ -405,7 +405,7 @@ class ProfilePage extends CcGetView<ProfileController> {
           CcBouncing(
             onTap: block == null ? () => _handleLogout(context) : null,
             child: CcText(
-              el.tr(CcLocaleKeys.auth_logout),
+              el.tr(PrjLocaleKeys.auth_logout),
               textStyle: context.ccTextTheme.bodySmall?.copyWith(
                 color: block == null
                     ? context.ccColorScheme.onSurfaceVariant
@@ -428,9 +428,9 @@ class ProfilePage extends CcGetView<ProfileController> {
     CcSnackBarHelper.showErrorSnackBar(
       context: context,
       message: switch (result) {
-        LogoutResult.offline => el.tr(CcLocaleKeys.sync_logout_blocked_offline),
+        LogoutResult.offline => el.tr(PrjLocaleKeys.sync_logout_blocked_offline),
         LogoutResult.pendingSync => el.tr(
-          CcLocaleKeys.sync_logout_blocked_pending,
+          PrjLocaleKeys.sync_logout_blocked_pending,
         ),
         LogoutResult.success => '',
       },
@@ -467,7 +467,7 @@ class ProfilePage extends CcGetView<ProfileController> {
         );
       },
       child: CcText(
-        el.tr(CcLocaleKeys.profile_delete_account),
+        el.tr(PrjLocaleKeys.profile_delete_account),
         textStyle: context.ccTextTheme.bodySmall?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
@@ -486,7 +486,7 @@ class ProfilePage extends CcGetView<ProfileController> {
       children: [
         const CcSpaceSM(),
         CcText(
-          el.tr(CcLocaleKeys.app_slogan),
+          el.tr(PrjLocaleKeys.app_slogan),
           maxLines: 2,
           textStyle: textTheme.bodySmall?.copyWith(
             color: scheme.onSurfaceVariant.withOpacity(0.8),
@@ -497,20 +497,20 @@ class ProfilePage extends CcGetView<ProfileController> {
         const CcSpaceXS(),
         _buildContactBox(
           context,
-          role: el.tr(CcLocaleKeys.app_role_hr),
-          name: el.tr(CcLocaleKeys.app_author_hr_name),
-          email: el.tr(CcLocaleKeys.app_author_hr_email),
+          role: el.tr(PrjLocaleKeys.app_role_hr),
+          name: el.tr(PrjLocaleKeys.app_author_hr_name),
+          email: el.tr(PrjLocaleKeys.app_author_hr_email),
         ),
         _buildContactBox(
           context,
-          role: el.tr(CcLocaleKeys.app_role_tech),
-          name: el.tr(CcLocaleKeys.app_author_tech_name),
-          email: el.tr(CcLocaleKeys.app_author_tech_email),
+          role: el.tr(PrjLocaleKeys.app_role_tech),
+          name: el.tr(PrjLocaleKeys.app_author_tech_name),
+          email: el.tr(PrjLocaleKeys.app_author_tech_email),
         ),
         GestureDetector(
           onLongPress: () => controller.openCrashLogViewer(context),
           child: CcText(
-            el.tr(CcLocaleKeys.app_address),
+            el.tr(PrjLocaleKeys.app_address),
             textStyle: textTheme.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant.withOpacity(0.5),
             ),
@@ -538,7 +538,7 @@ class ProfilePage extends CcGetView<ProfileController> {
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
-            CcLocaleKeys.app_copied_email,
+            PrjLocaleKeys.app_copied_email,
             namedArgs: {'email': email},
           ),
         );

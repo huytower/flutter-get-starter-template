@@ -3,7 +3,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
-import 'package:domain_features/core/get_x/cc_get_controller.dart';
+import 'package:domain_features/core/get_x/prj_get_controller.dart';
 import 'package:domain_features/features/wallet/domain/entities/wallet_totals.dart';
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:domain_features/features/wallet/domain/services/emergency_fund_access.dart';
@@ -28,7 +28,7 @@ enum WalletDeleteOutcome { success, notEmpty, protected, error }
 /// [WalletChangeEffects] tells other features about changes. The bottom
 /// sheets are opened through the `WalletSheets` extension.
 @lazySingleton
-class WalletController extends CcGetController {
+class WalletController extends PrjGetController {
   WalletController(
     this._repository,
     this._loadOverview,
@@ -277,7 +277,7 @@ class WalletController extends CcGetController {
     if (type == WalletType.emergencyFund &&
         !await _emergencyFund.isUnlocked()) {
       errorMessage.value = el.tr(
-        CcLocaleKeys.wallet_emergency_fund_locked_hint,
+        PrjLocaleKeys.wallet_emergency_fund_locked_hint,
       );
       return;
     }

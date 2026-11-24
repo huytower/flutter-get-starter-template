@@ -26,7 +26,7 @@ class UndoReconciliationUseCase {
     final latest = latestResult.tryGetSuccess();
     if (latest == null) {
       return const Error(
-        ValidationFailure('Không tìm thấy đợt đối soát nào để hoàn tác!'),
+        CcValidationFailure('Không tìm thấy đợt đối soát nào để hoàn tác!'),
       );
     }
 

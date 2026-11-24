@@ -18,7 +18,7 @@ class FinanceLineArtBackground extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const BgGradientWidget(topAlpha: 45),
+            const CcGradientBackground(topAlpha: 45),
             CustomPaint(
               painter: _FinanceLineArtPainter(
                 lineColor: scheme.primary.withValues(alpha: 0.28),

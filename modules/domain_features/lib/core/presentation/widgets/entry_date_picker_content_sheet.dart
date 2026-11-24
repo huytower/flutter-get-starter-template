@@ -418,7 +418,7 @@ class _EntryDatePickerContentSheetState
           TextButton(
             onPressed: () => Navigator.of(context).pop(null),
             child: CcText(
-              el.tr(CcLocaleKeys.common_cancel),
+              el.tr(PrjLocaleKeys.common_cancel),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,
@@ -429,7 +429,7 @@ class _EntryDatePickerContentSheetState
           TextButton(
             onPressed: () => Navigator.of(context).pop(_selectedDate),
             child: CcText(
-              el.tr(CcLocaleKeys.common_ok),
+              el.tr(PrjLocaleKeys.common_ok),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,

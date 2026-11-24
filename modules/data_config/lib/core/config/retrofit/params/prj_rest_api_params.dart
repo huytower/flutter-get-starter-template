@@ -43,7 +43,7 @@
 ///   }
 /// }
 /// ```
-enum CcRestApiParams {
+enum PrjRestApiParams {
   /// Business status code (e.g., "0" for success, or specific error codes)
   code,
 

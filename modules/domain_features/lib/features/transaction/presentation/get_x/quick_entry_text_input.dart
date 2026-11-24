@@ -221,7 +221,7 @@ class QuickEntryTextInput {
 
     if (suggestion.isEmpty) {
       _session.quickEntryErrorKey.value =
-          CcLocaleKeys.quick_entry_could_not_parse;
+          PrjLocaleKeys.quick_entry_could_not_parse;
       return;
     }
 

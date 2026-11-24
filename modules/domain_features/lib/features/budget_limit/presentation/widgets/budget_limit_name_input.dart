@@ -21,13 +21,13 @@ class BudgetLimitNameInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return CcNameInputField(
       controller: controller,
-      hintText: el.tr(CcLocaleKeys.budget_name_hint),
+      hintText: el.tr(PrjLocaleKeys.budget_name_hint),
       errorText: errorText,
       onClear: onClear,
       onTap: onTap,
       maxLength: 30,
       maxLengthWarningText: el.tr(
-        CcLocaleKeys.validation_max_length_reached,
+        PrjLocaleKeys.validation_max_length_reached,
         namedArgs: {'count': '30'},
       ),
     );

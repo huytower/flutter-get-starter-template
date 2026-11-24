@@ -219,7 +219,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
               ),
               const CcSpaceSM(),
               CcText(
-                el.tr(CcLocaleKeys.budget_customize_category),
+                el.tr(PrjLocaleKeys.budget_customize_category),
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
                   color: scheme.onSurfaceVariant.withOpacity(0.5),
                   fontWeight: FontWeight.w500,

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
-import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/features/profile/data/datasources/local/profile_local_datasource.dart';
@@ -20,7 +20,7 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     tempDir = Directory.systemTemp.createTempSync('profile_currency_test');
     Hive.init(tempDir.path);
-    await CcAppStorage.register();
+    await PrjAppStorage.register();
     localeCurrency =
         CurrencyCatalog.detectSuggestedCurrencyWithDetails().currencyCode;
     gpsCurrency = localeCurrency == CurrencyConstants.jpy
@@ -34,11 +34,11 @@ void main() {
   });
 
   setUp(() async {
-    final box = Hive.box<CcAppStorage>(CcHiveBox.APP_BOX_NAME);
+    final box = Hive.box<PrjAppStorage>(PrjHiveBox.APP_BOX_NAME);
     await box.clear();
-    final fresh = CcAppStorage();
-    await box.put(CcHiveBox.keyDefault, fresh);
-    CcAppStorage.instance = fresh;
+    final fresh = PrjAppStorage();
+    await box.put(PrjHiveBox.keyDefault, fresh);
+    PrjAppStorage.instance = fresh;
   });
 
   Future<void> settle() =>
@@ -62,7 +62,7 @@ void main() {
 
         expect(settings.currencyCode, localeCurrency);
         expect(settings.currencySelectionSource, 'detected');
-        expect(CcAppStorage.instance.currencyCode, localeCurrency);
+        expect(PrjAppStorage.instance.currencyCode, localeCurrency);
       },
     );
 
@@ -76,8 +76,8 @@ void main() {
         ).getSettings();
         await settle();
 
-        expect(CcAppStorage.instance.currencyCode, gpsCurrency);
-        expect(CcAppStorage.instance.currencyDetectionCountryCode, 'ZZ');
+        expect(PrjAppStorage.instance.currencyCode, gpsCurrency);
+        expect(PrjAppStorage.instance.currencyDetectionCountryCode, 'ZZ');
         expect(CurrencyConstants.onCurrencyChanged.value, before + 1);
       },
     );
@@ -92,8 +92,8 @@ void main() {
         ).getSettings();
         await settle();
 
-        expect(CcAppStorage.instance.currencyCode, localeCurrency);
-        expect(CcAppStorage.instance.currencyDetectionCountryCode, 'ZZ');
+        expect(PrjAppStorage.instance.currencyCode, localeCurrency);
+        expect(PrjAppStorage.instance.currencyDetectionCountryCode, 'ZZ');
         expect(CurrencyConstants.onCurrencyChanged.value, before);
       },
     );
@@ -109,7 +109,7 @@ void main() {
         neverAnswers.complete((currencyCode: gpsCurrency, countryCode: 'ZZ'));
         await settle();
 
-        expect(CcAppStorage.instance.currencyCode, localeCurrency);
+        expect(PrjAppStorage.instance.currencyCode, localeCurrency);
         expect(CurrencyConstants.onCurrencyChanged.value, before);
       },
     );
@@ -120,7 +120,7 @@ void main() {
       await dataSource(() async => throw StateError('no gps')).getSettings();
       await settle();
 
-      expect(CcAppStorage.instance.currencyCode, localeCurrency);
+      expect(PrjAppStorage.instance.currencyCode, localeCurrency);
       expect(CurrencyConstants.onCurrencyChanged.value, before);
     });
 
@@ -134,14 +134,14 @@ void main() {
         );
 
         await source.getSettings();
-        CcAppStorage.instance
+        PrjAppStorage.instance
           ..currencyCode = CurrencyConstants.eur
           ..currencySelectionSource = CurrencySelectionSources.userSelected;
         final before = CurrencyConstants.onCurrencyChanged.value;
         gps.complete((currencyCode: gpsCurrency, countryCode: 'ZZ'));
         await settle();
 
-        expect(CcAppStorage.instance.currencyCode, CurrencyConstants.eur);
+        expect(PrjAppStorage.instance.currencyCode, CurrencyConstants.eur);
         expect(CurrencyConstants.onCurrencyChanged.value, before);
       },
     );
@@ -166,7 +166,7 @@ void main() {
 
   group('currency already stored', () {
     test('never runs GPS detection again', () async {
-      CcAppStorage.instance
+      PrjAppStorage.instance
         ..currencyCode = CurrencyConstants.vnd
         ..currencySelectionSource = CurrencySelectionSources.userSelected;
       var detections = 0;

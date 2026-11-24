@@ -60,7 +60,7 @@ class PrjCategoryGroupSection extends StatelessWidget {
           activeColor: primary,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: context.respDim(18)),
-            child: HorizontalFadeScrollView(
+            child: CcHorizontalFadeScrollView(
               height: context.respDim(45),
               builder: (controller) => ListView.separated(
                 controller: controller,

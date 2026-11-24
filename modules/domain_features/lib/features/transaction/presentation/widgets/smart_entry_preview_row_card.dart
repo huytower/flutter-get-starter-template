@@ -81,7 +81,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
               ),
             ),
           if (state.rows.length > 1)
-            CcCancelBtn.bouncing(
+            CcCancelButton.bouncing(
               onTap: () => state.remove(row.id),
               iconColor: context.ccColorScheme.onSurfaceVariant,
             ),
@@ -100,9 +100,9 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcFormLabel(text: el.tr(CcLocaleKeys.transaction_category)),
+        CcFormLabel(text: el.tr(PrjLocaleKeys.transaction_category)),
         const CcSpaceXS(),
-        HorizontalFadeScrollView(
+        CcHorizontalFadeScrollView(
           height: context.respDim(80),
           builder: (scrollController) => ListView.separated(
             scrollDirection: Axis.horizontal,
@@ -139,8 +139,8 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     if (state.wallets.isEmpty) return const SizedBox.shrink();
 
     final labelKey = row.type == CategoryType.income
-        ? CcLocaleKeys.transaction_source_income
-        : CcLocaleKeys.transaction_source_expense;
+        ? PrjLocaleKeys.transaction_source_income
+        : PrjLocaleKeys.transaction_source_expense;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +167,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
 
     return Row(
       children: [
-        CcFormLabel(text: el.tr(CcLocaleKeys.transaction_time)),
+        CcFormLabel(text: el.tr(PrjLocaleKeys.transaction_time)),
         const CcSpaceSM(),
         if (isCustomDate) ...[
           _buildDatePill(

@@ -14,7 +14,7 @@ import 'http_base.dart';
 /// It enables production-specific settings and optimizations.
 ///
 /// This class is immutable and can only be instantiated once per application
-/// lifecycle through the [CcAppConfig] singleton.
+/// lifecycle through the [PrjAppConfig] singleton.
 ///
 /// To use this configuration, set the env to `prod`:
 /// ```
@@ -28,7 +28,7 @@ import 'http_base.dart';
 class HttpProd extends HttpBase {
   /// Creates a production configuration instance.
   ///
-  /// Prefer using [CcAppConfig.instance] to get the current configuration.
+  /// Prefer using [PrjAppConfig.instance] to get the current configuration.
   const HttpProd()
     : super(
         isLogger: false, // Disable logging in production by default

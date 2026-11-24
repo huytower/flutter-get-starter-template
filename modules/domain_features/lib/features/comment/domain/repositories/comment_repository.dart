@@ -16,6 +16,6 @@ abstract class CommentRepository {
   ///
   /// Returns a result containing the list of comments for the requested page.
   Future<Result<List<CommentEntity>, CcFailure>> getComments(
-    PaginationRequest request,
+    CcPaginationRequest request,
   );
 }

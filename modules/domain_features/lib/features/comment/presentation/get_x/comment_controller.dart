@@ -4,12 +4,12 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../domain/entities/comment_entity.dart';
 import '../../domain/repositories/comment_repository.dart';
 
 @injectable
-class CommentController extends CcGetController with PaginationMixin {
+class CommentController extends PrjGetController with CcPaginationMixin {
   CommentController(this._repository);
 
   final CommentRepository _repository;
@@ -43,7 +43,7 @@ class CommentController extends CcGetController with PaginationMixin {
     // 3. Fetch data using the current request from mixin
     final result = await _repository.getComments(
       refresh
-          ? const PaginationRequest(page: 1, itemsPerPage: 20)
+          ? const CcPaginationRequest(page: 1, itemsPerPage: 20)
           : currentPaginationRequest,
     );
 

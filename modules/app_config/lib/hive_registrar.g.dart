@@ -3,22 +3,22 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
-import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
-import 'package:app_config/data/datasources/local/box/app_track_log/cc_app_track_log.dart';
-import 'package:app_config/data/datasources/local/box/device_info/cc_device_info.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/prj_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_track_log/prj_app_track_log.dart';
+import 'package:app_config/data/datasources/local/box/device_info/prj_device_info.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
-    registerAdapter(CcAppStorageAdapter());
-    registerAdapter(CcAppTrackLogAdapter());
-    registerAdapter(CcDeviceInfoAdapter());
+    registerAdapter(PrjAppStorageAdapter());
+    registerAdapter(PrjAppTrackLogAdapter());
+    registerAdapter(PrjDeviceInfoAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
-    registerAdapter(CcAppStorageAdapter());
-    registerAdapter(CcAppTrackLogAdapter());
-    registerAdapter(CcDeviceInfoAdapter());
+    registerAdapter(PrjAppStorageAdapter());
+    registerAdapter(PrjAppTrackLogAdapter());
+    registerAdapter(PrjDeviceInfoAdapter());
   }
 }

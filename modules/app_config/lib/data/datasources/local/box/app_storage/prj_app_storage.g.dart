@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'cc_app_storage.dart';
+part of 'prj_app_storage.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
+class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
   @override
   final typeId = 2;
 
   @override
-  CcAppStorage read(BinaryReader reader) {
+  PrjAppStorage read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return CcAppStorage(
+    return PrjAppStorage(
       accessToken: fields[0] as String?,
       fcmToken: fields[1] as String?,
       gpsLocation: fields[2] as String?,
@@ -44,14 +44,14 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       currencySelectionSource: fields[25] as String?,
       currencyDetectionCountryCode: fields[26] as String?,
       financialSchemaVersion: (fields[27] as num?)?.toInt(),
-      guestLoginPromptAtTimes8Shown: fields[28] as bool?,
-      guestLoginPrompt15Dismissed: fields[29] as bool?,
+      hasShownGuestLoginFirstReminder: fields[28] as bool?,
+      hasDismissedGuestLoginFinalWarning: fields[29] as bool?,
       guestLoginPromptSessionUid: fields[30] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, CcAppStorage obj) {
+  void write(BinaryWriter writer, PrjAppStorage obj) {
     writer
       ..writeByte(30)
       ..writeByte(0)
@@ -109,9 +109,9 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(27)
       ..write(obj.financialSchemaVersion)
       ..writeByte(28)
-      ..write(obj.guestLoginPromptAtTimes8Shown)
+      ..write(obj.hasShownGuestLoginFirstReminder)
       ..writeByte(29)
-      ..write(obj.guestLoginPrompt15Dismissed)
+      ..write(obj.hasDismissedGuestLoginFinalWarning)
       ..writeByte(30)
       ..write(obj.guestLoginPromptSessionUid);
   }
@@ -122,7 +122,7 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CcAppStorageAdapter &&
+      other is PrjAppStorageAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -131,7 +131,9 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
+PrjAppStorage _$PrjAppStorageFromJson(
+  Map<String, dynamic> json,
+) => PrjAppStorage(
   accessToken: json['accessToken'] as String?,
   fcmToken: json['fcmToken'] as String?,
   gpsLocation: json['gpsLocation'] as String?,
@@ -173,44 +175,48 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   currencySelectionSource: json['currencySelectionSource'] as String?,
   currencyDetectionCountryCode: json['currencyDetectionCountryCode'] as String?,
   financialSchemaVersion: (json['financialSchemaVersion'] as num?)?.toInt(),
-  guestLoginPromptAtTimes8Shown: json['guestLoginPromptAtTimes8Shown'] as bool?,
-  guestLoginPrompt15Dismissed: json['guestLoginPrompt15Dismissed'] as bool?,
+  hasShownGuestLoginFirstReminder:
+      json['hasShownGuestLoginFirstReminder'] as bool?,
+  hasDismissedGuestLoginFinalWarning:
+      json['hasDismissedGuestLoginFinalWarning'] as bool?,
   guestLoginPromptSessionUid: json['guestLoginPromptSessionUid'] as String?,
 );
 
-Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
-    <String, dynamic>{
-      'accessToken': instance.accessToken,
-      'fcmToken': instance.fcmToken,
-      'gpsLocation': instance.gpsLocation,
-      'userRole': instance.userRole,
-      'dashboardData': instance.dashboardData,
-      'user': const DomainUserEntityConverter().toJson(instance.user),
-      'reminderEnabled': instance.reminderEnabled,
-      'weeklyAuditDayIndex': instance.weeklyAuditDayIndex,
-      'currencyCode': instance.currencyCode,
-      'birthYear': instance.birthYear,
-      'isDarkMode': instance.isDarkMode,
-      'completedGuidelineTaskIds': instance.completedGuidelineTaskIds,
-      'weeklyAuditDayChangedAt': instance.weeklyAuditDayChangedAt
-          ?.toIso8601String(),
-      'levelFeatureAnchorAt': instance.levelFeatureAnchorAt?.toIso8601String(),
-      'isVip': instance.isVip,
-      'highestUserLevelReached': instance.highestUserLevelReached,
-      'firstLaunchAt': instance.firstLaunchAt?.toIso8601String(),
-      'cloudBackupReminderSentAt': instance.cloudBackupReminderSentAt
-          ?.toIso8601String(),
-      'hasViewedEmergencyFundEbook': instance.hasViewedEmergencyFundEbook,
-      'hasSeenTutorial': instance.hasSeenTutorial,
-      'isProfileHeaderFlipped': instance.isProfileHeaderFlipped,
-      'hasCustomizedCategories': instance.hasCustomizedCategories,
-      'hasInteractedWithTransactionCardStack':
-          instance.hasInteractedWithTransactionCardStack,
-      'financialDataOwnerId': instance.financialDataOwnerId,
-      'currencySelectionSource': instance.currencySelectionSource,
-      'currencyDetectionCountryCode': instance.currencyDetectionCountryCode,
-      'financialSchemaVersion': instance.financialSchemaVersion,
-      'guestLoginPromptAtTimes8Shown': instance.guestLoginPromptAtTimes8Shown,
-      'guestLoginPrompt15Dismissed': instance.guestLoginPrompt15Dismissed,
-      'guestLoginPromptSessionUid': instance.guestLoginPromptSessionUid,
-    };
+Map<String, dynamic> _$PrjAppStorageToJson(
+  PrjAppStorage instance,
+) => <String, dynamic>{
+  'accessToken': instance.accessToken,
+  'fcmToken': instance.fcmToken,
+  'gpsLocation': instance.gpsLocation,
+  'userRole': instance.userRole,
+  'dashboardData': instance.dashboardData,
+  'user': const DomainUserEntityConverter().toJson(instance.user),
+  'reminderEnabled': instance.reminderEnabled,
+  'weeklyAuditDayIndex': instance.weeklyAuditDayIndex,
+  'currencyCode': instance.currencyCode,
+  'birthYear': instance.birthYear,
+  'isDarkMode': instance.isDarkMode,
+  'completedGuidelineTaskIds': instance.completedGuidelineTaskIds,
+  'weeklyAuditDayChangedAt': instance.weeklyAuditDayChangedAt
+      ?.toIso8601String(),
+  'levelFeatureAnchorAt': instance.levelFeatureAnchorAt?.toIso8601String(),
+  'isVip': instance.isVip,
+  'highestUserLevelReached': instance.highestUserLevelReached,
+  'firstLaunchAt': instance.firstLaunchAt?.toIso8601String(),
+  'cloudBackupReminderSentAt': instance.cloudBackupReminderSentAt
+      ?.toIso8601String(),
+  'hasViewedEmergencyFundEbook': instance.hasViewedEmergencyFundEbook,
+  'hasSeenTutorial': instance.hasSeenTutorial,
+  'isProfileHeaderFlipped': instance.isProfileHeaderFlipped,
+  'hasCustomizedCategories': instance.hasCustomizedCategories,
+  'hasInteractedWithTransactionCardStack':
+      instance.hasInteractedWithTransactionCardStack,
+  'financialDataOwnerId': instance.financialDataOwnerId,
+  'currencySelectionSource': instance.currencySelectionSource,
+  'currencyDetectionCountryCode': instance.currencyDetectionCountryCode,
+  'financialSchemaVersion': instance.financialSchemaVersion,
+  'hasShownGuestLoginFirstReminder': instance.hasShownGuestLoginFirstReminder,
+  'hasDismissedGuestLoginFinalWarning':
+      instance.hasDismissedGuestLoginFinalWarning,
+  'guestLoginPromptSessionUid': instance.guestLoginPromptSessionUid,
+};

@@ -46,7 +46,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!controller.isInitialized) {
-        controller.init(initialCurrencyCode);
+        controller.loadInitialCurrency(initialCurrencyCode);
       }
     });
 
@@ -85,7 +85,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
         ),
       ),
       child: CcText(
-        el.tr(CcLocaleKeys.profile_currency),
+        el.tr(PrjLocaleKeys.profile_currency),
         maxLines: 1,
         textStyle: context.ccTextTheme.titleLarge?.copyWith(
           color: scheme.onPrimary,
@@ -501,7 +501,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
           Navigator.of(context).pop(null);
         },
         child: CcText(
-          el.tr(CcLocaleKeys.common_cancel),
+          el.tr(PrjLocaleKeys.common_cancel),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: scheme.primary,
             fontWeight: CcTypographyParams.semiBold,
@@ -515,7 +515,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
           Navigator.of(context).pop(selectedCode);
         },
         child: CcText(
-          el.tr(CcLocaleKeys.common_ok),
+          el.tr(PrjLocaleKeys.common_ok),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: scheme.primary,
             fontWeight: CcTypographyParams.semiBold,

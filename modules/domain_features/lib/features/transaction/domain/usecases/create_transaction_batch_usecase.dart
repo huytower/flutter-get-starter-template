@@ -1,7 +1,7 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
+import 'package:message/prj_locale_keys.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
@@ -35,8 +35,8 @@ class CreateTransactionBatchUseCase {
     if (overdrawnAt != null) {
       return BatchSaveResult(
         saved: 0,
-        failure: const ValidationFailure(
-          CcLocaleKeys.transaction_validation_insufficient_balance,
+        failure: const CcValidationFailure(
+          PrjLocaleKeys.transaction_validation_insufficient_balance,
         ),
         failedAt: overdrawnAt,
       );

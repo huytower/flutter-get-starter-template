@@ -79,7 +79,7 @@ class GuidelineResetBottomSheet extends StatelessWidget {
           ),
           const CcSpaceSM(),
           CcText(
-            el.tr(CcLocaleKeys.profile_view_tutorial),
+            el.tr(PrjLocaleKeys.profile_view_tutorial),
             maxLines: 1,
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
               color: scheme.onPrimary,
@@ -135,7 +135,7 @@ class GuidelineResetBottomSheet extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: CcText(
-              el.tr(CcLocaleKeys.guideline_reset_confirm_cancel),
+              el.tr(PrjLocaleKeys.guideline_reset_confirm_cancel),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,
@@ -149,7 +149,7 @@ class GuidelineResetBottomSheet extends StatelessWidget {
               onConfirm();
             },
             child: CcText(
-              el.tr(CcLocaleKeys.guideline_reset_confirm_agree),
+              el.tr(PrjLocaleKeys.guideline_reset_confirm_agree),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,

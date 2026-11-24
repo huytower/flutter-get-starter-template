@@ -149,7 +149,7 @@ void main() {
     });
 
     test('propagates config and device failures', () async {
-      const failure = UnknownFailure('boom');
+      const failure = CcUnknownFailure('boom');
       final configFails = CheckAppUpdateUseCase(
         _FakeConfigRepository(const Error(failure)),
         _FakeAppRepository(Success(installed('1.0.0'))),
@@ -158,13 +158,13 @@ void main() {
         _FakeConfigRepository(
           Success(config(isForce: true, minimum: '2.0.0')),
         ),
-        _FakeAppRepository(const Error(DeviceFailure('no info'))),
+        _FakeAppRepository(const Error(CcDeviceFailure('no info'))),
       );
 
       expect((await configFails()).tryGetError(), failure);
       expect(
         (await deviceFails()).tryGetError(),
-        const DeviceFailure('no info'),
+        const CcDeviceFailure('no info'),
       );
     });
   });

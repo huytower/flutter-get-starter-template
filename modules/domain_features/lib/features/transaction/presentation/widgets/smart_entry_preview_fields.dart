@@ -113,7 +113,7 @@ class SmartEntryTypeToggle extends StatelessWidget {
         ),
         child: CcText(
           el.tr(
-            isIncome ? CcLocaleKeys.common_income : CcLocaleKeys.common_expense,
+            isIncome ? PrjLocaleKeys.common_income : PrjLocaleKeys.common_expense,
           ),
           align: Alignment.center,
           textAlign: TextAlign.center,
@@ -178,7 +178,7 @@ class _SmartEntryNoteFieldState extends State<SmartEntryNoteField> {
 
     return CcNoteInputField(
       controller: _controller,
-      hintText: el.tr(CcLocaleKeys.transaction_note_hint),
+      hintText: el.tr(PrjLocaleKeys.transaction_note_hint),
       maxLines: 2,
       color: scheme.surfaceContainerHighest,
       borderColor: scheme.outlineVariant.withValues(alpha: 0.2),

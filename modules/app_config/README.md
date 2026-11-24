@@ -49,7 +49,7 @@ void main() async {
     Firebase.initializeApp(),
     initializeDependencies(),
     _initHive(),
-    CcLocalization.initialize(),
+    PrjLocalization.initialize(),
   ]);
   
   // 3. Deferred Services (Non-blocking)
@@ -64,8 +64,8 @@ void main() async {
 ### Accessing App Configuration
 
 ```
-final version = await CcAppConfig.version;
-final buildNumber = await CcAppConfig.buildNumber;
+final version = await PrjAppConfig.version;
+final buildNumber = await PrjAppConfig.buildNumber;
 ```
 
 ### Using AppVersionService

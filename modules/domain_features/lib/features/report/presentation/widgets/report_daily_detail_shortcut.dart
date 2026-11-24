@@ -23,7 +23,7 @@ class ReportDailyDetailShortcut extends StatelessWidget {
         CcBouncing(
           onTap: () => context.router.push(const ReportDailyDetailRoute()),
           child: CcText(
-            el.tr(CcLocaleKeys.report_daily_detail),
+            el.tr(PrjLocaleKeys.report_daily_detail),
             textStyle: context.ccTextTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: textColor,

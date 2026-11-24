@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcCancelBtn;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcCancelButton;
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
@@ -47,18 +47,18 @@ final _wallet = WalletEntity(
 );
 
 String _confirmMany(int count) => el.tr(
-  CcLocaleKeys.smart_entry_preview_confirm_many,
+  PrjLocaleKeys.smart_entry_preview_confirm_many,
   namedArgs: {'count': '$count'},
 );
 
 String _titleMany(int count) => el.tr(
-  CcLocaleKeys.smart_entry_preview_title_many,
+  PrjLocaleKeys.smart_entry_preview_title_many,
   namedArgs: {'count': '$count'},
 );
 
-String get _confirmOne => el.tr(CcLocaleKeys.smart_entry_preview_confirm_one);
+String get _confirmOne => el.tr(PrjLocaleKeys.smart_entry_preview_confirm_one);
 
-String get _income => el.tr(CcLocaleKeys.common_income);
+String get _income => el.tr(PrjLocaleKeys.common_income);
 
 Finder _text(String value) => find.text(value, findRichText: true);
 
@@ -180,7 +180,7 @@ void main() {
 
     final firstCardRemove = find.descendant(
       of: find.byType(SmartEntryPreviewRowCard).first,
-      matching: find.byType(CcCancelBtn),
+      matching: find.byType(CcCancelButton),
     );
     await tester.tap(firstCardRemove);
     await tester.pumpAndSettle();
@@ -191,7 +191,7 @@ void main() {
     expect(
       find.descendant(
         of: find.byType(SmartEntryPreviewRowCard),
-        matching: find.byType(CcCancelBtn),
+        matching: find.byType(CcCancelButton),
       ),
       findsNothing,
     );

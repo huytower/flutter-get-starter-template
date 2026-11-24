@@ -1,7 +1,7 @@
 import 'package:cc_sdk/export_cc_sdk.dart'
     show CcCrashReporter, CcServerException;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:domain_features/core/data/repositories/cc_base_repository.dart';
+import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeCrashReporter implements CcCrashReporter {
@@ -23,7 +23,7 @@ class _FakeCrashReporter implements CcCrashReporter {
   }
 }
 
-class _Repository with CcBaseRepository {
+class _Repository with PrjBaseRepository {
   _Repository(this.crashReporter);
 
   @override
@@ -44,7 +44,7 @@ void main() {
       () async => throw StateError('Liability 1 not found'),
     );
 
-    expect(result.tryGetError(), isA<ServerFailure>());
+    expect(result.tryGetError(), isA<CcServerFailure>());
     expect(reporter.errors.single, isA<StateError>());
     expect(reporter.reasons.single, '_Repository.safeRequest');
   });
@@ -54,7 +54,7 @@ void main() {
       () async => throw CcServerException(message: 'Bad request'),
     );
 
-    expect(result.tryGetError(), isA<ServerFailure>());
+    expect(result.tryGetError(), isA<CcServerFailure>());
     expect(reporter.errors, isEmpty);
   });
 

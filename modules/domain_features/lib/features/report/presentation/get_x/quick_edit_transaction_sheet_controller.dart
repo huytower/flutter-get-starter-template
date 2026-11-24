@@ -12,14 +12,14 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/budget/budget_name_helper.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/get_x/cc_get_controller.dart';
+import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/get_x/investment_form_controller.dart';
 
 @injectable
-class QuickEditTransactionSheetController extends CcGetController {
+class QuickEditTransactionSheetController extends PrjGetController {
   late final TransactionEntity transaction;
   late final VoidCallback _onCloseSheet;
 
@@ -93,7 +93,7 @@ class QuickEditTransactionSheetController extends CcGetController {
     }
   }
 
-  void init(TransactionEntity tx, VoidCallback onCloseSheet) {
+  void prepareForm(TransactionEntity tx, VoidCallback onCloseSheet) {
     transaction = tx;
     _onCloseSheet = onCloseSheet;
     amountStr.value = tx.amount.toString();
@@ -263,7 +263,7 @@ class QuickEditTransactionSheetController extends CcGetController {
       if (result.isSuccess()) {
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
-          message: el.tr(CcLocaleKeys.common_save),
+          message: el.tr(PrjLocaleKeys.common_save),
         );
         final refresh = getIt<FinancialRefreshProvider>();
         await refresh.refreshTransactions();
@@ -275,7 +275,7 @@ class QuickEditTransactionSheetController extends CcGetController {
           context: context,
           message:
               result.tryGetError()?.message ??
-              el.tr(CcLocaleKeys.app_error_general),
+              el.tr(PrjLocaleKeys.app_error_general),
         );
       }
     } finally {
