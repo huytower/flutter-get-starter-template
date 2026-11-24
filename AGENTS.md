@@ -227,9 +227,9 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
     - **Layout** (navigation, pane count, grid columns) branches on Material 3 window size classes
       (`CcWindowSizeClass`: compact <600, medium 600–840, expanded 840–1200, large 1200–1600, extraLarge ≥1600),
       measured from the **space a widget is given**: `CcAdaptiveBuilder` / `CcResponsiveFlex` (LayoutBuilder-based),
-      or `context.windowSizeClass` only for whole-window decisions (the navigation shell). Use
-      `CcWindowHeightClass` for vertical-room decisions instead of fixed percentages of screen height. Never branch
-      on device type or `Platform`.
+      or `context.windowSizeClass` only for whole-window decisions (the navigation shell, built on
+      `CcAdaptiveNavigationScaffold`). Use `CcWindowHeightClass` for vertical-room decisions instead of fixed
+      percentages of screen height. Never branch on device type or `Platform`.
     - Check every new screen against the shared window matrix `CcReferenceWindows` (`cc_sdk_ui`: phones,
       foldables, Android 7"/10" tablets, iPad mini / 11" / 13", iPad Split View, landscape, web desktop) — use
       `setTestDevice` from `modules/domain_features/test/adaptive/` — for touch-target size, text overflow and

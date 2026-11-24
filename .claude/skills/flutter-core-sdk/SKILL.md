@@ -115,7 +115,7 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | Package | Owns | Entry point |
 |---|---|---|
 | `cc_sdk` | Network/device helpers, DI core, `CcSdkConfig` (app name, logger switch), capability interfaces, crash-reporter interface and log file path, the `.Log()` extension | `export_cc_sdk.dart` |
-| `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation, `CcLoadMoreList`), tokens (`CcBaseColors`, `CcSpace*`), `CcScale`, `CcWindowSizeClass`, `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn`, widget-building mixins (view config, pull-to-refresh, load-more, curved navigation). Does not depend on `cc_sdk`: import both barrels when you need both | `export_cc_sdk_ui.dart` |
+| `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation incl. `CcAdaptiveNavigationScaffold`, `CcLoadMoreList`), tokens (`CcBaseColors`, `CcSpace*`), `CcScale`, `CcWindowSizeClass`, `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn`, widget-building mixins (view config, pull-to-refresh, load-more). Does not depend on `cc_sdk`: import both barrels when you need both | `export_cc_sdk_ui.dart` |
 | `cc_mixin` | Behavior-only mixins: pagination, back-button | `export_cc_mixin.dart` |
 | `cc_sdk_data` | Core entities/models, `CcFailure` hierarchy, shared domain services | `export_cc_sdk_data.dart` |
 | `cc_sdk_firebase` | Capability ring: Firebase implementations of core interfaces (`CcFirebaseAiClient`, `CcFirebaseAnalytics`, `CcFirebaseCrashReporter`, `CcFirebaseAppAttestation`). Only package allowed to import Firebase SDKs (migration in progress) | `export_cc_sdk_firebase.dart` |
@@ -250,8 +250,9 @@ the parent repo.
    - **Android `AndroidManifest.xml`:** no `android:screenOrientation` on the activity (a manifest lock also
      locks tablets, and Android 16+ ignores it on screens >= 600 dp); keep `configChanges` including
      `orientation|screenSize|smallestScreenSize|screenLayout` so resizing does not restart the activity.
-   - **Navigation shell:** bottom bar below the expanded window class (< 840 dp), `CcNavigationRail` from
-     expanded up (this template: `lib/presentation/main_navigation/navigation_bar.dart`).
+   - **Navigation shell:** `CcAdaptiveNavigationScaffold` (bottom bar below the expanded window class, rail
+     from it, page state kept across the switch); the app passes its tabs, colours and badges (this
+     template: `lib/presentation/main_navigation/navigation_bar.dart`).
    - **Tests:** lay each screen out on `CcReferenceWindows.all`.
 
 ## Quick reference

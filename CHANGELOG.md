@@ -69,6 +69,10 @@ numbered by CI (`docs/tech/development/BUILD.md`).
   sideways); the adaptive test matrix is the SDK's `CcReferenceWindows`, which adds iPad mini / 11" / 13", iPad
   Split View and a sideways foldable; AGENTS.md and the SDK skill list the per-app platform settings (iOS iPad
   orientations without `UIRequiresFullScreen`, no Android manifest lock).
+- The main navigation shell runs on the SDK's `CcAdaptiveNavigationScaffold` (bottom bar below 840 dp, rail
+  from 840 dp, page state kept across the switch); the shell keeps only the app's tabs, badges, splash and back
+  handling. `CcCurvedNavigationMixin` was removed from the SDK
+  (`docs/plans/adaptive-navigation-shell.md`).
 - `melos run check:imports` (`scripts/check_imports.dart`): import boundaries, package cycles, naming and DI rules,
   run first in CI. Existing debt is frozen in `scripts/check_imports_baseline.txt`.
 - CI release pipeline on push to `qltc`: Android AAB to Google Play alpha, iOS IPA to TestFlight

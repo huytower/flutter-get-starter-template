@@ -1,7 +1,7 @@
 # Plan: adaptive navigation shell in the SDK
 
-Status: **N1 and N2 done** (`CcAdaptiveNavigationScaffold` in `cc_sdk_ui`; the app shell uses it). N3 waits for
-approval.
+Status: **done** (N1–N3: `CcAdaptiveNavigationScaffold` in `cc_sdk_ui`, the app shell uses it,
+`CcCurvedNavigationMixin` removed).
 
 N2 differs from the plan in two places:
 - The app wraps the **whole** scaffold in `mainShell.watchTabs` instead of using `navigationBuilder`: the tab
