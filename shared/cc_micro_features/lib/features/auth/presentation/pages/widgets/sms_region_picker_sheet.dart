@@ -7,10 +7,10 @@ import '../../../domain/sms_region.dart';
 
 /// Bottom sheet listing the countries SMS verification is available for.
 ///
-/// Styled like the currency picker (gradient header, glassy cards on a tinted
-/// body) with the countries laid out in a 3-column grid. Each card shows only
-/// flag, ISO code and dial code; the header reuses the existing "Phone Number"
-/// string. Pops with the chosen [SmsRegion].
+/// Built on [CcPickerSheetFrame] like the other pickers (glassy cards on the
+/// tinted body), with the countries in a 3-column grid. Each card shows only
+/// flag, ISO code and dial code; the header reuses the existing "Phone
+/// Number" string. Pops with the chosen [SmsRegion].
 class SmsRegionPickerSheet extends StatelessWidget {
   const SmsRegionPickerSheet({super.key, required this.selectedDialCode});
 
@@ -40,11 +40,8 @@ class SmsRegionPickerSheet extends StatelessWidget {
     BuildContext context, {
     required String selectedDialCode,
   }) {
-    return showModalBottomSheet<SmsRegion>(
+    return CcAdaptiveBottomSheet.show<SmsRegion>(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
       builder: (_) => SmsRegionPickerSheet(selectedDialCode: selectedDialCode),
     );
   }
@@ -52,43 +49,12 @@ class SmsRegionPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-
     return SizedBox(
-      height: MediaQuery.of(context).size.height * sheetHeightFactor,
-      child: Column(
-        children: [
-          _buildHeader(context, scheme),
-          Expanded(child: _buildBody(context, scheme)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, ColorScheme scheme) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.SPACE_MD),
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [scheme.primary, scheme.primaryContainer],
-        ),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(context.respDim(24)),
-          topRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
-      child: CcText(
-        el.tr(CcMfLocaleKeys.auth_phone_number),
-        maxLines: 1,
-        textStyle: context.ccTextTheme.titleLarge?.copyWith(
-          color: scheme.onPrimary,
-          fontWeight: CcTypographyParams.semiBold,
-        ),
+      height: MediaQuery.sizeOf(context).height * sheetHeightFactor,
+      child: CcPickerSheetFrame(
+        title: el.tr(CcMfLocaleKeys.auth_phone_number),
+        hasScrollableBody: true,
+        body: _buildBody(context, scheme),
       ),
     );
   }
@@ -96,42 +62,39 @@ class SmsRegionPickerSheet extends StatelessWidget {
   Widget _buildBody(BuildContext context, ColorScheme scheme) {
     final padding = context.respPadding(CcPaddingParams.PAGE_MD);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
-      child: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(
-              padding,
-              context.respPadding(CcPaddingParams.SPACE_SM),
-              padding,
-              0,
-            ),
-            sliver: _buildGrid(context, scheme, _popularRegions),
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(
+            padding,
+            context.respPadding(CcPaddingParams.SPACE_SM),
+            padding,
+            0,
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: padding,
-                vertical: context.respPadding(CcPaddingParams.SPACE_SM),
-              ),
-              child: Divider(
-                height: 1,
-                color: scheme.outlineVariant.withValues(alpha: 0.5),
-              ),
+          sliver: _buildGrid(context, scheme, _popularRegions),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: padding,
+              vertical: context.respPadding(CcPaddingParams.SPACE_SM),
+            ),
+            child: Divider(
+              height: 1,
+              color: scheme.outlineVariant.withValues(alpha: 0.5),
             ),
           ),
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(
-              padding,
-              0,
-              padding,
-              context.respPadding(CcPaddingParams.SPACE_XL),
-            ),
-            sliver: _buildGrid(context, scheme, _otherRegions),
+        ),
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(
+            padding,
+            0,
+            padding,
+            context.respPadding(CcPaddingParams.SPACE_XL),
           ),
-        ],
-      ),
+          sliver: _buildGrid(context, scheme, _otherRegions),
+        ),
+      ],
     );
   }
 
