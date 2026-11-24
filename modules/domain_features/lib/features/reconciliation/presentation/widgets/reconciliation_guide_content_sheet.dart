@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-/// Content of the reconciliation guide sheet: a gradient title header, the
-/// guide rows (icon + text) and a single close action.
+/// Content of the reconciliation guide sheet: the guide rows (icon + text) in a
+/// [CcPickerSheetFrame] with a single OK button.
 class ReconciliationGuideContentSheet extends StatelessWidget {
   const ReconciliationGuideContentSheet({super.key});
 
@@ -40,65 +40,13 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-
-    // Capped below the status bar; the rows scroll when they do not fit.
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(context, scheme),
-          Flexible(child: _buildBody(context, scheme)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, ColorScheme scheme) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.SPACE_LG),
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [scheme.primary, scheme.primaryContainer],
-        ),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(context.respDim(24)),
-          topRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
-      child: CcText(
-        tr(PrjLocaleKeys.reconciliation_title),
-        maxLines: 1,
-        textStyle: context.ccTextTheme.titleLarge?.copyWith(
-          color: scheme.onPrimary,
-          fontWeight: CcTypographyParams.semiBold,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBody(BuildContext context, ColorScheme scheme) {
-    return DecoratedBox(
-      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(child: _buildGuideList(context, scheme)),
-            _buildActions(context, scheme),
-            const CcSpaceMD(),
-          ],
-        ),
-      ),
+    // The rows scroll when they do not fit; the title and OK stay in view.
+    return CcPickerSheetFrame(
+      title: tr(PrjLocaleKeys.reconciliation_title),
+      hasScrollableBody: true,
+      body: _buildGuideList(context, scheme),
+      hasCancel: false,
+      onConfirm: () => Navigator.of(context).pop(),
     );
   }
 
@@ -194,29 +142,6 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
         ],
       ),
       textAlign: TextAlign.start,
-    );
-  }
-
-  Widget _buildActions(BuildContext context, ColorScheme scheme) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: CcText(
-              tr(PrjLocaleKeys.common_ok),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: scheme.primary,
-                fontWeight: CcTypographyParams.semiBold,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

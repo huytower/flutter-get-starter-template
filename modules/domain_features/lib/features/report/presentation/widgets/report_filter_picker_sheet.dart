@@ -75,159 +75,113 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return SafeArea(
-      top: false,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(
-              context.respPadding(CcPaddingParams.SPACE_LG),
+    return CcPickerSheetFrame(
+      // "Lọc" would be better but using existing keys
+      title: el.tr(PrjLocaleKeys.common_edit),
+      headerTrailing: CcTextButton(
+        text: el.tr(PrjLocaleKeys.common_done),
+        textColor: scheme.onPrimary,
+        onTap: () => Navigator.of(
+          context,
+        ).pop((type: _currentType, walletId: _currentWalletId)),
+      ),
+      hasScrollableBody: true,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          vertical: context.respPadding(CcPaddingParams.SPACE_MD),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader(
+              context,
+              el.tr(PrjLocaleKeys.report_filter_by_type),
             ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [scheme.primary, scheme.primaryContainer],
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
               ),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(context.respDim(16)),
-                topRight: Radius.circular(context.respDim(16)),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CcText(
-                  el.tr(
-                    PrjLocaleKeys.common_edit,
-                  ), // "Lọc" would be better but using existing keys
-                  textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                    color: scheme.onPrimary,
-                    fontWeight: CcTypographyParams.bold,
-                  ),
-                ),
-                CcTextButton(
-                  text: el.tr(PrjLocaleKeys.common_done),
-                  textColor: context.ccColorScheme.onPrimary,
-                  onTap: () => Navigator.of(
+              child: Wrap(
+                spacing: context.respDim(8),
+                runSpacing: context.respDim(8),
+                children: [
+                  _buildTypeRow(
                     context,
-                  ).pop((type: _currentType, walletId: _currentWalletId)),
-                ),
-              ],
-            ),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.7,
+                    ReportFilterType.all,
+                    icon: Icons.apps_rounded,
+                    label: el.tr(PrjLocaleKeys.report_filter_all_types),
+                  ),
+                  _buildTypeRow(
+                    context,
+                    ReportFilterType.expense,
+                    icon: Icons.south_west,
+                    label: el.tr(PrjLocaleKeys.common_expense),
+                    color: scheme.error,
+                  ),
+                  _buildTypeRow(
+                    context,
+                    ReportFilterType.income,
+                    icon: Icons.north_east,
+                    label: el.tr(PrjLocaleKeys.common_income),
+                    color: PrjColors.success,
+                  ),
+                  _buildTypeRow(
+                    context,
+                    ReportFilterType.investment,
+                    icon: Icons.eco_outlined,
+                    label: el.tr(PrjLocaleKeys.transaction_investment),
+                    color: scheme.investment,
+                  ),
+                  _buildTypeRow(
+                    context,
+                    ReportFilterType.liability,
+                    iconAsset: 'assets/icon/ic_borrow.webp',
+                    label: el.tr(PrjLocaleKeys.liability_title),
+                    color: scheme.liability,
+                  ),
+                  _buildTypeRow(
+                    context,
+                    ReportFilterType.lend,
+                    iconAsset: 'assets/icon/ic_lend.webp',
+                    label: el.tr(PrjLocaleKeys.liability_lend),
+                    color: scheme.liabilitySecondary,
+                  ),
+                ],
               ),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                  vertical: context.respPadding(CcPaddingParams.SPACE_MD),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionHeader(
-                      context,
-                      el.tr(PrjLocaleKeys.report_filter_by_type),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.respPadding(
-                          CcPaddingParams.PAGE_MD,
-                        ),
-                      ),
-                      child: Wrap(
-                        spacing: context.respDim(8),
-                        runSpacing: context.respDim(8),
-                        children: [
-                          _buildTypeRow(
-                            context,
-                            ReportFilterType.all,
-                            icon: Icons.apps_rounded,
-                            label: el.tr(PrjLocaleKeys.report_filter_all_types),
-                          ),
-                          _buildTypeRow(
-                            context,
-                            ReportFilterType.expense,
-                            icon: Icons.south_west,
-                            label: el.tr(PrjLocaleKeys.common_expense),
-                            color: scheme.error,
-                          ),
-                          _buildTypeRow(
-                            context,
-                            ReportFilterType.income,
-                            icon: Icons.north_east,
-                            label: el.tr(PrjLocaleKeys.common_income),
-                            color: PrjColors.success,
-                          ),
-                          _buildTypeRow(
-                            context,
-                            ReportFilterType.investment,
-                            icon: Icons.eco_outlined,
-                            label: el.tr(PrjLocaleKeys.transaction_investment),
-                            color: scheme.investment,
-                          ),
-                          _buildTypeRow(
-                            context,
-                            ReportFilterType.liability,
-                            iconAsset: 'assets/icon/ic_borrow.webp',
-                            label: el.tr(PrjLocaleKeys.liability_title),
-                            color: scheme.liability,
-                          ),
-                          _buildTypeRow(
-                            context,
-                            ReportFilterType.lend,
-                            iconAsset: 'assets/icon/ic_lend.webp',
-                            label: el.tr(PrjLocaleKeys.liability_lend),
-                            color: scheme.liabilitySecondary,
-                          ),
-                        ],
-                      ),
-                    ),
+            ),
 
-                    const CcSpaceLG(),
-                    _buildSectionHeader(
+            const CcSpaceLG(),
+            _buildSectionHeader(
+              context,
+              el.tr(PrjLocaleKeys.report_filter_by_wallet),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+              ),
+              child: Wrap(
+                spacing: context.respDim(8),
+                runSpacing: context.respDim(8),
+                children: [
+                  _buildWalletRow(
+                    context,
+                    null,
+                    Icons.account_balance_wallet_outlined,
+                    el.tr(PrjLocaleKeys.report_filter_all_wallets),
+                  ),
+                  for (final wallet in _orderedWallets)
+                    _buildWalletRow(
                       context,
-                      el.tr(PrjLocaleKeys.report_filter_by_wallet),
+                      wallet.id,
+                      iconDataFromCode(wallet.iconCode),
+                      wallet.name,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.respPadding(
-                          CcPaddingParams.PAGE_MD,
-                        ),
-                      ),
-                      child: Wrap(
-                        spacing: context.respDim(8),
-                        runSpacing: context.respDim(8),
-                        children: [
-                          _buildWalletRow(
-                            context,
-                            null,
-                            Icons.account_balance_wallet_outlined,
-                            el.tr(PrjLocaleKeys.report_filter_all_wallets),
-                          ),
-                          for (final wallet in _orderedWallets)
-                            _buildWalletRow(
-                              context,
-                              wallet.id,
-                              iconDataFromCode(wallet.iconCode),
-                              wallet.name,
-                            ),
-                        ],
-                      ),
-                    ),
-                    const CcSpaceLG(),
-                  ],
-                ),
+                ],
               ),
             ),
-          ),
-        ],
+            const CcSpaceLG(),
+          ],
+        ),
       ),
     );
   }

@@ -52,46 +52,11 @@ class CurrencySelectionContentSheet extends StatelessWidget {
 
     final scheme = context.ccColorScheme;
 
-    // Scrolls in landscape (short window) instead of overflowing.
-    return CcLandscapeScrollable(
-      child: Obx(
-        () => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildHeader(context, scheme),
-            _buildBody(context, scheme, controller),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, ColorScheme scheme) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.SPACE_LG),
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [scheme.primary, scheme.primaryContainer],
-        ),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(context.respDim(24)),
-          topRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
-      child: CcText(
-        el.tr(PrjLocaleKeys.profile_currency),
-        maxLines: 1,
-        textStyle: context.ccTextTheme.titleLarge?.copyWith(
-          color: scheme.onPrimary,
-          fontWeight: CcTypographyParams.semiBold,
-        ),
-      ),
+    // The actions sit in the body (inline with the notice on tablets), so the
+    // frame's own action row is not used.
+    return CcPickerSheetFrame(
+      title: el.tr(PrjLocaleKeys.profile_currency),
+      body: Obx(() => _buildBody(context, scheme, controller)),
     );
   }
 
@@ -108,26 +73,21 @@ class CurrencySelectionContentSheet extends StatelessWidget {
         )
         .toList();
 
-    return DecoratedBox(
-      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildCurrencyList(context, scheme, currencies, controller),
-          if (_useGrid(context))
-            ..._buildInlineFooter(context, scheme, controller)
-          else ...[
-            _buildDefaultCurrencyNotice(context, scheme, controller),
-            _buildProviderAttribution(context, scheme),
-            const CcSpaceXS(),
-            _buildHiddenTagsSection(context, scheme, controller),
-            _buildActions(context, scheme, controller),
-          ],
-          const CcSpaceXL(),
-          // Keep the last row clear of the system navigation bar / taskbar.
-          SizedBox(height: MediaQuery.viewPaddingOf(context).bottom),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildCurrencyList(context, scheme, currencies, controller),
+        if (_useGrid(context))
+          ..._buildInlineFooter(context, scheme, controller)
+        else ...[
+          _buildDefaultCurrencyNotice(context, scheme, controller),
+          _buildProviderAttribution(context, scheme),
+          const CcSpaceXS(),
+          _buildHiddenTagsSection(context, scheme, controller),
+          _buildActions(context, scheme, controller),
         ],
-      ),
+        const CcSpaceXL(),
+      ],
     );
   }
 
