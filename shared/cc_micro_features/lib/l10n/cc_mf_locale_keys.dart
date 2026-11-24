@@ -44,6 +44,8 @@ abstract final class CcMfLocaleKeys {
   static const auth_login_phone = 'mf.auth.login_phone';
   static const auth_phone_number = 'mf.auth.phone_number';
   static const auth_phone_number_hint = 'mf.auth.phone_number_hint';
+  static const auth_reauth_account_mismatch =
+      'mf.auth.reauth_account_mismatch';
   static const auth_recent_login_required = 'mf.auth.recent_login_required';
   static const auth_resend = 'mf.auth.resend';
   static const auth_security_warning_bullet_ai =

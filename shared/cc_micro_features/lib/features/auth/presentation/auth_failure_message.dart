@@ -11,9 +11,15 @@ import '../domain/auth_failures.dart';
 /// keeps its own message.
 String authFailureMessage(CcFailure failure) {
   return switch (failure) {
-    AppleVerificationFailure() => el.tr(CcMfLocaleKeys.auth_apple_verify_failed),
+    AppleVerificationFailure() => el.tr(
+      CcMfLocaleKeys.auth_apple_verify_failed,
+    ),
     RecentLoginRequiredFailure() => el.tr(
       CcMfLocaleKeys.auth_recent_login_required,
+    ),
+    ReauthAccountMismatchFailure(:final expectedAccount) => el.tr(
+      CcMfLocaleKeys.auth_reauth_account_mismatch,
+      namedArgs: {'account': expectedAccount},
     ),
     _ => failure.message,
   };

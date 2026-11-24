@@ -314,7 +314,9 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         );
         Catcher2.reportCheckedError(err, StackTrace.current);
         return const Error(
-          CcUnauthorizedFailure('Apple Sign-In is not supported on this device'),
+          CcUnauthorizedFailure(
+            'Apple Sign-In is not supported on this device',
+          ),
         );
       }
 
@@ -520,13 +522,19 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     }, (failure) => Error(failure));
   }
 
+  /// Email of the Google account picked in the last Google sheet, so account
+  /// deletion can tell whether the user confirmed with the right account.
+  String? _lastGoogleEmail;
+
   /// Shared helper to handle the Google Sign-In "dance" and return a Firebase
   /// credential.
   Future<Result<firebase_auth.AuthCredential, CcFailure>>
   _getGoogleCredential() async {
+    _lastGoogleEmail = null;
     try {
       await _googleSignIn.initialize();
       final googleUser = await _googleSignIn.authenticate();
+      _lastGoogleEmail = googleUser.email;
       final googleAuth = googleUser.authentication;
 
       return Success(
@@ -610,40 +618,68 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       final providerIds = user.providerData.map((p) => p.providerId).toSet();
       final hasApple = providerIds.contains('apple.com');
       final hasGoogle = providerIds.contains('google.com');
+      final signInProvider = await _currentSignInProvider(user);
+      '[DeleteAccount] start | account=${_maskEmail(user.email)} '
+              'providers=${providerIds.join(',')} signedInWith=$signInProvider'
+          .Log(_tag);
 
-      // Sign in with Apple: App Store guideline 5.1.1(v) requires revoking the
-      // Apple token when the account is deleted. Apple only issues the
-      // authorization code needed for that during a fresh authorization, so
-      // re-authenticate first (this also satisfies Firebase's recent-login
-      // rule), revoke, then delete.
+      // The confirmation step must show the SAME account that is being
+      // deleted, so it uses the provider the user signed in with this time:
       //
-      // The Apple sheet always uses the Apple ID signed in on THIS device; it
-      // cannot be pointed at another one. If the account's Apple link belongs
-      // to a different Apple ID, the sheet would show that other Apple ID
-      // ("Create an account using ...") and the user would be confirming the
-      // wrong account, so it is only shown when this device's Apple ID is the
-      // linked one.
+      // - Signed in with Apple → the Apple sheet, but only once Apple confirms
+      //   the Apple ID on this device is the one linked to this account (the
+      //   Apple sheet always shows the device's Apple ID and cannot be pointed
+      //   at another one). This also lets us revoke the Apple token, as App
+      //   Store guideline 5.1.1(v) requires.
+      // - Signed in with Google (even if Apple is also linked, e.g. through
+      //   Firebase's same-email account linking) → the Google sheet, never the
+      //   Apple one: the Apple sheet would show an unrelated Apple ID.
       var hasAppleReauthenticated = false;
-      if (hasApple && await _canConfirmAppleOnThisDevice(user)) {
+      if (hasApple &&
+          signInProvider == 'apple.com' &&
+          await _canConfirmAppleOnThisDevice(user)) {
         final failure = await _reauthenticateAndRevokeApple(user);
         if (failure != null) return Error(failure);
         hasAppleReauthenticated = true;
+      } else if (hasApple) {
+        '[DeleteAccount] Apple is linked but not confirmable here '
+                '(signedInWith=$signInProvider) | skipping the Apple sheet, '
+                'Apple token not revoked from this device'
+            .Log(_tag);
+        Catcher2.reportCheckedError(
+          Exception(
+            '[AppleRevoke] Account deleted without the Apple step '
+            '(signedInWith=$signInProvider): its Apple token is not revoked.',
+          ),
+          StackTrace.current,
+        );
       }
 
       // Firebase refuses to delete an account whose sign-in is older than a
       // few minutes. Re-authenticate BEFORE [beforeDelete] removes the user's
       // data, so cancelling the Google sheet can never leave an account with
       // its data already gone.
-      if (!hasAppleReauthenticated && !await _hasRecentLogin(user)) {
-        if (!hasGoogle) return const Error(RecentLoginRequiredFailure());
-        final reauth = await _reauthenticateWithGoogle(user);
-        if (reauth != null) return Error(reauth);
+      if (!hasAppleReauthenticated) {
+        final hasRecentLogin = await _hasRecentLogin(user);
+        '[DeleteAccount] recent login: $hasRecentLogin'.Log(_tag);
+        if (!hasRecentLogin) {
+          if (!hasGoogle) {
+            '[DeleteAccount] stop | no Google to re-authenticate, user must log in again'
+                .Log(_tag);
+            return const Error(RecentLoginRequiredFailure());
+          }
+          final reauth = await _reauthenticateWithGoogle(user);
+          if (reauth != null) return Error(reauth);
+        }
       }
 
       if (beforeDelete != null) {
         try {
+          '[DeleteAccount] deleting app data'.Log(_tag);
           await beforeDelete();
+          '[DeleteAccount] app data deleted'.Log(_tag);
         } catch (e, stack) {
+          '[DeleteAccount] stop | app data delete failed: $e'.Log(_tag);
           Catcher2.reportCheckedError(
             Exception('[DeleteAccount] Deleting user data failed: $e'),
             stack,
@@ -655,6 +691,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       try {
         await user.delete();
       } on firebase_auth.FirebaseAuthException catch (e) {
+        '[DeleteAccount] user.delete() failed | code=${e.code}'.Log(_tag);
         if (e.code != 'requires-recent-login') {
           return Error(_mapLinkException(e));
         }
@@ -672,10 +709,35 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         }
       }
 
+      '[DeleteAccount] done | account deleted'.Log(_tag);
       return const Success(unit);
     } catch (e) {
+      '[DeleteAccount] stop | unexpected error: $e'.Log(_tag);
       return Error(CcUnknownFailure('Delete account failed: $e'));
     }
+  }
+
+  static const String _tag = 'FirebaseAuthRepositoryImpl';
+
+  /// The provider used for the current sign-in (`google.com`, `apple.com`,
+  /// `phone`, ...), read from the ID token. Null when it cannot be read.
+  Future<String?> _currentSignInProvider(firebase_auth.User user) async {
+    try {
+      return (await user.getIdTokenResult()).signInProvider;
+    } catch (e) {
+      '[DeleteAccount] could not read the sign-in provider: $e'.Log(_tag);
+      return null;
+    }
+  }
+
+  /// `mi***@gmail.com` — enough to tell accounts apart in local logs without
+  /// printing the full address.
+  String _maskEmail(String? email) {
+    if (email == null || email.isEmpty) return '(none)';
+    final at = email.indexOf('@');
+    if (at <= 0) return '***';
+    final visible = at < 2 ? email.substring(0, at) : email.substring(0, 2);
+    return '$visible***${email.substring(at)}';
   }
 
   /// Whether [user] signed in recently enough for Firebase to allow deleting
@@ -698,47 +760,43 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   /// - authorized: same Apple ID → confirm with Apple and revoke.
   /// - revoked: the user already removed the app from their Apple ID → there
   ///   is no token left to revoke.
-  /// - not found: the link belongs to a different Apple ID (signed in on
-  ///   another device) → the token cannot be revoked from here; reported so
-  ///   the gap is visible, and the deletion goes on without the Apple sheet.
+  /// - not found: the link belongs to a different Apple ID → the Apple sheet
+  ///   would show that other Apple ID, so it is not shown.
   ///
-  /// Platforms without a native credential-state API (Android's web flow,
-  /// where the user picks the Apple ID themselves) keep the Apple step.
+  /// Fails closed: when the linked Apple ID cannot be read or Apple cannot
+  /// answer (no native credential-state API, e.g. Android), the Apple sheet is
+  /// NOT shown. Showing it on a guess is exactly what put an unrelated Apple
+  /// ID in front of the user.
   Future<bool> _canConfirmAppleOnThisDevice(firebase_auth.User user) async {
-    final linkedAppleId = user.providerData
-        .where((p) => p.providerId == 'apple.com')
-        .map((p) => p.uid)
-        .whereType<String>()
-        .firstOrNull;
-    if (linkedAppleId == null || linkedAppleId.isEmpty) return true;
+    final linkedAppleId = _linkedAppleId(user);
+    if (linkedAppleId == null) {
+      '[DeleteAccount] Apple check: linked Apple ID unknown | no Apple sheet'
+          .Log(_tag);
+      return false;
+    }
 
     final CredentialState state;
     try {
       state = await SignInWithApple.getCredentialState(linkedAppleId);
     } catch (e) {
-      '[AppleRevoke] Credential state unavailable ($e), keeping the Apple step'
-          .Log('FirebaseAuthRepositoryImpl');
-      return true;
+      '[DeleteAccount] Apple check: credential state unavailable ($e) | no Apple sheet'
+          .Log(_tag);
+      return false;
     }
-    '[AppleRevoke] Credential state of the linked Apple ID on this device: $state'
-        .Log('FirebaseAuthRepositoryImpl');
+    '[DeleteAccount] Apple check: linked Apple ID on this device is $state'.Log(
+      _tag,
+    );
+    return state == CredentialState.authorized;
+  }
 
-    switch (state) {
-      case CredentialState.authorized:
-        return true;
-      case CredentialState.revoked:
-        return false;
-      case CredentialState.notFound:
-        Catcher2.reportCheckedError(
-          Exception(
-            '[AppleRevoke] The account is linked to an Apple ID that is not '
-            'signed in on this device, so its Apple token cannot be revoked '
-            'here. Deleting the account without the Apple step.',
-          ),
-          StackTrace.current,
-        );
-        return false;
+  /// Apple's user identifier linked to [user], or null when not available.
+  String? _linkedAppleId(firebase_auth.User user) {
+    for (final p in user.providerData) {
+      if (p.providerId != 'apple.com') continue;
+      final uid = p.uid;
+      if (uid != null && uid.isNotEmpty) return uid;
     }
+    return null;
   }
 
   /// Re-authenticates [user] with a fresh Apple authorization, then revokes the
@@ -751,9 +809,22 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   Future<CcFailure?> _reauthenticateAndRevokeApple(
     firebase_auth.User user,
   ) async {
+    '[DeleteAccount] showing the Apple sheet'.Log(_tag);
     final appleResult = await _getAppleCredential(requestProfile: false);
-    if (appleResult.isError()) return appleResult.tryGetError();
+    if (appleResult.isError()) {
+      '[DeleteAccount] stop | Apple sheet: ${appleResult.tryGetError()?.message}'
+          .Log(_tag);
+      return appleResult.tryGetError();
+    }
     final apple = appleResult.tryGetSuccess()!;
+
+    // Defense in depth: never send Firebase a credential for another Apple ID.
+    final isSameAppleId = _lastAppleUserId == _linkedAppleId(user);
+    '[DeleteAccount] Apple sheet returned the linked Apple ID: $isSameAppleId'
+        .Log(_tag);
+    if (!isSameAppleId) {
+      return ReauthAccountMismatchFailure(_accountLabel(user));
+    }
 
     final reauth = await _reauthenticate(user, apple.credential);
     if (reauth != null) {
@@ -784,10 +855,53 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     return null;
   }
 
+  /// Re-authenticates [user] through the Google sheet. The Google sheet lets
+  /// the user pick any Google account on the device, so the picked account is
+  /// checked against the account's own Google identity first.
   Future<CcFailure?> _reauthenticateWithGoogle(firebase_auth.User user) async {
+    '[DeleteAccount] showing the Google sheet'.Log(_tag);
     final credResult = await _getGoogleCredential();
-    if (credResult.isError()) return credResult.tryGetError();
-    return _reauthenticate(user, credResult.tryGetSuccess()!);
+    if (credResult.isError()) {
+      '[DeleteAccount] stop | Google sheet: ${credResult.tryGetError()?.message}'
+          .Log(_tag);
+      return credResult.tryGetError();
+    }
+
+    final expected = _linkedGoogleEmail(user);
+    final picked = _lastGoogleEmail;
+    final isSameAccount =
+        expected == null ||
+        (picked != null && picked.toLowerCase() == expected.toLowerCase());
+    '[DeleteAccount] Google sheet picked ${_maskEmail(picked)}, expected '
+            '${_maskEmail(expected)} | same account: $isSameAccount'
+        .Log(_tag);
+    if (!isSameAccount) {
+      await _googleSignIn.signOut();
+      return ReauthAccountMismatchFailure(_accountLabel(user));
+    }
+
+    final failure = await _reauthenticate(user, credResult.tryGetSuccess()!);
+    '[DeleteAccount] Google re-authentication: ${failure?.message ?? 'ok'}'.Log(
+      _tag,
+    );
+    return failure;
+  }
+
+  /// Email of the Google identity linked to [user], or null when unknown.
+  String? _linkedGoogleEmail(firebase_auth.User user) {
+    for (final p in user.providerData) {
+      if (p.providerId != 'google.com') continue;
+      final email = p.email;
+      if (email != null && email.isNotEmpty) return email;
+    }
+    return null;
+  }
+
+  /// How the signed-in account is named to the user: email, else phone.
+  String _accountLabel(firebase_auth.User user) {
+    final email = user.email ?? _linkedGoogleEmail(user);
+    if (email != null && email.isNotEmpty) return email;
+    return user.phoneNumber ?? '';
   }
 
   Future<CcFailure?> _reauthenticate(

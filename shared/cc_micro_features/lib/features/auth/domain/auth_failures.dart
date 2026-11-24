@@ -1,4 +1,5 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
+
 /// The user dismissed the Google/Apple sheet. Not an error: the UI must close
 /// any loading state silently instead of showing a message. Typed so callers
 /// never have to compare [message] text.
@@ -20,4 +21,15 @@ class AppleVerificationFailure extends CcFailure {
 class RecentLoginRequiredFailure extends CcFailure {
   const RecentLoginRequiredFailure()
     : super('Recent login required for this action');
+}
+
+/// While confirming a sensitive action (delete account), the user picked a
+/// different Google/Apple account than the one signed in. Nothing was changed.
+/// [expectedAccount] is the signed-in account (usually its email) so the
+/// message can name it.
+class ReauthAccountMismatchFailure extends CcFailure {
+  const ReauthAccountMismatchFailure(this.expectedAccount)
+    : super('The chosen account is not the signed-in account');
+
+  final String expectedAccount;
 }
