@@ -456,7 +456,6 @@ class ProfilePage extends PrjGetView<ProfileController> {
       onTap: () async {
         await DeleteAccountConfirmSheet.show(
           context,
-          hasAppleSignIn: controller.hasAppleSignIn,
           accountLabel: controller.accountLabel,
           onConfirm: () async {
             final result = await controller.deleteAccount();

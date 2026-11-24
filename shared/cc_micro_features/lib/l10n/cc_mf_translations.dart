@@ -23,8 +23,6 @@ abstract final class CcMfTranslations {
       },
       "auth": {
         "delete_account": "Delete account",
-        "delete_apple_note":
-            "This account is linked to Sign in with Apple. If it is this device's Apple ID, Apple will ask you to confirm before the account is deleted.",
         "delete_confirm": "Delete Account?",
         "delete_confirm_desc":
             "This will permanently delete your account and all associated data. This action cannot be undone.",
@@ -103,8 +101,6 @@ abstract final class CcMfTranslations {
       },
       "auth": {
         "delete_account": "Xóa tài khoản",
-        "delete_apple_note":
-            "Tài khoản này có liên kết đăng nhập bằng Apple. Nếu đó là Apple ID trên máy này, Apple sẽ yêu cầu bạn xác nhận trước khi xóa tài khoản.",
         "delete_confirm": "Xóa Tài Khoản?",
         "delete_confirm_desc":
             "Điều này sẽ xóa vĩnh viễn tài khoản và tất cả dữ liệu liên quan của bạn. Hành động này không thể hoàn tác.",
@@ -183,8 +179,6 @@ abstract final class CcMfTranslations {
       },
       "auth": {
         "delete_account": "계정 삭제",
-        "delete_apple_note":
-            "이 계정은 Apple로 로그인에 연결되어 있습니다. 이 기기의 Apple ID인 경우 계정을 삭제하기 전에 Apple이 확인을 요청합니다.",
         "delete_confirm": "계정을 삭제하시겠습니까?",
         "delete_confirm_desc": "계정 및 모든 관련 데이터를 영구적으로 삭제합니다. 이 작업은 취소할 수 없습니다.",
         "agree_prefix": "동의합니다 ",
@@ -260,8 +254,6 @@ abstract final class CcMfTranslations {
       },
       "auth": {
         "delete_account": "アカウントを削除",
-        "delete_apple_note":
-            "このアカウントはAppleでサインインに連携されています。このデバイスのApple IDの場合、削除の前にAppleから確認が求められます。",
         "delete_confirm": "アカウントを削除しますか？",
         "delete_confirm_desc": "アカウントとすべての関連データが永続的に削除されます。この操作は取り消せません。",
         "agree_prefix": "同意する ",
@@ -335,8 +327,6 @@ abstract final class CcMfTranslations {
       },
       "auth": {
         "delete_account": "删除账户",
-        "delete_apple_note":
-            "此账户已关联通过 Apple 登录。如果是本设备的 Apple ID，删除账户前 Apple 会要求您确认。",
         "delete_confirm": "删除账户？",
         "delete_confirm_desc": "这将永久删除您的账户和所有相关数据。此操作无法撤销。",
         "agree_prefix": "我同意 ",

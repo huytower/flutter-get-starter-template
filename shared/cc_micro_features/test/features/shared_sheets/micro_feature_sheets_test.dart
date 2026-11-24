@@ -46,7 +46,7 @@ Future<T?> _openSheet<T>(
 
 void main() {
   group('DeleteAccountConfirmSheet', () {
-    testWidgets('confirm calls back; account and Apple note shown', (
+    testWidgets('confirm calls back; account shown', (
       tester,
     ) async {
       var confirms = 0;
@@ -55,12 +55,10 @@ void main() {
         (context) => DeleteAccountConfirmSheet.show(
           context,
           accountLabel: 'me@example.com',
-          hasAppleSignIn: true,
           onConfirm: () => confirms++,
         ),
       );
       expect(_text('me@example.com'), findsOneWidget);
-      expect(_text(CcMfLocaleKeys.auth_delete_apple_note), findsOneWidget);
 
       await tester.tap(_text(CcMfLocaleKeys.auth_delete_account));
       await tester.pumpAndSettle();
@@ -79,7 +77,6 @@ void main() {
           onConfirm: () => confirms++,
         ),
       );
-      expect(_text(CcMfLocaleKeys.auth_delete_apple_note), findsNothing);
 
       await tester.tap(_text('Cancel'));
       await tester.pumpAndSettle();

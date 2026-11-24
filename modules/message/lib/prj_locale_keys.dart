@@ -818,8 +818,6 @@ class CodegenLoader extends AssetLoader {
       "ai_sharing": "Share data with AI",
       "ai_sharing_subtitle": "Sends data to Google Gemini for quick entry, receipt scan and advice",
       "delete_account": "Delete account",
-      "delete_apple_note":
-          "This account is linked to Sign in with Apple. If it is this device's Apple ID, Apple will ask you to confirm before the account is deleted.",
       "delete_success": "Your account has been deleted.",
       "delete_confirm_desc":
           "This will permanently delete your account and all associated data. This action cannot be undone.",
@@ -1561,8 +1559,6 @@ class CodegenLoader extends AssetLoader {
       "ai_sharing": "Chia sẻ dữ liệu với AI",
       "ai_sharing_subtitle": "Gửi dữ liệu tới Google Gemini cho nhập nhanh, quét hóa đơn, gợi ý",
       "delete_account": "Xóa tài khoản",
-      "delete_apple_note":
-          "Tài khoản này có liên kết đăng nhập bằng Apple. Nếu đó là Apple ID trên máy này, Apple sẽ yêu cầu bạn xác nhận trước khi xóa tài khoản.",
       "delete_success": "Tài khoản của bạn đã được xóa.",
       "delete_confirm_desc":
           "Điều này sẽ xóa vĩnh viễn tài khoản và tất cả dữ liệu liên quan của bạn. Hành động này không thể hoàn tác.",
@@ -2556,8 +2552,6 @@ class CodegenLoader extends AssetLoader {
       "ai_sharing": "AI와 데이터 공유",
       "ai_sharing_subtitle": "빠른 입력, 영수증 스캔, 조언을 위해 Google Gemini로 데이터를 보냅니다",
       "delete_account": "계정 삭제",
-      "delete_apple_note":
-          "이 계정은 Apple로 로그인에 연결되어 있습니다. 이 기기의 Apple ID인 경우 계정을 삭제하기 전에 Apple이 확인을 요청합니다.",
       "delete_success": "계정이 삭제되었습니다.",
       "young_children_message":
           "어린 자녀가 있으신가요? 예라면 우유, 기저귀, 장난감 관련 카테고리를 자동으로 활성화합니다.",
@@ -3383,8 +3377,6 @@ class CodegenLoader extends AssetLoader {
       "ai_sharing": "AIとのデータ共有",
       "ai_sharing_subtitle": "クイック入力・レシートスキャン・アドバイスのためGoogle Geminiにデータを送信します",
       "delete_account": "アカウントを削除",
-      "delete_apple_note":
-          "このアカウントはAppleでサインインに連携されています。このデバイスのApple IDの場合、削除の前にAppleから確認が求められます。",
       "delete_success": "アカウントを削除しました。",
       "young_children_message": "幼児がいますか？はいの場合、ミルク、おむつ、おもちゃ関連のカテゴリを自動的に有効にします。",
       "experience_level_progress": "経験レベルの進行",
@@ -4197,8 +4189,6 @@ class CodegenLoader extends AssetLoader {
       "ai_sharing": "与 AI 共享数据",
       "ai_sharing_subtitle": "为快速录入、扫描小票和建议向 Google Gemini 发送数据",
       "delete_account": "删除账户",
-      "delete_apple_note":
-          "此账户已关联通过 Apple 登录。如果是本设备的 Apple ID，删除账户前 Apple 会要求您确认。",
       "delete_success": "您的账户已删除。",
       "young_children_message": "您有年幼的子女吗？如果是，我们将自动启用儿童相关类别（奶粉、纸尿裤、玩具）。",
       "experience_level_progress": "经验等级进度",

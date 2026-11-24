@@ -29,7 +29,6 @@ abstract final class CcMfLocaleKeys {
   static const app_review_report_title = 'mf.app_review.report_title';
   static const auth_agree_prefix = 'mf.auth.agree_prefix';
   static const auth_delete_account = 'mf.auth.delete_account';
-  static const auth_delete_apple_note = 'mf.auth.delete_apple_note';
   static const auth_delete_confirm = 'mf.auth.delete_confirm';
   static const auth_delete_confirm_desc = 'mf.auth.delete_confirm_desc';
   static const auth_apple_verify_failed = 'mf.auth.apple_verify_failed';

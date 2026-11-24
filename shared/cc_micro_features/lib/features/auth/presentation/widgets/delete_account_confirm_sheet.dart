@@ -4,8 +4,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 /// Confirmation sheet before deleting the signed-in account. Shows which
-/// account ([accountLabel]), what deleting means, and, when the account uses
-/// Sign in with Apple ([hasAppleSignIn]), that Apple will ask to confirm.
+/// account ([accountLabel]) and what deleting means.
 /// Returns `true` when confirmed (after calling [onConfirm]), `false` or
 /// `null` otherwise.
 ///
@@ -20,7 +19,6 @@ class DeleteAccountConfirmSheet extends StatelessWidget {
   const DeleteAccountConfirmSheet({
     super.key,
     required this.onConfirm,
-    this.hasAppleSignIn = false,
     this.accountLabel,
   });
 
@@ -29,14 +27,9 @@ class DeleteAccountConfirmSheet extends StatelessWidget {
   /// The signed-in account (email, phone or name).
   final String? accountLabel;
 
-  /// Sign in with Apple is linked, so deleting opens Apple's sheet (needed to
-  /// revoke the Apple token). Said up front so it is not taken for a sign-in.
-  final bool hasAppleSignIn;
-
   static Future<bool?> show(
     BuildContext context, {
     required VoidCallback onConfirm,
-    bool hasAppleSignIn = false,
     String? accountLabel,
   }) {
     return CcAdaptiveBottomSheet.show<bool>(
@@ -44,7 +37,6 @@ class DeleteAccountConfirmSheet extends StatelessWidget {
       backgroundColor: null,
       builder: (_) => DeleteAccountConfirmSheet(
         onConfirm: onConfirm,
-        hasAppleSignIn: hasAppleSignIn,
         accountLabel: accountLabel,
       ),
     );
@@ -73,15 +65,6 @@ class DeleteAccountConfirmSheet extends StatelessWidget {
               ],
               const CcSpaceSM(),
               _buildNote(context, CcMfLocaleKeys.auth_delete_confirm_desc, 5),
-              if (hasAppleSignIn) ...[
-                const CcSpaceSM(),
-                _buildNote(
-                  context,
-                  CcMfLocaleKeys.auth_delete_apple_note,
-                  4,
-                  hasSmallText: true,
-                ),
-              ],
               const CcSpaceLG(),
               _buildActions(context),
             ],

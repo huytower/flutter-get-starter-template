@@ -609,9 +609,26 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   Future<Result<Unit, CcFailure>> deleteAccount({
     Future<void> Function()? beforeDelete,
   }) async {
+    final trace = _deleteTrace = _DeleteAccountTrace();
+    final result = await _runDeleteAccount(beforeDelete: beforeDelete);
+    _deleteTrace = null;
+    final outcome = switch (result) {
+      Success() => 'deleted',
+      Error(error: AuthCancelledFailure()) => 'cancelled by the user',
+      Error(:final error) => 'failed: ${error.runtimeType} ${error.message}',
+    };
+    '[DeleteAccount] outcome: $outcome'.Log(_tag);
+    trace.send(outcome);
+    return result;
+  }
+
+  Future<Result<Unit, CcFailure>> _runDeleteAccount({
+    Future<void> Function()? beforeDelete,
+  }) async {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) {
+        _trace('stop | not signed in');
         return const Error(CcUnauthorizedFailure('Not logged in'));
       }
 
@@ -619,9 +636,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       final hasApple = providerIds.contains('apple.com');
       final hasGoogle = providerIds.contains('google.com');
       final signInProvider = await _currentSignInProvider(user);
-      '[DeleteAccount] start | account=${_maskEmail(user.email)} '
-              'providers=${providerIds.join(',')} signedInWith=$signInProvider'
-          .Log(_tag);
+      _trace(
+        'start | account=${_maskEmail(user.email)} '
+        'providers=${providerIds.join(',')} signedInWith=$signInProvider',
+      );
 
       // The confirmation step must show the SAME account that is being
       // deleted, so it uses the provider the user signed in with this time:
@@ -642,16 +660,9 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         if (failure != null) return Error(failure);
         hasAppleReauthenticated = true;
       } else if (hasApple) {
-        '[DeleteAccount] Apple is linked but not confirmable here '
-                '(signedInWith=$signInProvider) | skipping the Apple sheet, '
-                'Apple token not revoked from this device'
-            .Log(_tag);
-        Catcher2.reportCheckedError(
-          Exception(
-            '[AppleRevoke] Account deleted without the Apple step '
-            '(signedInWith=$signInProvider): its Apple token is not revoked.',
-          ),
-          StackTrace.current,
+        _trace(
+          'Apple linked but not confirmable here | no Apple sheet, '
+          'Apple token NOT revoked from this device',
         );
       }
 
@@ -661,11 +672,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       // its data already gone.
       if (!hasAppleReauthenticated) {
         final hasRecentLogin = await _hasRecentLogin(user);
-        '[DeleteAccount] recent login: $hasRecentLogin'.Log(_tag);
+        _trace('recent login: $hasRecentLogin');
         if (!hasRecentLogin) {
           if (!hasGoogle) {
-            '[DeleteAccount] stop | no Google to re-authenticate, user must log in again'
-                .Log(_tag);
+            _trace('stop | no Google to re-authenticate, must log in again');
             return const Error(RecentLoginRequiredFailure());
           }
           final reauth = await _reauthenticateWithGoogle(user);
@@ -675,15 +685,11 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
 
       if (beforeDelete != null) {
         try {
-          '[DeleteAccount] deleting app data'.Log(_tag);
+          _trace('deleting app data');
           await beforeDelete();
-          '[DeleteAccount] app data deleted'.Log(_tag);
-        } catch (e, stack) {
-          '[DeleteAccount] stop | app data delete failed: $e'.Log(_tag);
-          Catcher2.reportCheckedError(
-            Exception('[DeleteAccount] Deleting user data failed: $e'),
-            stack,
-          );
+          _trace('app data deleted');
+        } catch (e) {
+          _trace('stop | app data delete failed: $e');
           return Error(CcServerFailure('Could not delete your data: $e'));
         }
       }
@@ -691,7 +697,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       try {
         await user.delete();
       } on firebase_auth.FirebaseAuthException catch (e) {
-        '[DeleteAccount] user.delete() failed | code=${e.code}'.Log(_tag);
+        _trace('user.delete() failed | code=${e.code}');
         if (e.code != 'requires-recent-login') {
           return Error(_mapLinkException(e));
         }
@@ -705,19 +711,30 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         try {
           await user.delete();
         } on firebase_auth.FirebaseAuthException catch (retry) {
+          _trace('user.delete() retry failed | code=${retry.code}');
           return Error(_mapLinkException(retry));
         }
       }
 
-      '[DeleteAccount] done | account deleted'.Log(_tag);
+      _trace('user.delete() ok');
       return const Success(unit);
     } catch (e) {
-      '[DeleteAccount] stop | unexpected error: $e'.Log(_tag);
+      _trace('stop | unexpected error: $e');
       return Error(CcUnknownFailure('Delete account failed: $e'));
     }
   }
 
   static const String _tag = 'FirebaseAuthRepositoryImpl';
+
+  /// Steps of the account deletion in progress, sent to Slack once it ends.
+  _DeleteAccountTrace? _deleteTrace;
+
+  /// Records one step of the account deletion: printed locally with `.Log()`
+  /// and kept for the single Slack report sent when the deletion ends.
+  void _trace(String step) {
+    '[DeleteAccount] $step'.Log(_tag);
+    _deleteTrace?.add(step);
+  }
 
   /// The provider used for the current sign-in (`google.com`, `apple.com`,
   /// `phone`, ...), read from the ID token. Null when it cannot be read.
@@ -725,13 +742,13 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     try {
       return (await user.getIdTokenResult()).signInProvider;
     } catch (e) {
-      '[DeleteAccount] could not read the sign-in provider: $e'.Log(_tag);
+      _trace('could not read the sign-in provider: $e');
       return null;
     }
   }
 
-  /// `mi***@gmail.com` — enough to tell accounts apart in local logs without
-  /// printing the full address.
+  /// `mi***@gmail.com` — enough to tell accounts apart in logs and Slack
+  /// without sending the full address.
   String _maskEmail(String? email) {
     if (email == null || email.isEmpty) return '(none)';
     final at = email.indexOf('@');
@@ -770,8 +787,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   Future<bool> _canConfirmAppleOnThisDevice(firebase_auth.User user) async {
     final linkedAppleId = _linkedAppleId(user);
     if (linkedAppleId == null) {
-      '[DeleteAccount] Apple check: linked Apple ID unknown | no Apple sheet'
-          .Log(_tag);
+      _trace('Apple check: linked Apple ID unknown | no Apple sheet');
       return false;
     }
 
@@ -779,13 +795,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     try {
       state = await SignInWithApple.getCredentialState(linkedAppleId);
     } catch (e) {
-      '[DeleteAccount] Apple check: credential state unavailable ($e) | no Apple sheet'
-          .Log(_tag);
+      _trace('Apple check: credential state unavailable ($e) | no Apple sheet');
       return false;
     }
-    '[DeleteAccount] Apple check: linked Apple ID on this device is $state'.Log(
-      _tag,
-    );
+    _trace('Apple check: linked Apple ID on this device is $state');
     return state == CredentialState.authorized;
   }
 
@@ -805,51 +818,39 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   ///
   /// A failed revoke does NOT block the deletion — the user asked to leave and
   /// a broken Apple key setup in Firebase must not trap them — but it is
-  /// reported to Slack so the compliance gap is visible and fixable.
+  /// recorded in the deletion's Slack report so the gap is visible.
   Future<CcFailure?> _reauthenticateAndRevokeApple(
     firebase_auth.User user,
   ) async {
-    '[DeleteAccount] showing the Apple sheet'.Log(_tag);
+    _trace('showing the Apple sheet');
     final appleResult = await _getAppleCredential(requestProfile: false);
     if (appleResult.isError()) {
-      '[DeleteAccount] stop | Apple sheet: ${appleResult.tryGetError()?.message}'
-          .Log(_tag);
+      _trace('stop | Apple sheet: ${appleResult.tryGetError()?.message}');
       return appleResult.tryGetError();
     }
     final apple = appleResult.tryGetSuccess()!;
 
     // Defense in depth: never send Firebase a credential for another Apple ID.
     final isSameAppleId = _lastAppleUserId == _linkedAppleId(user);
-    '[DeleteAccount] Apple sheet returned the linked Apple ID: $isSameAppleId'
-        .Log(_tag);
+    _trace('Apple sheet returned the linked Apple ID: $isSameAppleId');
     if (!isSameAppleId) {
       return ReauthAccountMismatchFailure(_accountLabel(user));
     }
 
     final reauth = await _reauthenticate(user, apple.credential);
-    if (reauth != null) {
-      Catcher2.reportCheckedError(
-        Exception(
-          '[AppleRevoke] Re-authentication before delete failed: ${reauth.message}',
-        ),
-        StackTrace.current,
-      );
-      return reauth;
-    }
+    _trace('Apple re-authentication: ${reauth?.message ?? 'ok'}');
+    if (reauth != null) return reauth;
 
     try {
       await _firebaseAuth.revokeTokenWithAuthorizationCode(
         apple.authorizationCode,
       );
-      '[AppleRevoke] Apple token revoked'.Log('FirebaseAuthRepositoryImpl');
-    } catch (e, stack) {
-      Catcher2.reportCheckedError(
-        Exception(
-          '[AppleRevoke] Could not revoke the Apple token, account deletion '
-          'continues | error=$e | Check the Apple provider setup (Team ID, '
-          'Key ID, private key) in Firebase Console > Authentication.',
-        ),
-        stack,
+      _trace('Apple token revoked');
+    } catch (e) {
+      _trace(
+        'Apple token revoke FAILED, deletion continues | error=$e | check the '
+        'Apple provider setup (Team ID, Key ID, private key) in Firebase '
+        'Console > Authentication',
       );
     }
     return null;
@@ -859,11 +860,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   /// the user pick any Google account on the device, so the picked account is
   /// checked against the account's own Google identity first.
   Future<CcFailure?> _reauthenticateWithGoogle(firebase_auth.User user) async {
-    '[DeleteAccount] showing the Google sheet'.Log(_tag);
+    _trace('showing the Google sheet');
     final credResult = await _getGoogleCredential();
     if (credResult.isError()) {
-      '[DeleteAccount] stop | Google sheet: ${credResult.tryGetError()?.message}'
-          .Log(_tag);
+      _trace('stop | Google sheet: ${credResult.tryGetError()?.message}');
       return credResult.tryGetError();
     }
 
@@ -872,18 +872,17 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     final isSameAccount =
         expected == null ||
         (picked != null && picked.toLowerCase() == expected.toLowerCase());
-    '[DeleteAccount] Google sheet picked ${_maskEmail(picked)}, expected '
-            '${_maskEmail(expected)} | same account: $isSameAccount'
-        .Log(_tag);
+    _trace(
+      'Google sheet picked ${_maskEmail(picked)}, expected '
+      '${_maskEmail(expected)} | same account: $isSameAccount',
+    );
     if (!isSameAccount) {
       await _googleSignIn.signOut();
       return ReauthAccountMismatchFailure(_accountLabel(user));
     }
 
     final failure = await _reauthenticate(user, credResult.tryGetSuccess()!);
-    '[DeleteAccount] Google re-authentication: ${failure?.message ?? 'ok'}'.Log(
-      _tag,
-    );
+    _trace('Google re-authentication: ${failure?.message ?? 'ok'}');
     return failure;
   }
 
@@ -1045,5 +1044,32 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     final bytes = utf8.encode(input);
     final digest = sha256.convert(bytes);
     return digest.toString();
+  }
+}
+
+/// Steps of one account deletion, sent to Slack as a single report when the
+/// deletion ends, so release builds show the whole flow.
+///
+/// The Slack alert shows only the first line of an error and drops identical
+/// first lines within 5 minutes, so the report is one line that starts with
+/// a per-attempt run id.
+class _DeleteAccountTrace {
+  _DeleteAccountTrace() : _startedAt = DateTime.now();
+
+  final DateTime _startedAt;
+  final List<String> _steps = [];
+
+  void add(String step) {
+    final ms = DateTime.now().difference(_startedAt).inMilliseconds;
+    // Error texts can span lines; Slack would only show the first one.
+    _steps.add('+${ms}ms ${step.replaceAll(RegExp(r'\s*\n\s*'), ' ')}');
+  }
+
+  void send(String outcome) {
+    final run = _startedAt.millisecondsSinceEpoch.toRadixString(36);
+    Catcher2.reportCheckedError(
+      Exception('[DeleteAccount] run=$run | $outcome | ${_steps.join(' ▸ ')}'),
+      StackTrace.current,
+    );
   }
 }

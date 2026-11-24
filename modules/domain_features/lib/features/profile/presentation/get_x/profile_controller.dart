@@ -163,10 +163,6 @@ class ProfileController extends PrjGetController {
 
   bool get hasLoggedIn => user.value != null;
 
-  /// Deleting an Apple-linked account asks Apple to confirm first.
-  bool get hasAppleSignIn =>
-      user.value?.linkedProviderIds.contains('apple.com') ?? false;
-
   /// How the signed-in account is identified to the user: email, else phone,
   /// else name. Null for an account with none of them.
   String? get accountLabel {
