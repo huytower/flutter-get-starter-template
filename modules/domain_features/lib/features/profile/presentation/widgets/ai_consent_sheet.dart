@@ -9,8 +9,9 @@ import '../pages/privacy_policy_page.dart';
 /// Asks the user to allow sharing data with Google Gemini before any AI
 /// feature sends anything. Short on purpose: what is sent, to whom, how to
 /// turn it off, plus a link to the Privacy Policy.
-class AiConsentSheet extends StatelessWidget {
-  const AiConsentSheet({super.key});
+abstract final class AiConsentSheet {
+  /// Lines the explanation may take.
+  static const int _bodyMaxLines = 10;
 
   /// Returns true when the user has allowed AI data sharing — already stored,
   /// or just granted in the sheet. Declining or dismissing returns false.
@@ -20,107 +21,39 @@ class AiConsentSheet extends StatelessWidget {
   ) async {
     if (await prefs.hasGeminiEnabled()) return true;
     if (!context.mounted) return false;
-    final allowed = await CcAdaptiveBottomSheet.show<bool>(
-      context: context,
-      backgroundColor: null,
-      builder: (_) => const AiConsentSheet(),
+    final granted = await CcConfirmSheet.show(
+      context,
+      icon: Icons.auto_awesome_rounded,
+      title: el.tr(PrjLocaleKeys.profile_ai_consent_title),
+      message: el.tr(PrjLocaleKeys.profile_ai_consent_body),
+      messageMaxLines: _bodyMaxLines,
+      extra: const _PrivacyPolicyLink(),
+      cancelLabel: el.tr(PrjLocaleKeys.profile_ai_consent_decline),
+      confirmLabel: el.tr(PrjLocaleKeys.profile_ai_consent_allow),
+      tone: CcConfirmTone.primary,
     );
-    final granted = allowed ?? false;
     await prefs.setGeminiEnabled(granted);
     return granted;
   }
+}
+
+/// Underlined link that opens the Privacy Policy over the sheet.
+class _PrivacyPolicyLink extends StatelessWidget {
+  const _PrivacyPolicyLink();
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    return CcLandscapeScrollable(
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(
-            context.respPadding(CcPaddingParams.SPACE_LG),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Container(
-                  padding: EdgeInsets.all(context.respDim(14)),
-                  decoration: BoxDecoration(
-                    color: scheme.primary.withOpacity(0.12),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.auto_awesome_rounded,
-                    color: scheme.primary,
-                    size: context.respIconSize(baseSize: 28),
-                  ),
-                ),
-              ),
-              const CcSpaceMD(),
-              CcText(
-                el.tr(PrjLocaleKeys.profile_ai_consent_title),
-                align: Alignment.center,
-                textAlign: TextAlign.center,
-                textStyle: context.ccTextTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: scheme.onSurface,
-                ),
-              ),
-              const CcSpaceSM(),
-              CcText(
-                el.tr(PrjLocaleKeys.profile_ai_consent_body),
-                align: Alignment.center,
-                maxLines: 10,
-                textAlign: TextAlign.center,
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-              const CcSpaceSM(),
-              CcBouncing(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const PrivacyPolicyPage(),
-                  ),
-                ),
-                child: CcText(
-                  el.tr(PrjLocaleKeys.profile_ai_consent_terms),
-                  align: Alignment.center,
-                  textAlign: TextAlign.center,
-                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                    color: scheme.primary,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-              const CcSpaceLG(),
-              Row(
-                children: [
-                  Expanded(
-                    child: CcBaseButton(
-                      title: el.tr(PrjLocaleKeys.profile_ai_consent_decline),
-                      backgroundColor: [
-                        scheme.surfaceContainerHighest,
-                        scheme.surfaceContainerHighest,
-                      ],
-                      textColor: scheme.onSurface,
-                      onTap: () => Navigator.of(context).pop(false),
-                    ),
-                  ),
-                  const CcSpaceMD(),
-                  Expanded(
-                    child: CcBaseButton(
-                      title: el.tr(PrjLocaleKeys.profile_ai_consent_allow),
-                      backgroundColor: [scheme.primary, scheme.primary],
-                      textColor: scheme.onPrimary,
-                      onTap: () => Navigator.of(context).pop(true),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+    return CcBouncing(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const PrivacyPolicyPage()),
+      ),
+      child: CcText(
+        el.tr(PrjLocaleKeys.profile_ai_consent_terms),
+        align: Alignment.center,
+        textAlign: TextAlign.center,
+        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+          color: context.ccColorScheme.primary,
+          decoration: TextDecoration.underline,
         ),
       ),
     );

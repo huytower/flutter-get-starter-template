@@ -14,7 +14,10 @@ import 'quick_edit_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';
 
 class ReportTransactionTile extends StatelessWidget {
-  const ReportTransactionTile({required this.transaction, required this.hasEditMode});
+  const ReportTransactionTile({
+    required this.transaction,
+    required this.hasEditMode,
+  });
 
   final TransactionEntity transaction;
   final bool hasEditMode;
@@ -115,27 +118,10 @@ class ReportTransactionTile extends StatelessWidget {
                   size: context.respIconSize(baseSize: 16),
                   color: context.ccColorScheme.error,
                 ),
-                onTap: () async {
-                  final result = await DeleteTransactionSheet.show(
-                    context,
-                    transaction,
-                  );
-                  if (result == null) return;
-
-                  result.when(
-                    (success) {
-                      // Success handled in bottom sheet
-                    },
-                    (failure) {
-                      if (context.mounted) {
-                        CcSnackBarHelper.showErrorSnackBar(
-                          context: context,
-                          message: failure.message,
-                        );
-                      }
-                    },
-                  );
-                },
+                onTap: () => DeleteTransactionSheet.confirmAndDelete(
+                  context,
+                  transaction,
+                ),
               ),
               CcIconButton.bouncing(
                 icon: Icon(

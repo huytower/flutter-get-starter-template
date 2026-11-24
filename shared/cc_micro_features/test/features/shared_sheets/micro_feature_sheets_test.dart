@@ -1,5 +1,6 @@
 import 'package:cc_micro_features/export_micro_features.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcConfirmSheet;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -46,9 +47,7 @@ Future<T?> _openSheet<T>(
 
 void main() {
   group('DeleteAccountConfirmSheet', () {
-    testWidgets('confirm calls back; account shown', (
-      tester,
-    ) async {
+    testWidgets('confirm calls back; account shown', (tester) async {
       var confirms = 0;
       await _openSheet<bool>(
         tester,
@@ -63,7 +62,7 @@ void main() {
       await tester.tap(_text(CcMfLocaleKeys.auth_delete_account));
       await tester.pumpAndSettle();
       expect(confirms, 1);
-      expect(find.byType(DeleteAccountConfirmSheet), findsNothing);
+      expect(find.byType(CcConfirmSheet), findsNothing);
       // Let the buttons' debounce timers run out.
       await tester.pump(const Duration(seconds: 2));
     });
@@ -81,7 +80,7 @@ void main() {
       await tester.tap(_text('Cancel'));
       await tester.pumpAndSettle();
       expect(confirms, 0);
-      expect(find.byType(DeleteAccountConfirmSheet), findsNothing);
+      expect(find.byType(CcConfirmSheet), findsNothing);
       // Let the buttons' debounce timers run out.
       await tester.pump(const Duration(seconds: 2));
     });
