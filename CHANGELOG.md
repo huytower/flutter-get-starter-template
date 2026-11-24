@@ -54,6 +54,11 @@ numbered by CI (`docs/tech/development/BUILD.md`).
   `CcDialogHelper.showMessageBottomSheet`. Their strings moved to `mf.app_review.*`, `mf.language.*` and
   `mf.auth.delete_*`; 18 app strings that are no longer used were removed from all five languages. The language
   and delete-account sheets take Cancel / OK from Flutter's Material localizations.
+- Widget reuse, round 2 (`docs/plans/widget-reuse-round-2.md`): `CcPickerSheetFrame` replaces the hand-written
+  gradient header + tinted body + Cancel / OK of the date, language, currency, reconciliation guide, report
+  filter and receipt source sheets (one header size for all). Birth year, weekly audit day and display name use
+  `CcYearPickerSheet`, `CcWeekdayPickerSheet` and `CcTextInputSheet`. `LegalDocumentView` moved to the `web`
+  micro-feature as `LegalDocumentPage`; `domain_features` no longer depends on `webview_flutter`.
 - `melos run check:imports` (`scripts/check_imports.dart`): import boundaries, package cycles, naming and DI rules,
   run first in CI. Existing debt is frozen in `scripts/check_imports_baseline.txt`.
 - CI release pipeline on push to `qltc`: Android AAB to Google Play alpha, iOS IPA to TestFlight
