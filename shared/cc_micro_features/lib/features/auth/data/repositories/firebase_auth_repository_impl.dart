@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:catcher_2/catcher_2.dart';
+import 'package:cc_micro_features/features/auth/data/diagnostics/delete_account_trace.dart';
 import 'package:cc_micro_features/features/auth/domain/auth_failures.dart';
 import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
 import 'package:cc_micro_features/features/auth/domain/repositories/auth_repository.dart';
@@ -609,7 +610,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   Future<Result<Unit, CcFailure>> deleteAccount({
     Future<void> Function()? beforeDelete,
   }) async {
-    final trace = _deleteTrace = _DeleteAccountTrace();
+    final trace = _deleteTrace = DeleteAccountTrace();
     final result = await _runDeleteAccount(beforeDelete: beforeDelete);
     _deleteTrace = null;
     final outcome = switch (result) {
@@ -727,7 +728,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   static const String _tag = 'FirebaseAuthRepositoryImpl';
 
   /// Steps of the account deletion in progress, sent to Slack once it ends.
-  _DeleteAccountTrace? _deleteTrace;
+  DeleteAccountTrace? _deleteTrace;
 
   /// Records one step of the account deletion: printed locally with `.Log()`
   /// and kept for the single Slack report sent when the deletion ends.
@@ -1044,32 +1045,5 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     final bytes = utf8.encode(input);
     final digest = sha256.convert(bytes);
     return digest.toString();
-  }
-}
-
-/// Steps of one account deletion, sent to Slack as a single report when the
-/// deletion ends, so release builds show the whole flow.
-///
-/// The Slack alert shows only the first line of an error and drops identical
-/// first lines within 5 minutes, so the report is one line that starts with
-/// a per-attempt run id.
-class _DeleteAccountTrace {
-  _DeleteAccountTrace() : _startedAt = DateTime.now();
-
-  final DateTime _startedAt;
-  final List<String> _steps = [];
-
-  void add(String step) {
-    final ms = DateTime.now().difference(_startedAt).inMilliseconds;
-    // Error texts can span lines; Slack would only show the first one.
-    _steps.add('+${ms}ms ${step.replaceAll(RegExp(r'\s*\n\s*'), ' ')}');
-  }
-
-  void send(String outcome) {
-    final run = _startedAt.millisecondsSinceEpoch.toRadixString(36);
-    Catcher2.reportCheckedError(
-      Exception('[DeleteAccount] run=$run | $outcome | ${_steps.join(' ▸ ')}'),
-      StackTrace.current,
-    );
   }
 }
