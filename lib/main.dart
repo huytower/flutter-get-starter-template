@@ -37,7 +37,7 @@ void main() async {
 
     // Orientation: phones portrait-only, tablets/foldables free. Applied
     // before the first frame (fire-and-forget) so a phone held sideways never
-    // flashes a landscape UI; OrientationPolicyScope keeps it current after.
+    // flashes a landscape UI; CcOrientationPolicyScope keeps it current after.
     final view = WidgetsBinding.instance.platformDispatcher.implicitView;
     if (view != null) {
       unawaited(

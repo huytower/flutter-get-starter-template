@@ -7,7 +7,6 @@ import 'package:message/export_message.dart';
 import 'package:theme/core/helper/theme_helper.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
-import '../layout/orientation_policy_scope.dart';
 import 'config/auto_route/app_router.dart';
 import 'routing_strategy.dart';
 
@@ -17,8 +16,11 @@ class AutoRouteStrategy extends RoutingStrategy {
   final AppRouter _appRouter;
   final CcAnalytics _analytics;
 
-  AutoRouteStrategy(ThemeProvider themeProvider, this._appRouter, this._analytics)
-    : super(themeProvider);
+  AutoRouteStrategy(
+    ThemeProvider themeProvider,
+    this._appRouter,
+    this._analytics,
+  ) : super(themeProvider);
 
   @override
   Widget buildApp() {
@@ -35,7 +37,7 @@ class AutoRouteStrategy extends RoutingStrategy {
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         builder: (context, child) {
-          return OrientationPolicyScope(
+          return CcOrientationPolicyScope(
             child: CcKeyboardHelper.dismissOnTap(
               child: child ?? const SizedBox.shrink(),
               context: context,

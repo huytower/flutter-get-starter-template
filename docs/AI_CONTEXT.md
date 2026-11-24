@@ -74,7 +74,7 @@ Window size classes, scaling and the `context.resp*` API are covered in `AGENTS.
 **Orientation policy** (one rule, applied in Dart on every platform): screens whose shortest side is < 600 dp
 (phones, foldable cover screens) are portrait-only; larger screens (tablets, unfolded foldables, desktop/web)
 rotate freely. `CcOrientationPolicy.apply` implements it; `main.dart` applies it before the first
-frame and `OrientationPolicyScope` (in `MaterialApp.builder`) re-applies it on every window size change, e.g. a
+frame and `CcOrientationPolicyScope` (`cc_sdk`, in `MaterialApp.builder`) re-applies it on every window size change, e.g. a
 foldable opening or closing. Platform configuration backing it:
 
 - **Android**: no `screenOrientation` in `AndroidManifest.xml` — a manifest lock would also lock tablets on

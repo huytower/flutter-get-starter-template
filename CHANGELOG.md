@@ -64,6 +64,7 @@ numbered by CI (`docs/tech/development/BUILD.md`).
   account) use `CcConfirmSheet`; the SMS region picker opens with `CcAdaptiveBottomSheet` on
   `CcPickerSheetFrame` (capped on tablets like every other sheet); `buildDomainGradientAppBar` is now
   `CcGradientAppBar.create`. Cancel buttons use Flutter's Material label.
+- The app shell's `OrientationPolicyScope` moved to `cc_sdk` as `CcOrientationPolicyScope`.
 - `melos run check:imports` (`scripts/check_imports.dart`): import boundaries, package cycles, naming and DI rules,
   run first in CI. Existing debt is frozen in `scripts/check_imports_baseline.txt`.
 - CI release pipeline on push to `qltc`: Android AAB to Google Play alpha, iOS IPA to TestFlight
