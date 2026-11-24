@@ -72,29 +72,10 @@ class _LanguagePickerSheetState extends State<LanguagePickerSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    // Scrolls in landscape (short window) instead of overflowing.
-    return CcLandscapeScrollable(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CcSheetHeader(title: el.tr(CcMfLocaleKeys.language_title)),
-          DecoratedBox(
-            decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildLanguageGrid(context),
-                  _buildActions(context),
-                  const CcSpaceMD(),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+    return CcPickerSheetFrame(
+      title: el.tr(CcMfLocaleKeys.language_title),
+      body: _buildLanguageGrid(context),
+      onConfirm: () => Navigator.of(context).pop(_selectedLocale),
     );
   }
 
@@ -160,33 +141,6 @@ class _LanguagePickerSheetState extends State<LanguagePickerSheet> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildActions(BuildContext context) {
-    final localizations = MaterialLocalizations.of(context);
-    final style = context.ccTextTheme.titleMedium?.copyWith(
-      color: context.ccColorScheme.primary,
-      fontWeight: CcTypographyParams.semiBold,
-    );
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: CcText(localizations.cancelButtonLabel, textStyle: style),
-          ),
-          const CcSpaceSM(),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(_selectedLocale),
-            child: CcText(localizations.okButtonLabel, textStyle: style),
-          ),
-        ],
       ),
     );
   }
