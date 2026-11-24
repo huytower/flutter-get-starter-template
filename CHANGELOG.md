@@ -59,6 +59,11 @@ numbered by CI (`docs/tech/development/BUILD.md`).
   filter and receipt source sheets (one header size for all). Birth year, weekly audit day and display name use
   `CcYearPickerSheet`, `CcWeekdayPickerSheet` and `CcTextInputSheet`. `LegalDocumentView` moved to the `web`
   micro-feature as `LegalDocumentPage`; `domain_features` no longer depends on `webview_flutter`.
+- Widget reuse, round 3 (`docs/plans/widget-reuse-round-3.md`): the nine hand-copied centred confirm sheets
+  (wallet, investment, budget limit, liability and transaction delete, reconciliation undo, AI consent, delete
+  account) use `CcConfirmSheet`; the SMS region picker opens with `CcAdaptiveBottomSheet` on
+  `CcPickerSheetFrame` (capped on tablets like every other sheet); `buildDomainGradientAppBar` is now
+  `CcGradientAppBar.create`. Cancel buttons use Flutter's Material label.
 - `melos run check:imports` (`scripts/check_imports.dart`): import boundaries, package cycles, naming and DI rules,
   run first in CI. Existing debt is frozen in `scripts/check_imports_baseline.txt`.
 - CI release pipeline on push to `qltc`: Android AAB to Google Play alpha, iOS IPA to TestFlight

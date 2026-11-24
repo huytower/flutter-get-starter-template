@@ -88,6 +88,7 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_ui` → `cc_sdk` (and re-export of `export_cc_sdk.dart`) | a design system pulled device/network/storage plugins and the whole core API | **Done (Unreleased):** `CcScale` / `CcWindowSizeClass` moved into `cc_sdk_ui`; no dependency, no re-export |
 | `CcRewardCompletionBanner`, `CcGuidelineBadge` | a showcase banner and the app's onboarding badge in the design system | **Done (Unreleased):** moved to the app (`RewardCompletionBanner`, `GuidelineBadgeView`) |
 | `flutter_udid` in `cc_sdk` (+ a `CcDeviceEntity` pre-resolved at boot) | a long-lived hardware id is a per-app privacy decision; the boot lookup was unused | **Done (Unreleased):** `CcDeviceIdProvider` in core, `CcUdidDeviceIdProvider` in `cc_sdk_device`; no boot pre-resolve |
+| `buildDomainGradientAppBar` in `cc_sdk_ui` | a domain word in an SDK name, and a top-level function | **Done (Unreleased):** `CcGradientAppBar.create` |
 | `BiometricFailure`, `CurlFailure` in `cc_sdk_data`; `flutter` runtime dependency | feature / tool-named failures in the core; a pure-Dart package depending on Flutter | **Done (Unreleased):** removed; `cc_sdk_data` is pure Dart at runtime |
 
 ## Stability and versioning
