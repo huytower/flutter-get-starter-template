@@ -1,7 +1,15 @@
 # Plan: adaptive navigation shell in the SDK
 
-Status: **N1 done** (`CcAdaptiveNavigationScaffold` in `cc_sdk_ui`, app not switched yet). N2 and N3 wait for
+Status: **N1 and N2 done** (`CcAdaptiveNavigationScaffold` in `cc_sdk_ui`; the app shell uses it). N3 waits for
 approval.
+
+N2 differs from the plan in two places:
+- The app wraps the **whole** scaffold in `mainShell.watchTabs` instead of using `navigationBuilder`: the tab
+  badges are read while the destination list is built, so the list has to be built inside the GetX `Obx`. The
+  page keeps its state across that rebuild (the scaffold keys it), and `buildTab` returns `const` pages, so the
+  rebuild is cheap.
+- No widget test for `NavigationBar` itself: its `initState` resolves real providers through `getIt`, which the
+  test rules forbid registering. The scaffold's 26 SDK tests cover the layout on every reference window.
 
 ## Why
 

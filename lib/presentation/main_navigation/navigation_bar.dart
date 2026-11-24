@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:auto_route/auto_route.dart';
 import 'package:bridge/export_bridge.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
@@ -17,6 +15,10 @@ import 'logic/navigation_logic_mixin.dart';
 /// Layout: Phân bổ · (＋ Giao dịch) · Hồ sơ
 /// History is accessible via the action button on the Giao dịch tab.
 /// Budget is accessible from the Phân bổ tab ("Xem tất cả"), not a top-level tab.
+///
+/// Bottom bar or side rail by window size comes from
+/// [CcAdaptiveNavigationScaffold]; this view only supplies the app's tabs,
+/// splash, double back to exit and system bar style.
 @RoutePage()
 class NavigationBar extends StatefulWidget {
   const NavigationBar({super.key});
@@ -26,65 +28,33 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<NavigationBar>
-    with CcCurvedNavigationMixin, CcDoubleBackToExitMixin, NavigationLogicMixin {
+    with CcDoubleBackToExitMixin, NavigationLogicMixin {
   // Bar index i is MainTab.values[i]; entry ("Giao dịch") is centred as the
   // raised "＋".
   static final int _indexEntry = MainTab.entry.index;
 
-  /// Bottom insets up to this size (dp) come from a gesture indicator (iOS home
-  /// indicator, Android gesture pill); larger ones are a 3-button bar.
-  static const double _maxGestureInset = 34;
-
-  /// Padding kept under the bar for a gesture indicator — enough to clear the
-  /// indicator itself. Tune on a real device if labels and indicator collide.
-  static const double _gestureInsetCap = 22;
-
   // Singleton to persist index across hot reload.
   static int? _persistentIndex;
 
-  /// Keeps the tab content's state when the shell switches between the
-  /// bottom bar and the rail (rotation, split screen, window resize).
-  final GlobalKey _contentKey = GlobalKey();
+  int get _currentIndex => _persistentIndex ?? _indexEntry;
 
-  /// Rail from expanded width up; compact and medium (phones, 7–8" tablets in
-  /// portrait) keep the bottom bar they were designed for.
-  bool _useRail(BuildContext context) =>
-      context.windowSizeClass.hasAtLeast(CcWindowSizeClass.expanded);
-
-  @override
-  void initState() {
-    super.initState();
+  void _setIndex(int index) {
+    _persistentIndex = index;
+    handleTabRefresh(index);
+    setState(() {});
   }
 
   @override
   bool handleCustomNavigation() {
-    if (currentIndex != _indexEntry) {
-      setIndex(_indexEntry);
+    if (_currentIndex != _indexEntry) {
+      _setIndex(_indexEntry);
       return true;
     }
     return false;
   }
 
   @override
-  double? get navigationBarHeight => context.respDim(64);
-
-  /// [buildBottomNavigationBar] already pads for the system bottom inset
-  /// (capped for gesture navigation). Letting the bar add it again doubled
-  /// the inset and made the bar oversized on Android gesture devices.
-  @override
-  bool get navigationUseSafeArea => false;
-
-  @override
-  bool get shouldEnableDoubleBackToExit => currentIndex == _indexEntry;
-
-  @override
-  Color? get navigationActiveColor => PrjColors.primary;
-
-  @override
-  Color? get navigationActiveIconColor => PrjColors.onPrimary;
-
-  @override
-  Color? get navigationFabColor => PrjColors.primary;
+  bool get shouldEnableDoubleBackToExit => _currentIndex == _indexEntry;
 
   @override
   String get backPressMessage =>
@@ -94,18 +64,7 @@ class _NavigationBarState extends State<NavigationBar>
   void showBackPressHint(BuildContext context, String message) =>
       showDoubleBackPressSnackBar(context, message);
 
-  @override
-  int get currentIndex => _persistentIndex ?? _indexEntry;
-
-  @override
-  void setIndex(int index) {
-    _persistentIndex = index;
-    handleTabRefresh(index);
-    setState(() {});
-  }
-
-  @override
-  List<CcCurvedNavigationItem> get navigationItems => [
+  List<CcCurvedNavigationItem> get _destinations => [
     CcCurvedNavigationItem(
       inactiveIcon: Icons.pie_chart_outline,
       activeIcon: Icons.pie_chart,
@@ -127,82 +86,6 @@ class _NavigationBarState extends State<NavigationBar>
     ),
   ];
 
-  bool get enableAppBar => false;
-
-  bool get enableBottomNavigationBar => !showSplash;
-
-  PreferredSizeWidget? buildAppBar(BuildContext context) => null;
-
-  Widget? buildBottomNavigationBar(BuildContext context) {
-    final systemBottomPadding = MediaQuery.of(context).padding.bottom;
-    final hasDark = Theme.of(context).brightness == Brightness.dark;
-
-    return mainShell.watchTabs(() {
-      // To support both gesture navigation and 3-button navigation without
-      // overlap, we pad by the system bottom inset. A gesture indicator only
-      // occupies the lower part of its inset (34dp on iPhone, ~24dp on Pixel),
-      // so that case is capped to keep the bar compact; a 3-button bar fills
-      // its whole inset and keeps the full padding. The background container
-      // extends the color behind the system bar.
-      final hasGestureInset = systemBottomPadding <= _maxGestureInset;
-      final bottomInset = hasGestureInset
-          ? math.min(systemBottomPadding, _gestureInsetCap)
-          : systemBottomPadding;
-      return Container(
-        color: hasDark ? Colors.transparent : CcBaseColors.white100,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: bottomInset),
-          child: buildCurvedNavigationBar(),
-        ),
-      );
-    });
-  }
-
-  /// "＋ Giao dịch" is the rail's round primary action, like the raised "＋"
-  /// of the bottom bar.
-  @override
-  int? get navigationRailPrimaryIndex => _indexEntry;
-
-  Widget _buildNavigationRail(BuildContext context) {
-    // Labels beside icons only on desktop-class windows (≥ 1600 dp, web/PC).
-    // Tablets — even a 10" one in landscape (~1280 dp) — keep the compact
-    // rail so the content keeps the room.
-    final extended = context.windowSizeClass.hasAtLeast(
-      CcWindowSizeClass.extraLarge,
-    );
-    return mainShell.watchTabs(
-      () => buildNavigationRail(extended: extended),
-    );
-  }
-
-  /// Puts the rail beside the content on wide windows. No divider: the rail's
-  /// surface and the page background separate by tone. Tab pages run
-  /// full-bleed and cap their own foreground (`CcMaxWidth.content`). The
-  /// content subtree is keyed so switching layouts does not reset the open
-  /// tab's state.
-  Widget onBodyWrapper(BuildContext context, Widget body) {
-    final showRail = _useRail(context) && enableBottomNavigationBar;
-    return Row(
-      children: [
-        if (showRail) _buildNavigationRail(context),
-        Expanded(
-          // Lets pages square the edge that touches the rail.
-          child: CcNavigationRailScope(
-            railVisible: showRail,
-            child: KeyedSubtree(key: _contentKey, child: body),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget? buildContent(BuildContext context) {
-    if (showSplash) {
-      return const Center(child: CcLoadingIconWidget());
-    }
-    return mainShell.buildTab(MainTab.fromIndex(currentIndex));
-  }
-
   @override
   Widget build(BuildContext context) {
     final hasDark = Theme.of(context).brightness == Brightness.dark;
@@ -211,7 +94,7 @@ class _NavigationBarState extends State<NavigationBar>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: (hasDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
           .copyWith(
-            statusBarColor: Colors.transparent,
+            statusBarColor: CcBaseColors.transparent,
             systemNavigationBarColor: scheme.background,
             systemNavigationBarIconBrightness: hasDark
                 ? Brightness.light
@@ -221,23 +104,32 @@ class _NavigationBarState extends State<NavigationBar>
         canPop: canPop,
         onPopInvokedWithResult: (didPop, result) =>
             onPopInvokedWithResult(context, didPop, result),
-        child: Scaffold(
-          // Remove SafeArea here to allow individual pages to manage their own
-          // safe area (e.g. for immersive gradient headers that span into the
-          // status bar). Pages using CcViewConfigMixin (default) still get a
-          // SafeArea wrapper by default unless they override useSafeArea.
-          body: onBodyWrapper(context, _buildBody(context)),
-          appBar: enableAppBar ? buildAppBar(context) : null,
-          bottomNavigationBar: enableBottomNavigationBar && !_useRail(context)
-              ? buildBottomNavigationBar(context)
-              : null,
+        // No SafeArea here: pages manage their own (e.g. immersive gradient
+        // headers that run under the status bar).
+        //
+        // The destinations read the tab badges, so they are built inside
+        // watchTabs and the shell rebuilds when a badge changes. The page
+        // keeps its state across that rebuild (the scaffold keys it).
+        child: mainShell.watchTabs(
+          () => CcAdaptiveNavigationScaffold(
+            destinations: _destinations,
+            currentIndex: _currentIndex,
+            onSelect: _setIndex,
+            primaryIndex: _indexEntry,
+            hasNavigation: !showSplash,
+            activeColor: PrjColors.primary,
+            activeIconColor: PrjColors.onPrimary,
+            fabColor: PrjColors.primary,
+            barHeight: context.respDim(64),
+            body: CcFadePageWrapper(child: _buildContent()),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    final content = buildContent(context) ?? const SizedBox.shrink();
-    return CcFadePageWrapper(child: content);
+  Widget _buildContent() {
+    if (showSplash) return const Center(child: CcLoadingIconWidget());
+    return mainShell.buildTab(MainTab.fromIndex(_currentIndex));
   }
 }

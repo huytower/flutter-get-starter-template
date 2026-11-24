@@ -7,7 +7,7 @@ import 'main_tab.dart';
 ///
 /// ```dart
 /// final shell = getIt<MainShellProvider>();
-/// shell.watchTabs(() => buildCurvedNavigationBar());
+/// shell.watchTabs(() => CcAdaptiveNavigationScaffold(destinations: ..., ...));
 /// ```
 abstract interface class MainShellProvider {
   /// The page shown for [tab].
