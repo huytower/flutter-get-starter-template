@@ -1,6 +1,5 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
@@ -164,7 +163,7 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
         ),
         const CcSpaceSM(),
         CcPadding(
-          EntrySubmitButton(
+          CcSubmitButton(
             text: el.tr('profile.feedback_send'),
             hasSubmitting: _hasSubmitting,
             hasEnabled: !_hasSubmitting,

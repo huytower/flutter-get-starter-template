@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,7 @@ class ReconciliationConfirmButton extends StatelessWidget {
     return Obx(() {
       final busy = controller.hasSubmitting.value;
 
-      return EntrySubmitButton(
+      return CcSubmitButton(
         text: el.tr(PrjLocaleKeys.reconciliation_confirm),
         hasSubmitting: busy,
         hasEnabled: controller.canReconcile,

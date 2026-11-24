@@ -1,7 +1,16 @@
 # Plan: move reusable widgets from `modules/` to `shared/`
 
 Status: **approved** with the recommended choices (date picker on `MaterialLocalizations`, one bottom-sheet
-implementation, micro-features included, one phase at a time). **Phase 1 done**; phases 2–4 pending.
+implementation, micro-features included, one phase at a time). **Phases 1 and 2 done**; phases 3–4 pending.
+
+Phase 2 differs from the table in three places:
+- A3/A4: `MoneyKeypadPanel` stays in the app as a ~50-line adapter over `CcKeypadPanel` (it adds the
+  translations and the currency-formatted quick amounts its 6 callers share); `QuickAmountValues` builds the
+  labels for it and for `PrjAmountInputSection`.
+- A7: a new `CcSubmitButton`, not an extension of `CcBaseButton`. `CcBaseButton` is a gradient-list button with
+  its own loading mode; adding badge, width factor, leading icon and gradient foreground to it would change its
+  existing users.
+- A8 also split out `CcCalendarMonthGrid` and `CcYearGrid` so each file stays under ~250 lines.
 
 Phase 1 differs from the table in two names:
 - A16 is a separate widget, `CcTwoColumnPair`, not a `CcTwoColumn.pair` constructor: the two layouts share only

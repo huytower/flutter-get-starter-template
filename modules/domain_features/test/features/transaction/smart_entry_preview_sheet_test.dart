@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcCancelButton;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcCancelButton, CcSubmitButton;
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:domain_features/features/transaction/domain/entities/parsed_transaction_entity.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/smart_entry_preview_state.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_amount_field.dart';
@@ -146,7 +145,7 @@ Future<void> _flushDebounce(WidgetTester tester) =>
     tester.pump(const Duration(seconds: 1));
 
 Future<void> _tapConfirm(WidgetTester tester) async {
-  await tester.tap(find.byType(EntrySubmitButton));
+  await tester.tap(find.byType(CcSubmitButton));
   await tester.pumpAndSettle();
   await _flushDebounce(tester);
 }
@@ -313,7 +312,7 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.byType(SmartEntryPreviewRowCard), findsWidgets);
-      expect(find.byType(EntrySubmitButton), findsOneWidget);
+      expect(find.byType(CcSubmitButton), findsOneWidget);
     });
   }
 
@@ -326,7 +325,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(EntrySubmitButton), findsOneWidget);
+    expect(find.byType(CcSubmitButton), findsOneWidget);
   });
 
   testWidgets('the type toggle only exists for a mixed scope', (tester) async {

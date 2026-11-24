@@ -1,8 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
-import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
-import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
-import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -60,7 +57,7 @@ class _LendFormState extends State<LendForm> {
               },
               child: SingleChildScrollView(
                 controller: controller.scrollController,
-                child: EntryFormTwoColumn.shouldUse(context)
+                child: CcFormTwoColumn.shouldUse(context)
                     ? _buildTwoColumnContent(context, controller, accentColor)
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +92,7 @@ class _LendFormState extends State<LendForm> {
     LendFormController controller,
     Color accentColor,
   ) {
-    return EntryFormTwoColumn(
+    return CcFormTwoColumn(
       leading: [
         LendDirectionToggle(
           value: controller.action.value,
@@ -137,7 +134,7 @@ class _LendFormState extends State<LendForm> {
       children: [
         LendAssetSelector(controller: controller, activeColor: accentColor),
         const CcSpaceSM(),
-        EntryFormContainer(
+        CcFormCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -240,7 +237,7 @@ class _LendFormState extends State<LendForm> {
       icon = Icons.arrow_circle_down;
     }
 
-    return EntrySubmitButton(
+    return CcSubmitButton(
       text: text,
       hasSubmitting: controller.hasSubmitting.value,
       hasEnabled: controller.canSubmit,

@@ -1,9 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
-import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
-import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
-import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -95,7 +92,7 @@ class _IncomeFormState extends State<IncomeForm> {
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        child: EntryFormTwoColumn.shouldUse(context)
+        child: CcFormTwoColumn.shouldUse(context)
             ? _buildTwoColumnContent(
                 context,
                 controller,
@@ -126,7 +123,7 @@ class _IncomeFormState extends State<IncomeForm> {
     GuidelineProvider guideline,
     Color accentColor,
   ) {
-    return EntryFormTwoColumn(
+    return CcFormTwoColumn(
       leading: [
         IncomeCategorySelectionSection(
           controller: controller,
@@ -188,7 +185,7 @@ class _IncomeFormState extends State<IncomeForm> {
     GuidelineProvider guideline,
     Color accentColor,
   ) {
-    return EntrySubmitButton(
+    return CcSubmitButton(
       text: controller.hasEditing
           ? el.tr(PrjLocaleKeys.common_save)
           : el.tr(PrjLocaleKeys.transaction_record_income),
@@ -214,7 +211,7 @@ class _IncomeFormState extends State<IncomeForm> {
     GuidelineProvider guideline,
     Color accentColor,
   ) {
-    return EntryFormContainer(
+    return CcFormCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

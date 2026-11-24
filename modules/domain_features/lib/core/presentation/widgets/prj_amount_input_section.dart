@@ -1,7 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/currency/money_formatter.dart';
-import 'package:domain_features/core/presentation/widgets/prj_quick_amount_chips.dart';
+import 'package:domain_features/core/presentation/helper/quick_amount_values.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
@@ -152,11 +152,10 @@ class PrjAmountInputSection extends StatelessWidget {
   }
 
   Widget _buildQuickChips(Color accent) {
-    return PrjQuickAmountChips(
-      amounts: quickAmounts,
+    return CcQuickValueChips<int>(
+      items: QuickAmountValues.from(quickAmounts, currencyCode: currencyCode),
       onSelected: onQuickAmountSelected,
       activeColor: accent,
-      currencyCode: currencyCode,
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/presentation/widgets/quick_date_row.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
@@ -68,7 +67,10 @@ class EntryAdditionalDetailsSection extends StatelessWidget {
     return Column(
       children: [
         if (!hideDate) ...[
-          QuickDateRow(
+          CcQuickDateRow(
+            label: el.tr(PrjLocaleKeys.transaction_time),
+            todayLabel: el.tr(PrjLocaleKeys.transaction_today),
+            yesterdayLabel: el.tr(PrjLocaleKeys.transaction_yesterday),
             selectedDate: selectedDate,
             onDateSelected: onDateSelected,
             onCalendarTap: onCalendarTap,

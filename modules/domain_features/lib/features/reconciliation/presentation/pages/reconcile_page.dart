@@ -72,7 +72,7 @@ class ReconcilePage extends PrjGetView<ReconciliationController> {
   Widget? buildContent(BuildContext context) {
     // The keypad always sits under the content (never as an extra column), so
     // the tablet keeps its two-column body; the keypad itself is compact on
-    // tablets (see QuickNumericKeypad).
+    // tablets (see CcNumericKeypad).
     return Column(
       children: [
         Expanded(child: _buildScrollBody(context)),

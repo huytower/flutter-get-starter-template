@@ -1,6 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import 'package:domain_features/core/presentation/widgets/prj_amount_input_section.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -231,7 +230,7 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
                         },
                       ),
                       const CcSpaceMD(),
-                      EntrySubmitButton(
+                      CcSubmitButton(
                         text: el.tr('transaction.transfer_money'),
                         hasSubmitting: _hasSubmitting,
                         hasEnabled: canSubmit,

@@ -1,4 +1,4 @@
-import 'package:domain_features/core/presentation/widgets/entry_date_picker_sheet.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../constant/currency_constants.dart';
@@ -24,8 +24,10 @@ class TransactionFormHelpers {
     DateTime? lastDate,
   }) async {
     final now = DateTime.now();
-    final picked = await EntryDatePickerSheet.show(
+    final picked = await CcDatePickerSheet.show(
       context,
+      // The week starts on Monday, as before the SDK picker.
+      firstDayOfWeekIndex: DateTime.monday % DateTime.daysPerWeek,
       initialDate: initialDate,
       firstDate: firstDate ?? DateTime(now.year, now.month - 6, now.day),
       lastDate: lastDate ?? now,

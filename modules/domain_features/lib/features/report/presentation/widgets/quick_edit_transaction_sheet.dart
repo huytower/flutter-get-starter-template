@@ -1,7 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
-import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
-import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import 'package:domain_features/core/presentation/widgets/prj_amount_input_section.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -73,14 +71,14 @@ class QuickEditTransactionSheet
                       const CcSpaceSM(),
                       _buildAmountSection(context, accentColor),
                       const CcSpaceSM(),
-                      EntryFormContainer(
+                      CcFormCard(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [_buildDateAndNoteSection(context)],
                         ),
                       ),
                       const CcSpaceSM(),
-                      EntrySubmitButton(
+                      CcSubmitButton(
                         text: el.tr(PrjLocaleKeys.common_save),
                         hasSubmitting: controller.hasSubmitting.value,
                         hasEnabled: true,

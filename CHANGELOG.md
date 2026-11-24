@@ -37,6 +37,12 @@ numbered by CI (`docs/tech/development/BUILD.md`).
   `revealRowCard` → `CcScrollReveal.reveal`, `ReportCardPair` → `CcTwoColumnPair`,
   `PrjCategoryShimmerList` → `CcShimmerList`, `PrjPageBackground` → `CcGradientBackground.page`.
   The asset-row sizes stay in the app as `AssetCardMetrics`.
+- Phase 2 (form widgets): `QuickNumericKeypad` → `CcNumericKeypad`, `PrjQuickAmountChips` →
+  `CcQuickValueChips`, `EntryFormContainer` → `CcFormCard`, `EntryFormTwoColumn` → `CcFormTwoColumn`,
+  `EntrySubmitButton` → `CcSubmitButton`, `QuickDateRow` → `CcQuickDateRow`, `EntryDatePickerSheet` →
+  `CcDatePickerSheet`. `MoneyKeypadPanel` stays as a thin app adapter over `CcKeypadPanel` (translations,
+  currency-formatted quick amounts via `QuickAmountValues`). The date picker's month, weekday and button
+  texts now come from Flutter's Material localizations; the week still starts on Monday.
 - `melos run check:imports` (`scripts/check_imports.dart`): import boundaries, package cycles, naming and DI rules,
   run first in CI. Existing debt is frozen in `scripts/check_imports_baseline.txt`.
 - CI release pipeline on push to `qltc`: Android AAB to Google Play alpha, iOS IPA to TestFlight

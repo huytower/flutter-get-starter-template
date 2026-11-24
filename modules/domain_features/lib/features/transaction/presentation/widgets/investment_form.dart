@@ -2,9 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/di/di.dart';
 import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
-import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
-import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
-import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -85,7 +82,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
-        child: EntryFormTwoColumn.shouldUse(context)
+        child: CcFormTwoColumn.shouldUse(context)
             ? _buildTwoColumnContent(context, controller, accentColor)
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +108,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    return EntryFormTwoColumn(
+    return CcFormTwoColumn(
       leading: [
         buildInvestDirectionToggle(context, controller, accentColor),
         const CcSpaceSM(),
@@ -187,7 +184,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    return EntryFormContainer(
+    return CcFormCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -240,7 +237,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     Color accentColor,
   ) {
     return Obx(
-      () => EntrySubmitButton(
+      () => CcSubmitButton(
         text: el.tr(
           controller.direction.value == InvestmentDirection.contribute
               ? PrjLocaleKeys.transaction_record_investment
