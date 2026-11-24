@@ -104,8 +104,8 @@ class BudgetLimitPreviewSection extends StatelessWidget {
         ),
         Obx(() {
           guideline.bounceTrigger;
-          if (!guideline.isTaskActive('budget_limit') &&
-              !guideline.isTaskActive('min_living')) {
+          if (!guideline.hasTaskActive('budget_limit') &&
+              !guideline.hasTaskActive('min_living')) {
             return const SizedBox.shrink();
           }
           return Positioned(

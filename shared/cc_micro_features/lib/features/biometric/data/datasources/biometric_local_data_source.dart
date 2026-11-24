@@ -42,7 +42,7 @@ class BiometricLocalDataSource {
   }
 
   /// Check if biometric authentication is available and enrolled
-  Future<bool> isBiometricAvailable() async {
+  Future<bool> hasBiometricAvailable() async {
     try {
       return await _auth.canCheckBiometrics &&
           await _auth.isDeviceSupported() &&

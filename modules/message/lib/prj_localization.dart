@@ -116,7 +116,7 @@ class PrjLocalization {
   }
 
   /// Checks if the current locale is RTL.
-  static bool isRTL(BuildContext context) {
+  static bool hasRTL(BuildContext context) {
     return context.locale.languageCode == 'ar' ||
         context.locale.languageCode == 'he';
   }

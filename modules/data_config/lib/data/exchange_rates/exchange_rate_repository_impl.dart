@@ -111,7 +111,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
       );
 
       if (hasValidCachedQuotes) {
-        if (date != null || _freshness.isFresh(cached.fetchedAt)) {
+        if (date != null || _freshness.hasFresh(cached.fetchedAt)) {
           return Success(
             ExchangeRateResult(
               table: cached,

@@ -61,7 +61,7 @@ class EditWalletSheet extends StatelessWidget {
                 Obx(() {
                   final guideline = getIt<GuidelineProvider>();
                   final showing =
-                      guideline.isTaskActive('wallet_balance') &&
+                      guideline.hasTaskActive('wallet_balance') &&
                       wallet.type == WalletType.cash;
                   return Positioned(
                     top: context.respDim(-10),

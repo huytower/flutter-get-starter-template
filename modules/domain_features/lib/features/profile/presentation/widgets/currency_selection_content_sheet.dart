@@ -134,7 +134,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
   // The sheet is capped narrower than the window, so the decision uses the
   // window class (small tablet and up, >= 600 dp), not the sheet's width.
   bool _useGrid(BuildContext context) =>
-      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
+      context.windowSizeClass.hasAtLeast(CcWindowSizeClass.medium);
 
   /// Tablet footer: the notice + attribution share one row with the actions.
   List<Widget> _buildInlineFooter(
@@ -367,7 +367,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
     final hasSelected =
         code.toUpperCase() ==
         controller.primaryCurrencyCode.value.toUpperCase();
-    final hasLoading = controller.isLoadingRates[code] ?? false;
+    final hasLoading = controller.loadingRateByCurrency[code] ?? false;
     final convertedAmount = controller.convertedAmounts[code];
     final String displayAmount;
 

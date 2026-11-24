@@ -5,7 +5,7 @@
 /// Returns false when there's no real baseline ([avgPrevMonths] <= 0) — a
 /// category spent on for the first time this month isn't "anomalous", it's
 /// just new.
-bool isAnomalousSpend(
+bool hasAnomalousSpend(
   int thisMonthSpend,
   double avgPrevMonths, {
   double thresholdRatio = 1.5,

@@ -167,8 +167,8 @@ void main() {
       ]);
 
       expect(state.canConfirm, isFalse);
-      expect(state.isValid(state.rows.first), isTrue);
-      expect(state.isValid(state.rows.last), isFalse);
+      expect(state.hasValid(state.rows.first), isTrue);
+      expect(state.hasValid(state.rows.last), isFalse);
     });
 
     test('is false with no rows left, or while saving', () {

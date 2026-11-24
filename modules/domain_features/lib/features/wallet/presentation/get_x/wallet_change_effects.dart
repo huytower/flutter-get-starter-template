@@ -54,7 +54,7 @@ class WalletChangeEffects {
     _refresh.refreshBudgetAllocation();
     if (created &&
         guideline.hasAvailable &&
-        guideline.isTaskActive(balanceTask)) {
+        guideline.hasTaskActive(balanceTask)) {
       await guideline.completeTask(balanceTask);
     }
   }

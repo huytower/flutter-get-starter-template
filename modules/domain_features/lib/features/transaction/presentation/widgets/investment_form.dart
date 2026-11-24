@@ -162,7 +162,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
         ),
         Obx(() {
           final txCtrl = Get.find<TransactionController>();
-          if (!guideline.isTaskActive('investment') ||
+          if (!guideline.hasTaskActive('investment') ||
               txCtrl.selectedTabIndex.value !=
                   TransactionTabKind.investment.index) {
             return const SizedBox.shrink();

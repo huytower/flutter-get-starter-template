@@ -98,7 +98,7 @@ class ReconcilePage extends PrjGetView<ReconciliationController> {
   /// Small tablet and up: the keypad floats over the page instead of pushing
   /// the content up.
   bool _floatingKeypad(BuildContext context) =>
-      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
+      context.windowSizeClass.hasAtLeast(CcWindowSizeClass.medium);
 
   /// Bottom room kept free while the floating keypad is up (chips + 4 key rows).
   static const double _floatingKeypadReserve = 280;

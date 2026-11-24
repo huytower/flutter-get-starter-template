@@ -20,13 +20,13 @@ class QuickNumericKeypad extends StatelessWidget {
   static const double _tabletKeyHeight = 36;
   static const double _tabletMaxWidth = 480;
 
-  bool _isTablet(BuildContext context) =>
-      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
+  bool _hasTablet(BuildContext context) =>
+      context.windowSizeClass.hasAtLeast(CcWindowSizeClass.medium);
 
   @override
   Widget build(BuildContext context) {
     final pad = _buildPad(context);
-    if (!_isTablet(context)) return pad;
+    if (!_hasTablet(context)) return pad;
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: _tabletMaxWidth),
@@ -43,7 +43,7 @@ class QuickNumericKeypad extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         // On tablets the panel behind supplies the (translucent) fill.
-        color: _isTablet(context)
+        color: _hasTablet(context)
             ? Colors.transparent
             : context.ccColorScheme.surfaceContainerHighest,
         border: Border(
@@ -80,7 +80,7 @@ class QuickNumericKeypad extends StatelessWidget {
       hasBouncing: true,
       onTap: () => hasDelete ? onDelete() : onKeyPress(label),
       child: Container(
-        height: _isTablet(context)
+        height: _hasTablet(context)
             ? context.respDim(30).clamp(0, _tabletKeyHeight).toDouble()
             : context.respDim(30),
         margin: EdgeInsets.all(context.respDim(2)),

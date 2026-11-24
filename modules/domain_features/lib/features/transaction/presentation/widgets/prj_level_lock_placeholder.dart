@@ -37,17 +37,17 @@ class PrjLevelLockPlaceholder extends StatelessWidget {
           _buildTaskItem(
             context,
             label: el.tr(PrjLocaleKeys.level_lock_task_setup_budget),
-            hasCompleted: guideline.isTaskCompleted('budget_limit'),
+            hasCompleted: guideline.hasTaskCompleted('budget_limit'),
           ),
           _buildTaskItem(
             context,
             label: el.tr(PrjLocaleKeys.level_lock_task_record_transactions),
-            hasCompleted: guideline.isTaskCompleted('first_transaction'),
+            hasCompleted: guideline.hasTaskCompleted('first_transaction'),
           ),
           _buildTaskItem(
             context,
             label: el.tr(PrjLocaleKeys.level_lock_task_setup_birth_year),
-            hasCompleted: guideline.isTaskCompleted('birth_year'),
+            hasCompleted: guideline.hasTaskCompleted('birth_year'),
           ),
           _buildTaskItem(
             context,

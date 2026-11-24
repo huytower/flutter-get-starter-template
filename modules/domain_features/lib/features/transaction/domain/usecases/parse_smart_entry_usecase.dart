@@ -54,7 +54,7 @@ class ParseSmartEntryUseCase {
     int maxTransactions = defaultMaxTransactions,
     ParsedTransactionEntity? localResult,
   }) async {
-    if (!await _aiPreferences.isGeminiEnabled()) {
+    if (!await _aiPreferences.hasGeminiEnabled()) {
       return const Error(CcValidationFailure(geminiDisabledReason));
     }
     if (input is SmartEntryImagesInput && input.images.isEmpty) {

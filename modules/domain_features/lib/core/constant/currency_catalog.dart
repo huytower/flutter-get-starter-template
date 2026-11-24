@@ -216,5 +216,5 @@ class CurrencyCatalog {
   }
 
   /// Checks whether a given currency code is supported strictly.
-  static bool isSupported(String? code) => tryGetDefinition(code) != null;
+  static bool hasSupported(String? code) => tryGetDefinition(code) != null;
 }

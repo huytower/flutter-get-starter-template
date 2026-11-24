@@ -144,7 +144,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     final now = DateTime.now();
     final yesterday = now.subtract(const Duration(days: 1));
     final hasCustomDate =
-        !_isSameDay(row.date, now) && !_isSameDay(row.date, yesterday);
+        !_hasSameDay(row.date, now) && !_hasSameDay(row.date, yesterday);
 
     return Row(
       children: [
@@ -181,7 +181,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     );
   }
 
-  bool _isSameDay(DateTime d1, DateTime d2) {
+  bool _hasSameDay(DateTime d1, DateTime d2) {
     return d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
   }
 }

@@ -19,7 +19,7 @@ class AiConsentSheet extends StatelessWidget {
     BuildContext context,
     AiFallbackPreferenceDataSource prefs,
   ) async {
-    if (await prefs.isGeminiEnabled()) return true;
+    if (await prefs.hasGeminiEnabled()) return true;
     if (!context.mounted) return false;
     final allowed = await showAdaptiveBottomSheet<bool>(
       context: context,

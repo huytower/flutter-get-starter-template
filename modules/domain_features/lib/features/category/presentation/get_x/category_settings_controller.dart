@@ -233,11 +233,11 @@ class CategorySettingsController extends PrjGetController {
     }
   }
 
-  bool isEnabled(CategoryEntity cat) =>
+  bool hasEnabled(CategoryEntity cat) =>
       pending.containsKey(cat.id) ? pending[cat.id]! : cat.hasEnabled;
 
   void toggle(CategoryEntity cat) async {
-    final current = isEnabled(cat);
+    final current = hasEnabled(cat);
     final next = !current;
 
     pending[cat.id] = next;

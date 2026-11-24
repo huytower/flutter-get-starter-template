@@ -71,7 +71,7 @@ class QuickEntryCategoryCache {
 
   /// Whether [result]'s category is unusable in this form — never resolved,
   /// or resolved to an id this form can't record against.
-  bool isMissingFor(ParsedTransactionEntity result) {
+  bool hasMissingFor(ParsedTransactionEntity result) {
     // Nothing to record against at all, whatever the parse resolved.
     if (!_form.quickEntryHasSelectableCategory) return true;
 

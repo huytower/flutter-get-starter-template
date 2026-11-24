@@ -200,7 +200,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
       activeColor: accentColor,
       leadingIcon: Icons.arrow_circle_down,
       leadingIconSize: 28,
-      badge: guideline.isTaskActive('first_transaction')
+      badge: guideline.hasTaskActive('first_transaction')
           ? PrjGuidelineBadge(
               size: context.respDim(6),
               label: guideline.bannerDescription,

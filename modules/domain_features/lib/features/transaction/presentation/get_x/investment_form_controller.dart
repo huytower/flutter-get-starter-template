@@ -113,7 +113,7 @@ class InvestmentFormController extends TransactionFormController {
     if (intent != QuickEntryIntent.investment) return;
 
     setDirection(
-      QuickEntryIntentUtil.isInvestmentReturn(text)
+      QuickEntryIntentUtil.hasInvestmentReturn(text)
           ? InvestmentDirection.returnProfit
           : InvestmentDirection.contribute,
     );

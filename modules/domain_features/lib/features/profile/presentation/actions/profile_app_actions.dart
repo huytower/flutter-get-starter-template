@@ -16,7 +16,7 @@ class ProfileAppActions {
   /// Passed to the rating sheet, which sends the user's feedback.
   final CcFeedbackReporter feedbackReporter;
 
-  Future<bool> isAiSharingEnabled() => _aiPreferences.isGeminiEnabled();
+  Future<bool> hasAiSharingEnabled() => _aiPreferences.hasGeminiEnabled();
 
   Future<void> withdrawAiConsent() => _aiPreferences.setGeminiEnabled(false);
 

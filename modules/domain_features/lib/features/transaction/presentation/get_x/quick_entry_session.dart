@@ -157,13 +157,13 @@ class QuickEntrySession with WidgetsBindingObserver {
   bool get hasQuickEntryCategoryMissing {
     final suggestion = quickEntrySuggestion.value;
     if (suggestion == null) return false;
-    return isCategoryMissingFor(suggestion);
+    return hasCategoryMissingFor(suggestion);
   }
 
   /// Like [hasQuickEntryCategoryMissing], for a parse not yet published to
   /// [quickEntrySuggestion] (that getter would score the previous keystroke).
-  bool isCategoryMissingFor(ParsedTransactionEntity result) =>
-      _categories.isMissingFor(result);
+  bool hasCategoryMissingFor(ParsedTransactionEntity result) =>
+      _categories.hasMissingFor(result);
 
   /// Alias of [hasQuickEntryCategoryMissing] for the suggestion chip.
   bool get hasQuickEntryCategoryInvalid => hasQuickEntryCategoryMissing;
@@ -196,13 +196,13 @@ class QuickEntrySession with WidgetsBindingObserver {
   /// [hasParsingQuickEntry] only if it's still the active one.
   (bool Function(), VoidCallback) trackQuickEntryGeneration() {
     final generation = _quickEntryGeneration;
-    bool isCurrent() =>
+    bool hasCurrent() =>
         !_quickEntryDisposed && generation == _quickEntryGeneration;
     void resetIfCurrent() {
-      if (isCurrent()) hasParsingQuickEntry.value = false;
+      if (hasCurrent()) hasParsingQuickEntry.value = false;
     }
 
-    return (isCurrent, resetIfCurrent);
+    return (hasCurrent, resetIfCurrent);
   }
 
   late final QuickEntryTextInput _text = QuickEntryTextInput(this);

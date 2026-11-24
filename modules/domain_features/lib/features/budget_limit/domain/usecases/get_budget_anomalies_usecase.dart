@@ -10,7 +10,7 @@ import 'get_budget_limit_stats_usecase.dart';
 
 /// Phase 3.4 "AI Actions for Budget Issues" — flags budgets whose spend this
 /// month is a sudden spike vs the preceding 3 months' average for that same
-/// category (see [isAnomalousSpend]). Pure local computation, no LLM call —
+/// category (see [hasAnomalousSpend]). Pure local computation, no LLM call —
 /// "suggest income increase strategies" (the one genuinely LLM-shaped action
 /// in the spec) is deliberately out of scope here, deferred to a later
 /// phase.
@@ -48,7 +48,7 @@ class GetBudgetAnomaliesUseCase {
           .toList();
       final avgPrev = _averageMonthlySpend(categoryPrevExpenses, startOfMonth);
 
-      if (isAnomalousSpend(stat.spent, avgPrev)) {
+      if (hasAnomalousSpend(stat.spent, avgPrev)) {
         anomalies.add(
           BudgetAnomalyEntity(
             budgetName: stat.budget.name,

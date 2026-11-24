@@ -686,7 +686,7 @@ class CategorySeed {
   }
 
   /// Whether [birthYear] indicates the user is under 23 years old.
-  static bool isYoungAdult(int? birthYear) =>
+  static bool hasYoungAdult(int? birthYear) =>
       ageGroup(birthYear) == AgeGroup.youngAdult;
 
   /// Whether [birthYear] indicates the user is 30+ years old. Per product

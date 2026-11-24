@@ -181,7 +181,7 @@ class _BorrowFormState extends State<BorrowForm> {
                 ? Get.find<TransactionController>()
                 : null;
             if (txCtrl == null ||
-                !guideline.isTaskActive('liability') ||
+                !guideline.hasTaskActive('liability') ||
                 txCtrl.selectedTabIndex.value !=
                     TransactionTabKind.borrow.index) {
               return const SizedBox.shrink();

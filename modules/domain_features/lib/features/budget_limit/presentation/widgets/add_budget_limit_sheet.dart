@@ -225,7 +225,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
         ),
         Obx(() {
           guideline.bounceTrigger;
-          if (!guideline.isTaskActive('min_living')) {
+          if (!guideline.hasTaskActive('min_living')) {
             return const SizedBox.shrink();
           }
           return Positioned(

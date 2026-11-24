@@ -74,7 +74,7 @@ class GenerateAiFinancialAdviceUseCase {
     required CurrencyConversionService conversionService,
     String? languageCode,
   }) async {
-    if (!await _aiPreferences.isGeminiEnabled()) {
+    if (!await _aiPreferences.hasGeminiEnabled()) {
       return const Error(CcValidationFailure(aiDisabledReason));
     }
     final results = await Future.wait([
@@ -187,7 +187,7 @@ class GenerateAiFinancialAdviceUseCase {
   /// AI quota is exhausted (release builds; debug has no quota).
   Future<bool> _shouldReportFailure(CcAiFailure? failure) async {
     if (failure?.kind == CcAiFailureKind.deviceAttestation) return false;
-    return _aiPreferences.isUnderDailyLimit();
+    return _aiPreferences.hasUnderDailyLimit();
   }
 
   CcAiSchema _buildResponseSchema(String language) {

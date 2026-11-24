@@ -21,8 +21,8 @@ abstract final class WalletOrdering {
     liquid.sort((a, b) {
       if (a.type == WalletType.cash && b.type != WalletType.cash) return -1;
       if (b.type == WalletType.cash && a.type != WalletType.cash) return 1;
-      if (_isDefaultBank(a) && b.type != WalletType.cash) return -1;
-      if (_isDefaultBank(b) && a.type != WalletType.cash) return 1;
+      if (_hasDefaultBank(a) && b.type != WalletType.cash) return -1;
+      if (_hasDefaultBank(b) && a.type != WalletType.cash) return 1;
 
       final typeCompare = _liquidTypeOrder
           .indexOf(a.type)
@@ -67,9 +67,9 @@ abstract final class WalletOrdering {
 
   /// Cash and the default bank wallet cannot be deleted.
   static bool canDelete(WalletEntity wallet) =>
-      wallet.type != WalletType.cash && !_isDefaultBank(wallet);
+      wallet.type != WalletType.cash && !_hasDefaultBank(wallet);
 
-  static bool _isDefaultBank(WalletEntity w) =>
+  static bool _hasDefaultBank(WalletEntity w) =>
       w.type == WalletType.bank && w.id == defaultBankId;
 
   static List<WalletEntity> _uniqueInvestments(Iterable<WalletEntity> all) => {

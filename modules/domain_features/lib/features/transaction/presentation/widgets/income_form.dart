@@ -198,7 +198,7 @@ class _IncomeFormState extends State<IncomeForm> {
       activeColor: accentColor,
       leadingIcon: Icons.arrow_circle_up,
       leadingIconSize: 18,
-      badge: guideline.isTaskActive('first_transaction')
+      badge: guideline.hasTaskActive('first_transaction')
           ? PrjGuidelineBadge(
               size: context.respDim(8),
               label: guideline.bannerDescription,

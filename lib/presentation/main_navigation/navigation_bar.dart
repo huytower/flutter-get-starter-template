@@ -49,7 +49,7 @@ class _NavigationBarState extends State<NavigationBar>
   /// Rail from expanded width up; compact and medium (phones, 7–8" tablets in
   /// portrait) keep the bottom bar they were designed for.
   bool _useRail(BuildContext context) =>
-      context.windowSizeClass.isAtLeast(CcWindowSizeClass.expanded);
+      context.windowSizeClass.hasAtLeast(CcWindowSizeClass.expanded);
 
   @override
   void initState() {
@@ -167,7 +167,7 @@ class _NavigationBarState extends State<NavigationBar>
     // Labels beside icons only on desktop-class windows (≥ 1600 dp, web/PC).
     // Tablets — even a 10" one in landscape (~1280 dp) — keep the compact
     // rail so the content keeps the room.
-    final extended = context.windowSizeClass.isAtLeast(
+    final extended = context.windowSizeClass.hasAtLeast(
       CcWindowSizeClass.extraLarge,
     );
     return mainShell.watchTabs(

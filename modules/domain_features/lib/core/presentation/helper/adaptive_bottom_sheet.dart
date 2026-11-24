@@ -23,7 +23,7 @@ Future<T?> showAdaptiveBottomSheet<T>({
 }) {
   final hasTablet = CcWindowSizeClass.of(
     context,
-  ).isAtLeast(CcWindowSizeClass.medium);
+  ).hasAtLeast(CcWindowSizeClass.medium);
   return showModalBottomSheet<T>(
     context: context,
     isScrollControlled: hasScrollControlled,

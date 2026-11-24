@@ -35,9 +35,9 @@ class AuthenticateWithBiometricsUseCase {
   ) async {
     try {
       // First check if biometrics are available
-      final isAvailable = await repository.isBiometricAvailable();
+      final hasAvailable = await repository.hasBiometricAvailable();
 
-      return await isAvailable.when((success) async {
+      return await hasAvailable.when((success) async {
         if (!success) {
           return Error(Exception('Biometric authentication not available'));
         }

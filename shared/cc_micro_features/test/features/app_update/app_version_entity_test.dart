@@ -39,29 +39,29 @@ void main() {
 
   group('AppVersionEntity.compareTo', () {
     test('compares segments numerically, not as text', () {
-      expect(v('1.9.0').isLowerThan(v('1.10.0')), isTrue);
-      expect(v('1.10.0').isLowerThan(v('1.9.0')), isFalse);
-      expect(v('2.0.0').isLowerThan(v('10.0.0')), isTrue);
+      expect(v('1.9.0').hasLowerThan(v('1.10.0')), isTrue);
+      expect(v('1.10.0').hasLowerThan(v('1.9.0')), isFalse);
+      expect(v('2.0.0').hasLowerThan(v('10.0.0')), isTrue);
     });
 
     test('missing segments count as zero', () {
       expect(v('1.2').compareTo(v('1.2.0')), 0);
-      expect(v('1.2').isLowerThan(v('1.2.1')), isTrue);
+      expect(v('1.2').hasLowerThan(v('1.2.1')), isTrue);
     });
 
     test('equal versions are not lower', () {
-      expect(v('1.2.0').isLowerThan(v('1.2.0')), isFalse);
-      expect(v('1.2.0+5').isLowerThan(v('1.2.0+5')), isFalse);
+      expect(v('1.2.0').hasLowerThan(v('1.2.0')), isFalse);
+      expect(v('1.2.0+5').hasLowerThan(v('1.2.0+5')), isFalse);
     });
 
     test('build number breaks ties only when both sides have one', () {
-      expect(v('1.2.0+29').isLowerThan(v('1.2.0+30')), isTrue);
-      expect(v('1.2.0+31').isLowerThan(v('1.2.0+30')), isFalse);
+      expect(v('1.2.0+29').hasLowerThan(v('1.2.0+30')), isTrue);
+      expect(v('1.2.0+31').hasLowerThan(v('1.2.0+30')), isFalse);
       // Minimum without build number ignores the installed build.
-      expect(v('1.2.0+1').isLowerThan(v('1.2.0')), isFalse);
+      expect(v('1.2.0+1').hasLowerThan(v('1.2.0')), isFalse);
       // Semver decides before build numbers are looked at.
-      expect(v('1.1.9+999').isLowerThan(v('1.2.0+1')), isTrue);
-      expect(v('1.2.1+1').isLowerThan(v('1.2.0+999')), isFalse);
+      expect(v('1.1.9+999').hasLowerThan(v('1.2.0+1')), isTrue);
+      expect(v('1.2.1+1').hasLowerThan(v('1.2.0+999')), isFalse);
     });
   });
 }

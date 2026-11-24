@@ -44,7 +44,7 @@ class GetLiabilityTrendUseCase {
         )
         .toList();
 
-    bool isCashIn(TransactionEntity t) =>
+    bool hasCashIn(TransactionEntity t) =>
         t.type == TransactionType.debtBorrow ||
         t.type == TransactionType.debtCollect;
 
@@ -52,15 +52,15 @@ class GetLiabilityTrendUseCase {
       transactions: transactions,
       range: range,
       window: window,
-      inflowAmount: (t) => isCashIn(t) ? t.amount.toDouble() : 0,
-      outflowAmount: (t) => !isCashIn(t) ? t.amount.toDouble() : 0,
+      inflowAmount: (t) => hasCashIn(t) ? t.amount.toDouble() : 0,
+      outflowAmount: (t) => !hasCashIn(t) ? t.amount.toDouble() : 0,
     );
 
     final totalIn = transactions
-        .where(isCashIn)
+        .where(hasCashIn)
         .fold<double>(0, (sum, t) => sum + t.amount);
     final totalOut = transactions
-        .where((t) => !isCashIn(t))
+        .where((t) => !hasCashIn(t))
         .fold<double>(0, (sum, t) => sum + t.amount);
 
     final sortedTransactions = transactions.toList();

@@ -163,6 +163,7 @@
     "your_wallets": "Liquid wallets",
     "see_all": "See all",
     "empty": "No wallets yet.\nTap + to add one.",
+    "not_found": "This wallet no longer exists. Please choose another wallet.",
     "investment_empty": "No investment wallets yet\nTap + to add ",
     "investment_name": "Investment Name",
     "investment_name_hint": "e.g. BTC, Apple Stock...",

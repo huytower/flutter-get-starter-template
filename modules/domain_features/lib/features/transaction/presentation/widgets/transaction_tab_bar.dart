@@ -201,7 +201,7 @@ class TransactionTabBar extends StatelessWidget {
     bool hasSelected,
     ColorScheme scheme,
   ) {
-    final hasUnlocked = controller.isTabUnlocked(kind);
+    final hasUnlocked = controller.hasTabUnlocked(kind);
     final activeColor = kind.color(context);
 
     return CcInteractionWrapper(

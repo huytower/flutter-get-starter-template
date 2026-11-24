@@ -45,7 +45,7 @@ class MoneyKeypadPanel extends StatelessWidget {
     });
 
     final scheme = context.ccColorScheme;
-    final hasTablet = context.windowSizeClass.isAtLeast(
+    final hasTablet = context.windowSizeClass.hasAtLeast(
       CcWindowSizeClass.medium,
     );
 

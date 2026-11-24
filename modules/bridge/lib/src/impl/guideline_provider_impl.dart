@@ -17,10 +17,10 @@ class GuidelineProviderImpl implements GuidelineProvider {
   bool get hasAvailable => Get.isRegistered<GuidelineController>();
 
   @override
-  bool isTaskActive(String taskId) => _c.isTaskActive(taskId);
+  bool hasTaskActive(String taskId) => _c.hasTaskActive(taskId);
 
   @override
-  bool isTaskCompleted(String taskId) => _c.isTaskCompleted(taskId);
+  bool hasTaskCompleted(String taskId) => _c.hasTaskCompleted(taskId);
 
   @override
   String? get currentTaskId => _c.currentTaskId;

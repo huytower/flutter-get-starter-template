@@ -109,7 +109,7 @@ class _LiquidWalletListView extends PrjGetView<WalletController> {
                 Obx(() {
                   final guideline = getIt<GuidelineProvider>();
                   final showing =
-                      guideline.isTaskActive('wallet_balance') &&
+                      guideline.hasTaskActive('wallet_balance') &&
                       !controller.hasEditMode.value;
                   return Positioned(
                     bottom: context.respDim(-10),
@@ -182,7 +182,7 @@ class _LiquidWalletListView extends PrjGetView<WalletController> {
             // flow across two columns instead of one stretched row each.
             final useGrid = CcWindowSizeClass.fromWidth(
               constraints.maxWidth,
-            ).isAtLeast(CcWindowSizeClass.medium);
+            ).hasAtLeast(CcWindowSizeClass.medium);
             return ListView(
               padding: EdgeInsets.all(
                 context.respPadding(CcPaddingParams.SPACE_MD),

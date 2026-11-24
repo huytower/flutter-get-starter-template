@@ -17,7 +17,7 @@ class CurrencySelectionController extends PrjGetController {
   final RxString primaryCurrencyCode = 'VND'.obs;
   final RxBool showHiddenTags = false.obs;
   final RxMap<String, int> convertedAmounts = <String, int>{}.obs;
-  final RxMap<String, bool> isLoadingRates = <String, bool>{}.obs;
+  final RxMap<String, bool> loadingRateByCurrency = <String, bool>{}.obs;
   bool _initialized = false;
 
   bool get hasInitialized => _initialized;
@@ -45,7 +45,7 @@ class CurrencySelectionController extends PrjGetController {
   Future<void> loadConvertedRates() async {
     final requestCurrency = primaryCurrencyCode.value;
     convertedAmounts.clear();
-    isLoadingRates.clear();
+    loadingRateByCurrency.clear();
     final requestId = Object();
     _activeRequest = requestId;
     final baseCurrency = requestCurrency;
@@ -56,7 +56,7 @@ class CurrencySelectionController extends PrjGetController {
         .toList();
 
     for (final code in otherCodes) {
-      isLoadingRates[code] = true;
+      loadingRateByCurrency[code] = true;
     }
 
     final result = await _conversionService.convertAll(
@@ -68,7 +68,7 @@ class CurrencySelectionController extends PrjGetController {
     if (!identical(_activeRequest, requestId)) return;
 
     for (final code in otherCodes) {
-      isLoadingRates[code] = false;
+      loadingRateByCurrency[code] = false;
     }
 
     result.when(

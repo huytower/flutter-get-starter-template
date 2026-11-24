@@ -36,7 +36,7 @@ class EntryFormTwoColumn extends StatelessWidget {
     final gap = context.respPadding(CcPaddingParams.PAGE_SM);
     final details = this.details;
     // Small (~7") tablet: even split, the 3:2 right column is too narrow.
-    final even = CcTwoColumn.isSmallTablet(context);
+    final even = CcTwoColumn.hasSmallTablet(context);
     return CcContentInset(
       maxWidth: maxWidth,
       child: CcContentPadding(

@@ -32,7 +32,7 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
 
   void initNavigationLogic() {
     const startRoute = PrjEnv.autoRouteStart;
-    showQuickTestAsSecondTab = _isQuickTestRoute(startRoute);
+    showQuickTestAsSecondTab = _hasQuickTestRoute(startRoute);
     checkSplash();
 
     // 1. Critical but non-blocking (User level drives UI availability)
@@ -108,7 +108,7 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
-  bool _isQuickTestRoute(String? route) {
+  bool _hasQuickTestRoute(String? route) {
     return route?.toUpperCase() == QuickTestTabContent.routeName;
   }
 }

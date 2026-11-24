@@ -107,7 +107,7 @@ class ReportTransactionTile extends StatelessWidget {
                 ),
               ],
             ),
-            if (hasEditMode && isEditableTransaction(transaction)) ...[
+            if (hasEditMode && hasEditableTransaction(transaction)) ...[
               const CcSpaceXS(),
               CcIconButton.bouncing(
                 icon: Icon(

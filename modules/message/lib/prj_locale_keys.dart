@@ -185,6 +185,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "Liquid wallets",
       "see_all": "See all",
       "empty": "No wallets yet.\nTap + to add one.",
+      "not_found": "This wallet no longer exists. Please choose another wallet.",
       "investment_empty": "No investment wallets yet\nTap + to add ",
       "investment_name": "Investment Name",
       "investment_name_hint": "e.g. BTC, Apple Stock...",
@@ -1092,6 +1093,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "Ví thanh khoản",
       "see_all": "Xem tất cả",
       "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
+      "not_found": "Ví này không còn tồn tại. Vui lòng chọn ví khác.",
       "investment_empty": "Chưa có danh mục đầu tư nào\nNhấn + để thêm ",
       "investment_name": "Tên khoản đầu tư",
       "investment_name_hint": "Ví dụ: BTC, Cổ phiếu Apple...",
@@ -1986,6 +1988,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "유동 자산 지갑",
       "see_all": "모두 보기",
       "empty": "지갑이 없습니다.\n+를 탭하여 추가하세요.",
+      "not_found": "이 지갑은 더 이상 존재하지 않습니다. 다른 지갑을 선택하세요.",
       "investment_empty": "투자 지갑이 없습니다\n+를 탭하여 추가",
       "investment_name": "투자 이름",
       "investment_name_hint": "예: BTC, Apple 주식...",
@@ -2836,6 +2839,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "流動性ウォレット",
       "see_all": "すべて表示",
       "empty": "ウォレットがまだありません。\n+をタップして追加してください。",
+      "not_found": "このウォレットは存在しません。別のウォレットを選択してください。",
       "investment_empty": "投資ウォレットがまだありません\n+をタップして追加",
       "investment_name": "投資名",
       "investment_name_hint": "例: BTC、Apple株...",
@@ -3675,6 +3679,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "流动钱包",
       "see_all": "查看全部",
       "empty": "还没有钱包。\n点击 + 添加一个。",
+      "not_found": "该钱包已不存在，请选择其他钱包。",
       "investment_empty": "还没有投资钱包\n点击 + 添加",
       "investment_name": "投资名称",
       "investment_name_hint": "例如: BTC、Apple 股票...",
@@ -4525,6 +4530,7 @@ class PrjLocaleKeys {
   static const wallet_your_wallets = 'wallet.your_wallets';
   static const wallet_see_all = 'wallet.see_all';
   static const wallet_empty = 'wallet.empty';
+  static const wallet_not_found = 'wallet.not_found';
   static const wallet_investment_empty = 'wallet.investment_empty';
   static const wallet_investment_name = 'wallet.investment_name';
   static const wallet_investment_name_hint = 'wallet.investment_name_hint';

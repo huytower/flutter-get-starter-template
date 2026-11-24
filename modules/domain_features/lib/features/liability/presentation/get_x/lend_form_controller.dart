@@ -417,7 +417,7 @@ class LendFormController extends LiabilityBaseFormController {
     if (intent != QuickEntryIntent.lend) return;
 
     setAction(
-      QuickEntryIntentUtil.isLendCollection(text)
+      QuickEntryIntentUtil.hasLendCollection(text)
           ? LiabilityDirectionForm.decrease
           : LiabilityDirectionForm.increase,
     );

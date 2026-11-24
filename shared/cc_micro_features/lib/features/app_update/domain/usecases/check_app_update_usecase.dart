@@ -46,7 +46,7 @@ class CheckAppUpdateUseCase {
       return const AppUpdateNotRequired();
     }
     final minimum = AppVersionEntity.tryParse(config.minimumVersion);
-    if (minimum == null || !installed.version.isLowerThan(minimum)) {
+    if (minimum == null || !installed.version.hasLowerThan(minimum)) {
       return const AppUpdateNotRequired();
     }
     return AppUpdateRequired(

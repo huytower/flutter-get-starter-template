@@ -81,8 +81,8 @@ class TransactionPageHeader extends StatelessWidget {
   /// < 900 dp tall): title, banner and actions share one row so the header
   /// stays low and the tab bar never covers the banner.
   static bool useInlineLayout(BuildContext context) =>
-      context.windowSizeClass.isAtLeast(CcWindowSizeClass.expanded) &&
-      !context.windowHeightClass.isAtLeast(CcWindowHeightClass.expanded);
+      context.windowSizeClass.hasAtLeast(CcWindowSizeClass.expanded) &&
+      !context.windowHeightClass.hasAtLeast(CcWindowHeightClass.expanded);
 
   Widget _buildInlineForeground(BuildContext context) {
     final guideline = getIt<GuidelineProvider>();

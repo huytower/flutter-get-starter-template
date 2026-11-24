@@ -41,7 +41,7 @@ class WalletReconcileTile extends StatelessWidget {
       final actual = counted ?? balance.bookBalance;
       final diff = actual - balance.bookBalance;
       final hasBalanced = diff == 0;
-      final hasAcknowledged = controller.isAcknowledged(balance.wallet.id);
+      final hasAcknowledged = controller.hasAcknowledged(balance.wallet.id);
       final hasResolved = hasBalanced || hasAcknowledged;
       final hasEditing = controller.editingWalletId.value == balance.wallet.id;
       final scheme = context.ccColorScheme;

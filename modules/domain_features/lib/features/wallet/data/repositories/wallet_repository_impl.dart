@@ -4,6 +4,7 @@ import 'package:domain_features/core/data/repositories/prj_base_repository.dart'
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../domain/repositories/wallet_repository.dart';
@@ -40,15 +41,17 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
     });
   }
 
+  /// A missing wallet is an expected outcome (deleted, or replaced by a sync,
+  /// while a form still held its id), not a bug: it comes back as a
+  /// [CcValidationFailure] the UI can show, and is not sent to the crash
+  /// reporter the way an exception inside [safeRequest] would be.
   @override
-  Future<Result<WalletEntity, CcFailure>> getWallet(String id) {
-    return safeRequest(() async {
-      final wallet = await _local.getWallet(id);
-      if (wallet == null) {
-        throw StateError('Wallet not found: $id');
-      }
-      return wallet;
-    });
+  Future<Result<WalletEntity, CcFailure>> getWallet(String id) async {
+    final result = await safeRequest(() => _local.getWallet(id));
+    if (result.isError()) return Error(result.tryGetError()!);
+    final wallet = result.tryGetSuccess();
+    if (wallet == null) return _walletNotFound(id);
+    return Success(wallet);
   }
 
   @override
@@ -68,12 +71,13 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
   }
 
   @override
-  Future<Result<void, CcFailure>> deleteWallet(String id) {
+  Future<Result<void, CcFailure>> deleteWallet(String id) async {
+    final modelResult = await safeRequest(() => _local.getWalletModel(id));
+    if (modelResult.isError()) return Error(modelResult.tryGetError()!);
+    final walletModel = modelResult.tryGetSuccess();
+    if (walletModel == null) return _walletNotFound(id);
+
     return safeRequest(() async {
-      final walletModel = await _local.getWalletModel(id);
-      if (walletModel == null) {
-        throw StateError('Wallet not found: $id');
-      }
       await _local.deleteWallet(id);
       if (walletModel.remoteId != null) {
         try {
@@ -113,6 +117,11 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
         }
       }
     });
+  }
+
+  Error<T, CcFailure> _walletNotFound<T>(String id) {
+    'Wallet not found: $id'.Log('WalletRepository');
+    return const Error(CcValidationFailure(PrjLocaleKeys.wallet_not_found));
   }
 
   Future<void> _syncWallet(String id) async {

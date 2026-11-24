@@ -77,7 +77,7 @@ class ReconciliationController extends PrjGetController {
         !hasSubmitting.value;
   }
 
-  bool isAcknowledged(String walletId) => _acknowledged.contains(walletId);
+  bool hasAcknowledged(String walletId) => _acknowledged.contains(walletId);
 
   /// The counted amount, or null while the wallet has not been counted yet.
   int? actualOf(String walletId) => _actuals[walletId];

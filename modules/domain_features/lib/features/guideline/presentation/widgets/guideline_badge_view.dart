@@ -232,7 +232,7 @@ class _GuidelineBadgeViewState extends State<GuidelineBadgeView>
   /// badge is given, so it never runs past its parent.
   double _labelMaxWidth(BuildContext context, BoxConstraints constraints) {
     final windowWidth = MediaQuery.sizeOf(context).width;
-    final windowCap = CcTwoColumn.isSmallTablet(context)
+    final windowCap = CcTwoColumn.hasSmallTablet(context)
         ? windowWidth * 0.3
         : windowWidth * 0.5;
     return constraints.hasBoundedWidth

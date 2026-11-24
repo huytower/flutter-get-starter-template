@@ -371,7 +371,7 @@ class ProfileInfoCard extends StatelessWidget {
 
   /// Apple "Hide My Email" addresses are random strings that mean nothing to
   /// the user, so a localized label is shown instead of the raw address.
-  bool _isApplePrivateRelay(String email) =>
+  bool _hasApplePrivateRelay(String email) =>
       email.toLowerCase().endsWith('@privaterelay.appleid.com');
 
   String _getFullName() {
@@ -450,7 +450,7 @@ class ProfileInfoCard extends StatelessWidget {
           CcText(
             hasEmpty
                 ? 'Email'
-                : _isApplePrivateRelay(email)
+                : _hasApplePrivateRelay(email)
                 ? el.tr(PrjLocaleKeys.profile_apple_private_email)
                 : email,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(

@@ -16,9 +16,9 @@ import 'dart:ui' show Color;
 abstract class GuidelineProvider {
   bool get hasAvailable;
 
-  bool isTaskActive(String taskId);
+  bool hasTaskActive(String taskId);
 
-  bool isTaskCompleted(String taskId);
+  bool hasTaskCompleted(String taskId);
 
   String? get currentTaskId;
 

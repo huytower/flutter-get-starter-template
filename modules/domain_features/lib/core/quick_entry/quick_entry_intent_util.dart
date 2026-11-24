@@ -220,19 +220,19 @@ class QuickEntryIntentUtil {
   ];
 
   /// Returns true if [text] indicates an investment return action.
-  static bool isInvestmentReturn(String text) {
+  static bool hasInvestmentReturn(String text) {
     final normalized = stripVietnameseDiacritics(text.toLowerCase());
     return investmentReturnKeywords.any((k) => normalized.contains(k));
   }
 
   /// Returns true if [text] indicates a debt repayment action.
-  static bool isDebtRepayment(String text) {
+  static bool hasDebtRepayment(String text) {
     final normalized = stripVietnameseDiacritics(text.toLowerCase());
     return debtRepayKeywords.any((k) => normalized.contains(k));
   }
 
   /// Returns true if [text] indicates a lend collection action.
-  static bool isLendCollection(String text) {
+  static bool hasLendCollection(String text) {
     final normalized = stripVietnameseDiacritics(text.toLowerCase());
     return lendCollectKeywords.any((k) => normalized.contains(k));
   }

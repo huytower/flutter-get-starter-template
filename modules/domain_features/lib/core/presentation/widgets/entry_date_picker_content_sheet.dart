@@ -51,11 +51,11 @@ class _EntryDatePickerContentSheetState
     });
   }
 
-  bool _isSameDay(DateTime a, DateTime b) {
+  bool _hasSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  bool _isInMonth(DateTime date, DateTime month) {
+  bool _hasInMonth(DateTime date, DateTime month) {
     return date.year == month.year && date.month == month.month;
   }
 
@@ -354,9 +354,9 @@ class _EntryDatePickerContentSheetState
     DateTime date,
     DateTime today,
   ) {
-    final hasCurrentMonth = _isInMonth(date, _viewedMonth);
-    final hasSelected = _isSameDay(date, _selectedDate);
-    final hasToday = _isSameDay(date, today);
+    final hasCurrentMonth = _hasInMonth(date, _viewedMonth);
+    final hasSelected = _hasSameDay(date, _selectedDate);
+    final hasToday = _hasSameDay(date, today);
     final hasSelectable =
         !date.isBefore(widget.firstDate) && !date.isAfter(widget.lastDate);
 

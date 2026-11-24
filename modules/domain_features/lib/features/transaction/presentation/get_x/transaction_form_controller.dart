@@ -76,20 +76,25 @@ abstract class TransactionFormController extends PrjGetController {
   void _loadWallets() {
     final parentController = Get.find<TransactionController>();
     wallets.assignAll(_liquidOnly(parentController.wallets));
-
-    if (selectedWalletId.value == null && wallets.isNotEmpty) {
-      selectedWalletId.value = wallets.first.id;
-    }
+    _ensureValidWalletSelection();
 
     // Listen to changes in parent's wallets
     _walletsWorker = ever(parentController.wallets, (
       List<WalletEntity> newWallets,
     ) {
       wallets.assignAll(_liquidOnly(newWallets));
-      if (selectedWalletId.value == null && wallets.isNotEmpty) {
-        selectedWalletId.value = wallets.first.id;
-      }
+      _ensureValidWalletSelection();
     });
+  }
+
+  /// Keeps [selectedWalletId] pointing at a wallet that still exists: a wallet
+  /// can be deleted, or replaced by a Firestore sync, while this form is open
+  /// (or before an old transaction is edited). A stale id would only fail later
+  /// at save time, so fall back to the first available wallet instead.
+  void _ensureValidWalletSelection() {
+    final current = selectedWalletId.value;
+    if (current != null && wallets.any((w) => w.id == current)) return;
+    selectedWalletId.value = wallets.isNotEmpty ? wallets.first.id : null;
   }
 
   /// Prefills the form from [transaction] for editing. Category selection is
@@ -101,6 +106,7 @@ abstract class TransactionFormController extends PrjGetController {
     editingTransaction = transaction;
     amountStr.value = transaction.amount.toString();
     selectedWalletId.value = transaction.walletId;
+    _ensureValidWalletSelection();
     date.value = transaction.date;
     noteController.text = transaction.note ?? '';
   }

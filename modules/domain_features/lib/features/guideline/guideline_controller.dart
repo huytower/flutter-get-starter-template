@@ -149,7 +149,7 @@ class GuidelineController extends GetxController {
     }).toList();
   }
 
-  bool isTaskCompleted(String taskId) => completedTasks.contains(taskId);
+  bool hasTaskCompleted(String taskId) => completedTasks.contains(taskId);
 
   String? get currentTaskId {
     for (final taskId in activeTaskSequence) {
@@ -174,7 +174,7 @@ class GuidelineController extends GetxController {
         : active.length + 1;
   }
 
-  bool isTaskActive(String taskId) => currentTaskId == taskId;
+  bool hasTaskActive(String taskId) => currentTaskId == taskId;
 
   /// Returns 0: Budget Allocation, 1: Transaction, 2: Profile
   int get activeTabIndex {

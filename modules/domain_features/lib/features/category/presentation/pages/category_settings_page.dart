@@ -364,8 +364,8 @@ class _CategorySettingsView extends PrjGetView<CategorySettingsController> {
             ),
           )
           .toList(),
-      isEnabled: (item) =>
-          controller.isEnabled(item.originalData as CategoryEntity),
+      hasEnabled: (item) =>
+          controller.hasEnabled(item.originalData as CategoryEntity),
       onToggle: (item) =>
           controller.toggle(item.originalData as CategoryEntity),
       accentColor: accentColor,

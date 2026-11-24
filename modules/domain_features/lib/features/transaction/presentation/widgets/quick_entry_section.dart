@@ -52,7 +52,7 @@ class QuickEntrySection extends StatelessWidget {
   final VoidCallback? onClear;
   final bool hasLocked;
 
-  bool _isSupportedLanguageAndCurrency(BuildContext context) {
+  bool _hasSupportedLanguageAndCurrency(BuildContext context) {
     final languageCode = el.EasyLocalization.of(
       context,
     )?.locale.languageCode.toLowerCase();
@@ -63,7 +63,7 @@ class QuickEntrySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isSupportedLanguageAndCurrency(context)) {
+    if (!_hasSupportedLanguageAndCurrency(context)) {
       return const SizedBox.shrink();
     }
     return Opacity(
@@ -242,7 +242,7 @@ class QuickEntrySection extends StatelessWidget {
     final buttonSize = context.respDim(30);
 
     return FutureBuilder<bool>(
-      future: aiPreferences.isGeminiEnabled(),
+      future: aiPreferences.hasGeminiEnabled(),
       builder: (context, snapshot) {
         final hasGeminiEnabled = snapshot.data ?? true;
         if (!hasGeminiEnabled) {

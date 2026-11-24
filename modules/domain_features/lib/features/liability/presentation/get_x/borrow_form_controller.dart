@@ -387,7 +387,7 @@ class BorrowFormController extends LiabilityBaseFormController {
     if (intent != QuickEntryIntent.debt) return;
 
     setAction(
-      QuickEntryIntentUtil.isDebtRepayment(text)
+      QuickEntryIntentUtil.hasDebtRepayment(text)
           ? LiabilityDirectionForm.decrease
           : LiabilityDirectionForm.increase,
     );

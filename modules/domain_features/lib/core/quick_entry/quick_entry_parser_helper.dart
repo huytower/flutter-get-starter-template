@@ -206,7 +206,7 @@ List<({String name, int price})> extractItemsFromText(String text) {
         _localePack.regex.ocrNoisePattern.hasMatch(name) ||
         name.length < 2;
 
-    if (!hasNoise && !_isStopWord(name)) {
+    if (!hasNoise && !_hasStopWord(name)) {
       items.add((name: name, price: value));
     }
   }
@@ -214,7 +214,7 @@ List<({String name, int price})> extractItemsFromText(String text) {
   return items;
 }
 
-bool _isStopWord(String text) {
+bool _hasStopWord(String text) {
   final lower = stripVietnameseDiacritics(text.toLowerCase());
   return _localePack.billStopWords.any(
     (s) => lower.startsWith(s) || lower.endsWith(s),

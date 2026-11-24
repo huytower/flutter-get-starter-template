@@ -62,7 +62,7 @@ class TransactionController extends PrjGetController {
   ];
 
   /// Returns whether a specific tab is currently unlocked based on user level.
-  bool isTabUnlocked(TransactionTabKind kind) {
+  bool hasTabUnlocked(TransactionTabKind kind) {
     if (kind == TransactionTabKind.expense ||
         kind == TransactionTabKind.income) {
       return true;
@@ -300,20 +300,20 @@ class TransactionController extends PrjGetController {
   bool get showInvestmentBadge {
     if (!getIt<GuidelineProvider>().hasAvailable) return false;
     final guideline = getIt<GuidelineProvider>();
-    return guideline.isTaskActive('investment') &&
+    return guideline.hasTaskActive('investment') &&
         guideline.hasCreatedFirstInvestment;
   }
 
   bool get showLiabilityBadge {
     if (!getIt<GuidelineProvider>().hasAvailable) return false;
     final guideline = getIt<GuidelineProvider>();
-    return guideline.isTaskActive('liability');
+    return guideline.hasTaskActive('liability');
   }
 
   bool get showLendBadge {
     if (!getIt<GuidelineProvider>().hasAvailable) return false;
     final guideline = getIt<GuidelineProvider>();
-    return guideline.isTaskActive('lend');
+    return guideline.hasTaskActive('lend');
   }
 
   void openReport(BuildContext context) {

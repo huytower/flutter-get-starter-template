@@ -108,7 +108,7 @@ class BudgetAllocationPage extends PrjGetView<BudgetAllocationController>
             onAddInvestment: () => controller.openAddInvestment(context),
             onSeeAll: () => controller.navigateToInvestmentList(context),
             showGuidelineBadge: getIt<GuidelineProvider>().hasAvailable
-                ? getIt<GuidelineProvider>().isTaskActive('investment') &&
+                ? getIt<GuidelineProvider>().hasTaskActive('investment') &&
                       !getIt<GuidelineProvider>().hasCreatedFirstInvestment
                 : false,
             badgeColor: getIt<GuidelineProvider>().hasAvailable
@@ -148,7 +148,7 @@ class BudgetAllocationPage extends PrjGetView<BudgetAllocationController>
             onSeeAll: () => controller.navigateToLiabilityList(context),
             hasLendFront: controller.hasLendSectionFront.value,
             showGuidelineBadge: getIt<GuidelineProvider>().hasAvailable
-                ? getIt<GuidelineProvider>().isTaskActive('liability') &&
+                ? getIt<GuidelineProvider>().hasTaskActive('liability') &&
                       !getIt<GuidelineProvider>().hasCreatedFirstLiability
                 : false,
             badgeColor: getIt<GuidelineProvider>().hasAvailable
@@ -195,7 +195,7 @@ class BudgetAllocationPage extends PrjGetView<BudgetAllocationController>
         wallets: controller.walletController.recentLiquidWallets,
         onAddWallet: () => controller.openAddWallet(context),
         showGuidelineBadge: getIt<GuidelineProvider>().hasAvailable
-            ? getIt<GuidelineProvider>().isTaskActive('wallet_balance')
+            ? getIt<GuidelineProvider>().hasTaskActive('wallet_balance')
             : false,
         badgeColor: getIt<GuidelineProvider>().hasAvailable
             ? getIt<GuidelineProvider>().currentColor

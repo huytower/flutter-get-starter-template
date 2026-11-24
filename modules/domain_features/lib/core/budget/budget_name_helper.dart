@@ -155,7 +155,7 @@ abstract final class BudgetNameHelper {
     required String name,
     required String? categoryNameKey,
   }) {
-    if (categoryNameKey != null && isDefaultName(name, key: categoryNameKey)) {
+    if (categoryNameKey != null && hasDefaultName(name, key: categoryNameKey)) {
       return el.tr(categoryNameKey);
     }
     if (categoryNameKey == null) {
@@ -173,7 +173,7 @@ abstract final class BudgetNameHelper {
 
   /// Returns true if the [name] matches a known default name (Vietnamese or English)
   /// for a category.
-  static bool isDefaultName(String name, {required String key}) {
+  static bool hasDefaultName(String name, {required String key}) {
     final searchName = name.trim().toLowerCase();
 
     // 1. Direct match on key or stripped key (e.g. 'category.food_drink' or 'food_drink')

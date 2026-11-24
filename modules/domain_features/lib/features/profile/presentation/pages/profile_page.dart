@@ -158,7 +158,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
     final split = (menuItems.length / 2).ceil();
     // Small (~7") tablet: two even columns, the settings list stays one
     // group. Larger tablets split it for three columns.
-    final small = CcTwoColumn.isSmallTablet(context);
+    final small = CcTwoColumn.hasSmallTablet(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -220,7 +220,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
           label: el.tr(PrjLocaleKeys.category_settings_title),
           subtitle: el.tr(PrjLocaleKeys.category_settings_subtitle),
           onTap: () => controller.navigateToCategorySettings(context),
-          badge: guideline.isTaskActive('categories')
+          badge: guideline.hasTaskActive('categories')
               ? PrjGuidelineBadge(
                   size: context.respDim(8),
                   label: guideline.bannerDescription,
@@ -239,7 +239,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
               controller.settings.value.birthYear?.toString() ??
               el.tr(PrjLocaleKeys.common_not_set),
           onTap: () => controller.pickBirthYear(context),
-          badge: guideline.isTaskActive('birth_year')
+          badge: guideline.hasTaskActive('birth_year')
               ? PrjGuidelineBadge(
                   size: context.respDim(6),
                   label: guideline.bannerDescription,

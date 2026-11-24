@@ -40,7 +40,7 @@ class QuickEntryTextInput {
       return;
     }
 
-    if (await _session.handler.parser.aiPreferences.isGeminiEnabled()) {
+    if (await _session.handler.parser.aiPreferences.hasGeminiEnabled()) {
       _session.quickEntrySuggestion.value = null;
       return;
     }
@@ -78,7 +78,7 @@ class QuickEntryTextInput {
     // Score the fresh parse, not [_session.isQuickEntryCategoryMissing] — the Rx still
     // holds the previous keystroke's result at this point.
     final hasAmount = local.amount != null && local.amount! > 0;
-    final categoryMissing = _session.isCategoryMissingFor(local);
+    final categoryMissing = _session.hasCategoryMissingFor(local);
     final hasComplete = local.hasComplete && !categoryMissing;
 
     // Publish the suggestion whenever an amount resolved, even if the category
@@ -121,8 +121,8 @@ class QuickEntryTextInput {
     if (!_session.handler.parser.canUseAiSmartEntry) return;
     final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
     final prefs = _session.handler.parser.aiPreferences;
-    final geminiEnabled = await prefs.isGeminiEnabled();
-    final cloudAllowed = geminiEnabled && await prefs.isUnderDailyLimit();
+    final geminiEnabled = await prefs.hasGeminiEnabled();
+    final cloudAllowed = geminiEnabled && await prefs.hasUnderDailyLimit();
     // Guards a fast double-submit from firing two concurrent cloud calls.
     if (_session.hasParsingQuickEntry.value) return;
     final text = _session.quickEntryController.text.trim();
@@ -170,7 +170,7 @@ class QuickEntryTextInput {
 
       // Proactively prefill form fields so the UI highlights the match immediately
       _session.host.amountStr.value = local.amount!.toString();
-      if (local.categoryId != null && !_session.isCategoryMissingFor(local)) {
+      if (local.categoryId != null && !_session.hasCategoryMissingFor(local)) {
         _session.host.applyQuickEntryCategory(local.categoryId!);
       }
 
@@ -230,7 +230,7 @@ class QuickEntryTextInput {
       _session.host.amountStr.value = suggestion.amount!.toString();
     }
     if (suggestion.categoryId != null &&
-        !_session.isCategoryMissingFor(suggestion)) {
+        !_session.hasCategoryMissingFor(suggestion)) {
       _session.host.applyQuickEntryCategory(suggestion.categoryId!);
     }
 

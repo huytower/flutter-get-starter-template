@@ -23,7 +23,7 @@ class AiFallbackPreferenceDataSource {
   /// Whether the user agreed to share data with Gemini (Google). Opt-in:
   /// defaults to false, so nothing leaves the device until the user allows it
   /// in the AI consent sheet (App Store guidelines 5.1.1(i) / 5.1.2(i)).
-  Future<bool> isGeminiEnabled() async {
+  Future<bool> hasGeminiEnabled() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_keyGeminiEnabled) ?? false;
   }
@@ -46,7 +46,7 @@ class AiFallbackPreferenceDataSource {
     return prefs.getInt(_keyCallCount) ?? 0;
   }
 
-  Future<bool> isUnderDailyLimit() async {
+  Future<bool> hasUnderDailyLimit() async {
     if (!enforceDailyLimit) return true;
     return await getTodayFallbackCount() < dailyCallLimit;
   }
@@ -67,7 +67,7 @@ class AiFallbackPreferenceDataSource {
   Future<void> _lock = Future.value();
 
   /// Atomically checks-and-increments the daily call count — a plain
-  /// [isUnderDailyLimit] + [incrementTodayFallbackCount] pair would let two
+  /// [hasUnderDailyLimit] + [incrementTodayFallbackCount] pair would let two
   /// overlapping callers both read the same pre-increment count and both
   /// slip through over the cap. Returns false, count untouched, once the
   /// cap is reached for today.

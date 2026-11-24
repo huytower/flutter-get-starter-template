@@ -5,7 +5,7 @@ import '../entities/biometric_auth_type_entity.dart';
 
 abstract class BiometricRepository {
   /// Checks if biometric authentication is available on the device
-  Future<Result<bool, Exception>> isBiometricAvailable();
+  Future<Result<bool, Exception>> hasBiometricAvailable();
 
   /// Authenticates the user using biometrics
   ///

@@ -116,7 +116,7 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
     ];
     // Small tablet and up (>= 600 dp window): two columns, so the sheet is
     // wider and shorter instead of one long column.
-    if (context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium)) {
+    if (context.windowSizeClass.hasAtLeast(CcWindowSizeClass.medium)) {
       return CcMultiColumn(
         columns: 2,
         columnGap: context.respPadding(CcPaddingParams.SPACE_LG),

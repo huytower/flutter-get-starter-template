@@ -13,7 +13,7 @@ class RateFreshness {
   final Duration maxAge;
   final Duration? warningThreshold;
 
-  bool isFresh(DateTime fetchedAt) {
+  bool hasFresh(DateTime fetchedAt) {
     return DateTime.now().difference(fetchedAt) < maxAge;
   }
 }

@@ -275,7 +275,7 @@ class WalletController extends PrjGetController {
     String? categoryId,
   }) async {
     if (type == WalletType.emergencyFund &&
-        !await _emergencyFund.isUnlocked()) {
+        !await _emergencyFund.hasUnlocked()) {
       errorMessage.value = el.tr(
         PrjLocaleKeys.wallet_emergency_fund_locked_hint,
       );

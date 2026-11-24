@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthPreferenceDataSource {
   static const String _keyIsTermsAccepted = 'is_terms_accepted';
 
-  Future<bool> isTermsAccepted() async {
+  Future<bool> hasTermsAccepted() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_keyIsTermsAccepted) ?? false;
   }

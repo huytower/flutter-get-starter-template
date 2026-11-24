@@ -26,10 +26,10 @@ class BiometricBloc extends Bloc<BiometricEvent, BiometricState> {
     Emitter<BiometricState> emit,
   ) async {
     emit(BiometricLoading());
-    final isAvailableResult = await _repository.isBiometricAvailable();
+    final hasAvailableResult = await _repository.hasBiometricAvailable();
     final typesResult = await _repository.getAvailableBiometrics();
 
-    isAvailableResult.when((hasAvailable) {
+    hasAvailableResult.when((hasAvailable) {
       typesResult.when(
         (types) =>
             emit(BiometricAvailable(hasAvailable: hasAvailable, types: types)),

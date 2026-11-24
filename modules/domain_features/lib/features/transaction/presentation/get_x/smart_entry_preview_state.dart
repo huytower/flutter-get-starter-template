@@ -169,13 +169,13 @@ class SmartEntryPreviewState {
     rows.removeRange(0, count.clamp(0, rows.length));
   }
 
-  bool isValid(SmartEntryPreviewRow row) =>
+  bool hasValid(SmartEntryPreviewRow row) =>
       row.amount > 0 &&
       row.walletId.isNotEmpty &&
       (!config.showCategory || row.categoryId.isNotEmpty);
 
   bool get canConfirm =>
-      rows.isNotEmpty && rows.every(isValid) && !hasCommitting.value;
+      rows.isNotEmpty && rows.every(hasValid) && !hasCommitting.value;
 
   int totalFor(String type) => rows
       .where((row) => row.type == type)

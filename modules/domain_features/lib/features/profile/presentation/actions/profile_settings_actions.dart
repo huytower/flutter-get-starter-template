@@ -44,7 +44,7 @@ class ProfileSettingsActions {
       'profile_sign_in_reminder_dismissed';
 
   /// Once dismissed, the sign-in reminder never comes back.
-  Future<bool> isSignInReminderDismissed() async =>
+  Future<bool> hasSignInReminderDismissed() async =>
       (await SharedPreferences.getInstance()).getBool(
         _signInReminderDismissedKey,
       ) ??

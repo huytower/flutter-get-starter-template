@@ -70,7 +70,7 @@ class AppVersionEntity extends Equatable
   }
 
   /// Whether this version is strictly older than [other].
-  bool isLowerThan(AppVersionEntity other) => compareTo(other) < 0;
+  bool hasLowerThan(AppVersionEntity other) => compareTo(other) < 0;
 
   @override
   String toString() {

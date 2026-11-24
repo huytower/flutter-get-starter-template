@@ -66,7 +66,7 @@ abstract final class ReceiptImagePickerHelper {
       if (image == null) return const ReceiptImagePickResult();
       return ReceiptImagePickResult(image: image);
     } on PlatformException catch (e) {
-      return ReceiptImagePickResult(permissionDenied: _isPermissionDenied(e));
+      return ReceiptImagePickResult(permissionDenied: _hasPermissionDenied(e));
     } catch (_) {
       return const ReceiptImagePickResult();
     }
@@ -92,7 +92,7 @@ abstract final class ReceiptImagePickerHelper {
       return ReceiptImageBatchPickResult(images: images);
     } on PlatformException catch (e) {
       return ReceiptImageBatchPickResult(
-        permissionDenied: _isPermissionDenied(e),
+        permissionDenied: _hasPermissionDenied(e),
       );
     } catch (_) {
       return const ReceiptImageBatchPickResult(failed: true);
@@ -108,7 +108,7 @@ abstract final class ReceiptImagePickerHelper {
 
   // image_picker_android/image_picker_ios both use these exact codes
   // for a denied camera or photo-library permission.
-  static bool _isPermissionDenied(PlatformException e) =>
+  static bool _hasPermissionDenied(PlatformException e) =>
       e.code == 'camera_access_denied' || e.code == 'photo_access_denied';
 
   /// Sniffs the format from the magic-number header; null (not a guessed

@@ -13,9 +13,9 @@ class BiometricRepositoryImpl implements BiometricRepository {
   BiometricRepositoryImpl(this._datasource);
 
   @override
-  Future<Result<bool, Exception>> isBiometricAvailable() async {
+  Future<Result<bool, Exception>> hasBiometricAvailable() async {
     try {
-      final hasAvailable = await _datasource.isBiometricAvailable();
+      final hasAvailable = await _datasource.hasBiometricAvailable();
       return Success(hasAvailable);
     } catch (e) {
       return Error(

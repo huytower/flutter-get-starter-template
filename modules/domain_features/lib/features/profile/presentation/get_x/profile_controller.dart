@@ -60,7 +60,7 @@ class ProfileController extends PrjGetController {
   final RxBool aiSharingEnabled = false.obs;
 
   Future<void> _loadAiSharing() async {
-    aiSharingEnabled.value = await _app.isAiSharingEnabled();
+    aiSharingEnabled.value = await _app.hasAiSharingEnabled();
   }
 
   /// Turning it on shows the consent sheet; turning it off withdraws consent.
@@ -99,7 +99,7 @@ class ProfileController extends PrjGetController {
 
   Future<void> _loadSignInReminder() async {
     signInReminderDismissed.value = await _settingsActions
-        .isSignInReminderDismissed();
+        .hasSignInReminderDismissed();
   }
 
   Future<void> dismissSignInReminder() async {

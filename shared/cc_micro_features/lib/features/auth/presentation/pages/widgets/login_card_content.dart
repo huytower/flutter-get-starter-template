@@ -48,7 +48,7 @@ class _LoginCardContentState extends State<LoginCardContent> {
   }
 
   Future<void> _loadPreference() async {
-    final accepted = await getIt<AuthPreferenceDataSource>().isTermsAccepted();
+    final accepted = await getIt<AuthPreferenceDataSource>().hasTermsAccepted();
     if (mounted && accepted) {
       setState(() => _hasAgreed = true);
     }

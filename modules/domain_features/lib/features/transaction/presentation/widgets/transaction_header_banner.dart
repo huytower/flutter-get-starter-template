@@ -36,7 +36,7 @@ class TransactionHeaderBanner extends StatelessWidget {
   /// short wide windows, where a wrapped description would not fit.
   final bool hideGuidelineDescription;
 
-  bool _isSupportedLanguageAndCurrency(BuildContext context) {
+  bool _hasSupportedLanguageAndCurrency(BuildContext context) {
     final languageCode = el.EasyLocalization.of(
       context,
     )?.locale.languageCode.toLowerCase();
@@ -96,7 +96,7 @@ class TransactionHeaderBanner extends StatelessWidget {
     BuildContext context,
     TransactionTabKind activeTab,
   ) {
-    if (!_isSupportedLanguageAndCurrency(context)) {
+    if (!_hasSupportedLanguageAndCurrency(context)) {
       return const SizedBox.shrink();
     }
 

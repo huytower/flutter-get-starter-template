@@ -69,7 +69,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
     );
 
     // Validate the parsed phone number
-    if (!getIt<CcPhoneNumberValidator>().isValidMobile(parsedPhoneNumber)) {
+    if (!getIt<CcPhoneNumberValidator>().hasValidMobile(parsedPhoneNumber)) {
       setState(() {
         _validationError = el.tr(CcMfLocaleKeys.validation_phone);
       });

@@ -42,7 +42,7 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
           final item = items[index];
           final key = ValueKey('expense_${item.id}');
 
-          final hasSelected = _isItemSelected(
+          final hasSelected = _hasItemSelected(
             item,
             selectedCategory,
             selectedBudget,
@@ -78,7 +78,7 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
   /// budget item alone, so that card is the selected one whenever the category
   /// is selected — including the default selection, where the budget may not be
   /// resolved yet.
-  bool _isItemSelected(
+  bool _hasItemSelected(
     UnifiedCategoryItem item,
     CategoryEntity? selectedCategory,
     BudgetLimitEntity? selectedBudget,

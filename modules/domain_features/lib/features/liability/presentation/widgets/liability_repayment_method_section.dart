@@ -87,7 +87,7 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
     required Widget label,
     required Widget Function(double width) toggle,
   }) {
-    if (!CcTwoColumn.isSmallTablet(context)) {
+    if (!CcTwoColumn.hasSmallTablet(context)) {
       return Row(
         children: [label, const Spacer(), toggle(context.respDim(220))],
       );

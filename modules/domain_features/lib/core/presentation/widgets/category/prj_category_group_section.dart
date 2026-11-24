@@ -24,7 +24,7 @@ class PrjCategoryGroupItem {
 /// and a large watermark icon.
 class PrjCategoryGroupSection extends StatelessWidget {
   final List<PrjCategoryGroupItem> items;
-  final bool Function(PrjCategoryGroupItem) isEnabled;
+  final bool Function(PrjCategoryGroupItem) hasEnabled;
   final void Function(PrjCategoryGroupItem) onToggle;
   final Color? accentColor;
   final IconData? watermarkIcon;
@@ -32,7 +32,7 @@ class PrjCategoryGroupSection extends StatelessWidget {
   const PrjCategoryGroupSection({
     super.key,
     required this.items,
-    required this.isEnabled,
+    required this.hasEnabled,
     required this.onToggle,
     this.accentColor,
     this.watermarkIcon,
@@ -72,7 +72,7 @@ class PrjCategoryGroupSection extends StatelessWidget {
                 separatorBuilder: (_, _) => const CcSpaceSM(),
                 itemBuilder: (context, index) {
                   final item = items[index];
-                  final enabled = isEnabled(item);
+                  final enabled = hasEnabled(item);
                   return PrjCategoryChip(
                     label: item.label,
                     iconCode: item.iconCode,

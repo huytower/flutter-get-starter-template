@@ -70,7 +70,7 @@ class QuickDateRow extends StatelessWidget {
     String label,
     DateTime date,
   ) {
-    final hasSelected = _isSameDay(selectedDate, date);
+    final hasSelected = _hasSameDay(selectedDate, date);
     return CcBouncing(
       onTap: () => onDateSelected(date),
       borderRadius: context.brLg,
@@ -105,7 +105,7 @@ class QuickDateRow extends StatelessWidget {
     );
   }
 
-  bool _isSameDay(DateTime d1, DateTime d2) {
+  bool _hasSameDay(DateTime d1, DateTime d2) {
     return d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
   }
 }

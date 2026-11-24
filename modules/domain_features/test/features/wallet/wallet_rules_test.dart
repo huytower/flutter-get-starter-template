@@ -77,14 +77,14 @@ void main() {
       final profile = _FakeProfile(const ProfileSettingsEntity());
       final access = _access(3, profile);
 
-      expect(await access.isUnlocked(), isFalse);
+      expect(await access.hasUnlocked(), isFalse);
       await access.markEbookViewed();
-      expect(await access.isUnlocked(), isTrue);
+      expect(await access.hasUnlocked(), isTrue);
     });
 
     test('VIP is unlocked at any level', () async {
       final profile = _FakeProfile(const ProfileSettingsEntity(hasVip: true));
-      expect(await _access(0, profile).isUnlocked(), isTrue);
+      expect(await _access(0, profile).hasUnlocked(), isTrue);
     });
   });
 

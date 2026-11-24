@@ -20,7 +20,7 @@ import 'package:multiple_result/multiple_result.dart';
 /// successful fetch, offline, or when a key is missing in Remote Config.
 @LazySingleton(as: AppUpdateConfigRepository)
 class AppUpdateConfigRepositoryImpl implements AppUpdateConfigRepository {
-  static const isForceKey = 'isForce';
+  static const forceUpdateConfigKey = 'isForce';
   static const minimumVersionKey = 'minimumOsVersionHasForce';
 
   /// App Store id of this app (also used by the in-app rating link).
@@ -35,7 +35,7 @@ class AppUpdateConfigRepositoryImpl implements AppUpdateConfigRepository {
     final env = HttpClientConfig.httpConfig;
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setDefaults({
-      isForceKey: env.hasForceUpdate,
+      forceUpdateConfigKey: env.hasForceUpdate,
       minimumVersionKey: env.minimumOsVersionHasForce ?? '',
     });
     await remoteConfig.setConfigSettings(
@@ -65,7 +65,7 @@ class AppUpdateConfigRepositoryImpl implements AppUpdateConfigRepository {
       final minimum = remoteConfig.getString(minimumVersionKey).trim();
       return Success(
         AppUpdateConfigEntity(
-          hasForce: remoteConfig.getBool(isForceKey),
+          hasForce: remoteConfig.getBool(forceUpdateConfigKey),
           minimumVersion: minimum.isEmpty ? null : minimum,
           iosAppStoreId: _iosAppStoreId,
         ),

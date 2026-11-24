@@ -152,7 +152,7 @@ class AddLiquidSheetController extends PrjGetController {
   }
 
   Future<void> _loadEmergencyFundGate() async {
-    emergencyFundUnlocked.value = await _emergencyFund.isUnlocked();
+    emergencyFundUnlocked.value = await _emergencyFund.hasUnlocked();
   }
 
   Future<void> openEmergencyFundEbook(BuildContext context) async {

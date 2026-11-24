@@ -64,7 +64,7 @@ class PrjHiveBox {
   // ===== Box Classification =====
 
   /// Returns true if the box contains sensitive financial data that should be encrypted.
-  static bool isFinancialBox(String boxName) {
+  static bool hasFinancialBox(String boxName) {
     return [
       WALLET_BOX_NAME,
       CATEGORY_BOX_NAME,
@@ -76,7 +76,7 @@ class PrjHiveBox {
   }
 
   /// Returns true if the box contains non-financial data that can remain unencrypted.
-  static bool isNonFinancialBox(String boxName) {
+  static bool hasNonFinancialBox(String boxName) {
     return [
       APP_BOX_NAME,
       DEVICE_BOX_NAME,

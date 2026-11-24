@@ -175,7 +175,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
           Obx(() {
             final guideline = controller.guideline;
             final showing =
-                guideline.isTaskActive('wallet_balance') && controller.hasCash;
+                guideline.hasTaskActive('wallet_balance') && controller.hasCash;
             return Positioned(
               bottom: context.respDim(-10),
               right: context.respDim(-10),

@@ -449,7 +449,7 @@ class ExpenseFormController extends TransactionFormController
       // supported language, and the user hasn't customized it, we mark it
       // for translation in the UI.
       if (category != null &&
-          BudgetNameHelper.isDefaultName(
+          BudgetNameHelper.hasDefaultName(
             b.budget.name,
             key: category.nameKey,
           )) {

@@ -10,7 +10,7 @@ bool computeIsInflow(TransactionEntity transaction) {
       type == TransactionType.debtCollect;
 }
 
-bool isEditableTransaction(TransactionEntity transaction) {
+bool hasEditableTransaction(TransactionEntity transaction) {
   if (transaction.hasDeleted) return false;
   if (transaction.hasTransfer) return false;
   return DateTime.now().difference(transaction.date).inDays <=
