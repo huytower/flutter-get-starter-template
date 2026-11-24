@@ -12,7 +12,6 @@ import '../../domain/entities/liability_balance_entity.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
 import '../widgets/lend_wallet_list_item.dart';
-import '../widgets/liability_delete_confirm_sheet.dart';
 
 @RoutePage()
 class LendListPage extends StatefulWidget {
@@ -195,20 +194,16 @@ class _LendListView extends PrjGetView<LiabilityListController> {
   Future<void> _openAddLend(BuildContext context) =>
       _openAddLendSheet(context, controller);
 
-  void _confirmDelete(BuildContext context, String id) {
-    CcAdaptiveBottomSheet.show<void>(
-      context: context,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => LiabilityDeleteConfirmSheet(
-        liability: controller.liabilities
-            .firstWhere((b) => b.liability.id == id)
-            .liability,
-        onDelete: () => controller.deleteLiability(context, id),
-      ),
+  Future<void> _confirmDelete(BuildContext context, String id) async {
+    final confirmed = await CcConfirmSheet.show(
+      context,
+      icon: Icons.delete_outline_rounded,
+      title: el.tr(PrjLocaleKeys.liability_delete_title),
+      message: el.tr(PrjLocaleKeys.liability_delete_confirm_msg),
+      confirmLabel: el.tr(PrjLocaleKeys.common_delete),
     );
+    if (!confirmed || !context.mounted) return;
+    await controller.deleteLiability(context, id);
   }
 }
 

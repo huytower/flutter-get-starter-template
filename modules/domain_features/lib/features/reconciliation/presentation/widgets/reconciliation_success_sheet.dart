@@ -75,102 +75,21 @@ class _ReconciliationSuccessSheetState
   }
 }
 
-class ReconciliationUndoSheet extends StatelessWidget {
-  const ReconciliationUndoSheet({super.key});
-
-  static Future<void> show(BuildContext context) {
-    return CcAdaptiveBottomSheet.show<void>(
-      context: context,
-      backgroundColor: null,
-      builder: (_) => const ReconciliationUndoSheet(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+/// Asks before undoing the last reconciliation, then undoes it.
+abstract final class ReconciliationUndoSheet {
+  static Future<void> show(BuildContext context) async {
     final controller = Get.find<ReconciliationController>();
-    final scheme = context.ccColorScheme;
-
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                padding: EdgeInsets.all(context.respDim(14)),
-                decoration: BoxDecoration(
-                  color: scheme.primary.withOpacity(0.12),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.undo_rounded,
-                  color: scheme.primary,
-                  size: context.respIconSize(baseSize: 28),
-                ),
-              ),
-            ),
-            const CcSpaceMD(),
-            CcText(
-              el.tr(PrjLocaleKeys.reconciliation_undo_title),
-              align: Alignment.center,
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.onSurface,
-              ),
-            ),
-            const CcSpaceSM(),
-            CcText(
-              el.tr(PrjLocaleKeys.reconciliation_undo_confirm),
-              align: Alignment.center,
-              maxLines: 5,
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-            const CcSpaceLG(),
-            Row(
-              children: [
-                Expanded(
-                  child: CcBaseButton(
-                    title: el.tr(PrjLocaleKeys.common_cancel),
-                    backgroundColor: [
-                      scheme.surfaceContainerHighest,
-                      scheme.surfaceContainerHighest,
-                    ],
-                    textColor: scheme.onSurface,
-                    onTap: () => Navigator.of(context).pop(),
-                  ),
-                ),
-                const CcSpaceMD(),
-                Expanded(
-                  child: CcBaseButton(
-                    title: el.tr(PrjLocaleKeys.reconciliation_undo),
-                    backgroundColor: [scheme.primary, scheme.primaryContainer],
-                    textColor: scheme.onPrimary,
-                    onTap: () async {
-                      if (controller.hasSubmitting.value) return;
-                      Navigator.of(context).pop();
-                      final error = await controller.undoLast();
-                      if (!context.mounted) return;
-                      if (error != null) {
-                        CcSnackBarHelper.showErrorSnackBar(
-                          context: context,
-                          message: error,
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    final confirmed = await CcConfirmSheet.show(
+      context,
+      icon: Icons.undo_rounded,
+      title: el.tr(PrjLocaleKeys.reconciliation_undo_title),
+      message: el.tr(PrjLocaleKeys.reconciliation_undo_confirm),
+      confirmLabel: el.tr(PrjLocaleKeys.reconciliation_undo),
+      tone: CcConfirmTone.primary,
     );
+    if (!confirmed || controller.hasSubmitting.value) return;
+    final error = await controller.undoLast();
+    if (error == null || !context.mounted) return;
+    CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
   }
 }

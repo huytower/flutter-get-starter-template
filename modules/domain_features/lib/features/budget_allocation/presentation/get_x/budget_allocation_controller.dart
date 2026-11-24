@@ -27,7 +27,6 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
 import '../../../wallet/presentation/widgets/add_liquid_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
-import '../widgets/wallet_delete_confirmation_sheet.dart';
 
 @lazySingleton
 class BudgetAllocationController extends PrjGetController {
@@ -164,16 +163,18 @@ class BudgetAllocationController extends PrjGetController {
     );
   }
 
-  void _confirmDelete(BuildContext context, WalletEntity wallet) {
-    WalletDeleteConfirmationSheet.show(
+  Future<void> _confirmDelete(BuildContext context, WalletEntity wallet) async {
+    final confirmed = await CcConfirmSheet.show(
       context,
-      wallet: wallet,
-      onConfirm: () async {
-        final outcome = await walletController.deleteWallet(wallet.id);
-        if (!context.mounted) return;
-        _handleDeleteOutcome(context, outcome);
-      },
+      icon: Icons.delete_outline_rounded,
+      title: el.tr(PrjLocaleKeys.wallet_delete_title),
+      message: el.tr(PrjLocaleKeys.wallet_delete_confirm_msg),
+      confirmLabel: el.tr(PrjLocaleKeys.common_delete),
     );
+    if (!confirmed) return;
+    final outcome = await walletController.deleteWallet(wallet.id);
+    if (!context.mounted) return;
+    _handleDeleteOutcome(context, outcome);
   }
 
   void _handleDeleteOutcome(BuildContext context, WalletDeleteOutcome outcome) {

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
+import '../../../../core/budget/budget_name_helper.dart';
 import '../../../../core/get_x/prj_get_view.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/budget_limit_controller.dart';
 import '../widgets/add_budget_limit_sheet.dart';
-import '../widgets/budget_limit_delete_confirm_sheet.dart';
 import '../widgets/budget_limit_grid.dart';
 
 @RoutePage()
@@ -165,19 +165,25 @@ class _BudgetLimitListView extends PrjGetView<BudgetLimitController> {
     );
   }
 
-  void _confirmDeleteBudgetLimit(
+  Future<void> _confirmDeleteBudgetLimit(
     BuildContext context,
     BudgetLimitEntity budget,
-  ) {
-    CcAdaptiveBottomSheet.show<void>(
-      context: context,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: context.brXl),
-      builder: (_) => BudgetLimitDeleteConfirmSheet(
-        budget: budget,
-        onDelete: () => controller.deleteBudget(budget.id),
-      ),
+  ) async {
+    final name = BudgetNameHelper.getDisplayName(
+      name: budget.name,
+      categoryNameKey: null,
     );
+    final confirmed = await CcConfirmSheet.show(
+      context,
+      icon: Icons.delete_outline_rounded,
+      title: el.tr(PrjLocaleKeys.budget_delete_title),
+      message: el.tr(
+        PrjLocaleKeys.budget_delete_confirm,
+        namedArgs: {'name': name},
+      ),
+      confirmLabel: el.tr(PrjLocaleKeys.common_delete),
+    );
+    if (confirmed) await controller.deleteBudget(budget.id);
   }
 
   Widget _buildSeeMoreDescription(BuildContext context) {

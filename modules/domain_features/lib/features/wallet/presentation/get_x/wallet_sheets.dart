@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../widgets/add_liquid_sheet.dart';
-import '../widgets/investment_delete_confirm_sheet.dart';
-import '../widgets/wallet_delete_confirm_sheet.dart';
 import 'wallet_controller.dart';
 
 /// The add/edit and delete sheets of the wallet list screens.
@@ -33,34 +31,35 @@ extension WalletSheets on WalletController {
   }
 
   /// Deletes an untouched investment wallet at once; otherwise asks first.
-  void confirmDelete(BuildContext context, WalletEntity wallet) {
-    if (wallet.type == WalletType.investment) {
+  Future<void> confirmDelete(BuildContext context, WalletEntity wallet) async {
+    final hasInvestment = wallet.type == WalletType.investment;
+    if (hasInvestment) {
       final stats = investmentStatsOf(wallet.id);
       if (stats.contributed == 0 && stats.returned == 0) {
-        deleteWallet(wallet.id).then((outcome) => _showOutcome(null, outcome));
+        _showOutcome(null, await deleteWallet(wallet.id));
         return;
       }
     }
 
-    CcAdaptiveBottomSheet.show<void>(
-      context: context,
-      hasScrollControlled: false,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    final confirmed = await CcConfirmSheet.show(
+      context,
+      icon: Icons.delete_outline_rounded,
+      title: el.tr(
+        hasInvestment
+            ? PrjLocaleKeys.wallet_investment_delete_title
+            : PrjLocaleKeys.wallet_delete_title,
       ),
-      builder: (_) => wallet.type == WalletType.investment
-          ? InvestmentDeleteConfirmSheet(
-              wallet: wallet,
-              onDelete: () => deleteWallet(wallet.id),
-              onOutcome: (outcome) => _showOutcome(context, outcome),
-            )
-          : WalletDeleteConfirmSheet(
-              wallet: wallet,
-              onDelete: () => deleteWallet(wallet.id),
-              onOutcome: (outcome) => _showOutcome(context, outcome),
-            ),
+      message: el.tr(
+        hasInvestment
+            ? PrjLocaleKeys.wallet_investment_delete_confirm
+            : PrjLocaleKeys.wallet_delete_confirm_msg,
+      ),
+      confirmLabel: el.tr(PrjLocaleKeys.common_delete),
     );
+    if (!confirmed) return;
+    final outcome = await deleteWallet(wallet.id);
+    if (!context.mounted) return;
+    _showOutcome(context, outcome);
   }
 
   void _showOutcome(BuildContext? context, WalletDeleteOutcome outcome) {

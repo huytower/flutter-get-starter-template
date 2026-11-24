@@ -10,7 +10,6 @@ import 'package:message/export_message.dart';
 import '../../../../core/get_x/prj_get_view.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
-import '../widgets/liability_delete_confirm_sheet.dart';
 import '../widgets/liability_wallet_grid_card.dart';
 
 @RoutePage()
@@ -189,20 +188,16 @@ class _LiabilityGridView extends PrjGetView<LiabilityListController> {
   Future<void> _openAddLiability(BuildContext context) =>
       _openAddLiabilitySheet(context, controller);
 
-  void _confirmDelete(BuildContext context, String id) {
-    CcAdaptiveBottomSheet.show<void>(
-      context: context,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => LiabilityDeleteConfirmSheet(
-        liability: controller.liabilities
-            .firstWhere((b) => b.liability.id == id)
-            .liability,
-        onDelete: () => controller.deleteLiability(context, id),
-      ),
+  Future<void> _confirmDelete(BuildContext context, String id) async {
+    final confirmed = await CcConfirmSheet.show(
+      context,
+      icon: Icons.delete_outline_rounded,
+      title: el.tr(PrjLocaleKeys.liability_delete_title),
+      message: el.tr(PrjLocaleKeys.liability_delete_confirm_msg),
+      confirmLabel: el.tr(PrjLocaleKeys.common_delete),
     );
+    if (!confirmed || !context.mounted) return;
+    await controller.deleteLiability(context, id);
   }
 }
 
