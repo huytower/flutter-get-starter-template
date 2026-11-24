@@ -48,7 +48,7 @@ class _BudgetLimitListView extends PrjGetView<BudgetLimitController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
+    return CcGradientAppBar.create(
       context,
       leading: Obx(
         () => CcIconButton.bouncing(

@@ -67,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: buildDomainGradientAppBar(
+        appBar: CcGradientAppBar.create(
           context,
           title: const SizedBox.shrink(),
           leading: CcIconButton.bouncing(

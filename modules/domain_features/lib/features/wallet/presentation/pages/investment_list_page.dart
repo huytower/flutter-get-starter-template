@@ -63,7 +63,7 @@ class _InvestmentListView extends PrjGetView<WalletController> {
 
   @override
   PreferredSizeWidget buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
+    return CcGradientAppBar.create(
       context,
       leading: Obx(
         () => CcIconButton.bouncing(

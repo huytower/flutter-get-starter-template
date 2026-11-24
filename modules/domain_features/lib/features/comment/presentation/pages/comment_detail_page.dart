@@ -14,7 +14,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
+    return CcGradientAppBar.create(
       context,
       leading: BackButton(color: context.ccColorScheme.onPrimary),
       title: Center(

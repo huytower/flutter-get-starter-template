@@ -145,7 +145,7 @@ class _CategorySettingsView extends PrjGetView<CategorySettingsController> {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
+    return CcGradientAppBar.create(
       context,
       leading: CcIconButton.bouncing(
         icon: Icon(

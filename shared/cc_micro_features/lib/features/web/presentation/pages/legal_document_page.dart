@@ -81,7 +81,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage> {
     final scheme = context.ccColorScheme;
     return Scaffold(
       backgroundColor: scheme.surface,
-      appBar: buildDomainGradientAppBar(
+      appBar: CcGradientAppBar.create(
         context,
         leading: CcIconButton.bouncing(
           icon: Icon(

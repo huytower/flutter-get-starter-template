@@ -25,7 +25,7 @@ class _ReportDailyDetailView extends PrjGetView<ReportController> {
 
   @override
   PreferredSizeWidget buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
+    return CcGradientAppBar.create(
       context,
       leading: Obx(
         () => CcIconButton.bouncing(

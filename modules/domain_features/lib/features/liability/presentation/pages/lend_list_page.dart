@@ -67,7 +67,7 @@ class _LendListView extends PrjGetView<LiabilityListController> {
 
   @override
   PreferredSizeWidget buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
+    return CcGradientAppBar.create(
       context,
       leading: Obx(
         () => CcIconButton.bouncing(

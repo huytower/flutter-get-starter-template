@@ -10,7 +10,7 @@ import '../get_x/budget_allocation_controller.dart';
 PreferredSizeWidget buildBudgetAllocationHeader(BuildContext context) {
   final controller = Get.find<BudgetAllocationController>();
 
-  return buildDomainGradientAppBar(
+  return CcGradientAppBar.create(
     context,
     title: CcText(
       el.tr(PrjLocaleKeys.nav_budget_allocation),

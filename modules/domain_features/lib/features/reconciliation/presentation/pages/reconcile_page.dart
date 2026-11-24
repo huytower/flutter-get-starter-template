@@ -27,7 +27,7 @@ class ReconcilePage extends PrjGetView<ReconciliationController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
+    return CcGradientAppBar.create(
       context,
       leading: CcIconButton.bouncing(
         icon: Icon(
