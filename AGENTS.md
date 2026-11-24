@@ -285,8 +285,11 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
 14. **Functional Results** — all UseCases/Repositories return `Result<T, CcFailure>` (`multiple_result` package;
     `CcFailure` lives in `cc_sdk_data`, import `package:cc_sdk_data/export_cc_sdk_data.dart`).
 15. **Logging** — the `.Log()` extension from `cc_sdk` only. NEVER `print()` or `developer.log()` in production code.
-16. **File size & composition** — keep files ~200–300 lines; split large `build()` methods into
-    `_buildHeader`/`_buildListItem`/etc. helpers. `const` everything that can be const.
+16. **File size & composition** — keep files ~200–300 lines; **300 is the hard limit** for source files under
+    `lib/` (`check:imports` rule `file-size`; translation maps and generated files are exempt). Split in this
+    order: large `build()` methods into `_buildHeader`/`_buildListItem`/etc. helpers; a widget into its own
+    file (file = type); a controller or service by extracting one responsibility into its own `@injectable`
+    class (section IV.3). `const` everything that can be const.
 17. `analysis_options.yaml` disables many default lints deliberately — don't re-enable them piecemeal without
     checking why they were turned off first.
 
@@ -411,8 +414,10 @@ on any doc having been read:
       `presentation/pages/`), or as `getIt<XController|XBloc|XCubit>()` at the entry point creating it.
     - `naming-folder` / `naming-file-type` (rule #12): canonical folder names under `lib/`, and each file
       named after the public type it declares (except the listed family files).
-    Existing `feature-controller` / `di-composition-root` debt is frozen per file in
-    `scripts/check_imports_baseline.txt`: a file may not exceed its count, and a count that went down must be
+    - `file-size` (rule #16): a source file under `lib/` has at most 300 lines.
+    Existing `feature-controller` / `di-composition-root` / `file-size` debt is frozen per file in
+    `scripts/check_imports_baseline.txt` (for `file-size` the count is the lines over 300, so a large file may
+    not grow): a file may not exceed its count, and a count that went down must be
     lowered (`dart scripts/check_imports.dart --write-baseline`), so the file only shrinks. Never add a line to it.
     A new rule goes into the script, not only into this file.
 23. **Import order** (rule #13): rely on `dart analyze` with `directives_ordering` enabled, `dart fix --apply` to

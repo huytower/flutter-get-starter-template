@@ -6,9 +6,10 @@
 // (or `dart scripts/check_imports.dart`). Exits 1 and lists every violation
 // as `path:line [rule] message`. Generated files are skipped.
 //
-// Legacy debt of the `feature-controller` and `di-composition-root` rules is
-// frozen per file in `scripts/check_imports_baseline.txt`: a file may keep (not
-// add to) its recorded count, and an entry that went down must be lowered, so
+// Legacy debt of the `feature-controller`, `di-composition-root` and
+// `file-size` rules is frozen per file in `scripts/check_imports_baseline.txt`:
+// a file may keep (not add to) its recorded count (for `file-size`, the lines
+// over the limit), and an entry that went down must be lowered, so
 // the baseline only ever shrinks. After paying debt off, run
 // `dart scripts/check_imports.dart --write-baseline` and commit the smaller file.
 //
@@ -20,6 +21,17 @@ import 'dart:io';
 const Set<String> _baselinedRules = {
   'feature-controller',
   'di-composition-root',
+  'file-size',
+};
+
+/// Longest source file, in lines (AGENTS.md rule 16, "~200–300 lines").
+const int _maxFileLines = 300;
+
+/// Files that are data tables rather than code (translation maps), exempt
+/// from the file-size rule.
+const Set<String> _dataTableFiles = {
+  'modules/message/lib/prj_locale_keys.dart',
+  'shared/cc_micro_features/lib/l10n/cc_mf_translations.dart',
 };
 
 const String _baselinePath = 'scripts/check_imports_baseline.txt';
@@ -187,11 +199,15 @@ const Set<String> _typeFamilyFiles = {
 };
 
 class _Violation {
-  _Violation(this.path, this.line, this.rule, this.message);
+  _Violation(this.path, this.line, this.rule, this.message, {this.weight = 1});
   final String path;
   final int line;
   final String rule;
   final String message;
+
+  /// How much this violation counts in the baseline (`file-size`: the lines
+  /// over the limit); 1 for every other rule.
+  final int weight;
 
   @override
   String toString() => '$path:$line [$rule] $message';
@@ -276,6 +292,7 @@ Iterable<_Violation> _check(String owner, String path, File file) sync* {
     yield* _checkFeatureControllers(path, source);
     yield* _checkComposition(owner, path, source);
     yield* _checkNaming(path, source);
+    yield* _checkFileSize(path, source);
   }
 
   if (_sdkCore.contains(owner) || owner == 'cc_bridge') {
@@ -553,6 +570,22 @@ Iterable<_Violation> _checkNaming(String path, String source) sync* {
   );
 }
 
+/// Source files stay within [_maxFileLines] lines (AGENTS.md rule 16): split
+/// `build()` into `_build*` helpers, move a widget to its own file, or extract
+/// a responsibility into its own class.
+Iterable<_Violation> _checkFileSize(String path, String source) sync* {
+  if (_dataTableFiles.contains(path)) return;
+  final lines = '\n'.allMatches(source.trimRight()).length + 1;
+  if (lines <= _maxFileLines) return;
+  yield _Violation(
+    path,
+    _maxFileLines + 1,
+    'file-size',
+    '$lines lines (limit $_maxFileLines): split it, see AGENTS.md rule 16',
+    weight: lines - _maxFileLines,
+  );
+}
+
 String? _resolve(String from, String uri) {
   if (uri.startsWith('dart:')) return null;
   if (uri.startsWith('package:')) {
@@ -612,7 +645,7 @@ Map<String, int> _countDebt(List<_Violation> violations) {
   final counts = <String, int>{};
   for (final v in violations.where((v) => _baselinedRules.contains(v.rule))) {
     final key = '${v.rule} ${v.path}';
-    counts[key] = (counts[key] ?? 0) + 1;
+    counts[key] = (counts[key] ?? 0) + v.weight;
   }
   return counts;
 }

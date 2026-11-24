@@ -73,6 +73,8 @@ numbered by CI (`docs/tech/development/BUILD.md`).
   from 840 dp, page state kept across the switch); the shell keeps only the app's tabs, badges, splash and back
   handling. `CcCurvedNavigationMixin` was removed from the SDK
   (`docs/plans/adaptive-navigation-shell.md`).
+- `check:imports` rule `file-size`: a source file under `lib/` has at most 300 lines (AGENTS.md rule 16). The 42
+  files above it today are frozen in the baseline by their extra lines, so they may shrink but not grow.
 - `melos run check:imports` (`scripts/check_imports.dart`): import boundaries, package cycles, naming and DI rules,
   run first in CI. Existing debt is frozen in `scripts/check_imports_baseline.txt`.
 - CI release pipeline on push to `qltc`: Android AAB to Google Play alpha, iOS IPA to TestFlight
