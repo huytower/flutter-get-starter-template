@@ -14,14 +14,23 @@ abstract final class CcMfTranslations {
     "mf": {
       "app_update": {
         "current_version": "Current version: {version}",
-        "message": "This version is no longer supported. Please update to version {version} or later to keep using the app.",
-        "open_store_failed": "Couldn't open the store. Please update the app from the App Store or Google Play.",
+        "message":
+            "This version is no longer supported. Please update to version {version} or later to keep using the app.",
+        "open_store_failed":
+            "Couldn't open the store. Please update the app from the App Store or Google Play.",
         "title": "Update required",
         "update_now": "Update now",
       },
       "auth": {
+        "delete_account": "Delete account",
+        "delete_apple_note":
+            "This account is linked to Sign in with Apple. If it is this device's Apple ID, Apple will ask you to confirm before the account is deleted.",
+        "delete_confirm": "Delete Account?",
+        "delete_confirm_desc":
+            "This will permanently delete your account and all associated data. This action cannot be undone.",
         "agree_prefix": "I agree with ",
-        "apple_verify_failed": "Couldn't verify your Apple ID. Please check your Apple ID in iPhone Settings and try again.",
+        "apple_verify_failed":
+            "Couldn't verify your Apple ID. Please check your Apple ID in iPhone Settings and try again.",
         "didnt_receive_code": "Didn't receive code?",
         "enter_phone_number": "Log in with \n Phone Number",
         "enter_security_code": "Enter the security code we sent to",
@@ -33,13 +42,15 @@ abstract final class CcMfTranslations {
         "login_phone": "Login with Phone Number",
         "phone_number": "Phone Number",
         "phone_number_hint": "Enter phone number",
-        "recent_login_required": "For security, please log in again before deleting your account.",
+        "recent_login_required":
+            "For security, please log in again before deleting your account.",
         "resend": "Resend after",
         "security_warning_bullet_ai": "AI-Generated Content",
         "security_warning_bullet_sms": "SMS/OTP Verification",
         "security_warning_other_login": "Other Sign In Methods",
         "security_warning_title": "For genuine devices only:",
-        "terms_and_privacy": "By continuing, you agree to our Terms of Service and Privacy Policy",
+        "terms_and_privacy":
+            "By continuing, you agree to our Terms of Service and Privacy Policy",
         "terms_of_service": "Terms of Service",
         "terms_privacy_connector": " and ",
         "privacy_policy": "Privacy Policy",
@@ -47,13 +58,34 @@ abstract final class CcMfTranslations {
         "we_just_sent_sms": "We just sent an SMS",
         "terms": "Terms of use",
       },
-      "common": {
-        "continue": "Continue",
-        "or": "OR",
+      "app_review": {
+        "calculate_ratings_info": "How do we calculate ratings?",
+        "customer_ratings_count": "{count} customer ratings",
+        "feedback_hint": "Tell us more (optional)",
+        "feedback_required": "Choose a tag or write a message",
+        "feedback_send": "Send feedback",
+        "feedback_sent": "Thanks for your feedback",
+        "out_of_5": "{rating} out of 5",
+        "rate_app": "Rate app",
+        "report_criticism": "Criticism",
+        "report_no_text": "(no text)",
+        "report_none": "(none)",
+        "report_not_rated": "(not rated)",
+        "report_praise": "Praise",
+        "report_rating": "Rating",
+        "report_text": "Typing feedback",
+        "report_title": "📝 User Feedback",
       },
-      "validation": {
-        "phone": "Invalid phone number format",
+      "language": {
+        "chinese": "Chinese",
+        "english": "English",
+        "japanese": "Japanese",
+        "korean": "Korean",
+        "title": "Language",
+        "vietnamese": "Vietnamese",
       },
+      "common": {"continue": "Continue", "or": "OR"},
+      "validation": {"phone": "Invalid phone number format"},
     },
   };
 
@@ -61,14 +93,23 @@ abstract final class CcMfTranslations {
     "mf": {
       "app_update": {
         "current_version": "Phiên bản hiện tại: {version}",
-        "message": "Phiên bản này không còn được hỗ trợ. Vui lòng cập nhật lên phiên bản {version} trở lên để tiếp tục sử dụng.",
-        "open_store_failed": "Không mở được cửa hàng ứng dụng. Vui lòng cập nhật ứng dụng từ App Store hoặc Google Play.",
+        "message":
+            "Phiên bản này không còn được hỗ trợ. Vui lòng cập nhật lên phiên bản {version} trở lên để tiếp tục sử dụng.",
+        "open_store_failed":
+            "Không mở được cửa hàng ứng dụng. Vui lòng cập nhật ứng dụng từ App Store hoặc Google Play.",
         "title": "Cần cập nhật ứng dụng",
         "update_now": "Cập nhật ngay",
       },
       "auth": {
+        "delete_account": "Xóa tài khoản",
+        "delete_apple_note":
+            "Tài khoản này có liên kết đăng nhập bằng Apple. Nếu đó là Apple ID trên máy này, Apple sẽ yêu cầu bạn xác nhận trước khi xóa tài khoản.",
+        "delete_confirm": "Xóa Tài Khoản?",
+        "delete_confirm_desc":
+            "Điều này sẽ xóa vĩnh viễn tài khoản và tất cả dữ liệu liên quan của bạn. Hành động này không thể hoàn tác.",
         "agree_prefix": "Tôi đồng ý với ",
-        "apple_verify_failed": "Không thể xác thực Apple ID. Vui lòng kiểm tra tài khoản Apple ID trong Cài đặt iPhone của bạn và thử lại.",
+        "apple_verify_failed":
+            "Không thể xác thực Apple ID. Vui lòng kiểm tra tài khoản Apple ID trong Cài đặt iPhone của bạn và thử lại.",
         "didnt_receive_code": "Không nhận được mã?",
         "enter_phone_number": "Nhập số điện thoại của bạn",
         "enter_security_code": "Nhập mã bảo mật chúng tôi đã gửi tới",
@@ -80,13 +121,15 @@ abstract final class CcMfTranslations {
         "login_phone": "Đăng nhập với số điện thoại",
         "phone_number": "Số điện thoại",
         "phone_number_hint": "Nhập số điện thoại",
-        "recent_login_required": "Vì lý do bảo mật, vui lòng đăng nhập lại trước khi xóa tài khoản.",
+        "recent_login_required":
+            "Vì lý do bảo mật, vui lòng đăng nhập lại trước khi xóa tài khoản.",
         "resend": "Gửi lại sau",
         "security_warning_bullet_ai": "Nội dung tạo bởi AI",
         "security_warning_bullet_sms": "Xác minh SMS/OTP",
         "security_warning_other_login": "Đăng nhập khác",
         "security_warning_title": "Chỉ dành cho thiết bị chính hãng:",
-        "terms_and_privacy": "Bằng cách tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi",
+        "terms_and_privacy":
+            "Bằng cách tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi",
         "terms_of_service": "Điều khoản dịch vụ",
         "terms_privacy_connector": " và ",
         "privacy_policy": "Chính sách quyền riêng tư",
@@ -94,13 +137,34 @@ abstract final class CcMfTranslations {
         "we_just_sent_sms": "Chúng tôi vừa gửi một bản tin nhắn SMS",
         "terms": "Điều khoản sử dụng",
       },
-      "common": {
-        "continue": "Tiếp tục",
-        "or": "HOẶC",
+      "app_review": {
+        "calculate_ratings_info": "Cách chúng tôi tính toán đánh giá",
+        "customer_ratings_count": "{count} lượt đánh giá",
+        "feedback_hint": "Chia sẻ thêm (không bắt buộc)",
+        "feedback_required": "Hãy chọn thẻ hoặc viết nội dung",
+        "feedback_send": "Gửi góp ý",
+        "feedback_sent": "Cảm ơn góp ý của bạn",
+        "out_of_5": "{rating} trên 5",
+        "rate_app": "Đánh giá ứng dụng",
+        "report_criticism": "Góp ý",
+        "report_no_text": "(chưa nhập)",
+        "report_none": "(không có)",
+        "report_not_rated": "(chưa đánh giá)",
+        "report_praise": "Khen ngợi",
+        "report_rating": "Đánh giá",
+        "report_text": "Nội dung góp ý",
+        "report_title": "📝 Đánh giá & Góp ý người dùng",
       },
-      "validation": {
-        "phone": "Số điện thoại không hợp lệ",
+      "language": {
+        "chinese": "Tiếng Trung",
+        "english": "Tiếng Anh",
+        "japanese": "Tiếng Nhật",
+        "korean": "Tiếng Hàn",
+        "title": "Ngôn ngữ",
+        "vietnamese": "Tiếng Việt",
       },
+      "common": {"continue": "Tiếp tục", "or": "HOẶC"},
+      "validation": {"phone": "Số điện thoại không hợp lệ"},
     },
   };
 
@@ -108,14 +172,22 @@ abstract final class CcMfTranslations {
     "mf": {
       "app_update": {
         "current_version": "현재 버전: {version}",
-        "message": "이 버전은 더 이상 지원되지 않습니다. 앱을 계속 사용하려면 {version} 이상 버전으로 업데이트해 주세요.",
-        "open_store_failed": "스토어를 열 수 없습니다. App Store 또는 Google Play에서 앱을 업데이트해 주세요.",
+        "message":
+            "이 버전은 더 이상 지원되지 않습니다. 앱을 계속 사용하려면 {version} 이상 버전으로 업데이트해 주세요.",
+        "open_store_failed":
+            "스토어를 열 수 없습니다. App Store 또는 Google Play에서 앱을 업데이트해 주세요.",
         "title": "업데이트 필요",
         "update_now": "지금 업데이트",
       },
       "auth": {
+        "delete_account": "계정 삭제",
+        "delete_apple_note":
+            "이 계정은 Apple로 로그인에 연결되어 있습니다. 이 기기의 Apple ID인 경우 계정을 삭제하기 전에 Apple이 확인을 요청합니다.",
+        "delete_confirm": "계정을 삭제하시겠습니까?",
+        "delete_confirm_desc": "계정 및 모든 관련 데이터를 영구적으로 삭제합니다. 이 작업은 취소할 수 없습니다.",
         "agree_prefix": "동의합니다 ",
-        "apple_verify_failed": "Apple ID를 확인할 수 없습니다. iPhone 설정에서 Apple ID를 확인한 후 다시 시도해 주세요.",
+        "apple_verify_failed":
+            "Apple ID를 확인할 수 없습니다. iPhone 설정에서 Apple ID를 확인한 후 다시 시도해 주세요.",
         "didnt_receive_code": "코드를 받지 못하셨나요?",
         "enter_phone_number": "전화번호로\n로그인",
         "enter_security_code": "보낸 보안 코드를 입력하세요",
@@ -141,13 +213,34 @@ abstract final class CcMfTranslations {
         "we_just_sent_sms": "SMS를 보냈습니다",
         "terms": "이용 약관",
       },
-      "common": {
-        "continue": "계속",
-        "or": "또는",
+      "app_review": {
+        "calculate_ratings_info": "평가는 어떻게 계산되나요?",
+        "customer_ratings_count": "{count}개의 고객 평가",
+        "feedback_hint": "더 자세히 알려주세요 (선택 사항)",
+        "feedback_required": "태그를 선택하거나 내용을 입력하세요",
+        "feedback_send": "피드백 보내기",
+        "feedback_sent": "피드백 감사합니다",
+        "out_of_5": "5점 만점에 {rating}점",
+        "rate_app": "앱 평가",
+        "report_criticism": "개선 요청",
+        "report_no_text": "(미입력)",
+        "report_none": "(없음)",
+        "report_not_rated": "(평가 없음)",
+        "report_praise": "칭찬",
+        "report_rating": "평가",
+        "report_text": "피드백 내용",
+        "report_title": "📝 사용자 피드백",
       },
-      "validation": {
-        "phone": "잘못된 전화번호 형식",
+      "language": {
+        "chinese": "중국어",
+        "english": "영어",
+        "japanese": "일본어",
+        "korean": "한국어",
+        "title": "언어",
+        "vietnamese": "베트남어",
       },
+      "common": {"continue": "계속", "or": "또는"},
+      "validation": {"phone": "잘못된 전화번호 형식"},
     },
   };
 
@@ -155,14 +248,22 @@ abstract final class CcMfTranslations {
     "mf": {
       "app_update": {
         "current_version": "現在のバージョン: {version}",
-        "message": "このバージョンはサポートが終了しました。引き続きご利用いただくには、バージョン {version} 以降にアップデートしてください。",
-        "open_store_failed": "ストアを開けませんでした。App Store または Google Play からアプリをアップデートしてください。",
+        "message":
+            "このバージョンはサポートが終了しました。引き続きご利用いただくには、バージョン {version} 以降にアップデートしてください。",
+        "open_store_failed":
+            "ストアを開けませんでした。App Store または Google Play からアプリをアップデートしてください。",
         "title": "アップデートが必要です",
         "update_now": "今すぐアップデート",
       },
       "auth": {
+        "delete_account": "アカウントを削除",
+        "delete_apple_note":
+            "このアカウントはAppleでサインインに連携されています。このデバイスのApple IDの場合、削除の前にAppleから確認が求められます。",
+        "delete_confirm": "アカウントを削除しますか？",
+        "delete_confirm_desc": "アカウントとすべての関連データが永続的に削除されます。この操作は取り消せません。",
         "agree_prefix": "同意する ",
-        "apple_verify_failed": "Apple IDを確認できませんでした。iPhoneの設定でApple IDを確認して、もう一度お試しください。",
+        "apple_verify_failed":
+            "Apple IDを確認できませんでした。iPhoneの設定でApple IDを確認して、もう一度お試しください。",
         "didnt_receive_code": "コードを受け取りませんでしたか？",
         "enter_phone_number": "電話番号で\nログイン",
         "enter_security_code": "送信したセキュリティコードを入力してください",
@@ -188,13 +289,34 @@ abstract final class CcMfTranslations {
         "we_just_sent_sms": "SMSを送信しました",
         "terms": "利用規約",
       },
-      "common": {
-        "continue": "続行",
-        "or": "または",
+      "app_review": {
+        "calculate_ratings_info": "評価の計算方法について",
+        "customer_ratings_count": "{count}件のカスタマー評価",
+        "feedback_hint": "詳しく教えてください（任意）",
+        "feedback_required": "タグを選択するか内容を入力してください",
+        "feedback_send": "フィードバックを送信",
+        "feedback_sent": "フィードバックありがとうございます",
+        "out_of_5": "5段階中{rating}",
+        "rate_app": "アプリを評価",
+        "report_criticism": "改善点",
+        "report_no_text": "(未入力)",
+        "report_none": "(なし)",
+        "report_not_rated": "(未評価)",
+        "report_praise": "良かった点",
+        "report_rating": "評価",
+        "report_text": "フィードバック内容",
+        "report_title": "📝 ユーザーフィードバック",
       },
-      "validation": {
-        "phone": "無効な電話番号形式",
+      "language": {
+        "chinese": "中国語",
+        "english": "英語",
+        "japanese": "日本語",
+        "korean": "韓国語",
+        "title": "言語",
+        "vietnamese": "ベトナム語",
       },
+      "common": {"continue": "続行", "or": "または"},
+      "validation": {"phone": "無効な電話番号形式"},
     },
   };
 
@@ -208,6 +330,11 @@ abstract final class CcMfTranslations {
         "update_now": "立即更新",
       },
       "auth": {
+        "delete_account": "删除账户",
+        "delete_apple_note":
+            "此账户已关联通过 Apple 登录。如果是本设备的 Apple ID，删除账户前 Apple 会要求您确认。",
+        "delete_confirm": "删除账户？",
+        "delete_confirm_desc": "这将永久删除您的账户和所有相关数据。此操作无法撤销。",
         "agree_prefix": "我同意 ",
         "apple_verify_failed": "无法验证 Apple ID。请在 iPhone 设置中检查您的 Apple ID 后重试。",
         "didnt_receive_code": "没有收到代码？",
@@ -235,13 +362,34 @@ abstract final class CcMfTranslations {
         "we_just_sent_sms": "我们刚刚发送了一条短信",
         "terms": "使用条款",
       },
-      "common": {
-        "continue": "继续",
-        "or": "或",
+      "app_review": {
+        "calculate_ratings_info": "我们如何计算评分？",
+        "customer_ratings_count": "{count} 条客户评分",
+        "feedback_hint": "告诉我们更多（可选）",
+        "feedback_required": "请选择标签或填写内容",
+        "feedback_send": "发送反馈",
+        "feedback_sent": "感谢您的反馈",
+        "out_of_5": "满分 5 分，得分为 {rating}",
+        "rate_app": "评价应用",
+        "report_criticism": "批评/建议",
+        "report_no_text": "(未输入)",
+        "report_none": "(无)",
+        "report_not_rated": "(未评分)",
+        "report_praise": "赞扬",
+        "report_rating": "评分",
+        "report_text": "反馈内容",
+        "report_title": "📝 用户反馈",
       },
-      "validation": {
-        "phone": "无效的手机号码格式",
+      "language": {
+        "chinese": "中文",
+        "english": "英语",
+        "japanese": "日语",
+        "korean": "韩语",
+        "title": "语言",
+        "vietnamese": "越南语",
       },
+      "common": {"continue": "继续", "or": "或"},
+      "validation": {"phone": "无效的手机号码格式"},
     },
   };
 

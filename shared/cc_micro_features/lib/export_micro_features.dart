@@ -3,6 +3,7 @@ library cc_micro_features;
 // Core
 export 'core/di/di.dart';
 export 'core/navigation/features_router.gr.dart';
+export 'features/app_review/export_app_review.dart';
 export 'features/app_update/export_app_update.dart';
 export 'features/auth/export_auth.dart';
 // Features
