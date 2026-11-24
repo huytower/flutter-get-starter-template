@@ -1,5 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart'
-    show CcPaddingParams, ResponsiveExtension;
+    show
+        CcPaddingParams,
+        CcReferenceWindow,
+        CcReferenceWindows,
+        ResponsiveExtension;
 import 'package:domain_features/features/transaction/presentation/widgets/base/category_selection_layout.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,7 +13,7 @@ import '../../adaptive/adaptive_test_devices.dart';
 /// Runs [body] with a BuildContext laid out on [device].
 Future<void> _withContext(
   WidgetTester tester,
-  AdaptiveTestDevice device,
+  CcReferenceWindow device,
   void Function(BuildContext context) body,
 ) async {
   setTestDevice(tester, device);
@@ -27,9 +31,9 @@ void main() {
   testWidgets('phones: no inset keeps symmetric leading padding', (
     tester,
   ) async {
-    await _withContext(tester, AdaptiveTestDevices.phone, (context) {
+    await _withContext(tester, CcReferenceWindows.phone, (context) {
       final leading = context.respPadding(CcPaddingParams.PAGE_SM);
-      final width = AdaptiveTestDevices.phone.size.width;
+      final width = CcReferenceWindows.phone.size.width;
       final scrolling = CategoryGridMetrics.of(
         context,
         viewportWidth: width,
@@ -47,7 +51,7 @@ void main() {
   testWidgets('wide + scrolling: starts at the content, bleeds to the edge', (
     tester,
   ) async {
-    await _withContext(tester, AdaptiveTestDevices.tablet10.landscape, (
+    await _withContext(tester, CcReferenceWindows.tablet10.landscape, (
       context,
     ) {
       const viewport = 1184.0; // 1280 dp minus a 96 dp rail
@@ -79,7 +83,7 @@ void main() {
   testWidgets('wide + fits one page: stays inside the content column', (
     tester,
   ) async {
-    await _withContext(tester, AdaptiveTestDevices.tablet10.landscape, (
+    await _withContext(tester, CcReferenceWindows.tablet10.landscape, (
       context,
     ) {
       const viewport = 1184.0;

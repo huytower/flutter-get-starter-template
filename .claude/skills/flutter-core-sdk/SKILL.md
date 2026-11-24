@@ -239,6 +239,20 @@ the parent repo.
 5. Import only through the barrels: `package:cc_sdk/export_cc_sdk.dart`,
    `package:cc_sdk_ui/export_cc_sdk_ui.dart`, `package:cc_mixin/export_cc_mixin.dart`,
    `package:cc_sdk_data/export_cc_sdk_data.dart`.
+6. Multi-screen support (phones, foldables, 7"/10" tablets, iPad, landscape) — the SDK widgets adapt by
+   themselves; the app adds:
+   - **Orientation:** call `CcOrientationPolicy.apply(MediaQuery.sizeOf(...))` once before `runApp`, and wrap
+     the app in `CcOrientationPolicyScope` (in `MaterialApp.builder`) so it re-applies on every window change
+     (phones portrait, tablets free).
+   - **iOS `Info.plist`:** `UISupportedInterfaceOrientations` = portrait (iPhone);
+     `UISupportedInterfaceOrientations~ipad` = all four; do **not** set `UIRequiresFullScreen`, so iPad Split
+     View / Slide Over work (the layouts follow the window width).
+   - **Android `AndroidManifest.xml`:** no `android:screenOrientation` on the activity (a manifest lock also
+     locks tablets, and Android 16+ ignores it on screens >= 600 dp); keep `configChanges` including
+     `orientation|screenSize|smallestScreenSize|screenLayout` so resizing does not restart the activity.
+   - **Navigation shell:** bottom bar below the expanded window class (< 840 dp), `CcNavigationRail` from
+     expanded up (this template: `lib/presentation/main_navigation/navigation_bar.dart`).
+   - **Tests:** lay each screen out on `CcReferenceWindows.all`.
 
 ## Quick reference
 
@@ -247,5 +261,8 @@ the parent repo.
 - Paged lists: `CcPaginationMixin` (`cc_mixin`) + `CcLoadMoreList` / `CcLoadMoreMixin` (`cc_sdk_ui`).
 - Spacing tokens: `CcSpaceXS/SM/MD/LG/XL` (4/8/12/16/24).
 - Content cap: `CcMaxWidth.content` (840 dp); scroll views use `padding: CcMaxWidth.insetFor(width)`.
-- Landscape tablets: `CcTwoColumn` (check `CcTwoColumn.shouldUse(context)`); list pages: `CcMultiColumn`.
+- Landscape tablets: `CcTwoColumn` (check `CcTwoColumn.shouldUse(context)`: landscape and shortest side
+  >= 600 dp, so never a phone held sideways); list pages: `CcMultiColumn`.
+- Reference windows for tests: `CcReferenceWindows` (phones, foldables, Android 7"/10", iPad mini / 11" / 13",
+  iPad Split View, landscape, desktop).
 - Window classes: compact < 600, medium 600–840, expanded 840–1200, large 1200–1600, extraLarge ≥ 1600.

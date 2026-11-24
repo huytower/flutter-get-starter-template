@@ -218,8 +218,10 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
       `base + CcContentInset.of(context)` and an end padding of `base` — it starts aligned with the content and
       scrolls out to the screen edge instead of being cut at the content edge. (Transaction page is the reference.)
     - **Landscape tablets use left / right**: pages and forms split into two columns with `CcTwoColumn`
-      (3:2, capped at 1200 dp; `CcTwoColumn.shouldUse(context)` = landscape and >= 600 dp wide), primary content on
-      the left, secondary content / actions on the right. Phones and portrait tablets keep the single column.
+      (3:2, capped at 1200 dp; 1:1 on a ~7" tablet whose shortest side is < 720 dp;
+      `CcTwoColumn.shouldUse(context)` = landscape and shortest side >= 600 dp), primary content on the left,
+      secondary content / actions on the right. Phones (even held sideways) and portrait tablets keep the single
+      column. 10–11" tablets held upright (800–834 dp) are a *medium* window, not expanded.
       List pages use three columns instead: `CcMultiColumn` (items of any height, left to right then down) or a
       3-column grid, inside `CcMaxWidth(maxWidth: CcTwoColumn.defaultMaxWidth)`.
     - **Layout** (navigation, pane count, grid columns) branches on Material 3 window size classes
@@ -228,9 +230,11 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
       or `context.windowSizeClass` only for whole-window decisions (the navigation shell). Use
       `CcWindowHeightClass` for vertical-room decisions instead of fixed percentages of screen height. Never branch
       on device type or `Platform`.
-    - Check every new screen against the shared matrix in `modules/domain_features/test/adaptive/` (phones,
-      foldables, 7"/10" tablets, landscape, web desktop): touch-target size, text overflow, no layout overflow.
-      "Web desktop" there is a window size only: the app ships on Android and iOS, and has no web target yet.
+    - Check every new screen against the shared window matrix `CcReferenceWindows` (`cc_sdk_ui`: phones,
+      foldables, Android 7"/10" tablets, iPad mini / 11" / 13", iPad Split View, landscape, web desktop) — use
+      `setTestDevice` from `modules/domain_features/test/adaptive/` — for touch-target size, text overflow and
+      layout overflow. "Web desktop" is a window size only: the app ships on Android and iOS, and has no web
+      target yet.
 10. **Localization** — `el.tr(PrjLocaleKeys.key)`, never hardcoded strings. New strings require all three kept in
     sync (no build step enforces this — treat drift as a bug):
     1. `modules/message/assets/translations/en.json`

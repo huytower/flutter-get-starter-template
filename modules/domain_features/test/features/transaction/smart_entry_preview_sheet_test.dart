@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcCancelButton, CcSubmitButton;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart'
+    show CcCancelButton, CcReferenceWindows, CcSubmitButton;
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/transaction/domain/entities/parsed_transaction_entity.dart';
@@ -18,8 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:message/export_message.dart';
-
-import '../../adaptive/adaptive_test_devices.dart';
 
 const _food = CategoryEntity(
   id: 'food',
@@ -302,8 +301,8 @@ void main() {
   });
 
   final screens = [
-    ...AdaptiveTestDevices.all,
-    AdaptiveTestDevices.smallPhone.landscape,
+    ...CcReferenceWindows.all,
+    CcReferenceWindows.smallPhone.landscape,
   ];
   for (final screen in screens) {
     testWidgets('lays out without overflow on $screen', (tester) async {

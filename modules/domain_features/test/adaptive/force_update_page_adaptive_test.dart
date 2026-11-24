@@ -1,6 +1,7 @@
 import 'package:cc_micro_features/features/app_update/domain/entities/app_update_status_entity.dart';
 import 'package:cc_micro_features/features/app_update/domain/entities/app_version_entity.dart';
 import 'package:cc_micro_features/features/app_update/presentation/pages/force_update_page.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcReferenceWindows;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -14,7 +15,7 @@ void main() {
     minimumVersion: AppVersionEntity.tryParse('1.2.0')!,
   );
 
-  for (final device in AdaptiveTestDevices.all) {
+  for (final device in CcReferenceWindows.all) {
     testWidgets('ForceUpdatePage lays out on $device', (tester) async {
       setTestDevice(tester, device);
       await tester.pumpWidget(
