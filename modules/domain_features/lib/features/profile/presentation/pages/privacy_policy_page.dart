@@ -1,9 +1,11 @@
 import 'package:auto_route/annotations.dart';
+import 'package:cc_micro_features/export_micro_features.dart'
+    show LegalDocumentPage;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../widgets/legal_document_view.dart';
+import '../helper/legal_document_scripts.dart';
 
 /// The app's Privacy Policy (App Store guideline 5.1.1(i)): what data is
 /// collected, how and why, which third parties receive it, retention and
@@ -14,9 +16,11 @@ class PrivacyPolicyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LegalDocumentView(
+    return LegalDocumentPage(
       assetPath: 'assets/legal/privacy_policy.html',
       title: el.tr(PrjLocaleKeys.profile_privacy_policy),
+      languageScripts: LegalDocumentScripts.byLanguage,
+      defaultScript: LegalDocumentScripts.fallback,
     );
   }
 }
