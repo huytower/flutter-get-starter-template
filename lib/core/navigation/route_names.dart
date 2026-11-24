@@ -32,6 +32,7 @@ enum AppRoute {
   report,
   reportDailyDetail,
   termsOfService,
+  privacyPolicy,
   investmentList,
   budgetInsightsList,
 }

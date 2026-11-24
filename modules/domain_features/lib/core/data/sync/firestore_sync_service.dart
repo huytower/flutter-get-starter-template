@@ -108,6 +108,35 @@ class FirestoreSyncService {
     }
   }
 
+  /// Deletes every document in [collectionNames] under the user's path, for
+  /// account deletion. Works in batches (Firestore caps a batch at 500
+  /// writes) and repeats until each collection is empty.
+  Future<void> deleteAllUserData({
+    required String userId,
+    required List<String> collectionNames,
+  }) async {
+    const batchSize = 400;
+    try {
+      for (final name in collectionNames) {
+        final collection = _firestore.collection(
+          getUserCollectionPath(userId, name),
+        );
+        while (true) {
+          final snapshot = await collection.limit(batchSize).get();
+          if (snapshot.docs.isEmpty) break;
+          final batch = _firestore.batch();
+          for (final doc in snapshot.docs) {
+            batch.delete(doc.reference);
+          }
+          await batch.commit();
+          if (snapshot.docs.length < batchSize) break;
+        }
+      }
+    } catch (e) {
+      throw SyncException('Failed to delete user data from Firestore: $e');
+    }
+  }
+
   /// Listens to real-time updates from Firestore.
   Stream<List<Map<String, dynamic>>> streamFromFirestore({
     required String userId,

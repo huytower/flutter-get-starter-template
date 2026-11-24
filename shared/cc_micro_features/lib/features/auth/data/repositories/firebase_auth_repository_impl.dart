@@ -598,7 +598,9 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<Unit, CcFailure>> deleteAccount() async {
+  Future<Result<Unit, CcFailure>> deleteAccount({
+    Future<void> Function()? beforeDelete,
+  }) async {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) {
@@ -628,6 +630,28 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         hasAppleReauthenticated = true;
       }
 
+      // Firebase refuses to delete an account whose sign-in is older than a
+      // few minutes. Re-authenticate BEFORE [beforeDelete] removes the user's
+      // data, so cancelling the Google sheet can never leave an account with
+      // its data already gone.
+      if (!hasAppleReauthenticated && !await _hasRecentLogin(user)) {
+        if (!hasGoogle) return const Error(RecentLoginRequiredFailure());
+        final reauth = await _reauthenticateWithGoogle(user);
+        if (reauth != null) return Error(reauth);
+      }
+
+      if (beforeDelete != null) {
+        try {
+          await beforeDelete();
+        } catch (e, stack) {
+          Catcher2.reportCheckedError(
+            Exception('[DeleteAccount] Deleting user data failed: $e'),
+            stack,
+          );
+          return Error(CcServerFailure('Could not delete your data: $e'));
+        }
+      }
+
       try {
         await user.delete();
       } on firebase_auth.FirebaseAuthException catch (e) {
@@ -651,6 +675,20 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       return const Success(unit);
     } catch (e) {
       return Error(CcUnknownFailure('Delete account failed: $e'));
+    }
+  }
+
+  /// Whether [user] signed in recently enough for Firebase to allow deleting
+  /// the account (Firebase's limit is about 5 minutes; 4 leaves a margin).
+  /// When the sign-in time cannot be read, re-authenticating is the safe
+  /// answer.
+  Future<bool> _hasRecentLogin(firebase_auth.User user) async {
+    try {
+      final authTime = (await user.getIdTokenResult()).authTime;
+      if (authTime == null) return false;
+      return DateTime.now().difference(authTime) < const Duration(minutes: 4);
+    } catch (_) {
+      return false;
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../../category/export_category.dart';
+import '../pages/privacy_policy_page.dart';
 import '../pages/terms_of_service_page.dart';
 
 /// Screens the profile opens.
@@ -15,6 +16,10 @@ abstract final class ProfileRoutes {
   static void terms(BuildContext context) => Navigator.of(
     context,
   ).push(MaterialPageRoute(builder: (_) => const TermsOfServicePage()));
+
+  static void privacyPolicy(BuildContext context) => Navigator.of(
+    context,
+  ).push(MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()));
 
   /// Developer crash-log viewer; no-op unless enabled for this build.
   static void crashLogViewer(BuildContext context) {

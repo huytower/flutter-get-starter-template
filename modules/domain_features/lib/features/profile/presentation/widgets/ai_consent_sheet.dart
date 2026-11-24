@@ -5,11 +5,11 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/ai/ai_fallback_preference_datasource.dart';
 import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
-import '../pages/terms_of_service_page.dart';
+import '../pages/privacy_policy_page.dart';
 
 /// Asks the user to allow sharing data with Google Gemini before any AI
 /// feature sends anything. Short on purpose: what is sent, to whom, how to
-/// turn it off, plus a link to the Terms & Privacy page.
+/// turn it off, plus a link to the Privacy Policy.
 class AiConsentSheet extends StatelessWidget {
   const AiConsentSheet({super.key});
 
@@ -82,7 +82,7 @@ class AiConsentSheet extends StatelessWidget {
               CcBouncing(
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => const TermsOfServicePage(),
+                    builder: (_) => const PrivacyPolicyPage(),
                   ),
                 ),
                 child: CcText(

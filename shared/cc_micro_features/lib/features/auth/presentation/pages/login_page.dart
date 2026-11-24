@@ -97,10 +97,6 @@ class _LoginViewState extends State<LoginView> {
                   phoneLoginTitle: _hasLinking
                       ? el.tr(CcMfLocaleKeys.auth_link_phone)
                       : el.tr(CcMfLocaleKeys.auth_login_phone),
-                  // `auth_terms_and_privacy` is already a full sentence, so
-                  // it must not be prefixed with `auth_agree_prefix`.
-                  agreeText: '',
-                  termsText: el.tr(CcMfLocaleKeys.auth_terms_and_privacy),
                   hasLinking: _hasLinking,
                 ),
               );

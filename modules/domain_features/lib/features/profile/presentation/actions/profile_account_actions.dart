@@ -44,9 +44,12 @@ class ProfileAccountActions {
   /// Null when logout is allowed, otherwise why it is blocked.
   LogoutBlock? get logoutBlock => _syncService.logoutBlock;
 
-  /// Deletes the account, then wipes the local financial data and session.
+  /// Deletes the user's cloud data and the account, then wipes the local
+  /// financial data and session.
   Future<Result<Unit, CcFailure>> deleteAccount() async {
-    final result = await _deleteAccount.call();
+    final result = await _deleteAccount.call(
+      beforeDelete: _syncService.deleteCloudData,
+    );
     if (result.isSuccess()) {
       await _syncService.handleAccountDeleted();
       await _session.clearSession();

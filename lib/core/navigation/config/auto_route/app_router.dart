@@ -55,6 +55,10 @@ class AppRouter extends RootStackRouter {
       path: AppRoute.termsOfService.path,
     ),
     AutoRoute(
+      page: PrivacyPolicyRoute.page,
+      path: AppRoute.privacyPolicy.path,
+    ),
+    AutoRoute(
       page: InvestmentListRoute.page,
       path: AppRoute.investmentList.path,
     ),

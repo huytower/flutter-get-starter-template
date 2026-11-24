@@ -14,6 +14,9 @@ abstract interface class AuthCoordinator {
   /// Navigates to the Main/Dashboard screen after successful login.
   void navigateToDashboard(BuildContext context);
 
-  /// Navigates to the Terms of Service / Privacy Policy screen.
+  /// Navigates to the Terms of Service screen.
   void navigateToTerms(BuildContext context);
+
+  /// Navigates to the Privacy Policy screen.
+  void navigateToPrivacyPolicy(BuildContext context);
 }

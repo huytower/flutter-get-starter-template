@@ -386,6 +386,29 @@ class FinancialDataSyncService {
     return LogoutResult.success;
   }
 
+  /// Every Firestore collection the app syncs under `users/{uid}/`.
+  static const List<String> syncedCollections = [
+    'wallets',
+    'transactions',
+    'budgets',
+    'reconciliations',
+    'categories',
+    'loans',
+  ];
+
+  /// Deletes the signed-in user's synced financial data from Firestore. Runs
+  /// right before the Firebase account is deleted (afterwards the client no
+  /// longer has permission). Throws when the data could not be deleted, so
+  /// the account deletion stops and the user can retry.
+  Future<void> deleteCloudData() async {
+    final userId = _userId;
+    if (userId == null) return;
+    await _syncService.deleteAllUserData(
+      userId: userId,
+      collectionNames: syncedCollections,
+    );
+  }
+
   /// Clears local financial data, wipes Hive boxes, and resets all in-memory
   /// state after account deletion, matching the post-logout reset behavior.
   Future<void> handleAccountDeleted() async {

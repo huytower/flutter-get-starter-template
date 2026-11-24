@@ -69,5 +69,12 @@ abstract class AuthRepository {
   /// Deletes the currently signed-in user account. Requires recent
   /// authentication. If the user has linked providers (phone + Google),
   /// all providers are deleted together with the user record.
-  Future<Result<Unit, CcFailure>> deleteAccount();
+  ///
+  /// [beforeDelete] removes the app's own data for this user (for example
+  /// cloud records). It runs once re-authentication has succeeded and right
+  /// before the account itself is deleted, while the user still has access to
+  /// that data. If it throws, the account is not deleted.
+  Future<Result<Unit, CcFailure>> deleteAccount({
+    Future<void> Function()? beforeDelete,
+  });
 }

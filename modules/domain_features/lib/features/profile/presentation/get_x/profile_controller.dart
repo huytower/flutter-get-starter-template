@@ -382,6 +382,9 @@ class ProfileController extends PrjGetController {
 
   void navigateToTerms(BuildContext context) => ProfileRoutes.terms(context);
 
+  void navigateToPrivacyPolicy(BuildContext context) =>
+      ProfileRoutes.privacyPolicy(context);
+
   Future<Result<Unit, CcFailure>> deleteAccount() async {
     layoutStatus.value = CcLayoutStatus.loading;
     try {

@@ -387,6 +387,12 @@ class ProfilePage extends PrjGetView<ProfileController> {
         onTap: () => controller.navigateToTerms(context),
       ),
       ProfileSettingsTile(
+        icon: Icons.privacy_tip_rounded,
+        label: el.tr(PrjLocaleKeys.profile_privacy_policy),
+        subtitle: el.tr(PrjLocaleKeys.profile_privacy_policy_subtitle),
+        onTap: () => controller.navigateToPrivacyPolicy(context),
+      ),
+      ProfileSettingsTile(
         icon: Icons.star_rate_rounded,
         label: el.tr(PrjLocaleKeys.profile_rate_app),
         subtitle: el.tr(PrjLocaleKeys.profile_rate_app_subtitle),

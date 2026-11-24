@@ -28,4 +28,9 @@ class AuthCoordinatorImpl implements AuthCoordinator {
   void navigateToTerms(BuildContext context) {
     context.router.push(const TermsOfServiceRoute());
   }
+
+  @override
+  void navigateToPrivacyPolicy(BuildContext context) {
+    context.router.push(const PrivacyPolicyRoute());
+  }
 }

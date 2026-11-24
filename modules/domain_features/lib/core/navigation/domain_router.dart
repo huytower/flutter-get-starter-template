@@ -5,5 +5,8 @@ import 'domain_router.gr.dart';
 @AutoRouterConfig()
 class DomainRouter extends RootStackRouter {
   @override
-  List<AutoRoute> get routes => [AutoRoute(page: TermsOfServiceRoute.page)];
+  List<AutoRoute> get routes => [
+    AutoRoute(page: TermsOfServiceRoute.page),
+    AutoRoute(page: PrivacyPolicyRoute.page),
+  ];
 }

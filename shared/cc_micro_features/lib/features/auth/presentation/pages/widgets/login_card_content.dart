@@ -17,8 +17,6 @@ class LoginCardContent extends StatefulWidget {
     required this.onPhoneLogin,
     this.loginTitle,
     this.phoneLoginTitle,
-    this.termsText,
-    this.agreeText,
     this.hasLinking = false,
   });
 
@@ -26,8 +24,6 @@ class LoginCardContent extends StatefulWidget {
 
   final String? loginTitle;
   final String? phoneLoginTitle;
-  final String? agreeText;
-  final String? termsText;
   final bool hasLinking;
 
   @override
@@ -127,6 +123,23 @@ class _LoginCardContentState extends State<LoginCardContent> {
     );
   }
 
+  TextSpan _buildLegalLink(
+    BuildContext context, {
+    required String text,
+    required Color? hintColor,
+    required VoidCallback? onTap,
+  }) {
+    return TextSpan(
+      text: text,
+      style: context.ccTextTheme.bodySmall?.copyWith(
+        color: hintColor ?? context.ccColorScheme.primary,
+        fontWeight: CcTypographyParams.bold,
+        decoration: TextDecoration.underline,
+      ),
+      recognizer: TapGestureRecognizer()..onTap = onTap,
+    );
+  }
+
   void _nudgeTerms() {
     HapticFeedback.mediumImpact();
     setState(() => _showAgreeHint = true);
@@ -153,24 +166,29 @@ class _LoginCardContentState extends State<LoginCardContent> {
         Expanded(
           child: Text.rich(
             TextSpan(
-              text: widget.agreeText ?? el.tr(CcMfLocaleKeys.auth_agree_prefix),
+              text: el.tr(CcMfLocaleKeys.auth_agree_prefix),
               style: context.ccTextTheme.bodySmall?.copyWith(color: hintColor),
               children: [
-                TextSpan(
-                  text:
-                      widget.termsText ??
-                      el.tr(CcMfLocaleKeys.auth_terms_of_service),
-                  style: context.ccTextTheme.bodySmall?.copyWith(
-                    color: hintColor ?? context.ccColorScheme.primary,
-                    fontWeight: CcTypographyParams.bold,
-                    decoration: TextDecoration.underline,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = hasDisabled
-                        ? null
-                        : () {
-                            getIt<AuthCoordinator>().navigateToTerms(context);
-                          },
+                _buildLegalLink(
+                  context,
+                  text: el.tr(CcMfLocaleKeys.auth_terms_of_service),
+                  hintColor: hintColor,
+                  onTap: hasDisabled
+                      ? null
+                      : () => getIt<AuthCoordinator>().navigateToTerms(context),
+                ),
+                TextSpan(text: el.tr(CcMfLocaleKeys.auth_terms_privacy_connector)),
+                // Separate link so the Privacy Policy is one tap away before
+                // sign-in (App Store guideline 5.1.1(i)).
+                _buildLegalLink(
+                  context,
+                  text: el.tr(CcMfLocaleKeys.auth_privacy_policy),
+                  hintColor: hintColor,
+                  onTap: hasDisabled
+                      ? null
+                      : () => getIt<AuthCoordinator>().navigateToPrivacyPolicy(
+                          context,
+                        ),
                 ),
               ],
             ),

@@ -31,6 +31,8 @@ abstract final class CcMfLocaleKeys {
   static const auth_terms = 'mf.auth.terms';
   static const auth_terms_and_privacy = 'mf.auth.terms_and_privacy';
   static const auth_terms_of_service = 'mf.auth.terms_of_service';
+  static const auth_terms_privacy_connector = 'mf.auth.terms_privacy_connector';
+  static const auth_privacy_policy = 'mf.auth.privacy_policy';
   static const auth_verify = 'mf.auth.verify';
   static const auth_we_just_sent_sms = 'mf.auth.we_just_sent_sms';
   static const common_continue = 'mf.common.continue';

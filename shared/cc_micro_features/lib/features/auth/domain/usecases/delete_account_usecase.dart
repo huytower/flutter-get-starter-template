@@ -10,7 +10,8 @@ class DeleteAccountUseCase {
 
   DeleteAccountUseCase(this._repository);
 
-  Future<Result<Unit, CcFailure>> call() {
-    return _repository.deleteAccount();
+  /// See [AuthRepository.deleteAccount] for when [beforeDelete] runs.
+  Future<Result<Unit, CcFailure>> call({Future<void> Function()? beforeDelete}) {
+    return _repository.deleteAccount(beforeDelete: beforeDelete);
   }
 }

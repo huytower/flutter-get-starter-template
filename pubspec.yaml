@@ -140,6 +140,7 @@ flutter:
     - assets/lottie/
     - assets/bg/
     - assets/legal/terms_of_service.html
+    - assets/legal/privacy_policy.html
 
 flutter_launcher_icons:
   android: true
