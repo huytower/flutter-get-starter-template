@@ -1,28 +1,30 @@
 import 'package:cc_micro_features/export_micro_features.dart'
     show LanguagePickerSheet;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
 import '../../../category/export_category.dart';
-import '../widgets/birth_year_sheet.dart';
 import '../widgets/currency_selection_sheet.dart';
-import '../widgets/display_name_sheet.dart';
-import '../widgets/weekly_audit_day_sheet.dart';
 
 /// The pickers the profile screen opens; each returns the user's choice or
 /// null when dismissed.
 abstract final class ProfileSheets {
+  /// Longest display name.
+  static const int _displayNameMaxLength = 20;
+
   /// Ages 10–70; starts at [current] or 25 years ago.
   static Future<int?> birthYear(BuildContext context, int? current) {
     final year = DateTime.now().year;
     final minYear = year - 70;
     final maxYear = year - 10;
-    return BirthYearSheet.show(
+    return CcYearPickerSheet.show(
       context,
-      currentYear: (current ?? year - 25).clamp(minYear, maxYear),
-      minYear: minYear,
-      maxYear: maxYear,
+      title: el.tr(PrjLocaleKeys.profile_birth_year_hint),
+      initialYear: (current ?? year - 25).clamp(minYear, maxYear),
+      firstYear: minYear,
+      lastYear: maxYear,
     );
   }
 
@@ -31,23 +33,26 @@ abstract final class ProfileSheets {
     BuildContext context,
     int currentIndex,
   ) async {
-    final day = await WeeklyAuditDaySheet.show(
+    final weekday = await CcWeekdayPickerSheet.show(
       context,
-      currentDay: currentIndex + 1,
+      title: el.tr(PrjLocaleKeys.profile_weekly_audit_day_hint),
+      // "Thứ Hai|Thứ Ba|...", Monday first.
+      weekdayNames: el.tr(PrjLocaleKeys.common_weekday_names).split('|'),
+      initialWeekday: currentIndex + DateTime.monday,
     );
-    return day == null ? null : day - 1;
+    return weekday == null ? null : weekday - DateTime.monday;
   }
 
   /// Returns the trimmed new name, or null when dismissed or left empty.
-  static Future<String?> displayName(
-    BuildContext context,
-    String current,
-  ) async {
-    final name = (await DisplayNameSheet.show(
+  static Future<String?> displayName(BuildContext context, String current) {
+    return CcTextInputSheet.show(
       context,
-      currentName: current,
-    ))?.trim();
-    return name == null || name.isEmpty ? null : name;
+      title: el.tr(PrjLocaleKeys.profile_display_name_title),
+      hint: el.tr(PrjLocaleKeys.profile_display_name_hint),
+      confirmLabel: el.tr(PrjLocaleKeys.profile_display_name_save),
+      initialValue: current,
+      maxLength: _displayNameMaxLength,
+    );
   }
 
   static Future<String?> currency(BuildContext context, String current) =>
