@@ -36,8 +36,8 @@ Four layers plus a bridge (`AGENTS.md` rule 1):
 1. **App Shell** (`lib/`) — pure orchestrator: boot sequence, DI wiring, routing. No business logic or feature UI.
 2. **Domain Features** (`modules/domain_features/`) — app-specific business verticals (transaction, wallet, budget,
    reconciliation, report, ...). This is where most of the code lives.
-3. **Micro-Features** (`shared/cc_micro_features/`) — project-blind, reusable verticals (app update, auth,
-   biometric, crash log viewer, messaging, splash, web) that can be dropped into another app unchanged.
+3. **Micro-Features** (`shared/cc_micro_features/`) — project-blind, reusable verticals (app review, app update,
+   auth, biometric, crash log viewer, language picker, messaging, splash, web) that can be dropped into another app unchanged.
 4. **Shared Core** (`shared/cc_core_sdk/`, git submodule) — network, failures, logging, design system, mixins, and
    optional capability packages (Firebase, Slack, device plugins, ...).
 5. **Bridge** (not a layer; the connection between them) — cross-module contracts so features never depend on each
@@ -77,7 +77,7 @@ flutter-get-starter-template/
 │   ├── theme/                    # Colors and typography (PrjColors, PrjTextStyle, createLightTheme / createDarkTheme)
 │   └── message/                  # i18n strings (en.json, vi.json, PrjLocaleKeys)
 ├── shared/
-│   ├── cc_micro_features/        # app_update, auth, biometric, crash_log, messaging, splash, web
+│   ├── cc_micro_features/        # app_review, app_update, auth, biometric, crash_log, language, messaging, splash, web
 │   └── cc_core_sdk/              # GIT SUBMODULE: cc_sdk, cc_sdk_ui, cc_mixin, cc_sdk_data (core), plus
 │                                 #   cc_sdk_firebase, cc_sdk_catcher, cc_sdk_slack, cc_sdk_device, cc_sdk_phone
 ├── cc_bridge/                    # Project-blind cross-module contracts (Coordinators, SessionContract)

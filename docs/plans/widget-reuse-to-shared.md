@@ -1,7 +1,16 @@
 # Plan: move reusable widgets from `modules/` to `shared/`
 
 Status: **approved** with the recommended choices (date picker on `MaterialLocalizations`, one bottom-sheet
-implementation, micro-features included, one phase at a time). **Phases 1–3 done**; phase 4 pending.
+implementation, micro-features included, one phase at a time). **All four phases done.**
+
+Phase 4 differs from the table in three places:
+- B1: the feedback tags (praise / criticism) name this app's features, so they stay in the app
+  (`ProfileReviewOptions`) and reach the sheet through `AppReviewOptions`; the sheet also takes the store ids and
+  the "N customer ratings" number from there. `AppRatingSheetContent` merged into `AppRatingSheet`.
+- B2: the language sheet uses `CcSheetHeader` and Material's Cancel / OK, so its header is slightly smaller than
+  before and the buttons read "Cancel" / "Hủy" (Flutter's wording).
+- Guideline reset: `CcDialogHelper.showMessageBottomSheet` has no gradient header or icon, so that confirmation
+  now looks like the app's other message sheets.
 
 Phase 3 differs from the table in two places:
 - A15 is named `CcProgressPie`, not `CcProgressRing`: it draws a filled wedge inside an outline, not a ring.

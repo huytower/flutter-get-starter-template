@@ -1,6 +1,10 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/export_micro_features.dart'
-    show AuthCancelledFailure, authFailureMessage;
+    show
+        AppRatingSheet,
+        AuthCancelledFailure,
+        DeleteAccountConfirmSheet,
+        authFailureMessage;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/get_x/prj_get_view.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -12,9 +16,7 @@ import 'package:message/export_message.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/profile_controller.dart';
-import '../widgets/app_rating_sheet.dart';
-import '../widgets/guideline_reset_bottom_sheet.dart';
-import '../widgets/profile_delete_confirm_sheet.dart';
+import '../helper/profile_review_options.dart';
 import '../widgets/profile_page_header.dart';
 import '../widgets/profile_sign_in_reminder.dart';
 
@@ -370,10 +372,12 @@ class ProfilePage extends PrjGetView<ProfileController> {
             PrjLocaleKeys.guideline_reset_confirm_desc,
             namedArgs: {'count': count.toString()},
           );
-          GuidelineResetBottomSheet.show(
-            context,
-            desc: desc,
-            count: count,
+          CcDialogHelper.showMessageBottomSheet(
+            context: context,
+            title: el.tr(PrjLocaleKeys.profile_view_tutorial),
+            content: desc,
+            confirmText: el.tr(PrjLocaleKeys.guideline_reset_confirm_agree),
+            cancelText: el.tr(PrjLocaleKeys.guideline_reset_confirm_cancel),
             onConfirm: () => guideline.resetGuideline(),
           );
         },
@@ -394,7 +398,11 @@ class ProfilePage extends PrjGetView<ProfileController> {
         icon: Icons.star_rate_rounded,
         label: el.tr(PrjLocaleKeys.profile_rate_app),
         subtitle: el.tr(PrjLocaleKeys.profile_rate_app_subtitle),
-        onTap: () => AppRatingSheet.show(context, controller.feedbackReporter),
+        onTap: () => AppRatingSheet.show(
+          context,
+          feedbackReporter: controller.feedbackReporter,
+          options: ProfileReviewOptions.current(),
+        ),
       ),
     ];
   }
@@ -446,7 +454,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
   Widget _buildDeleteAccountText(BuildContext context) {
     return CcBouncing(
       onTap: () async {
-        await ProfileDeleteConfirmSheet.show(
+        await DeleteAccountConfirmSheet.show(
           context,
           hasAppleSignIn: controller.hasAppleSignIn,
           accountLabel: controller.accountLabel,

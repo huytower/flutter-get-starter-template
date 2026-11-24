@@ -80,8 +80,8 @@ modules/
   theme/                          # SSOT for colors/typography (PrjColors, PrjTextStyle, createLightTheme / createDarkTheme)
   message/                        # SSOT for i18n strings (PrjLocaleKeys)
 shared/
-  cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (app_update, auth,
-                                   # biometric, crash_log, messaging, splash, web)
+  cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (app_review, app_update,
+                                   # auth, biometric, crash_log, language, messaging, splash, web)
   cc_core_sdk/                    # GIT SUBMODULE (huytower/cc_core_sdk) — universal engine:
     cc_sdk/                       #   network, device, logging (.Log()), capability + crash-reporter interfaces
     cc_sdk_ui/                    #   design system / widget catalog (CcContextExtension) + widget-building mixins

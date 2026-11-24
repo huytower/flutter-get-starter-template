@@ -821,7 +821,6 @@ class CodegenLoader extends AssetLoader {
       "delete_apple_note":
           "This account is linked to Sign in with Apple. If it is this device's Apple ID, Apple will ask you to confirm before the account is deleted.",
       "delete_success": "Your account has been deleted.",
-      "delete_confirm": "Delete Account?",
       "delete_confirm_desc":
           "This will permanently delete your account and all associated data. This action cannot be undone.",
       "young_children_message":
@@ -839,21 +838,6 @@ class CodegenLoader extends AssetLoader {
       "rate_app": "Rate app",
       "rate_app_subtitle": "Help us improve So Sach Xin",
       "customer_reviews": "Customer reviews",
-      "customer_ratings_count": "{count} customer ratings",
-      "calculate_ratings_info": "How do we calculate ratings?",
-      "out_of_5": "{rating} out of 5",
-      "feedback_hint": "Tell us more (optional)",
-      "feedback_send": "Send feedback",
-      "feedback_required": "Choose a tag or write a message",
-      "feedback_sent": "Thanks for your feedback",
-      "feedback_slack_title": "📝 User Feedback",
-      "feedback_slack_rating": "Rating",
-      "feedback_slack_praise": "Praise",
-      "feedback_slack_criticism": "Criticism",
-      "feedback_slack_text": "Typing feedback",
-      "feedback_slack_none": "(none)",
-      "feedback_slack_no_text": "(no text)",
-      "feedback_slack_not_rated": "(not rated)",
       "feedback_praise_fast": "Lightning-fast entry",
       "feedback_praise_offline": "Works great offline",
       "feedback_praise_runway": "Real Runway calculation",
@@ -1580,7 +1564,6 @@ class CodegenLoader extends AssetLoader {
       "delete_apple_note":
           "Tài khoản này có liên kết đăng nhập bằng Apple. Nếu đó là Apple ID trên máy này, Apple sẽ yêu cầu bạn xác nhận trước khi xóa tài khoản.",
       "delete_success": "Tài khoản của bạn đã được xóa.",
-      "delete_confirm": "Xóa Tài Khoản?",
       "delete_confirm_desc":
           "Điều này sẽ xóa vĩnh viễn tài khoản và tất cả dữ liệu liên quan của bạn. Hành động này không thể hoàn tác.",
       "young_children_message":
@@ -1598,21 +1581,6 @@ class CodegenLoader extends AssetLoader {
       "rate_app": "Đánh giá ứng dụng",
       "rate_app_subtitle": "Giúp chúng tôi cải thiện Sổ Sách Xịn",
       "customer_reviews": "Khách hàng đánh giá",
-      "customer_ratings_count": "{count} lượt đánh giá",
-      "calculate_ratings_info": "Cách chúng tôi tính toán đánh giá",
-      "out_of_5": "{rating} trên 5",
-      "feedback_hint": "Chia sẻ thêm (không bắt buộc)",
-      "feedback_send": "Gửi góp ý",
-      "feedback_required": "Hãy chọn thẻ hoặc viết nội dung",
-      "feedback_sent": "Cảm ơn góp ý của bạn",
-      "feedback_slack_title": "📝 Đánh giá & Góp ý người dùng",
-      "feedback_slack_rating": "Đánh giá",
-      "feedback_slack_praise": "Khen ngợi",
-      "feedback_slack_criticism": "Góp ý",
-      "feedback_slack_text": "Nội dung góp ý",
-      "feedback_slack_none": "(không có)",
-      "feedback_slack_no_text": "(chưa nhập)",
-      "feedback_slack_not_rated": "(chưa đánh giá)",
       "feedback_praise_fast": "Nhập liệu rất nhanh",
       "feedback_praise_offline": "Hoạt động tốt khi ngoại tuyến",
       "feedback_praise_runway": "Tính Runway thực tế",
@@ -2591,8 +2559,6 @@ class CodegenLoader extends AssetLoader {
       "delete_apple_note":
           "이 계정은 Apple로 로그인에 연결되어 있습니다. 이 기기의 Apple ID인 경우 계정을 삭제하기 전에 Apple이 확인을 요청합니다.",
       "delete_success": "계정이 삭제되었습니다.",
-      "delete_confirm": "계정을 삭제하시겠습니까?",
-      "delete_confirm_desc": "계정 및 모든 관련 데이터를 영구적으로 삭제합니다. 이 작업은 취소할 수 없습니다.",
       "young_children_message":
           "어린 자녀가 있으신가요? 예라면 우유, 기저귀, 장난감 관련 카테고리를 자동으로 활성화합니다.",
       "experience_level_progress": "경험 수준 진행",
@@ -2608,21 +2574,6 @@ class CodegenLoader extends AssetLoader {
       "rate_app": "앱 평가",
       "rate_app_subtitle": "So Sach Xin 개선에 도움을 주세요",
       "customer_reviews": "고객 리뷰",
-      "customer_ratings_count": "{count}개의 고객 평가",
-      "calculate_ratings_info": "평가는 어떻게 계산되나요?",
-      "out_of_5": "5점 만점에 {rating}점",
-      "feedback_hint": "더 자세히 알려주세요 (선택 사항)",
-      "feedback_send": "피드백 보내기",
-      "feedback_required": "태그를 선택하거나 내용을 입력하세요",
-      "feedback_sent": "피드백 감사합니다",
-      "feedback_slack_title": "📝 사용자 피드백",
-      "feedback_slack_rating": "평가",
-      "feedback_slack_praise": "칭찬",
-      "feedback_slack_criticism": "개선 요청",
-      "feedback_slack_text": "피드백 내용",
-      "feedback_slack_none": "(없음)",
-      "feedback_slack_no_text": "(미입력)",
-      "feedback_slack_not_rated": "(평가 없음)",
       "feedback_praise_fast": "빠른 입력",
       "feedback_praise_offline": "오프라인에서도 잘 작동",
       "feedback_praise_runway": "정확한 런웨이 계산",
@@ -3435,8 +3386,6 @@ class CodegenLoader extends AssetLoader {
       "delete_apple_note":
           "このアカウントはAppleでサインインに連携されています。このデバイスのApple IDの場合、削除の前にAppleから確認が求められます。",
       "delete_success": "アカウントを削除しました。",
-      "delete_confirm": "アカウントを削除しますか？",
-      "delete_confirm_desc": "アカウントとすべての関連データが永続的に削除されます。この操作は取り消せません。",
       "young_children_message": "幼児がいますか？はいの場合、ミルク、おむつ、おもちゃ関連のカテゴリを自動的に有効にします。",
       "experience_level_progress": "経験レベルの進行",
       "level_title": "レベル{level}（{title}）",
@@ -3451,21 +3400,6 @@ class CodegenLoader extends AssetLoader {
       "rate_app": "アプリを評価",
       "rate_app_subtitle": "So Sach Xinの改善にご協力ください",
       "customer_reviews": "カスタマーレビュー",
-      "customer_ratings_count": "{count}件のカスタマー評価",
-      "calculate_ratings_info": "評価の計算方法について",
-      "out_of_5": "5段階中{rating}",
-      "feedback_hint": "詳しく教えてください（任意）",
-      "feedback_send": "フィードバックを送信",
-      "feedback_required": "タグを選択するか内容を入力してください",
-      "feedback_sent": "フィードバックありがとうございます",
-      "feedback_slack_title": "📝 ユーザーフィードバック",
-      "feedback_slack_rating": "評価",
-      "feedback_slack_praise": "良かった点",
-      "feedback_slack_criticism": "改善点",
-      "feedback_slack_text": "フィードバック内容",
-      "feedback_slack_none": "(なし)",
-      "feedback_slack_no_text": "(未入力)",
-      "feedback_slack_not_rated": "(未評価)",
       "feedback_praise_fast": "入力が速い",
       "feedback_praise_offline": "オフラインでも快適",
       "feedback_praise_runway": "正確なランウェイ計算",
@@ -4266,8 +4200,6 @@ class CodegenLoader extends AssetLoader {
       "delete_apple_note":
           "此账户已关联通过 Apple 登录。如果是本设备的 Apple ID，删除账户前 Apple 会要求您确认。",
       "delete_success": "您的账户已删除。",
-      "delete_confirm": "删除账户？",
-      "delete_confirm_desc": "这将永久删除您的账户和所有相关数据。此操作无法撤销。",
       "young_children_message": "您有年幼的子女吗？如果是，我们将自动启用儿童相关类别（奶粉、纸尿裤、玩具）。",
       "experience_level_progress": "经验等级进度",
       "level_title": "等级 {level}（{title}）",
@@ -4282,21 +4214,6 @@ class CodegenLoader extends AssetLoader {
       "rate_app": "评价应用",
       "rate_app_subtitle": "帮助我们改进 So Sach Xin",
       "customer_reviews": "客户评价",
-      "customer_ratings_count": "{count} 条客户评分",
-      "calculate_ratings_info": "我们如何计算评分？",
-      "out_of_5": "满分 5 分，得分为 {rating}",
-      "feedback_hint": "告诉我们更多（可选）",
-      "feedback_send": "发送反馈",
-      "feedback_required": "选择标签或写下内容",
-      "feedback_sent": "感谢您的反馈",
-      "feedback_slack_title": "📝 用户反馈",
-      "feedback_slack_rating": "评分",
-      "feedback_slack_praise": "赞扬",
-      "feedback_slack_criticism": "批评/建议",
-      "feedback_slack_text": "反馈内容",
-      "feedback_slack_none": "(无)",
-      "feedback_slack_no_text": "(未输入)",
-      "feedback_slack_not_rated": "(未评分)",
       "feedback_praise_fast": "输入快速",
       "feedback_praise_offline": "离线也能正常使用",
       "feedback_praise_runway": "真实 Runway 计算",
@@ -5294,9 +5211,6 @@ class PrjLocaleKeys {
   static const profile_ai_sharing_subtitle = 'profile.ai_sharing_subtitle';
   static const profile_default_account_name = 'profile.default_account_name';
   static const profile_apple_private_email = 'profile.apple_private_email';
-  static const profile_delete_confirm = 'profile.delete_confirm';
-  static const profile_delete_confirm_desc = 'profile.delete_confirm_desc';
-  static const profile_delete_apple_note = 'profile.delete_apple_note';
   static const profile_delete_success = 'profile.delete_success';
   static const profile_rate_app = 'profile.rate_app';
   static const profile_rate_app_subtitle = 'profile.rate_app_subtitle';
@@ -5305,19 +5219,6 @@ class PrjLocaleKeys {
       'profile.customer_ratings_count';
   static const profile_calculate_ratings_info =
       'profile.calculate_ratings_info';
-  static const profile_out_of_5 = 'profile.out_of_5';
-  static const profile_feedback_hint = 'profile.feedback_hint';
-  static const profile_feedback_send = 'profile.feedback_send';
-  static const profile_feedback_required = 'profile.feedback_required';
-  static const profile_feedback_sent = 'profile.feedback_sent';
-  static const profile_feedback_slack_title = 'profile.feedback_slack_title';
-  static const profile_feedback_slack_rating = 'profile.feedback_slack_rating';
-  static const profile_feedback_slack_praise = 'profile.feedback_slack_praise';
-  static const profile_feedback_slack_criticism = 'profile.feedback_slack_criticism';
-  static const profile_feedback_slack_text = 'profile.feedback_slack_text';
-  static const profile_feedback_slack_none = 'profile.feedback_slack_none';
-  static const profile_feedback_slack_no_text = 'profile.feedback_slack_no_text';
-  static const profile_feedback_slack_not_rated = 'profile.feedback_slack_not_rated';
   static const profile_feedback_praise_fast = 'profile.feedback_praise_fast';
   static const profile_feedback_praise_offline =
       'profile.feedback_praise_offline';

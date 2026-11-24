@@ -43,7 +43,7 @@ flutter-get-starter-template/
 │                                #   liability, report, category, profile (+ user_level), comment,
 │                                #   notification, firestore (sync), guideline, crashlog, examples (demo only)
 ├── shared/cc_micro_features/     # Global Legos (Micro-Features)
-│   └── lib/features/            # app_update, auth, biometric, crash_log, messaging, splash, web
+│   └── lib/features/            # app_review, app_update, auth, biometric, crash_log, language, messaging, splash, web
 ├── shared/cc_core_sdk/           # Shared Core (Engine) — GIT SUBMODULE
 │   ├── cc_sdk/                  # Core SDK (network, device, logging, capability interfaces)
 │   ├── cc_sdk_ui/               # UI component library (CcContextExtension)

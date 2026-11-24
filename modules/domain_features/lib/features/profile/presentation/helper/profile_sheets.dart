@@ -1,11 +1,13 @@
+import 'package:cc_micro_features/export_micro_features.dart'
+    show LanguagePickerSheet;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
 
 import '../../../category/export_category.dart';
 import '../widgets/birth_year_sheet.dart';
 import '../widgets/currency_selection_sheet.dart';
 import '../widgets/display_name_sheet.dart';
-import '../widgets/language_selection_sheet.dart';
 import '../widgets/weekly_audit_day_sheet.dart';
 
 /// The pickers the profile screen opens; each returns the user's choice or
@@ -53,7 +55,10 @@ abstract final class ProfileSheets {
 
   /// Applies the picked app language; category labels re-translate.
   static Future<void> language(BuildContext context) async {
-    final picked = await LanguageSelectionSheet.show(context);
+    final picked = await LanguagePickerSheet.show(
+      context,
+      locales: PrjLocalization.supportedLocales,
+    );
     if (picked == null || !context.mounted) return;
     await el.EasyLocalization.of(context)!.setLocale(picked);
     CategorySettingsController.onCategoriesChanged.value++;

@@ -47,6 +47,13 @@ numbered by CI (`docs/tech/development/BUILD.md`).
   `ProfileSettingsTile` / `ProfileMenuGroup` → `CcSettingsTile` / `CcSettingsGroup`, `SmartEntrySheetHeader` →
   `CcSheetHeader`, `BudgetLimitPieChart` → `CcProgressPie`, `RatingPill` → `CcRatingPill`. Removed the unused
   `RatingBarRow` and its `profile.star_count` string (all five languages).
+- Phase 4 (micro-features): new `app_review` (`AppRatingSheet`, `ReviewsSummaryCard`, `ReviewFeedbackSection`,
+  set up with `AppReviewOptions`; this app's store ids and feedback tags live in `ProfileReviewOptions`) and
+  `language` (`LanguagePickerSheet`) in `cc_micro_features`; `ProfileDeleteConfirmSheet` →
+  `DeleteAccountConfirmSheet` in `auth`; the guideline reset confirmation uses
+  `CcDialogHelper.showMessageBottomSheet`. Their strings moved to `mf.app_review.*`, `mf.language.*` and
+  `mf.auth.delete_*`; 18 app strings that are no longer used were removed from all five languages. The language
+  and delete-account sheets take Cancel / OK from Flutter's Material localizations.
 - `melos run check:imports` (`scripts/check_imports.dart`): import boundaries, package cycles, naming and DI rules,
   run first in CI. Existing debt is frozen in `scripts/check_imports_baseline.txt`.
 - CI release pipeline on push to `qltc`: Android AAB to Google Play alpha, iOS IPA to TestFlight

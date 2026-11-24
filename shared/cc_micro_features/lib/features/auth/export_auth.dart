@@ -13,3 +13,4 @@ export 'presentation/pages/login_page.dart';
 export 'presentation/pages/otp_verification_page.dart';
 export 'presentation/pages/phone_auth_page.dart';
 export 'presentation/pages/phone_input_page.dart';
+export 'presentation/widgets/delete_account_confirm_sheet.dart';
