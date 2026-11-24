@@ -7,7 +7,6 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/presentation/widgets/asset_stat_item.dart';
-import '../../../../core/presentation/widgets/base_asset_list_item.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_display_name.dart';
 
@@ -43,10 +42,10 @@ class InvestmentWalletListItem extends StatelessWidget {
     );
   }
 
-  BaseAssetListItem _buildMainCard(BuildContext context) {
-    return BaseAssetListItem(
+  CcEditableListItem _buildMainCard(BuildContext context) {
+    return CcEditableListItem(
       hasEditMode: hasEditMode,
-      canDelete: canDelete,
+      hasDeletable: canDelete,
       onEdit: onEdit,
       onDelete: onDelete,
       dragHandle: dragHandle,

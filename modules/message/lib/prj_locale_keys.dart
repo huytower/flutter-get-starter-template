@@ -842,7 +842,6 @@ class CodegenLoader extends AssetLoader {
       "customer_ratings_count": "{count} customer ratings",
       "calculate_ratings_info": "How do we calculate ratings?",
       "out_of_5": "{rating} out of 5",
-      "star_count": "{count} star",
       "feedback_hint": "Tell us more (optional)",
       "feedback_send": "Send feedback",
       "feedback_required": "Choose a tag or write a message",
@@ -1602,7 +1601,6 @@ class CodegenLoader extends AssetLoader {
       "customer_ratings_count": "{count} lượt đánh giá",
       "calculate_ratings_info": "Cách chúng tôi tính toán đánh giá",
       "out_of_5": "{rating} trên 5",
-      "star_count": "{count} sao",
       "feedback_hint": "Chia sẻ thêm (không bắt buộc)",
       "feedback_send": "Gửi góp ý",
       "feedback_required": "Hãy chọn thẻ hoặc viết nội dung",
@@ -2613,7 +2611,6 @@ class CodegenLoader extends AssetLoader {
       "customer_ratings_count": "{count}개의 고객 평가",
       "calculate_ratings_info": "평가는 어떻게 계산되나요?",
       "out_of_5": "5점 만점에 {rating}점",
-      "star_count": "{count}점",
       "feedback_hint": "더 자세히 알려주세요 (선택 사항)",
       "feedback_send": "피드백 보내기",
       "feedback_required": "태그를 선택하거나 내용을 입력하세요",
@@ -3457,7 +3454,6 @@ class CodegenLoader extends AssetLoader {
       "customer_ratings_count": "{count}件のカスタマー評価",
       "calculate_ratings_info": "評価の計算方法について",
       "out_of_5": "5段階中{rating}",
-      "star_count": "{count}つ星",
       "feedback_hint": "詳しく教えてください（任意）",
       "feedback_send": "フィードバックを送信",
       "feedback_required": "タグを選択するか内容を入力してください",
@@ -4289,7 +4285,6 @@ class CodegenLoader extends AssetLoader {
       "customer_ratings_count": "{count} 条客户评分",
       "calculate_ratings_info": "我们如何计算评分？",
       "out_of_5": "满分 5 分，得分为 {rating}",
-      "star_count": "{count}星",
       "feedback_hint": "告诉我们更多（可选）",
       "feedback_send": "发送反馈",
       "feedback_required": "选择标签或写下内容",
@@ -5311,7 +5306,6 @@ class PrjLocaleKeys {
   static const profile_calculate_ratings_info =
       'profile.calculate_ratings_info';
   static const profile_out_of_5 = 'profile.out_of_5';
-  static const profile_star_count = 'profile.star_count';
   static const profile_feedback_hint = 'profile.feedback_hint';
   static const profile_feedback_send = 'profile.feedback_send';
   static const profile_feedback_required = 'profile.feedback_required';

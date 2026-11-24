@@ -6,7 +6,6 @@ import 'package:message/export_message.dart';
 
 import '../get_x/smart_entry_preview_state.dart';
 import 'smart_entry_preview_row_card.dart';
-import 'smart_entry_sheet_header.dart';
 
 class SmartEntryPreviewSheet extends StatelessWidget {
   const SmartEntryPreviewSheet({
@@ -73,7 +72,7 @@ class SmartEntryPreviewSheet extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     final count = state.rows.length;
 
-    return SmartEntrySheetHeader(
+    return CcSheetHeader(
       title: count > 1
           ? el.tr(
               PrjLocaleKeys.smart_entry_preview_title_many,

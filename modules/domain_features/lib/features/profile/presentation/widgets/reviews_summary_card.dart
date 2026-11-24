@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'reviews/rating_pill.dart';
-
 /// Customer reviews summary card with interactive 1-5 star selection
 /// and a top-right store icon button for store redirects.
 class ReviewsSummaryCard extends StatelessWidget {
@@ -147,8 +145,12 @@ class ReviewsSummaryCard extends StatelessWidget {
 
   Widget _buildRatingPill(BuildContext context) {
     return Center(
-      child: RatingPill(
+      child: CcRatingPill(
         averageRating: averageRating,
+        ratingLabel: (rating) => el.tr(
+          PrjLocaleKeys.profile_out_of_5,
+          namedArgs: {'rating': '$rating.0'},
+        ),
         onRatingSelected: (rating) {
           onRatingSelected?.call(rating);
           onRateTap?.call();

@@ -1,7 +1,12 @@
 # Plan: move reusable widgets from `modules/` to `shared/`
 
 Status: **approved** with the recommended choices (date picker on `MaterialLocalizations`, one bottom-sheet
-implementation, micro-features included, one phase at a time). **Phases 1 and 2 done**; phases 3–4 pending.
+implementation, micro-features included, one phase at a time). **Phases 1–3 done**; phase 4 pending.
+
+Phase 3 differs from the table in two places:
+- A15 is named `CcProgressPie`, not `CcProgressRing`: it draws a filled wedge inside an outline, not a ring.
+- A18: `RatingBarRow` was not moved. Nothing used it (and it showed a bare `%` instead of the percentage), so it
+  was deleted with its `profile.star_count` string. `RatingPill` moved as `CcRatingPill`.
 
 Phase 2 differs from the table in three places:
 - A3/A4: `MoneyKeypadPanel` stays in the app as a ~50-line adapter over `CcKeypadPanel` (it adds the

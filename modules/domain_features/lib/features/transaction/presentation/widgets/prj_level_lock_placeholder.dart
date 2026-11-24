@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../budget_limit/presentation/widgets/budget_limit_pie_chart.dart';
 import '../get_x/transaction_controller.dart';
 
 class PrjLevelLockPlaceholder extends StatelessWidget {
@@ -250,7 +249,7 @@ class PrjLevelLockPlaceholder extends StatelessWidget {
           ),
         ),
         const CcSpaceSM(),
-        BudgetLimitPieChart(
+        CcProgressPie(
           progress: progress.toDouble(),
           color: accent,
           size: context.respDim(20),

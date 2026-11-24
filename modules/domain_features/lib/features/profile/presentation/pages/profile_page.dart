@@ -15,9 +15,7 @@ import '../get_x/profile_controller.dart';
 import '../widgets/app_rating_sheet.dart';
 import '../widgets/guideline_reset_bottom_sheet.dart';
 import '../widgets/profile_delete_confirm_sheet.dart';
-import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_page_header.dart';
-import '../widgets/profile_settings_tile.dart';
 import '../widgets/profile_sign_in_reminder.dart';
 
 class ProfilePage extends PrjGetView<ProfileController> {
@@ -137,7 +135,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
             children: [
               const CcSpaceMD(),
               _buildSignInReminder(context),
-              ProfileMenuGroup(items: _buildMenuItems(context)),
+              CcSettingsGroup(items: _buildMenuItems(context)),
               const CcSpaceXL(),
               _buildAccountActions(context),
               const CcSpaceSM(),
@@ -191,13 +189,13 @@ class ProfilePage extends PrjGetView<ProfileController> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (small)
-                    ProfileMenuGroup(items: menuItems)
+                    CcSettingsGroup(items: menuItems)
                   else
                     CcMultiColumn(
                       columns: 2,
                       children: [
-                        ProfileMenuGroup(items: menuItems.sublist(0, split)),
-                        ProfileMenuGroup(items: menuItems.sublist(split)),
+                        CcSettingsGroup(items: menuItems.sublist(0, split)),
+                        CcSettingsGroup(items: menuItems.sublist(split)),
                       ],
                     ),
                   const CcSpaceXL(),
@@ -215,7 +213,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
 
     return [
       Obx(
-        () => ProfileSettingsTile(
+        () => CcSettingsTile(
           icon: Icons.tune_rounded,
           label: el.tr(PrjLocaleKeys.category_settings_title),
           subtitle: el.tr(PrjLocaleKeys.category_settings_subtitle),
@@ -231,7 +229,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
         ),
       ),
       Obx(
-        () => ProfileSettingsTile(
+        () => CcSettingsTile(
           icon: Icons.cake_rounded,
           label: el.tr(PrjLocaleKeys.profile_birth_year),
           subtitle: el.tr(PrjLocaleKeys.profile_birth_year_subtitle),
@@ -250,7 +248,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
         ),
       ),
       Obx(
-        () => ProfileSettingsTile(
+        () => CcSettingsTile(
           icon: Icons.calendar_today_rounded,
           label: el.tr(PrjLocaleKeys.profile_weekly_audit_day),
           subtitle: el.tr(PrjLocaleKeys.profile_weekly_audit_day_subtitle),
@@ -259,11 +257,11 @@ class ProfilePage extends PrjGetView<ProfileController> {
         ),
       ),
       Obx(
-        () => ProfileSettingsTile(
+        () => CcSettingsTile(
           icon: Icons.lock_open_rounded,
           label: el.tr(PrjLocaleKeys.profile_force_full_access),
           subtitle: el.tr(PrjLocaleKeys.profile_force_full_access_subtitle),
-          showChevron: false,
+          hasChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
             child: FittedBox(
@@ -280,11 +278,11 @@ class ProfilePage extends PrjGetView<ProfileController> {
         ),
       ),
       Obx(
-        () => ProfileSettingsTile(
+        () => CcSettingsTile(
           icon: Icons.auto_awesome_rounded,
           label: el.tr(PrjLocaleKeys.profile_ai_sharing),
           subtitle: el.tr(PrjLocaleKeys.profile_ai_sharing_subtitle),
-          showChevron: false,
+          hasChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
             child: FittedBox(
@@ -301,11 +299,11 @@ class ProfilePage extends PrjGetView<ProfileController> {
         ),
       ),
       Obx(
-        () => ProfileSettingsTile(
+        () => CcSettingsTile(
           icon: Icons.notifications_rounded,
           label: el.tr(PrjLocaleKeys.profile_reminder),
           subtitle: el.tr(PrjLocaleKeys.profile_reminder_subtitle),
-          showChevron: false,
+          hasChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
             child: FittedBox(
@@ -325,13 +323,13 @@ class ProfilePage extends PrjGetView<ProfileController> {
         final systemBrightness = MediaQuery.platformBrightnessOf(context);
         final hasDarkMode =
             hasDarkModeSetting ?? (systemBrightness == Brightness.dark);
-        return ProfileSettingsTile(
+        return CcSettingsTile(
           icon: Icons.palette_rounded,
           label: hasDarkMode
               ? el.tr(PrjLocaleKeys.settings_theme_dark)
               : el.tr(PrjLocaleKeys.settings_theme_light),
           subtitle: el.tr(PrjLocaleKeys.profile_theme_subtitle),
-          showChevron: false,
+          hasChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
             child: FittedBox(
@@ -346,7 +344,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
           ),
         );
       }),
-      ProfileSettingsTile(
+      CcSettingsTile(
         icon: Icons.language_rounded,
         label: el.tr(PrjLocaleKeys.settings_language),
         subtitle: el.tr(PrjLocaleKeys.profile_language_subtitle),
@@ -354,7 +352,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
         onTap: () => controller.pickLanguage(context),
       ),
       Obx(
-        () => ProfileSettingsTile(
+        () => CcSettingsTile(
           icon: Icons.attach_money_rounded,
           label: el.tr(PrjLocaleKeys.profile_currency),
           subtitle: el.tr(PrjLocaleKeys.profile_currency_subtitle),
@@ -362,7 +360,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
           onTap: () => controller.pickCurrency(context),
         ),
       ),
-      ProfileSettingsTile(
+      CcSettingsTile(
         icon: Icons.play_circle_outline_rounded,
         label: el.tr(PrjLocaleKeys.profile_view_tutorial),
         subtitle: el.tr(PrjLocaleKeys.profile_view_tutorial_subtitle),
@@ -380,19 +378,19 @@ class ProfilePage extends PrjGetView<ProfileController> {
           );
         },
       ),
-      ProfileSettingsTile(
+      CcSettingsTile(
         icon: Icons.description_rounded,
         label: el.tr(PrjLocaleKeys.profile_terms),
         subtitle: el.tr(PrjLocaleKeys.profile_terms_subtitle),
         onTap: () => controller.navigateToTerms(context),
       ),
-      ProfileSettingsTile(
+      CcSettingsTile(
         icon: Icons.privacy_tip_rounded,
         label: el.tr(PrjLocaleKeys.profile_privacy_policy),
         subtitle: el.tr(PrjLocaleKeys.profile_privacy_policy_subtitle),
         onTap: () => controller.navigateToPrivacyPolicy(context),
       ),
-      ProfileSettingsTile(
+      CcSettingsTile(
         icon: Icons.star_rate_rounded,
         label: el.tr(PrjLocaleKeys.profile_rate_app),
         subtitle: el.tr(PrjLocaleKeys.profile_rate_app_subtitle),
@@ -434,7 +432,9 @@ class ProfilePage extends PrjGetView<ProfileController> {
     CcSnackBarHelper.showErrorSnackBar(
       context: context,
       message: switch (result) {
-        LogoutResult.offline => el.tr(PrjLocaleKeys.sync_logout_blocked_offline),
+        LogoutResult.offline => el.tr(
+          PrjLocaleKeys.sync_logout_blocked_offline,
+        ),
         LogoutResult.pendingSync => el.tr(
           PrjLocaleKeys.sync_logout_blocked_pending,
         ),

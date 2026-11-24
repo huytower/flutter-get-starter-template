@@ -7,7 +7,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
-import 'compact_stat_row.dart';
 import 'invest_period_indicator.dart';
 
 class InvestHeroBanner extends StatelessWidget {
@@ -173,7 +172,7 @@ class InvestHeroBanner extends StatelessWidget {
             color: scheme.onPrimary,
           ),
           const SizedBox(height: 6),
-          CompactStatRow(
+          CcStatRow(
             label: 'ROI',
             value: hasVisible
                 ? '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%'
@@ -181,7 +180,7 @@ class InvestHeroBanner extends StatelessWidget {
             color: scheme.onPrimary,
           ),
           const SizedBox(height: 2),
-          CompactStatRow(
+          CcStatRow(
             label: el.tr(PrjLocaleKeys.wallet_investment_breakeven),
             value: hasVisible ? '${breakeven.toStringAsFixed(1)}%' : '***%',
             color: scheme.onPrimary.withOpacity(0.9),

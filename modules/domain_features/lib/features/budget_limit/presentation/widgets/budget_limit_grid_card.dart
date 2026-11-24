@@ -10,7 +10,6 @@ import '../../../../core/budget/budget_name_helper.dart';
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import 'budget_limit_grid_card_detail.dart';
-import 'budget_limit_pie_chart.dart';
 
 /// Grid card for a budget item — uses the exact same 3D flip card effect as [ProfilePageHeader]
 /// to reveal [BudgetLimitGridCardDetail].
@@ -276,7 +275,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
             fontWeight: inPenalty ? FontWeight.bold : null,
           ),
         ),
-        BudgetLimitPieChart(
+        CcProgressPie(
           progress: widget.stats.progress,
           color: accent,
           size: context.respDim(20),

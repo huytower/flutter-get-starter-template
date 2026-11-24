@@ -43,6 +43,10 @@ numbered by CI (`docs/tech/development/BUILD.md`).
   `CcDatePickerSheet`. `MoneyKeypadPanel` stays as a thin app adapter over `CcKeypadPanel` (translations,
   currency-formatted quick amounts via `QuickAmountValues`). The date picker's month, weekday and button
   texts now come from Flutter's Material localizations; the week still starts on Monday.
+- Phase 3 (lists and stats): `BaseAssetListItem` → `CcEditableListItem`, `CompactStatRow` → `CcStatRow`,
+  `ProfileSettingsTile` / `ProfileMenuGroup` → `CcSettingsTile` / `CcSettingsGroup`, `SmartEntrySheetHeader` →
+  `CcSheetHeader`, `BudgetLimitPieChart` → `CcProgressPie`, `RatingPill` → `CcRatingPill`. Removed the unused
+  `RatingBarRow` and its `profile.star_count` string (all five languages).
 - `melos run check:imports` (`scripts/check_imports.dart`): import boundaries, package cycles, naming and DI rules,
   run first in CI. Existing debt is frozen in `scripts/check_imports_baseline.txt`.
 - CI release pipeline on push to `qltc`: Android AAB to Google Play alpha, iOS IPA to TestFlight
