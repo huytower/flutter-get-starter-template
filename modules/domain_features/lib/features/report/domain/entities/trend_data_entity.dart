@@ -1,22 +1,9 @@
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:equatable/equatable.dart';
 
-class TrendPoint extends Equatable {
-  final String label;
-  final double income;
-  final double expense;
-  final DateTime date;
+import 'trend_point.dart';
 
-  const TrendPoint({
-    required this.label,
-    required this.income,
-    required this.expense,
-    required this.date,
-  });
-
-  @override
-  List<Object?> get props => [label, income, expense, date];
-}
+export 'trend_point.dart';
 
 class TrendDataEntity extends Equatable {
   final List<TrendPoint> points;

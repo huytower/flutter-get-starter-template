@@ -1,37 +1,13 @@
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:equatable/equatable.dart';
 
-/// Direction values stored in [LiabilityEntity.direction].
-abstract class LiabilityDirection {
-  /// Đi vay — money flows into the user's wallet, owed back later.
-  static const String borrow = 'borrow';
+import 'liability_direction.dart';
+import 'liability_installment_entity.dart';
+import 'liability_repayment_method.dart';
 
-  /// Cho vay — money flows out of the user's wallet, reclaimable later.
-  static const String lend = 'lend';
-}
-
-/// Repayment method values stored in [LiabilityEntity.repaymentMethod].
-abstract class LiabilityRepaymentMethod {
-  /// Trả góp — a schedule of due-date + amount periods.
-  static const String installment = 'installment';
-
-  /// Đáo hạn / Trả 1 lần — a single final due date.
-  static const String lumpSum = 'lump_sum';
-}
-
-/// One period of an installment ([LiabilityRepaymentMethod.installment]) schedule.
-class LiabilityInstallmentEntity extends Equatable {
-  final DateTime dueDate;
-  final int amount;
-
-  const LiabilityInstallmentEntity({
-    required this.dueDate,
-    required this.amount,
-  });
-
-  @override
-  List<Object?> get props => [dueDate, amount];
-}
+export 'liability_direction.dart';
+export 'liability_installment_entity.dart';
+export 'liability_repayment_method.dart';
 
 /// A loan or lend record ("Khoản vay/cho vay"). Tracks the principal and
 /// repayment plan; the outstanding balance and settled/outstanding status are

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
-import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
 
 /// Base reusable widget for Hero Banner cards (Liability, Investment, etc.).
@@ -37,154 +36,25 @@ class BaseHeroBannerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<BudgetAllocationController>();
     final walletController = controller.walletController;
-    final scheme = context.ccColorScheme;
 
-    return CcBouncing(
-      onTap: hasFront ? onTap : controller.toggleLiabilityCardStack,
-      borderRadius: context.brXl,
-      child: Stack(
-        children: [
-          // Only show glassy background for the card behind to keep front card crisp
-          if (!hasFront)
-            const Positioned.fill(child: CcGlassyGradientBackground()),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-              vertical: context.respPadding(CcPaddingParams.SPACE_LG),
-            ),
-            decoration: BoxDecoration(
-              // Front card is solid "normal debtloan color", back card is transparent
-              color: hasFront ? color : color.withValues(alpha: 0.1),
-              borderRadius: context.brXl,
-              border: hasFront ? null : context.borderSubtle,
-              boxShadow: hasFront
-                  ? [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.25),
-                        blurRadius: context.respDim(20),
-                        offset: Offset(0, context.respDim(10)),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildInfoColumn(context, walletController, scheme),
-                ),
-                const CcSpaceLG(),
-                if (hasFront) ...[
-                  _buildSwapAction(context, controller, scheme),
-                  const CcSpaceSM(),
-                ],
-                _buildBannerIcon(context, scheme),
-              ],
-            ),
-          ),
-        ],
+    return Obx(
+      () => CcHeroBannerCard(
+        title: el.tr(titleKey),
+        formattedValue: walletController.hasBalanceVisible.value
+            ? TransactionFormHelpers.formatShortWithSymbol(
+                balance,
+                currencyCode: walletController.currencyCode.value,
+              )
+            : '*********',
+        subtitle: el.tr(subtitleKey),
+        valueIcon: balanceIcon,
+        bannerIcon: bannerIcon,
+        bannerIconAsset: bannerIconAsset,
+        color: color,
+        hasFront: hasFront,
+        onTap: onTap,
+        onSwap: controller.toggleLiabilityCardStack,
       ),
-    );
-  }
-
-  Widget _buildInfoColumn(
-    BuildContext context,
-    WalletController walletController,
-    ColorScheme scheme,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CcText(
-          el.tr(titleKey),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: scheme.onPrimary.withOpacity(0.85),
-          ),
-        ),
-        const CcSpaceXS(),
-        _buildBalanceRow(context, walletController, scheme),
-        const CcSpaceXS(),
-        CcText(
-          el.tr(subtitleKey),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: scheme.onPrimary.withOpacity(0.7),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBalanceRow(
-    BuildContext context,
-    WalletController walletController,
-    ColorScheme scheme,
-  ) {
-    return Row(
-      children: [
-        Icon(
-          balanceIcon,
-          color: scheme.onPrimary.withOpacity(0.8),
-          size: context.respIconSize(baseSize: 18),
-        ),
-        const CcSpaceXS(),
-        Obx(
-          () => CcText(
-            walletController.hasBalanceVisible.value
-                ? TransactionFormHelpers.formatShortWithSymbol(
-                    balance,
-                    currencyCode: walletController.currencyCode.value,
-                  )
-                : '*********',
-            textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-              color: scheme.onPrimary,
-              fontWeight: CcTypographyParams.bold,
-              letterSpacing: 0.2,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSwapAction(
-    BuildContext context,
-    BudgetAllocationController controller,
-    ColorScheme scheme,
-  ) {
-    return CcIconButton.bouncing(
-      onTap: controller.toggleLiabilityCardStack,
-      icon: Icon(
-        Icons.swap_vert_rounded,
-        color: scheme.onPrimary.withOpacity(0.6),
-        size: context.respIconSize(baseSize: 20),
-      ),
-      width: context.respDim(32),
-      height: context.respDim(32),
-    );
-  }
-
-  Widget _buildBannerIcon(BuildContext context, ColorScheme scheme) {
-    return Container(
-      padding: EdgeInsets.all(context.respDim(6)),
-      decoration: BoxDecoration(
-        color: scheme.onPrimary.withOpacity(0.2),
-        shape: BoxShape.circle,
-      ),
-      child: bannerIconAsset != null
-          ? Image.asset(
-              bannerIconAsset!,
-              color: scheme.onPrimary,
-              width: context.respIconSize(baseSize: 16),
-              height: context.respIconSize(baseSize: 16),
-            )
-          : CcIconToken(
-              bannerIcon ?? Icons.help_outline,
-              color: scheme.onPrimary,
-              size: 16,
-            ),
     );
   }
 }

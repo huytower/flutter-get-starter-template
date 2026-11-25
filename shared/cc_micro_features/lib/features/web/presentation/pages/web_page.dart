@@ -20,21 +20,21 @@ class WebPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<WebCubit>()..initController(url: url),
-      child: WebViewPage(title: title),
+      child: _WebViewPage(title: title),
     );
   }
 }
 
-class WebViewPage extends StatefulWidget {
-  const WebViewPage({super.key, this.title});
+class _WebViewPage extends StatefulWidget {
+  const _WebViewPage({this.title});
 
   final String? title;
 
   @override
-  State<WebViewPage> createState() => _WebViewPageState();
+  State<_WebViewPage> createState() => _WebViewPageState();
 }
 
-class _WebViewPageState extends State<WebViewPage> {
+class _WebViewPageState extends State<_WebViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

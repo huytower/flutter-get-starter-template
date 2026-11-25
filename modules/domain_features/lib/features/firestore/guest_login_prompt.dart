@@ -1,0 +1,2 @@
+enum GuestLoginPrompt { firstReminder, finalWarning }
+

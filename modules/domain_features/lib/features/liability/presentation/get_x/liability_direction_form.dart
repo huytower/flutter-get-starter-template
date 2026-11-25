@@ -1,0 +1,2 @@
+enum LiabilityDirectionForm { increase, decrease }
+

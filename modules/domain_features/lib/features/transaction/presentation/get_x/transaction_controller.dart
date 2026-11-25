@@ -21,9 +21,9 @@ import 'income_form_controller.dart';
 import 'investment_form_controller.dart';
 import 'tab_change_notifier.dart';
 import 'transaction_form_controller.dart';
+import 'transaction_tab_kind.dart';
 
-/// Which real tab a `TabBar`/`TabBarView` slot represents.
-enum TransactionTabKind { expense, income, investment, borrow, lend }
+export 'transaction_tab_kind.dart';
 
 @injectable
 class TransactionController extends PrjGetController {

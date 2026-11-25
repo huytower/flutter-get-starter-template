@@ -5,9 +5,9 @@ import 'package:theme/export_theme.dart';
 
 import '../../../domain/entities/category_group_entity.dart';
 import '../../models/category_model.dart';
+import 'age_group.dart';
 
-/// Life stage derived from the user's birth year.
-enum AgeGroup { youngAdult, adult, midLife, mature }
+export 'age_group.dart';
 
 /// Default categories + groups seeded into Hive on first launch.
 class CategorySeed {

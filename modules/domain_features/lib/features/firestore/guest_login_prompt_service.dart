@@ -16,8 +16,9 @@ import '../profile/presentation/widgets/guest_login_prompt_sheet.dart';
 import '../reconciliation/data/models/reconciliation_model.dart';
 import '../transaction/data/models/transaction_model.dart';
 import '../wallet/data/models/wallet_hive_model.dart';
+import 'guest_login_prompt.dart';
 
-enum GuestLoginPrompt { firstReminder, finalWarning }
+export 'guest_login_prompt.dart';
 
 @lazySingleton
 class GuestLoginPromptService {

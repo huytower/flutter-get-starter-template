@@ -10,7 +10,8 @@ import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 import '../get_x/reconciliation_controller.dart';
-import 'editing_tile_reveal.dart';
+import 'wallet_actual_balance_input.dart';
+import 'wallet_reconcile_status_row.dart';
 
 class WalletReconcileTile extends StatelessWidget {
   final WalletBalanceEntity balance;
@@ -70,8 +71,8 @@ class WalletReconcileTile extends StatelessWidget {
           : scheme.error;
 
       // Keeps the tile above the money keypad while its amount is edited.
-      return EditingTileReveal(
-        hasEditing: hasEditing,
+      return CcScrollIntoView(
+        hasActive: hasEditing,
         child: Container(
           margin: EdgeInsets.only(
             bottom: context.respDim(CcPaddingParams.SPACE_MD),
@@ -142,7 +143,6 @@ class WalletReconcileTile extends StatelessWidget {
                   ),
                 ],
               ),
-              _buildGuidelineBadge(context),
             ],
           ),
         ),
@@ -181,258 +181,6 @@ class WalletReconcileTile extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildGuidelineBadge(BuildContext context) {
-    return const SizedBox();
-  }
-}
-
-/// The counted-amount field: the SDK [CcTextField] (same look as the other
-/// pages) driven by the money keypad instead of the system keyboard, with the
-/// localized "Actual" label as its hint.
-class WalletActualBalanceInput extends StatefulWidget {
-  /// Counted amount, or null while the wallet has not been counted yet.
-  final int? actual;
-  final bool hasEditing;
-  final String currencyCode;
-  final VoidCallback onTap;
-  final VoidCallback onClear;
-
-  const WalletActualBalanceInput({
-    super.key,
-    required this.actual,
-    required this.hasEditing,
-    required this.currencyCode,
-    required this.onTap,
-    required this.onClear,
-  });
-
-  @override
-  State<WalletActualBalanceInput> createState() =>
-      _WalletActualBalanceInputState();
-}
-
-class _WalletActualBalanceInputState extends State<WalletActualBalanceInput> {
-  final TextEditingController _controller = TextEditingController();
-
-  String get _text => widget.actual == null
-      ? ''
-      : formatCurrencyWithSymbol(
-          widget.actual!,
-          currencyCode: widget.currencyCode,
-        );
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.text = _text;
-  }
-
-  @override
-  void didUpdateWidget(covariant WalletActualBalanceInput oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (_controller.text != _text) _controller.text = _text;
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    return Stack(
-      alignment: Alignment.centerRight,
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: widget.onTap,
-          // Absorb pointers so the field never takes focus / opens the system
-          // keyboard; input comes from the money keypad.
-          child: AbsorbPointer(
-            child: CcTextField(
-              controller: _controller,
-              hintText: el.tr(PrjLocaleKeys.reconciliation_actual),
-              margin: EdgeInsets.zero,
-              textAlign: TextAlign.end,
-              color: scheme.surface,
-              borderColor: widget.hasEditing
-                  ? scheme.primary
-                  : scheme.outline.withValues(alpha: 0.5),
-              borderWidth: widget.hasEditing ? 1.5 : 1,
-              // Reserves room for the clear icon drawn on top.
-              suffixIcon: widget.actual == null
-                  ? null
-                  : SizedBox(width: context.respDim(28)),
-            ),
-          ),
-        ),
-        // Outside the absorbed field so it stays tappable; the text is
-        // right-aligned, so pad it clear of the icon.
-        if (widget.actual != null)
-          Padding(
-            padding: EdgeInsets.only(
-              right: context.respPadding(CcPaddingParams.SPACE_SM),
-            ),
-            child: CcBouncing(
-              onTap: widget.onClear,
-              child: Icon(
-                Icons.cancel,
-                size: context.respIconSize(baseSize: 16),
-                color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class WalletReconcileStatusRow extends StatelessWidget {
-  final bool hasCounted;
-  final bool hasBalanced;
-  final bool hasAcknowledged;
-  final int diff;
-  final String currencyCode;
-  final Color statusColor;
-  final VoidCallback onAcknowledge;
-  final VoidCallback onReview;
-
-  /// Puts the actions (create adjustment / review) on their own line, bottom
-  /// right, so a large "Off by" amount never competes with them for width.
-  final bool stacked;
-
-  const WalletReconcileStatusRow({
-    super.key,
-    required this.hasCounted,
-    required this.hasBalanced,
-    required this.hasAcknowledged,
-    required this.diff,
-    required this.currencyCode,
-    required this.statusColor,
-    required this.onAcknowledge,
-    required this.onReview,
-    this.stacked = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    if (!hasCounted) {
-      return Row(
-        children: [
-          Icon(
-            Icons.radio_button_unchecked_rounded,
-            size: context.respIconSize(baseSize: 16),
-            color: scheme.onSurfaceVariant,
-          ),
-          const CcSpaceXS(),
-          CcText(
-            el.tr(PrjLocaleKeys.reconciliation_not_counted),
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      );
-    }
-
-    if (hasBalanced) {
-      return Row(
-        children: [
-          const CcIconToken(Icons.check_circle_outline, size: 16),
-          const CcSpaceXS(),
-          CcText(
-            el.tr(PrjLocaleKeys.reconciliation_matched),
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: scheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      );
-    }
-
-    final status = Row(
-      children: [
-        Icon(
-          hasAcknowledged ? Icons.check_circle_outline : Icons.error_outline,
-          color: statusColor,
-          size: 16,
-        ),
-        const CcSpaceXS(),
-        CcText(
-          el.tr(
-            PrjLocaleKeys.reconciliation_lech,
-            namedArgs: {
-              'amount':
-                  '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}',
-            },
-          ),
-          textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: statusColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-    final actions = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (!hasAcknowledged)
-          CcBouncing(
-            onTap: onAcknowledge,
-            child: CcText(
-              el.tr(PrjLocaleKeys.reconciliation_create_adjustment),
-              textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                color: scheme.error,
-                fontWeight: FontWeight.w600,
-                decoration: TextDecoration.underline,
-                decorationColor: scheme.error,
-              ),
-            ),
-          )
-        else
-          CcText(
-            el.tr(PrjLocaleKeys.common_done),
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: scheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        CcIconButton.bouncing(
-          icon: Icon(
-            Icons.fact_check_outlined,
-            size: context.respIconSize(baseSize: 16),
-            color: scheme.onSurfaceVariant,
-          ),
-          height: context.respDim(28),
-          width: context.respDim(28),
-          tooltip: el.tr(PrjLocaleKeys.reconciliation_review_transactions),
-          onTap: onReview,
-        ),
-      ],
-    );
-
-    if (stacked) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          status,
-          const CcSpaceXS(),
-          Align(alignment: Alignment.centerRight, child: actions),
-        ],
-      );
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [status, actions],
     );
   }
 }

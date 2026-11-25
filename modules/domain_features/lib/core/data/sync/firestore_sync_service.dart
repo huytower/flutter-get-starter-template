@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 
+import 'sync_exception.dart';
+
+export 'sync_exception.dart';
+
 /// Base service for synchronizing data between Hive and Firestore.
 ///
 /// This service provides offline-first synchronization with automatic conflict resolution
@@ -154,14 +158,4 @@ class FirestoreSyncService {
           }).toList(),
         );
   }
-}
-
-/// Exception thrown when sync operations fail.
-class SyncException implements Exception {
-  final String message;
-
-  SyncException(this.message);
-
-  @override
-  String toString() => 'SyncException: $message';
 }

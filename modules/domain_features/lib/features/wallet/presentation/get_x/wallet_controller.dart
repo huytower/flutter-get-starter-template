@@ -16,9 +16,9 @@ import 'package:message/export_message.dart';
 
 import '../helper/wallet_ordering.dart';
 import 'wallet_change_effects.dart';
+import 'wallet_delete_outcome.dart';
 
-/// Outcome of a wallet deletion attempt (rule: only empty wallets deletable).
-enum WalletDeleteOutcome { success, notEmpty, protected, error }
+export 'wallet_delete_outcome.dart';
 
 /// State of the wallet screens: the wallet list, each wallet's book and
 /// display balance, investment stats and the header totals.

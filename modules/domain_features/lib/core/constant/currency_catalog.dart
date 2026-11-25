@@ -2,38 +2,11 @@ import 'dart:ui';
 
 import 'package:cc_sdk/export_cc_sdk.dart';
 
-/// ISO 4217 codes of the currencies the app supports. The single source for
-/// these codes; `CurrencyConstants` re-exposes them.
-abstract final class CurrencyCodes {
-  static const String vnd = 'VND';
-  static const String usd = 'USD';
-  static const String jpy = 'JPY';
-  static const String eur = 'EUR';
-  static const String krw = 'KRW';
-  static const String cny = 'CNY';
-}
+import 'currency_codes.dart';
+import 'currency_definition.dart';
 
-class CurrencyDefinition {
-  const CurrencyDefinition({
-    required this.code,
-    required this.nameKey,
-    required this.symbol,
-    required this.sampleAmount,
-    required this.locale,
-    required this.decimalDigits,
-    required this.hasPrefixSymbol,
-    this.aliases = const [],
-  });
-
-  final String code;
-  final String nameKey;
-  final String symbol;
-  final int sampleAmount;
-  final String locale;
-  final int decimalDigits;
-  final bool hasPrefixSymbol;
-  final List<String> aliases;
-}
+export 'currency_codes.dart';
+export 'currency_definition.dart';
 
 /// Centralized catalog and privacy-first initial currency detection
 /// using device region and app locale (without requesting GPS permissions).

@@ -3,16 +3,11 @@ import 'dart:ui';
 import 'package:equatable/equatable.dart';
 
 import 'budget_limit_entity.dart';
+import 'budget_limit_status.dart';
+import 'budget_penalty_tier.dart';
 
-enum BudgetLimitStatus { safe, nearLimit, over }
-
-/// Phase 3.4 "Over-budget Penalties" (see `docs/BUSINESS_REQUIREMENT.md`'s
-/// Smart Budgeting section): level point deductions at 3 escalating
-/// over-limit thresholds, shown on the budget chart. Deliberately kept
-/// separate from [BudgetLimitStatus] (which only drives the card's
-/// safe/warning/over color) so the gamification tiers can change later
-/// without touching the core warning logic.
-enum BudgetPenaltyTier { none, tier120, tier150, tier200 }
+export 'budget_limit_status.dart';
+export 'budget_penalty_tier.dart';
 
 /// A budget paired with its computed spending and the category's display data.
 class BudgetLimitStatsEntity extends Equatable {

@@ -4,39 +4,8 @@ import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:hive_ce/hive_ce.dart';
 
-abstract final class CurrencySelectionSources {
-  static const detected = 'detected';
-  static const userSelected = 'user_selected';
-  static const migrated = 'migrated';
-
-  /// Validates and normalizes selection source strings; defaults to [migrated] if invalid.
-  static String validate(String? source) {
-    if (source != null) {
-      final normalized = source.toLowerCase().trim();
-      if (normalized == detected ||
-          normalized == userSelected ||
-          normalized == migrated) {
-        return normalized;
-      }
-    }
-    return migrated;
-  }
-}
-
-enum CurrencySelectionSourceType {
-  detected,
-  userSelected,
-  migrated;
-
-  static CurrencySelectionSourceType parse(String? value) {
-    return switch (CurrencySelectionSources.validate(value)) {
-      CurrencySelectionSources.detected => CurrencySelectionSourceType.detected,
-      CurrencySelectionSources.userSelected =>
-        CurrencySelectionSourceType.userSelected,
-      _ => CurrencySelectionSourceType.migrated,
-    };
-  }
-}
+export 'currency_selection_source_type.dart';
+export 'currency_selection_sources.dart';
 
 /// Single Source of Truth (SSOT) for currency codes, default currency,
 /// currency symbols, and locale/region mappings across the app.

@@ -22,36 +22,15 @@ class AssetStatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const CcSpaceXS(),
-        SizedBox(
-          width: context.respIconSize(baseSize: 24),
-          height: context.respIconSize(baseSize: 24),
-          child: icon,
-        ),
-        const CcSpaceMD(),
-        CcText(
-          label,
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant.withAlpha(90),
-          ),
-        ),
-        const Spacer(),
-        CcText(
-          TransactionFormHelpers.formatShortWithSymbol(
-            value,
-            currencyCode:
-                currencyCode ?? CurrencyConstants.currentPrimaryCurrency,
-          ),
-          align: Alignment.center,
-          textAlign: TextAlign.center,
-          textStyle: context.ccTextTheme.labelLarge?.copyWith(
-            fontWeight: CcTypographyParams.bold,
-            color: color,
-          ),
-        ),
-      ],
+    return CcStatItem(
+      label: label,
+      formattedValue: TransactionFormHelpers.formatShortWithSymbol(
+        value,
+        currencyCode:
+            currencyCode ?? CurrencyConstants.currentPrimaryCurrency,
+      ),
+      color: color,
+      icon: icon,
     );
   }
 }

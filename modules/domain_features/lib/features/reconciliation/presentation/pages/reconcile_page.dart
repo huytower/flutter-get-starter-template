@@ -13,7 +13,6 @@ import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 import '../get_x/reconciliation_controller.dart';
-import '../widgets/finance_line_art_background.dart';
 import '../widgets/reconciliation_confirm_button.dart';
 import '../widgets/reconciliation_guide_sheet.dart';
 import '../widgets/reconciliation_history_section.dart';
@@ -62,7 +61,7 @@ class ReconcilePage extends PrjGetView<ReconciliationController> {
   Widget onPageBodyWrapper(BuildContext context, Widget body) {
     return Stack(
       children: [
-        const Positioned.fill(child: FinanceLineArtBackground()),
+        const Positioned.fill(child: CcFinanceLineArtBackground()),
         body,
       ],
     );

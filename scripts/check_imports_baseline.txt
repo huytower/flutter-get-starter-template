@@ -37,7 +37,6 @@ di-composition-root modules/domain_features/lib/features/transaction/presentatio
 di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/transaction_tab_bar.dart 1
 di-composition-root modules/domain_features/lib/features/wallet/presentation/widgets/wallet_strip_card.dart 1
 feature-controller modules/domain_features/lib/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart 2
-feature-controller modules/domain_features/lib/features/budget_allocation/presentation/widgets/base_hero_banner_card.dart 1
 feature-controller modules/domain_features/lib/features/budget_allocation/presentation/widgets/borrow_hero_card.dart 1
 feature-controller modules/domain_features/lib/features/budget_allocation/presentation/widgets/budget_limit_preview_section.dart 1
 feature-controller modules/domain_features/lib/features/budget_allocation/presentation/widgets/invest_hero_banner.dart 1
@@ -77,7 +76,7 @@ file-size modules/domain_features/lib/features/budget_allocation/presentation/ge
 file-size modules/domain_features/lib/features/budget_limit/presentation/widgets/add_budget_limit_sheet.dart 8
 file-size modules/domain_features/lib/features/budget_limit/presentation/widgets/budget_limit_grid_card.dart 61
 file-size modules/domain_features/lib/features/category/data/datasources/local/category_seed.dart 649
-file-size modules/domain_features/lib/features/category/presentation/pages/category_settings_page.dart 96
+file-size modules/domain_features/lib/features/category/presentation/pages/category_settings_page.dart 95
 file-size modules/domain_features/lib/features/firestore/financial_data_sync_service.dart 656
 file-size modules/domain_features/lib/features/guideline/presentation/widgets/guideline_badge_view.dart 12
 file-size modules/domain_features/lib/features/liability/presentation/get_x/borrow_form_controller.dart 183
@@ -88,11 +87,10 @@ file-size modules/domain_features/lib/features/profile/presentation/pages/profil
 file-size modules/domain_features/lib/features/profile/presentation/widgets/currency_selection_content_sheet.dart 187
 file-size modules/domain_features/lib/features/profile/presentation/widgets/profile_info_card.dart 210
 file-size modules/domain_features/lib/features/reconciliation/presentation/get_x/reconciliation_controller.dart 59
-file-size modules/domain_features/lib/features/reconciliation/presentation/pages/reconcile_page.dart 10
-file-size modules/domain_features/lib/features/reconciliation/presentation/widgets/wallet_reconcile_tile.dart 138
+file-size modules/domain_features/lib/features/reconciliation/presentation/pages/reconcile_page.dart 9
 file-size modules/domain_features/lib/features/report/domain/usecases/generate_ai_financial_advice_usecase.dart 168
 file-size modules/domain_features/lib/features/report/presentation/get_x/quick_edit_transaction_sheet_controller.dart 1
-file-size modules/domain_features/lib/features/report/presentation/get_x/report_controller.dart 206
+file-size modules/domain_features/lib/features/report/presentation/get_x/report_controller.dart 207
 file-size modules/domain_features/lib/features/report/presentation/widgets/report_filter_picker_sheet.dart 16
 file-size modules/domain_features/lib/features/transaction/data/models/transaction_model.dart 6
 file-size modules/domain_features/lib/features/transaction/presentation/get_x/expense_form_controller.dart 728
@@ -101,12 +99,11 @@ file-size modules/domain_features/lib/features/transaction/presentation/get_x/in
 file-size modules/domain_features/lib/features/transaction/presentation/get_x/quick_entry_session.dart 68
 file-size modules/domain_features/lib/features/transaction/presentation/get_x/transaction_controller.dart 28
 file-size modules/domain_features/lib/features/transaction/presentation/get_x/transaction_form_controller.dart 11
-file-size modules/domain_features/lib/features/transaction/presentation/widgets/base/category_selection_layout.dart 52
 file-size modules/domain_features/lib/features/transaction/presentation/widgets/investment_form.dart 46
 file-size modules/domain_features/lib/features/transaction/presentation/widgets/transaction_tab_bar.dart 22
 file-size modules/domain_features/lib/features/wallet/presentation/get_x/add_liquid_sheet_controller.dart 72
 file-size modules/domain_features/lib/features/wallet/presentation/get_x/wallet_controller.dart 92
 file-size modules/domain_features/lib/features/wallet/presentation/widgets/add_liquid_sheet.dart 87
 file-size modules/theme/lib/presentation/style/prj_text_style.dart 3
-file-size shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/navigation/cc_navigation_rail.dart 49
+file-size shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/navigation/cc_navigation_rail.dart 21
 file-size shared/cc_micro_features/lib/features/auth/data/repositories/firebase_auth_repository_impl.dart 749

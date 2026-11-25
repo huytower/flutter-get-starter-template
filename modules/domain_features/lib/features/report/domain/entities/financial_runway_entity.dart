@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-enum FinancialRunwayStatus { excellent, good, safe, caution, insufficient }
+import 'financial_runway_status.dart';
+
+export 'financial_runway_status.dart';
 
 class FinancialRunwayEntity extends Equatable {
   final int months;

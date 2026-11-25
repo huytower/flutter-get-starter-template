@@ -554,20 +554,47 @@ Iterable<_Violation> _checkNaming(String path, String source) sync* {
   }
 
   final base = segments.last.replaceFirst(RegExp(r'\.dart$'), '');
-  if (base == 'di' || base.startsWith('export_')) return;
+  if (base == 'di' || base.startsWith('export_') || base == 'prj_locale_keys') return;
   if (_typeFamilyFiles.contains(path)) return;
   if (RegExp(r'^part of\b', multiLine: true).hasMatch(source)) return;
   final types = _publicType.allMatches(source).map((m) => m.group(1)!).toList();
   if (types.isEmpty) return;
   final key = base.replaceAll('_', '');
-  if (types.any((t) => t.toLowerCase() == key)) return;
-  yield _Violation(
-    path,
-    1,
-    'naming-file-type',
-    'file name does not match its type (${types.join(', ')}); rename the file '
-        'or the type, or move the other types to their own files',
-  );
+  if (!types.any((t) => t.toLowerCase() == key)) {
+    yield _Violation(
+      path,
+      1,
+      'naming-file-type',
+      'file name does not match its type (${types.join(', ')}); rename the file '
+          'or the type, or move the other types to their own files',
+    );
+    return;
+  }
+
+  // AGENTS.md rule 12: one public type per file (except a use case's own
+  // *Params / result type, a sealed family, or Bloc *_event / *_state files).
+  if (base.endsWith('_event') || base.endsWith('_state')) return;
+  final hasSealed = RegExp(r'^sealed\s+class\b', multiLine: true).hasMatch(source);
+  if (hasSealed) return;
+  final nonUseCaseExtra = base.endsWith('_usecase')
+      ? types
+          .where(
+            (t) =>
+                t.toLowerCase() != key &&
+                !t.endsWith('Params') &&
+                !t.endsWith('Result'),
+          )
+          .toList()
+      : types.where((t) => t.toLowerCase() != key).toList();
+  if (nonUseCaseExtra.isNotEmpty) {
+    yield _Violation(
+      path,
+      1,
+      'naming-file-type',
+      'multiple public types in one file (${types.join(', ')}); move '
+          '${nonUseCaseExtra.join(', ')} to their own files',
+    );
+  }
 }
 
 /// Source files stay within [_maxFileLines] lines (AGENTS.md rule 16): split

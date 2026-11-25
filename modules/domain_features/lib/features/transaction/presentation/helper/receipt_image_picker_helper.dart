@@ -3,43 +3,13 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:image_picker/image_picker.dart';
 
-/// A receipt/screenshot image picked via [ReceiptImagePickerHelper.pickReceiptImage]
-/// — carries the file path plus the raw bytes
-/// and real [mimeType] (the cloud vision parser needs both). Not
-/// [XFile] itself, so callers never need a direct `image_picker` dependency.
-class ReceiptImage {
-  const ReceiptImage({
-    required this.path,
-    required this.bytes,
-    required this.mimeType,
-  });
+import 'receipt_image.dart';
+import 'receipt_image_batch_pick_result.dart';
+import 'receipt_image_pick_result.dart';
 
-  final String path;
-  final Uint8List bytes;
-  final String mimeType;
-}
-
-/// Outcome of [ReceiptImagePickerHelper.pickReceiptImage] — distinguishes *why*
-/// [image] is null so callers can show "permission denied" vs. silently
-/// no-op on a plain cancel.
-class ReceiptImagePickResult {
-  const ReceiptImagePickResult({this.image, this.permissionDenied = false});
-
-  final ReceiptImage? image;
-  final bool permissionDenied;
-}
-
-class ReceiptImageBatchPickResult {
-  const ReceiptImageBatchPickResult({
-    this.images = const [],
-    this.permissionDenied = false,
-    this.failed = false,
-  });
-
-  final List<ReceiptImage> images;
-  final bool permissionDenied;
-  final bool failed;
-}
+export 'receipt_image.dart';
+export 'receipt_image_batch_pick_result.dart';
+export 'receipt_image_pick_result.dart';
 
 /// Picks receipt images (camera or gallery) as [ReceiptImage]s.
 /// Fails silently on any error — backs a best-effort local extraction that

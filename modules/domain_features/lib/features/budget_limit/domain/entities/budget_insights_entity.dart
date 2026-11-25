@@ -1,52 +1,10 @@
 import 'package:equatable/equatable.dart';
 
-import 'budget_limit_stats_entity.dart';
+import 'budget_pacing_warning.dart';
+import 'budget_penalty_warning.dart';
 
-/// A near-limit/over budget with its Phase 3.4 pacing suggestion (80%:
-/// remaining days + suggested daily spend from the remaining 20%; 100%:
-/// remaining days, daily spend already at 0).
-class BudgetPacingWarning extends Equatable {
-  final String budgetName;
-  final String? categoryNameKey;
-  final BudgetLimitStatus status;
-  final int daysRemaining;
-  final int suggestedDailySpend;
-
-  const BudgetPacingWarning({
-    required this.budgetName,
-    this.categoryNameKey,
-    required this.status,
-    required this.daysRemaining,
-    required this.suggestedDailySpend,
-  });
-
-  @override
-  List<Object?> get props => [
-    budgetName,
-    categoryNameKey,
-    status,
-    daysRemaining,
-    suggestedDailySpend,
-  ];
-}
-
-/// A budget that has crossed one of the 120/150/200% penalty tiers.
-class BudgetPenaltyWarning extends Equatable {
-  final String budgetName;
-  final String? categoryNameKey;
-  final int percentUsed;
-  final BudgetPenaltyTier tier;
-
-  const BudgetPenaltyWarning({
-    required this.budgetName,
-    this.categoryNameKey,
-    required this.percentUsed,
-    required this.tier,
-  });
-
-  @override
-  List<Object?> get props => [budgetName, categoryNameKey, percentUsed, tier];
-}
+export 'budget_pacing_warning.dart';
+export 'budget_penalty_warning.dart';
 
 /// Aggregated Phase 3.4 "AI Actions" for the Budget Allocation page — empty
 /// (see [hasAnything]) when nothing needs the user's attention, matching the

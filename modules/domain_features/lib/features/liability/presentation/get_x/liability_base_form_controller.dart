@@ -9,9 +9,10 @@ import '../../../transaction/presentation/get_x/quick_entry_handler.dart';
 import '../../../transaction/presentation/get_x/quick_entry_session.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
+import 'liability_direction_form.dart';
 import 'liability_installment_draft.dart';
 
-enum LiabilityDirectionForm { increase, decrease }
+export 'liability_direction_form.dart';
 
 abstract class LiabilityBaseFormController extends TransactionFormController {
   LiabilityBaseFormController(this.quickEntryHandler);

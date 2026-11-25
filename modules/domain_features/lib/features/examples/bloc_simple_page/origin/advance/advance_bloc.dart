@@ -3,6 +3,9 @@ import 'package:injectable/injectable.dart';
 
 import 'advance_bloc_event.dart';
 import 'advance_bloc_state.dart';
+import 'bloc_type.dart';
+
+export 'bloc_type.dart';
 
 @lazySingleton
 class AdvanceBloc extends Bloc<AdvanceBlocEvent, AdvanceBlocState> {
@@ -30,5 +33,3 @@ class AdvanceBloc extends Bloc<AdvanceBlocEvent, AdvanceBlocState> {
   @disposeMethod
   Future<void> close() => super.close();
 }
-
-enum BlocType { builder, selector, listener, consumer }

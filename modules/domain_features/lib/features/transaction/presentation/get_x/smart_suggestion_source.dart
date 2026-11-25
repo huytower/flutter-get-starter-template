@@ -1,17 +1,6 @@
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
-import 'package:flutter/widgets.dart';
+import 'smart_suggestion.dart';
 
-class SmartSuggestion {
-  const SmartSuggestion({
-    required this.match,
-    required this.icon,
-    required this.hintKey,
-  });
-
-  final TransactionEntity match;
-  final IconData icon;
-  final String hintKey;
-}
+export 'smart_suggestion.dart';
 
 abstract interface class SmartSuggestionSource {
   SmartSuggestion? get activeSuggestion;

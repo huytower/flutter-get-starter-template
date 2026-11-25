@@ -22,21 +22,21 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<LoginBloc>(),
-      child: LoginView(showGradient: showGradient),
+      child: _LoginView(showGradient: showGradient),
     );
   }
 }
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key, this.showGradient = true});
+class _LoginView extends StatefulWidget {
+  const _LoginView({this.showGradient = true});
 
   final bool showGradient;
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<_LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginViewState extends State<_LoginView> {
   bool get _hasLinking => FirebaseAuth.instance.currentUser != null;
 
   @override

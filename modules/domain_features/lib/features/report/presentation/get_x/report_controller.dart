@@ -32,8 +32,9 @@ import '../../domain/usecases/get_investment_trend_usecase.dart';
 import '../../domain/usecases/get_liability_trend_usecase.dart';
 import '../../domain/usecases/get_trend_data_usecase.dart';
 import '../widgets/report_filter_picker_sheet.dart';
+import 'report_filter_type.dart';
 
-enum ReportFilterType { all, expense, income, investment, liability, lend }
+export 'report_filter_type.dart';
 
 @injectable
 class ReportController extends PrjGetController {
