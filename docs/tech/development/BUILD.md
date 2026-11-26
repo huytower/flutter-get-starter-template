@@ -9,7 +9,11 @@ Only the `prod` flavor exists. Every build needs `env/prod.json` (copy of `env/p
 ## Versioning
 
 `pubspec.yaml` (`version: <name>+<code>`, e.g. `1.0.0+25`) is the source of truth for the version **name** on
-both platforms and for the build **number** of local builds.
+both platforms and for the build **number** of local builds. iOS reads the name through `$(FLUTTER_BUILD_NAME)` in
+`ios/Runner/Info.plist`; do not set a version in Xcode.
+
+Once App Store Connect approves a version, it accepts no more uploads under that name (errors `90186` / `90062`):
+raise the `<name>` (e.g. `1.0.0` -> `1.0.1`) before the next push to `qltc`.
 
 | Build path | Build number used |
 |---|---|
