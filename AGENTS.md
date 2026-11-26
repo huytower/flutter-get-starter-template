@@ -255,9 +255,10 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
     `*_state.dart`/`*_event.dart`.
     - **File = type.** A file is named after the public type it declares (`money_formatter.dart` →
       `MoneyFormatter`). `*_usecase.dart` holds `*UseCase`, `*_datasource.dart` holds `*DataSource`. A
-      use case's own `*Params` / result type may share its file; any other type (entity, enum, failure,
-      repository interface) gets its own file. A sealed family stays in one file (Dart requires it).
-      The few deliberate family files (`CcSpace*`, `CcRow*`/`CcCol*`, ...) are listed in
+      use case's own `*Params` / result type may share its file; any other type (widget, entity, enum, failure,
+      repository interface) gets its own file. A sealed family stays in one file (Dart requires it), as do Bloc
+      `*_event.dart` / `*_state.dart` families. Private helpers (`_Foo`, a widget's `State`) stay with their
+      class. The few deliberate family files (`CcSpace*`, `CcRow*`/`CcCol*`, ...) are listed in
       `_typeFamilyFiles` in `scripts/check_imports.dart`; keep that list short.
     - **Folders:** plural layer folders (`datasources/`, `models/`, `entities/`, `repositories/`,
       `usecases/`), `get_x/` for GetX controllers, `pages/` + `widgets/` (not `ui/`). Shared code goes in a
@@ -412,8 +413,8 @@ on any doc having been read:
       barrel that re-exports it. Only `modules/bridge` may.
     - `di-composition-root` (section IV.2): `getIt` only in `core/di/`, the App Shell, a page (`*_page.dart`,
       `presentation/pages/`), or as `getIt<XController|XBloc|XCubit>()` at the entry point creating it.
-    - `naming-folder` / `naming-file-type` (rule #12): canonical folder names under `lib/`, and each file
-      named after the public type it declares (except the listed family files).
+    - `naming-folder` / `naming-file-type` (rule #12): canonical folder names under `lib/`; each file named
+      after the public type it declares and holding only that one public type (exceptions in rule #12).
     - `file-size` (rule #16): a source file under `lib/` has at most 300 lines.
     Existing `feature-controller` / `di-composition-root` / `file-size` debt is frozen per file in
     `scripts/check_imports_baseline.txt` (for `file-size` the count is the lines over 300, so a large file may

@@ -191,6 +191,11 @@ const Set<String> _typeFamilyFiles = {
   'modules/domain_features/lib/features/transaction/presentation/widgets/smart_entry_preview_fields.dart',
   // The auth failure family.
   'shared/cc_micro_features/lib/features/auth/domain/auth_failures.dart',
+  // The core failure family: open on purpose (apps add failures), so not
+  // sealed.
+  'shared/cc_core_sdk/cc_sdk_data/lib/src/domain/failures/cc_failure.dart',
+  // CcContentInset and CcContentPadding share the private inset scope.
+  'shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/adaptive/cc_content_inset.dart',
   // Design tokens and layout shorthands: CcSpaceXS..XL, CcRow*/CcCol*, ...
   'shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/space/cc_space.dart',
   'shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/flex/cc_flex.dart',
@@ -554,7 +559,8 @@ Iterable<_Violation> _checkNaming(String path, String source) sync* {
   }
 
   final base = segments.last.replaceFirst(RegExp(r'\.dart$'), '');
-  if (base == 'di' || base.startsWith('export_') || base == 'prj_locale_keys') return;
+  if (base == 'di' || base.startsWith('export_') || base == 'prj_locale_keys')
+    return;
   if (_typeFamilyFiles.contains(path)) return;
   if (RegExp(r'^part of\b', multiLine: true).hasMatch(source)) return;
   final types = _publicType.allMatches(source).map((m) => m.group(1)!).toList();
@@ -574,17 +580,20 @@ Iterable<_Violation> _checkNaming(String path, String source) sync* {
   // AGENTS.md rule 12: one public type per file (except a use case's own
   // *Params / result type, a sealed family, or Bloc *_event / *_state files).
   if (base.endsWith('_event') || base.endsWith('_state')) return;
-  final hasSealed = RegExp(r'^sealed\s+class\b', multiLine: true).hasMatch(source);
+  final hasSealed = RegExp(
+    r'^sealed\s+class\b',
+    multiLine: true,
+  ).hasMatch(source);
   if (hasSealed) return;
   final nonUseCaseExtra = base.endsWith('_usecase')
       ? types
-          .where(
-            (t) =>
-                t.toLowerCase() != key &&
-                !t.endsWith('Params') &&
-                !t.endsWith('Result'),
-          )
-          .toList()
+            .where(
+              (t) =>
+                  t.toLowerCase() != key &&
+                  !t.endsWith('Params') &&
+                  !t.endsWith('Result'),
+            )
+            .toList()
       : types.where((t) => t.toLowerCase() != key).toList();
   if (nonUseCaseExtra.isNotEmpty) {
     yield _Violation(
