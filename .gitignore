@@ -53,6 +53,8 @@ xcuserdata
 
 *.pyc
 *sync/
+# ...but never Dart source folders named *sync (e.g. lib/core/data/sync/)
+!**/lib/**/*sync/
 Icon?
 .tags*
 
