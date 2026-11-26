@@ -5,11 +5,13 @@ import 'package:domain_features/features/transaction/presentation/widgets/transa
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../guideline/export_guideline.dart';
+import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../get_x/expense_form_controller.dart';
 import '../get_x/quick_entry_batch_session.dart';
 import '../get_x/quick_entry_session.dart';
@@ -75,9 +77,24 @@ class TransactionHeaderBanner extends StatelessWidget {
           guideline.hasBannerHidden = false;
         }
       },
-      child: TransactionGuidelineBanner(
-        shouldHideDescription: hideGuidelineDescription,
+      child: _buildGuidelineBannerWidth(
+        context,
+        TransactionGuidelineBanner(
+          shouldHideDescription: hideGuidelineDescription,
+        ),
       ),
+    );
+  }
+
+  /// Phones keep the full-width banner; from a tablet window (medium, 600 dp)
+  /// up it takes half the width it is given, aligned to the start.
+  Widget _buildGuidelineBannerWidth(BuildContext context, Widget banner) {
+    if (context.windowSizeClass.hasBelow(CcWindowSizeClass.medium)) {
+      return banner;
+    }
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: FractionallySizedBox(widthFactor: 0.5, child: banner),
     );
   }
 
@@ -109,23 +126,17 @@ class TransactionHeaderBanner extends StatelessWidget {
     final canUseAiSmartEntry =
         getIt<UserLevelProvider>().status.canUseAiSmartEntry;
     final accentColor = _getTabColor(context, activeTab);
-    final hasLocked = !canUseAiSmartEntry;
 
     return SizedBox(
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              _buildQuickEntrySection(
-                context,
-                quickEntry.quickEntry,
-                accentColor,
-                hasLocked,
-              ),
-              if (hasLocked) _buildLockOverlay(context),
-            ],
+          _buildLockedQuickEntry(
+            context,
+            quickEntry.quickEntry,
+            accentColor,
+            canUseAiSmartEntry,
           ),
           if (canUseAiSmartEntry && suggestionSource != null)
             TransactionSmartSuggestionChip(
@@ -138,11 +149,39 @@ class TransactionHeaderBanner extends StatelessWidget {
     );
   }
 
+  /// AI smart entry is locked below LV3 (no VIP), and until the user agrees to
+  /// share data with Gemini: every input sends data, so there is no AI entry
+  /// without consent. Tapping the consent lock asks for it.
+  Widget _buildLockedQuickEntry(
+    BuildContext context,
+    QuickEntrySession controller,
+    Color accentColor,
+    bool canUseAiSmartEntry,
+  ) {
+    final section = _buildQuickEntrySection(context, controller, accentColor);
+    if (!canUseAiSmartEntry) {
+      return CcLockOverlay(hasLocked: true, child: section);
+    }
+
+    final aiPreferences = controller.handler.parser.aiPreferences;
+    return ValueListenableBuilder<bool?>(
+      valueListenable: aiPreferences.geminiEnabledListenable,
+      builder: (context, hasGeminiEnabled, child) => CcLockOverlay(
+        // Unknown (still loading) is not shown as locked, so the lock never
+        // flashes for a user who already agreed; the parsers check again.
+        hasLocked: hasGeminiEnabled == false,
+        semanticLabel: el.tr(PrjLocaleKeys.profile_ai_consent_title),
+        onLockedTap: () => AiConsentSheet.ensure(context, aiPreferences),
+        child: child!,
+      ),
+      child: section,
+    );
+  }
+
   Widget _buildQuickEntrySection(
     BuildContext context,
     QuickEntrySession controller,
     Color accentColor,
-    bool hasLocked,
   ) {
     final suggestion = controller.quickEntrySuggestion.value;
     final errorKey = controller.quickEntryErrorKey.value;
@@ -164,49 +203,10 @@ class TransactionHeaderBanner extends StatelessWidget {
         if (suggestion != null) controller.applyQuickEntryParse(suggestion);
       },
       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
-      aiPreferences: controller.handler.parser.aiPreferences,
       onClear: () {
         controller.dismissQuickEntrySuggestion();
         controller.hasParsingQuickEntry.value = false;
       },
-      hasLocked: hasLocked,
-    );
-  }
-
-  Widget _buildLockOverlay(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    return Positioned.fill(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: scheme.surface.withOpacity(0.3),
-          borderRadius: context.brLg,
-        ),
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: context.respDim(32),
-                height: context.respDim(32),
-                decoration: BoxDecoration(
-                  color: scheme.surface,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: scheme.onSurfaceVariant.withOpacity(0.1),
-                    width: context.respDim(1.5),
-                  ),
-                ),
-                child: Icon(
-                  Icons.lock_outline_rounded,
-                  size: context.respIconSize(baseSize: 16),
-                  color: scheme.onSurfaceVariant.withOpacity(0.6),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 

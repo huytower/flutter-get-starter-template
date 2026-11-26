@@ -11,27 +11,25 @@ import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../../domain/entities/reconciliation_availability_entity.dart';
 import '../../domain/entities/reconciliation_entity.dart';
-import '../../domain/usecases/get_reconciliation_history_usecase.dart';
-import '../../domain/usecases/perform_reconciliation_usecase.dart';
-import '../../domain/usecases/undo_reconciliation_usecase.dart';
+import '../actions/reconciliation_record_actions.dart';
 import '../widgets/reconciliation_success_sheet.dart';
 
 @injectable
 class ReconciliationController extends PrjGetController {
   ReconciliationController(
     this._getWalletBalances,
-    this._performReconciliation,
-    this._undoReconciliation,
-    this._getHistory,
+    this._records,
     this._userLevel,
   );
 
   final GetWalletBalancesUseCase _getWalletBalances;
-  final PerformReconciliationUseCase _performReconciliation;
-  final UndoReconciliationUseCase _undoReconciliation;
-  final GetReconciliationHistoryUseCase _getHistory;
+  final ReconciliationRecordActions _records;
   final UserLevelProvider _userLevel;
+
+  /// The current audit cycle; confirm is off once it is reconciled.
+  final cycle = Rxn<ReconciliationAvailabilityEntity>();
 
   final RxList<WalletBalanceEntity> balances = <WalletBalanceEntity>[].obs;
   final RxList<ReconciliationEntity> history = <ReconciliationEntity>[].obs;
@@ -74,6 +72,7 @@ class ReconciliationController extends PrjGetController {
         _actuals.isNotEmpty &&
         unhandledCount.value == 0 &&
         balances.isNotEmpty &&
+        !(cycle.value?.hasReconciledThisCycle ?? false) &&
         !hasSubmitting.value;
   }
 
@@ -192,8 +191,9 @@ class ReconciliationController extends PrjGetController {
   }
 
   Future<void> loadHistory() async {
-    final result = await _getHistory.call();
+    final result = await _records.history();
     result.when((success) => history.assignAll(success), (_) {});
+    cycle.value = (await _records.availability()).tryGetSuccess();
   }
 
   void setActual(String walletId, int value) {
@@ -283,7 +283,7 @@ class ReconciliationController extends PrjGetController {
     if (hasSubmitting.value) return null;
     hasSubmitting.value = true;
     try {
-      final result = await _performReconciliation.call(
+      final result = await _records.perform(
         await _actualsInWalletCurrency(),
         displayTotals: (
           systemTotal: systemTotal.value,
@@ -345,7 +345,7 @@ class ReconciliationController extends PrjGetController {
     if (hasSubmitting.value) return null;
     hasSubmitting.value = true;
     try {
-      final result = await _undoReconciliation.call();
+      final result = await _records.undo();
       return result.when<String?>((_) {
         loadBalances(showLoading: false);
         loadHistory();

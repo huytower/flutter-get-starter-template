@@ -106,7 +106,7 @@
     <!-- ===================== TIẾNG VIỆT ===================== -->
     <div class="container vietnamese-content" id="content-vi">
         <h1>Chính Sách Quyền Riêng Tư</h1>
-        <p class="update-date">Cập nhật lần cuối: 24/11/2026</p>
+        <p class="update-date">Cập nhật lần cuối: 27/11/2026</p>
 
         <div class="highlight">
             Chính sách này giải thích ứng dụng Sổ Sách Xịn ("Ứng dụng", "chúng tôi") thu thập dữ liệu gì, thu thập bằng cách nào, dùng để làm gì, chia sẻ với ai, lưu trong bao lâu và cách bạn rút lại sự đồng ý hoặc xóa dữ liệu. Chúng tôi không bán dữ liệu của bạn, không hiển thị quảng cáo và không theo dõi bạn trên các ứng dụng hay trang web khác.
@@ -141,9 +141,14 @@
                 <td>Đọc nội dung hóa đơn. Ứng dụng không truy cập các ảnh khác</td>
             </tr>
             <tr>
-                <td>Vị trí gần đúng</td>
-                <td>Chỉ khi bạn cho phép</td>
-                <td>Gợi ý đơn vị tiền tệ theo quốc gia. Vị trí không được lưu và không được gửi cho chúng tôi</td>
+                <td>Vị trí (để nhận diện quốc gia)</td>
+                <td>Chỉ khi bạn cho phép, lúc Ứng dụng tự gợi ý đơn vị tiền tệ (trước khi bạn tự chọn)</td>
+                <td>Gợi ý đơn vị tiền tệ theo quốc gia. Chỉ lưu mã quốc gia trên thiết bị; tọa độ không được lưu và không được gửi lên đám mây</td>
+            </tr>
+            <tr>
+                <td>Vị trí chính xác gắn với khoản chi</td>
+                <td>Chỉ khi bạn cho phép, lúc mở màn hình nhập khoản chi, nếu bạn đã mở khóa tính năng gợi ý thông minh (cấp 3 hoặc VIP)</td>
+                <td>Gợi ý lại khoản chi bạn từng ghi gần nơi bạn đang đứng. Tọa độ được lưu cùng khoản chi trên thiết bị và, nếu bạn đã đăng nhập, được sao lưu vào tài khoản đám mây của bạn (Cloud Firestore) như phần còn lại của giao dịch. Tọa độ bị xóa khi bạn xóa giao dịch đó hoặc xóa tài khoản. Không dùng cho quảng cáo hay theo dõi, không chia sẻ với bên thứ ba và không gửi cho AI</td>
             </tr>
             <tr>
                 <td>Dữ liệu thiết bị và chẩn đoán: mẫu máy, hệ điều hành, phiên bản ứng dụng, nhật ký lỗi, dữ liệu hiệu năng</td>
@@ -189,7 +194,7 @@
         <h2>4. Lưu Trữ Và Xóa Dữ Liệu</h2>
         <ul>
             <li>Dữ liệu tài chính và thông tin tài khoản được lưu trong thời gian tài khoản của bạn còn tồn tại.</li>
-            <li>Khi bạn <strong>xóa tài khoản</strong> (Hồ sơ → Xóa tài khoản), chúng tôi xóa ngay tài khoản đăng nhập và toàn bộ dữ liệu tài chính của bạn trên đám mây, đồng thời xóa dữ liệu trên thiết bị. Thao tác này không thể hoàn tác. Nếu bạn đăng nhập bằng Apple, quyền truy cập của Ứng dụng vào Apple ID của bạn cũng được thu hồi.</li>
+            <li>Khi bạn <strong>xóa tài khoản</strong> (Hồ sơ → Xóa tài khoản), chúng tôi xóa ngay tài khoản đăng nhập và toàn bộ dữ liệu tài chính của bạn trên đám mây, đồng thời xóa dữ liệu trên thiết bị. Thao tác này không thể hoàn tác. Nếu tài khoản có liên kết Apple và Apple ID trên thiết bị này chính là Apple ID đó, Ứng dụng yêu cầu bạn xác nhận bằng Apple rồi thu hồi quyền truy cập của Ứng dụng vào Apple ID của bạn (dù lần này bạn đăng nhập bằng Apple hay Google). Nếu thiết bị dùng Apple ID khác hoặc bạn xóa trên Android, hãy tự gỡ Ứng dụng trong Cài đặt → [tên bạn] → Đăng nhập bằng Apple.</li>
             <li>Khi bạn đăng xuất, dữ liệu trên thiết bị được xóa sau khi đã sao lưu lên đám mây.</li>
             <li>Nhật ký lỗi, dữ liệu hiệu năng và thống kê sử dụng được lưu theo thời hạn lưu trữ của Google Firebase và không dùng để nhận dạng cá nhân bạn. Báo cáo lỗi và góp ý trong Slack được xóa khi không còn cần cho việc sửa lỗi, hoặc khi bạn yêu cầu.</li>
         </ul>
@@ -197,7 +202,7 @@
         <h2>5. Quyền Và Lựa Chọn Của Bạn</h2>
         <ul>
             <li>Rút lại đồng ý chia sẻ dữ liệu với AI: Hồ sơ → Chia sẻ dữ liệu với AI.</li>
-            <li>Từ chối hoặc thu hồi quyền vị trí, micro, camera, ảnh, thông báo trong Cài đặt của thiết bị. Ứng dụng vẫn hoạt động, chỉ tính năng tương ứng bị tắt.</li>
+            <li>Từ chối hoặc thu hồi quyền vị trí, micro, camera, ảnh, thông báo trong Cài đặt của thiết bị. Ứng dụng vẫn hoạt động, chỉ tính năng tương ứng bị tắt. Khi quyền vị trí bị tắt, các khoản chi mới không được gắn tọa độ.</li>
             <li>Xóa tài khoản và toàn bộ dữ liệu: Hồ sơ → Xóa tài khoản.</li>
             <li>Yêu cầu truy cập, sửa hoặc xóa dữ liệu (kể cả báo cáo lỗi và góp ý): gửi email theo địa chỉ ở mục 9. Chúng tôi phản hồi trong vòng 30 ngày.</li>
         </ul>
@@ -224,7 +229,7 @@
     <!-- ===================== ENGLISH ===================== -->
     <div class="container english-content" id="content-en">
         <h1>Privacy Policy</h1>
-        <p class="update-date">Last updated: November 24, 2026</p>
+        <p class="update-date">Last updated: November 27, 2026</p>
 
         <div class="highlight">
             This policy explains what data the Sổ Sách Xịn app ("App", "we") collects, how it is collected, what it is used for, who it is shared with, how long it is kept, and how you can withdraw consent or delete your data. We do not sell your data, show ads, or track you across other apps or websites.
@@ -259,9 +264,14 @@
                 <td>Read the receipt. The App does not access your other photos</td>
             </tr>
             <tr>
-                <td>Approximate location</td>
-                <td>Only if you allow it</td>
-                <td>Suggest your currency based on your country. Location is not stored and not sent to us</td>
+                <td>Location (to detect your country)</td>
+                <td>Only if you allow it, when the App suggests your currency (before you pick one yourself)</td>
+                <td>Suggest your currency based on your country. Only the country code is kept, on your device; the coordinates are not stored and not sent to the cloud</td>
+            </tr>
+            <tr>
+                <td>Precise location attached to an expense</td>
+                <td>Only if you allow it, when you open the expense form, once you have unlocked smart suggestions (level 3 or VIP)</td>
+                <td>Suggest expenses you recorded near where you are. The coordinates are saved with the expense on your device and, if you are signed in, backed up to your cloud account (Cloud Firestore) like the rest of the transaction. They are deleted when you delete that transaction or your account. Not used for ads or tracking, not shared with third parties, and never sent to AI</td>
             </tr>
             <tr>
                 <td>Device and diagnostics: device model, OS, app version, crash logs, performance data</td>
@@ -307,7 +317,7 @@
         <h2>4. Data Retention and Deletion</h2>
         <ul>
             <li>Your financial data and account information are kept for as long as your account exists.</li>
-            <li>When you <strong>delete your account</strong> (Profile → Delete account), we immediately delete your sign-in account and all of your financial data in the cloud, and clear the data on your device. This cannot be undone. If you signed in with Apple, the App's access to your Apple ID is also revoked.</li>
+            <li>When you <strong>delete your account</strong> (Profile → Delete account), we immediately delete your sign-in account and all of your financial data in the cloud, and clear the data on your device. This cannot be undone. If your account has Apple linked and the Apple ID on this device is that one, the App asks you to confirm with Apple and then revokes its access to your Apple ID (whether you signed in with Apple or Google this time). If the device uses another Apple ID, or you delete on Android, remove the App yourself in Settings → [your name] → Sign in with Apple.</li>
             <li>When you log out, the data on your device is cleared after it has been backed up to the cloud.</li>
             <li>Crash logs, performance data and usage statistics are kept according to Google Firebase's retention periods and are not used to identify you personally. Crash reports and feedback in Slack are deleted when no longer needed to fix issues, or when you ask.</li>
         </ul>
@@ -315,7 +325,7 @@
         <h2>5. Your Rights and Choices</h2>
         <ul>
             <li>Withdraw consent to AI data sharing: Profile → Share data with AI.</li>
-            <li>Deny or revoke location, microphone, camera, photos and notification permissions in your device Settings. The App keeps working; only the related feature is turned off.</li>
+            <li>Deny or revoke location, microphone, camera, photos and notification permissions in your device Settings. The App keeps working; only the related feature is turned off. With location off, new expenses are saved without coordinates.</li>
             <li>Delete your account and all of its data: Profile → Delete account.</li>
             <li>Request access to, correction or deletion of your data (including crash reports and feedback): email us at the address in section 9. We reply within 30 days.</li>
         </ul>

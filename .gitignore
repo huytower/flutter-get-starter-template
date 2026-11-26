@@ -162,4 +162,4 @@ vendor/bundle/
 /macos/Flutter/GeneratedPluginRegistrant.swift
 
 # Product specification is kept out of version control (local only)
-docs/BUSINESS_REQUIREMENT.md
+#docs/BUSINESS_REQUIREMENT.md

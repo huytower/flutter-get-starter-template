@@ -9,6 +9,7 @@ import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../repositories/transaction_repository.dart';
+import '../services/reconciled_period_lock.dart';
 
 /// Input for [UpdateTransactionUseCase].
 class UpdateTransactionParams {
@@ -61,9 +62,11 @@ class UpdateTransactionUseCase {
     this._walletRepository,
     this._getWalletBookBalance,
     this._conversionService,
+    this._periodLock,
   );
 
   final TransactionRepository _transactionRepository;
+  final ReconciledPeriodLock _periodLock;
   final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
   final CurrencyConversionService _conversionService;
@@ -94,6 +97,11 @@ class UpdateTransactionUseCase {
         transactionEditWindowDays) {
       return const Error(
         CcValidationFailure(PrjLocaleKeys.transaction_validation_edit_window),
+      );
+    }
+    if (await _periodLock.hasReconciled(original)) {
+      return const Error(
+        CcValidationFailure(PrjLocaleKeys.transaction_validation_reconciled),
       );
     }
     if (params.amount <= 0) {

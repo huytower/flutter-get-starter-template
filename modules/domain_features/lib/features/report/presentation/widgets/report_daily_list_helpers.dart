@@ -2,6 +2,8 @@ import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../transaction/domain/services/reconciled_period_lock.dart';
+
 bool computeIsInflow(TransactionEntity transaction) {
   final type = transaction.type;
   return type == TransactionType.income ||
@@ -10,9 +12,18 @@ bool computeIsInflow(TransactionEntity transaction) {
       type == TransactionType.debtCollect;
 }
 
-bool hasEditableTransaction(TransactionEntity transaction) {
+/// Whether the report may offer edit/delete for [transaction]: the type allows
+/// it, it is within the edit window, and it is not in a reconciled period
+/// (dated at or before [reconciledUntil], see `ReconciledPeriodLock`).
+bool hasEditableTransaction(
+  TransactionEntity transaction, {
+  DateTime? reconciledUntil,
+}) {
   if (transaction.hasDeleted) return false;
   if (transaction.hasTransfer) return false;
+  if (ReconciledPeriodLock.hasLocked(transaction, reconciledUntil)) {
+    return false;
+  }
   return DateTime.now().difference(transaction.date).inDays <=
       transactionEditWindowDays;
 }

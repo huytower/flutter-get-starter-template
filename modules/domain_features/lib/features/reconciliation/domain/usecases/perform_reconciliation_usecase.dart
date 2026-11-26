@@ -13,6 +13,7 @@ import '../entities/reconciliation_allocation_entity.dart';
 import '../entities/reconciliation_entity.dart';
 import '../reconciliation_period_utils.dart';
 import '../repositories/reconciliation_repository.dart';
+import 'get_reconciliation_availability_usecase.dart';
 
 /// Performs a reconciliation (mirrors `KiemToanBCTCUseCase` +
 /// `KiemToanRepo.luuKiemToan`):
@@ -22,17 +23,23 @@ import '../repositories/reconciliation_repository.dart';
 /// 3. For each discrepancy, create an adjustment transaction (income for a
 ///    surplus / "dôi dư", expense for a shortfall / "hao hụt") so book = reality.
 /// 4. Save the reconciliation record with the created adjustment ids.
+///
+/// Refused when the current audit cycle already has a reconciliation (see
+/// [GetReconciliationAvailabilityUseCase]). The page entry checks this first;
+/// this guard covers a page left open across days or a double submit.
 @lazySingleton
 class PerformReconciliationUseCase {
   PerformReconciliationUseCase(
     this._getWalletBalances,
     this._transactionRepository,
     this._reconciliationRepository,
+    this._getAvailability,
   );
 
   final GetWalletBalancesUseCase _getWalletBalances;
   final TransactionRepository _transactionRepository;
   final ReconciliationRepository _reconciliationRepository;
+  final GetReconciliationAvailabilityUseCase _getAvailability;
 
   /// [actualByWalletId] maps a wallet id to the counted balance, in that
   /// wallet's own currency. Wallets absent from the map are assumed to match
@@ -46,6 +53,14 @@ class PerformReconciliationUseCase {
     Map<String, int> actualByWalletId, {
     ({int systemTotal, int actualTotal, String currencyCode})? displayTotals,
   }) async {
+    final availability = await _getAvailability();
+    if (availability.isError()) return Error(availability.tryGetError()!);
+    if (availability.tryGetSuccess()!.hasReconciledThisCycle) {
+      return Error(
+        CcValidationFailure(el.tr(PrjLocaleKeys.reconciliation_locked_message)),
+      );
+    }
+
     final balancesResult = await _getWalletBalances.call();
     if (balancesResult.isError()) {
       return Error(balancesResult.tryGetError()!);

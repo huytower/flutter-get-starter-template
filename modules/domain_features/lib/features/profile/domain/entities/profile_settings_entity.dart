@@ -11,7 +11,8 @@ class ProfileSettingsEntity {
     this.hasDarkMode,
     this.weeklyAuditDayChangedAt,
     this.levelFeatureAnchorAt,
-    this.hasVip = false,
+    this.hasVipSwitch = false,
+    this.hasPaidVip = false,
     this.highestUserLevelReached = 1,
     this.firstLaunchAt,
     this.cloudBackupReminderSentAt,
@@ -47,9 +48,24 @@ class ProfileSettingsEntity {
   /// forward, so pre-existing dev/test data can't grant an instant level.
   final DateTime? levelFeatureAnchorAt;
 
-  /// Manual VIP flag (no real IAP/store billing infra exists yet). Lifts the
-  /// free-tier cap on the number of Investment items / Loan records.
-  final bool hasVip;
+  /// The free "Unlock Invest, Liability, AI (experiment)" switch in Profile (Hive field 14, synced as
+  /// `hasVip`). Temporary: it exists until paid VIP ships, then the switch is
+  /// hidden and [hasVipAccess] stops reading it. The stored values are simply
+  /// ignored from then on, so no migration is needed.
+  final bool hasVipSwitch;
+
+  /// Paid VIP (Hive field 32). Set only by the purchase / entitlement check,
+  /// never by a Profile control, and never synced from the device: a client
+  /// copy is not proof of payment. Always false until billing exists.
+  final bool hasPaidVip;
+
+  /// Whether the user has VIP: the second, independent unlock path next to
+  /// the earned level (see `UserLevelStatusEntity`). Also lifts the free-tier
+  /// limits on Investment items / Loan records (custom names).
+  ///
+  /// When paid VIP ships, drop `|| hasVipSwitch` here (or keep it for debug /
+  /// QA builds only); nothing else changes.
+  bool get hasVipAccess => hasPaidVip || hasVipSwitch;
 
   /// Highest LV1-3 user level ever computed. Level is monotonic — never
   /// decreases once reached — so the user-level usecase re-applies this
@@ -92,7 +108,8 @@ class ProfileSettingsEntity {
     bool? hasDarkMode,
     DateTime? weeklyAuditDayChangedAt,
     DateTime? levelFeatureAnchorAt,
-    bool? hasVip,
+    bool? hasVipSwitch,
+    bool? hasPaidVip,
     int? highestUserLevelReached,
     DateTime? firstLaunchAt,
     DateTime? cloudBackupReminderSentAt,
@@ -114,7 +131,8 @@ class ProfileSettingsEntity {
     weeklyAuditDayChangedAt:
         weeklyAuditDayChangedAt ?? this.weeklyAuditDayChangedAt,
     levelFeatureAnchorAt: levelFeatureAnchorAt ?? this.levelFeatureAnchorAt,
-    hasVip: hasVip ?? this.hasVip,
+    hasVipSwitch: hasVipSwitch ?? this.hasVipSwitch,
+    hasPaidVip: hasPaidVip ?? this.hasPaidVip,
     highestUserLevelReached:
         highestUserLevelReached ?? this.highestUserLevelReached,
     firstLaunchAt: firstLaunchAt ?? this.firstLaunchAt,

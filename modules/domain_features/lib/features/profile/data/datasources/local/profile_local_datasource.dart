@@ -88,7 +88,8 @@ class ProfileLocalDataSource {
       }
 
       // If currency was auto-detected (not manually selected by user), refine via GPS in background
-      if (storage.currencySelectionSource == CurrencySelectionSources.detected) {
+      if (storage.currencySelectionSource ==
+          CurrencySelectionSources.detected) {
         unawaited(_refineCurrencyFromGps());
       }
     }
@@ -98,14 +99,16 @@ class ProfileLocalDataSource {
     return ProfileSettingsEntity(
       reminderEnabled: storage.reminderEnabled ?? false,
       weeklyAuditDayIndex: storage.weeklyAuditDayIndex ?? 6,
-      currencyCode: storage.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
+      currencyCode:
+          storage.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
       currencySelectionSource: storage.currencySelectionSource,
       currencyDetectionCountryCode: storage.currencyDetectionCountryCode,
       birthYear: storage.birthYear,
       hasDarkMode: storage.hasDarkMode,
       weeklyAuditDayChangedAt: storage.weeklyAuditDayChangedAt,
       levelFeatureAnchorAt: storage.levelFeatureAnchorAt,
-      hasVip: storage.hasVip ?? PrjFeatureFlags.hasVipModeEnabled,
+      hasVipSwitch: storage.hasVip ?? PrjFeatureFlags.hasVipModeEnabled,
+      hasPaidVip: storage.hasPaidVip ?? false,
       highestUserLevelReached: storage.highestUserLevelReached ?? 1,
       firstLaunchAt: storage.firstLaunchAt,
       cloudBackupReminderSentAt: storage.cloudBackupReminderSentAt,
@@ -134,7 +137,8 @@ class ProfileLocalDataSource {
     try {
       final suggestion = await _detectFromGps().timeout(_gpsTimeout);
 
-      if (storage.currencySelectionSource != CurrencySelectionSources.detected) {
+      if (storage.currencySelectionSource !=
+          CurrencySelectionSources.detected) {
         return;
       }
 
@@ -212,7 +216,8 @@ class ProfileLocalDataSource {
     storage.hasDarkMode = entity.hasDarkMode;
     storage.weeklyAuditDayChangedAt = entity.weeklyAuditDayChangedAt;
     storage.levelFeatureAnchorAt = entity.levelFeatureAnchorAt;
-    storage.hasVip = entity.hasVip;
+    storage.hasVip = entity.hasVipSwitch;
+    storage.hasPaidVip = entity.hasPaidVip;
     storage.highestUserLevelReached = entity.highestUserLevelReached;
     storage.firstLaunchAt = entity.firstLaunchAt;
     storage.cloudBackupReminderSentAt = entity.cloudBackupReminderSentAt;

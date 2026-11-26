@@ -5,11 +5,12 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../report/presentation/widgets/report_daily_detail_shortcut.dart';
-import '../get_x/budget_allocation_controller.dart';
 
-PreferredSizeWidget buildBudgetAllocationHeader(BuildContext context) {
-  final controller = Get.find<BudgetAllocationController>();
-
+/// [onReconcile] opens the reconciliation page (through its entry guard).
+PreferredSizeWidget buildBudgetAllocationHeader(
+  BuildContext context, {
+  required VoidCallback onReconcile,
+}) {
   return CcGradientAppBar.create(
     context,
     title: CcText(
@@ -21,7 +22,7 @@ PreferredSizeWidget buildBudgetAllocationHeader(BuildContext context) {
     ),
     actions: [
       CcBouncing(
-        onTap: () => controller.navigateToReconcile(context),
+        onTap: onReconcile,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -49,7 +50,9 @@ PreferredSizeWidget buildBudgetAllocationHeader(BuildContext context) {
 
 class BudgetAllocationHeader extends StatelessWidget
     implements PreferredSizeWidget {
-  const BudgetAllocationHeader({super.key});
+  const BudgetAllocationHeader({super.key, required this.onReconcile});
+
+  final VoidCallback onReconcile;
 
   @override
   Size get preferredSize {
@@ -61,6 +64,6 @@ class BudgetAllocationHeader extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return buildBudgetAllocationHeader(context);
+    return buildBudgetAllocationHeader(context, onReconcile: onReconcile);
   }
 }

@@ -6,6 +6,7 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/ai/ai_advice_highlight_helper.dart';
+import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../../domain/entities/ai_advice_entity.dart';
 import '../get_x/report_controller.dart';
 
@@ -26,36 +27,64 @@ class AiAdviceSection extends StatelessWidget {
       final hasGenerating = controller.hasGeneratingAdvice.value;
       final errorKey = controller.aiAdviceErrorKey.value;
 
-      return Container(
-        padding: EdgeInsets.all(context.respDim(12)),
-        decoration: BoxDecoration(
-          color: PrjColors.info.withOpacity(0.1),
-          borderRadius: context.brLg,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTitleRow(context),
-            const CcSpaceSM(),
-            if (hasGenerating)
-              _buildLoadingBody(context)
-            else if (advice != null)
-              _buildAdviceBody(context, advice)
-            else
-              _buildEmptyBody(context),
-            if (errorKey != null) ...[
-              const CcSpaceXS(),
-              CcText(
-                el.tr(errorKey),
-                textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  color: context.ccColorScheme.error,
-                ),
-              ),
-            ],
-          ],
-        ),
+      return _buildConsentLock(
+        context,
+        _buildCard(context, advice, hasGenerating, errorKey),
       );
     });
+  }
+
+  /// The advice sends this month's totals to Gemini, so it stays locked until
+  /// the user agrees to share data; tapping the lock asks for it.
+  Widget _buildConsentLock(BuildContext context, Widget card) {
+    final aiPreferences = controller.aiPreferences;
+    return ValueListenableBuilder<bool?>(
+      valueListenable: aiPreferences.geminiEnabledListenable,
+      builder: (context, hasGeminiEnabled, child) => CcLockOverlay(
+        hasLocked: hasGeminiEnabled == false,
+        semanticLabel: el.tr(PrjLocaleKeys.profile_ai_consent_title),
+        onLockedTap: () => AiConsentSheet.ensure(context, aiPreferences),
+        child: child!,
+      ),
+      child: card,
+    );
+  }
+
+  Widget _buildCard(
+    BuildContext context,
+    AiAdviceEntity? advice,
+    bool hasGenerating,
+    String? errorKey,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(context.respDim(12)),
+      decoration: BoxDecoration(
+        color: PrjColors.info.withOpacity(0.1),
+        borderRadius: context.brLg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitleRow(context),
+          const CcSpaceSM(),
+          if (hasGenerating)
+            _buildLoadingBody(context)
+          else if (advice != null)
+            _buildAdviceBody(context, advice)
+          else
+            _buildEmptyBody(context),
+          if (errorKey != null) ...[
+            const CcSpaceXS(),
+            CcText(
+              el.tr(errorKey),
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: context.ccColorScheme.error,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _buildTitleRow(BuildContext context) {

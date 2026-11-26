@@ -12,11 +12,16 @@ class ReportDailyList extends StatelessWidget {
     required this.transactions,
     required this.includeInvestmentAndLiability,
     required this.hasEditMode,
+    this.reconciledUntil,
   });
 
   final List<TransactionEntity> transactions;
   final bool includeInvestmentAndLiability;
   final bool hasEditMode;
+
+  /// Latest reconciliation: edit/delete is offered only for transactions
+  /// dated after it (unreconciled). Null when nothing was reconciled yet.
+  final DateTime? reconciledUntil;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +50,7 @@ class ReportDailyList extends StatelessWidget {
           transactions: groups[date]!,
           includeInvestmentAndLiability: includeInvestmentAndLiability,
           hasEditMode: hasEditMode,
+          reconciledUntil: reconciledUntil,
         ),
     ];
 

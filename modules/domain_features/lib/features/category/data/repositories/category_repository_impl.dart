@@ -4,6 +4,7 @@ import 'package:domain_features/core/data/repositories/prj_base_repository.dart'
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
+import 'package:domain_features/features/firestore/pending_cloud_deletes.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -87,7 +88,9 @@ class CategoryRepositoryImpl
   @override
   Future<Result<void, CcFailure>> deleteCategory(String id) {
     return safeRequest(() async {
+      final model = await _local.getCategory(id);
       await _local.deleteCategory(id);
+      await PendingCloudDeletes.add('categories', [id, model?.remoteId]);
       _syncService.syncAll();
     });
   }

@@ -25,7 +25,7 @@ class EmergencyFundAccess {
   /// Whether an emergency-fund wallet may be created now.
   Future<bool> hasUnlocked() async {
     final settings = await _getSettings();
-    return settings.hasVip ||
+    return settings.hasVipAccess ||
         (_userLevel.status.level >= 3 && settings.hasViewedEmergencyFundEbook);
   }
 

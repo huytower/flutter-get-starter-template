@@ -81,10 +81,8 @@
 	<string>Sổ Sách Xịn needs access to your documents folder to save and export your financial reports and transaction data.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Sổ Sách Xịn uses Face ID to securely authenticate your account and protect your financial data from unauthorized access.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
+	<string>Sổ Sách Xịn uses your location to suggest your currency from your country (only the country is kept) and, once smart suggestions are unlocked, to save where you record each expense so it can suggest expenses you made nearby. These places are saved with your expenses and backed up to your account. Optional: you can say no and keep using the app.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Sổ Sách Xịn uses your microphone to let you speak a quick expense entry like "50k cà phê" instead of typing (optional feature).</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

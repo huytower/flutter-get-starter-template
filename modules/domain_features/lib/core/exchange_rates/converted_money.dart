@@ -12,7 +12,5 @@ class ConvertedMoney {
   final String currencyCode;
   final RateProvenance provenance;
 
-  bool get showStaleWarning =>
-      provenance == RateProvenance.staleCache ||
-      provenance == RateProvenance.offlineFallback;
+  bool get showStaleWarning => provenance == RateProvenance.staleCache;
 }

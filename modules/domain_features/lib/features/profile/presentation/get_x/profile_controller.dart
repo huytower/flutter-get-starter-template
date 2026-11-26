@@ -73,7 +73,7 @@ class ProfileController extends PrjGetController {
     aiSharingEnabled.value = await _app.requestAiConsent(context);
   }
 
-  /// "Unlock all features" also unlocks the AI features, so enabling it asks
+  /// "Unlock Invest, Liability, AI (experiment)" also unlocks the AI features, so enabling it asks
   /// for the AI data-sharing consent first. Either answer still unlocks the
   /// features; only "Allow" turns on sharing.
   Future<void> toggleFullAccess(BuildContext context, bool value) async {
@@ -124,7 +124,7 @@ class ProfileController extends PrjGetController {
     });
 
     ever(CurrencyConstants.onCurrencyChanged, (_) => _syncStoredCurrency());
-    _load();
+    reloadSettings();
     unawaited(_loadSignInReminder());
   }
 
@@ -144,7 +144,7 @@ class ProfileController extends PrjGetController {
     await _settingsActions.save(updated);
   }
 
-  Future<void> _load() async {
+  Future<void> reloadSettings() async {
     try {
       layoutStatus.value = CcLayoutStatus.loading;
       settings.value = await _settingsActions.load();
@@ -219,7 +219,7 @@ class ProfileController extends PrjGetController {
   }
 
   Future<void> setVip(bool value) async {
-    await _save(settings.value.copyWith(hasVip: value));
+    await _save(settings.value.copyWith(hasVipSwitch: value));
 
     if (value) await _onboarding.enableFullAccessCategories();
 
@@ -348,7 +348,7 @@ class ProfileController extends PrjGetController {
           currencySelectionSource: CurrencySelectionSources.userSelected,
         ),
       );
-      await _load();
+      await reloadSettings();
       CurrencyConstants.onCurrencyChanged.value++;
     }
   }

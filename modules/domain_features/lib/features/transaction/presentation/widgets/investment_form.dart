@@ -45,17 +45,11 @@ class _InvestmentFormState extends State<InvestmentForm> {
   Widget build(BuildContext context) {
     return Obx(() {
       final accentColor = _accentColor(context, controller.direction.value);
-      final guideline = getIt<GuidelineProvider>();
 
       return Column(
         children: [
           Expanded(
-            child: _buildScrollableContent(
-              context,
-              controller,
-              accentColor,
-              guideline,
-            ),
+            child: _buildScrollableContent(context, controller, accentColor),
           ),
           if (controller.showKeypad.value)
             _buildMoneyKeypadPanel(context, controller, accentColor),
@@ -73,7 +67,6 @@ class _InvestmentFormState extends State<InvestmentForm> {
     BuildContext context,
     InvestmentFormController controller,
     Color accentColor,
-    GuidelineProvider guideline,
   ) {
     return GestureDetector(
       onTap: () {
@@ -146,9 +139,10 @@ class _InvestmentFormState extends State<InvestmentForm> {
   ) {
     final guideline = getIt<GuidelineProvider>();
 
+    // Non-positioned badge: the Stack grows to hold its label, so the close
+    // button stays hit-testable (Clip.none paints outside, never hit-tests).
     return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
+      alignment: Alignment.topCenter,
       children: [
         Obx(
           () => InvestmentDirectionToggle(
@@ -164,14 +158,19 @@ class _InvestmentFormState extends State<InvestmentForm> {
                   TransactionTabKind.investment.index) {
             return const SizedBox.shrink();
           }
-          return Positioned(
-            top: context.respDim(15),
-            right: context.respDim(50),
-            child: PrjGuidelineBadge(
-              size: context.respDim(6),
-              label: guideline.bannerDescription,
-              labelAbove: false,
-              growRight: false,
+          return Padding(
+            padding: EdgeInsets.only(
+              top: context.respDim(15),
+              right: context.respDim(50),
+            ),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: PrjGuidelineBadge(
+                size: context.respDim(6),
+                label: guideline.bannerDescription,
+                labelAbove: false,
+                growRight: false,
+              ),
             ),
           );
         }),

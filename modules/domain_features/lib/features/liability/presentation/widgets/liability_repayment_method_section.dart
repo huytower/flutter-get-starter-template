@@ -29,7 +29,8 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
             label: CcFormLabel(
               text: hasBorrowSide
                   ? el.tr(
-                      PrjLocaleKeys.transaction_liability_repayment_method_label,
+                      PrjLocaleKeys
+                          .transaction_liability_repayment_method_label,
                     )
                   : el.tr(
                       PrjLocaleKeys
@@ -44,7 +45,9 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
                   ? 0
                   : 1,
               firstLabel: hasBorrowSide
-                  ? el.tr(PrjLocaleKeys.transaction_liability_method_installment)
+                  ? el.tr(
+                      PrjLocaleKeys.transaction_liability_method_installment,
+                    )
                   : el.tr(
                       PrjLocaleKeys
                           .transaction_liability_method_installment_lend,

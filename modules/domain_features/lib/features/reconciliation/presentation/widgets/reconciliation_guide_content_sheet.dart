@@ -3,13 +3,20 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
+import '../../domain/entities/reconciliation_availability_entity.dart';
+import '../helper/audit_day_formatter.dart';
+
 /// Content of the reconciliation guide sheet: the guide rows (icon + text) in a
 /// [CcPickerSheetFrame] with a single OK button.
 class ReconciliationGuideContentSheet extends StatelessWidget {
-  const ReconciliationGuideContentSheet({super.key});
+  const ReconciliationGuideContentSheet({super.key, this.cycle});
 
-  /// What reconciliation is, then how to do it (count -> compare -> record),
-  /// then when it is due.
+  /// The user's current audit cycle, for the "when" row; null while it has not
+  /// loaded, then the row explains the cycle without dates.
+  final ReconciliationAvailabilityEntity? cycle;
+
+  /// What reconciliation is, then how to do it (count -> compare -> record).
+  /// The last row, when it is due, is [_cycleText].
   static const List<({IconData icon, String textKey})> _items = [
     (
       icon: Icons.info_outline_rounded,
@@ -31,11 +38,22 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
       icon: Icons.menu_book_rounded,
       textKey: PrjLocaleKeys.reconciliation_guide_record,
     ),
-    (
-      icon: Icons.event_repeat_rounded,
-      textKey: PrjLocaleKeys.reconciliation_cycle_subtitle,
-    ),
   ];
+
+  /// One reconciliation per 7-day cycle ending on the user's audit day, with
+  /// the current cycle's dates when they are known.
+  String _cycleText() {
+    final cycle = this.cycle;
+    if (cycle == null) return tr(PrjLocaleKeys.reconciliation_cycle_subtitle);
+    return tr(
+      PrjLocaleKeys.reconciliation_cycle_current,
+      namedArgs: {
+        'day': AuditDayFormatter.weekday(cycle.cycleEnd),
+        'start': AuditDayFormatter.dayWithDate(cycle.cycleStart),
+        'end': AuditDayFormatter.dayWithDate(cycle.cycleEnd),
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +79,12 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
     final items = [
       for (final item in _items)
         _buildGuideItem(context, scheme, item.icon, tr(item.textKey)),
+      _buildGuideItem(
+        context,
+        scheme,
+        Icons.event_repeat_rounded,
+        _cycleText(),
+      ),
     ];
     // Small tablet and up (>= 600 dp window): two columns, so the sheet is
     // wider and shorter instead of one long column.

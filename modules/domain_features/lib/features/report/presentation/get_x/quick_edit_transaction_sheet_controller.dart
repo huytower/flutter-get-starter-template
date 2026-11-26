@@ -273,9 +273,9 @@ class QuickEditTransactionSheetController extends PrjGetController {
       } else {
         CcSnackBarHelper.showErrorSnackBar(
           context: context,
-          message:
-              result.tryGetError()?.message ??
-              el.tr(PrjLocaleKeys.app_error_general),
+          message: el.tr(
+            result.tryGetError()?.message ?? PrjLocaleKeys.app_error_general,
+          ),
         );
       }
     } finally {

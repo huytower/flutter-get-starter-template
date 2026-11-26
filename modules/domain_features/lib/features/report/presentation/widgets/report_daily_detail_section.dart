@@ -25,6 +25,7 @@ class ReportDailyDetailSection extends StatelessWidget {
                 controller.userLevel.status.canUseInvestment ||
                 controller.userLevel.status.canUseLiability,
             hasEditMode: controller.hasEditMode.value,
+            reconciledUntil: controller.reconciledUntil.value,
           ),
         ),
         AiAdviceSection(controller: controller),

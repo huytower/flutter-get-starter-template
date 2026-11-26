@@ -11,9 +11,12 @@ import 'package:message/export_message.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/currency/money_formatter.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/presentation/helper/name_suggestions.dart';
 import '../../../../core/presentation/helper/wallet_icon_helper.dart';
+import '../../../../core/presentation/widgets/prj_suggested_name_field.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/add_liquid_sheet_controller.dart';
+import '../helper/wallet_name_suggestions.dart';
 
 class AddLiquidSheet extends GetView<AddLiquidSheetController> {
   const AddLiquidSheet({super.key, this.wallet});
@@ -120,24 +123,20 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     AddLiquidSheetController controller,
   ) {
     return Obx(() {
-      final field = CcNameInputField(
+      final field = PrjSuggestedNameField(
         controller: controller.nameController,
         labelText: el.tr(PrjLocaleKeys.wallet_name),
-        hintText: el.tr(PrjLocaleKeys.wallet_name_hint),
+        maxLength: 20,
+        suggestions: controller.hasNameLocked
+            ? const []
+            : NameSuggestions.fromKey(
+                WalletNameSuggestions.keyForType(controller.newType.value),
+              ),
         errorText: controller.nameError.value,
-        maxLength: 15,
-        maxLengthWarningText: el.tr(
-          PrjLocaleKeys.validation_max_length_reached,
-          namedArgs: {'count': '15'},
-        ),
-        onClear: () {
-          controller.hasNameValid.value = false;
-          controller.selectedInvestmentCategory.value = null;
-          controller.nameError.value = null;
-        },
+        onClear: () => controller.nameError.value = null,
       );
       if (!controller.hasNameLocked) return field;
-      // Built-in Cash / Bank wallets keep their localized name.
+      // The built-in Cash wallet keeps its localized name.
       return Opacity(
         opacity: 0.6,
         child: IgnorePointer(child: ExcludeFocus(child: field)),

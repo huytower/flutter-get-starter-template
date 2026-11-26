@@ -3,6 +3,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
+import 'package:domain_features/features/firestore/pending_cloud_deletes.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -83,7 +84,10 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
         try {
           await _sync.deleteWallet(walletModel.remoteId!);
         } catch (e) {
-          'Remote delete failed: $e'.Log('WalletRepository');
+          // Offline: queue it so the next online sync deletes it in the cloud
+          // and the pull meanwhile can't bring the wallet back.
+          'Remote delete deferred: $e'.Log('WalletRepository');
+          await PendingCloudDeletes.add('wallets', [id, walletModel.remoteId]);
         }
       }
     });

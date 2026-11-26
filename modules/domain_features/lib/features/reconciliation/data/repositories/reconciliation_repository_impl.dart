@@ -3,6 +3,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
+import 'package:domain_features/features/firestore/pending_cloud_deletes.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -68,7 +69,10 @@ class ReconciliationRepositoryImpl
   @override
   Future<Result<void, CcFailure>> deleteReconciliation(String id) {
     return safeRequest(() async {
+      final model = (await _local.getAll()).where((m) => m.id == id).firstOrNull;
       await _local.delete(id);
+      // Undo must reach the cloud too, or the record returns on the next pull.
+      await PendingCloudDeletes.add('reconciliations', [id, model?.remoteId]);
       _syncService.syncAll();
     });
   }

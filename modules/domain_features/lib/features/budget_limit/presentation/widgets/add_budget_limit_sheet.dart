@@ -118,7 +118,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
         if (!controller.hasEdit && controller.estimatedLimit.value != null)
           _buildEstimateSuggestion(context, controller),
         if (controller.limitLocked)
-          const BudgetLimitLockNotice()
+          BudgetLimitLockNotice(reason: controller.limitLockReason.value!)
         else
           Obx(
             () => PrjAmountInputSection(

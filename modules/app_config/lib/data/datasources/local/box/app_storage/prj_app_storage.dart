@@ -18,6 +18,12 @@ part 'prj_app_storage.g.dart';
 ///[example logger]-------------------------------------------------------------
 ///   PrjAppStorage.instance.Log();
 ///
+///[schema rules]---------------------------------------------------------------
+///   Installs keep records written by older app versions, so a record may lack
+///   any field. Every field is nullable and defaulted where it is read; a new
+///   field takes the next unused number; a number is never reused or renumbered
+///   (15 is retired). This is what lets a forced app update load old data.
+///
 
 @JsonSerializable()
 @HiveType(typeId: PrjHiveBox.APP_STORAGE_TYPE_ID)
@@ -93,7 +99,8 @@ class PrjAppStorage extends HiveObject {
   @HiveField(13)
   DateTime? levelFeatureAnchorAt;
 
-  /// Manual VIP flag (no real IAP/store billing infra exists yet).
+  /// The free "Unlock Invest, Liability, AI (experiment)" switch in Profile (temporary, until paid
+  /// VIP ships). Not proof of VIP by itself; paid VIP is [hasPaidVip].
   @HiveField(14)
   bool? hasVip;
 
@@ -168,6 +175,25 @@ class PrjAppStorage extends HiveObject {
   @HiveField(30)
   String? guestLoginPromptSessionUid;
 
+  /// JSON of the account settings as last agreed with Firestore (the common
+  /// base of the three-way merge in `AccountSettingsSync`); null until the
+  /// signed-in account first synced them on this device.
+  @HiveField(31)
+  String? accountSettingsSyncedJson;
+
+  /// Paid VIP, set only by the purchase / entitlement check (none exists yet,
+  /// so it stays null = not paid). Kept apart from the free switch [hasVip] so
+  /// hiding that switch later needs no migration. Not part of the synced
+  /// account settings: a device copy is not proof of payment.
+  @HiveField(32)
+  bool? hasPaidVip;
+
+  /// Cloud documents deleted on this device but not yet deleted in Firestore
+  /// (offline at the time), as `collection/documentId`. Flushed by the next
+  /// online `syncAll()`; until then the pull skips them so they can't return.
+  @HiveField(33)
+  List<String>? pendingCloudDeletes;
+
   PrjAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -199,5 +225,8 @@ class PrjAppStorage extends HiveObject {
     this.hasShownGuestLoginFirstReminder,
     this.hasDismissedGuestLoginFinalWarning,
     this.guestLoginPromptSessionUid,
+    this.accountSettingsSyncedJson,
+    this.hasPaidVip,
+    this.pendingCloudDeletes,
   });
 }

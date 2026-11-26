@@ -210,7 +210,7 @@ class WalletController extends PrjGetController {
       return;
     }
     final (:settings, wallets: list) = result.tryGetSuccess()!;
-    hasVip.value = settings.hasVip;
+    hasVip.value = settings.hasVipAccess;
     final currencyChanged = currencyCode.value != settings.currencyCode;
     currencyCode.value = settings.currencyCode;
 

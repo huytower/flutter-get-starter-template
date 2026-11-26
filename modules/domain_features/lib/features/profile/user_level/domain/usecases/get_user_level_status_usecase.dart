@@ -76,8 +76,13 @@ class GetUserLevelStatusUseCase {
     }
     final hasPositiveCashFlow = (income - expense) > 0;
 
-    // Level 2 logic: all guideline tasks completed AND reconciliation streak >= 2.
-    final completedGuidelineCount = settings.completedGuidelineTaskIds.length;
+    // Level 2 logic: the 6 LV1 guideline tasks completed AND streak >= 2.
+    // Only LV1 tasks count: the investment task (open to VIP) must not stand
+    // in for a missing LV1 task.
+    final completedGuidelineCount =
+        UserLevelStatusEntity.countLv1GuidelineTasks(
+          settings.completedGuidelineTaskIds,
+        );
     final guidelineCompleted =
         completedGuidelineCount >= UserLevelStatusEntity.lv1RequiredGuidelines;
 
@@ -103,7 +108,7 @@ class GetUserLevelStatusUseCase {
 
     // 3. Final display level: Milestones OR VIP override
     int level = organicLevel;
-    if (settings.hasVip) {
+    if (settings.hasVipAccess) {
       level = 3;
     }
 
@@ -115,7 +120,7 @@ class GetUserLevelStatusUseCase {
         hasPositiveCashFlow: hasPositiveCashFlow,
         fixedBudgetCount: fixedBudgetCount,
         completedGuidelineCount: completedGuidelineCount,
-        hasVip: settings.hasVip,
+        hasVip: settings.hasVipAccess,
       ),
     );
   }

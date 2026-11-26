@@ -269,7 +269,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
             child: FittedBox(
               fit: BoxFit.contain,
               child: Switch(
-                value: controller.settings.value.hasVip,
+                value: controller.settings.value.hasVipSwitch,
                 onChanged: (value) =>
                     controller.toggleFullAccess(context, value),
                 activeColor: context.ccColorScheme.primary,

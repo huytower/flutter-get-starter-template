@@ -272,7 +272,7 @@ class InvestmentFormController extends TransactionFormController {
   Future<void> _loadAll() async {
     hasLoadingMerged.value = true;
     final settings = await _getProfileSettings();
-    quickEntry.hasVip.value = settings.hasVip;
+    quickEntry.hasVip.value = settings.hasVipAccess;
     await loadSuggestions();
     await _loadCategories();
     await _recomputeMergedItems();

@@ -274,11 +274,8 @@ void main() {
       },
     );
 
-    test('leaves the amount empty when only fallback rates exist', () async {
-      for (final provenance in [
-        RateProvenance.staleCache,
-        RateProvenance.offlineFallback,
-      ]) {
+    test('leaves the amount empty when only stale rates exist', () async {
+      for (final provenance in [RateProvenance.staleCache]) {
         final merged = await finalizeOne(
           _json([_row(amount: 5, currencyCode: 'USD', categoryId: 'food')]),
           primary: 'VND',
@@ -313,13 +310,14 @@ void main() {
       expect(repository.calls, 0);
     });
 
-    test('leaves the amount empty when it converts to zero', () async {
+    test('an amount under 1 unit after conversion becomes 1 unit', () async {
+      // WholeUnitRounding: a non-zero amount never converts to 0 (BR §5).
       final merged = await finalizeOne(
         _json([_row(amount: 1, currencyCode: 'VND', categoryId: 'food')]),
         primary: 'USD',
       );
 
-      expect(merged!.amount, isNull);
+      expect(merged!.amount, 1);
     });
 
     test('survives a rate lookup that throws', () async {

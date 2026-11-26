@@ -13,12 +13,9 @@ class ExchangeRateResult {
   bool get hasUsableForDisplay =>
       provenance == RateProvenance.freshCache ||
       provenance == RateProvenance.staleCache ||
-      provenance == RateProvenance.network ||
-      provenance == RateProvenance.offlineFallback;
+      provenance == RateProvenance.network;
 
-  bool get requiresFreshnessWarning =>
-      provenance == RateProvenance.staleCache ||
-      provenance == RateProvenance.offlineFallback;
+  bool get requiresFreshnessWarning => provenance == RateProvenance.staleCache;
 
   bool get hasSafeForPersistedConversion =>
       provenance == RateProvenance.freshCache ||

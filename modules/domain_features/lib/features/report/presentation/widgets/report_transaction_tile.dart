@@ -7,6 +7,7 @@ import 'package:domain_features/features/category/data/datasources/local/categor
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import 'delete_transaction_sheet.dart';
@@ -17,10 +18,15 @@ class ReportTransactionTile extends StatelessWidget {
   const ReportTransactionTile({
     required this.transaction,
     required this.hasEditMode,
+    this.reconciledUntil,
   });
 
   final TransactionEntity transaction;
   final bool hasEditMode;
+
+  /// Latest reconciliation; a transaction dated at or before it shows a lock
+  /// instead of edit/delete.
+  final DateTime? reconciledUntil;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +116,32 @@ class ReportTransactionTile extends StatelessWidget {
                 ),
               ],
             ),
-            if (hasEditMode && hasEditableTransaction(transaction)) ...[
+            if (hasEditMode &&
+                hasEditableTransaction(transaction) &&
+                !hasEditableTransaction(
+                  transaction,
+                  reconciledUntil: reconciledUntil,
+                )) ...[
+              // Reconciled: closed for edits; a tap explains how to correct it.
+              const CcSpaceXS(),
+              CcIconButton.bouncing(
+                icon: Icon(
+                  Icons.lock_outline_rounded,
+                  size: context.respIconSize(baseSize: 16),
+                  color: context.ccColorScheme.onSurfaceVariant,
+                ),
+                onTap: () => CcSnackBarHelper.showSnackBar(
+                  context: context,
+                  message: el.tr(
+                    PrjLocaleKeys.transaction_validation_reconciled,
+                  ),
+                ),
+              ),
+            ] else if (hasEditMode &&
+                hasEditableTransaction(
+                  transaction,
+                  reconciledUntil: reconciledUntil,
+                )) ...[
               const CcSpaceXS(),
               CcIconButton.bouncing(
                 icon: Icon(

@@ -1,25 +1,24 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../entities/budget_limit_lock_reason.dart';
 import '../repositories/budget_limit_repository.dart';
+import '../services/budget_limit_edit_policy.dart';
 
 /// Edits an existing budget (mirrors `UpdateDinhMucNganSachUseCase`).
 ///
-/// The name may change at any time; the limit may only change during the
-/// first week of a month (days 1–7), so a running month's cap can't be moved
-/// mid-month. Pass null to leave a field unchanged.
+/// The name and the fixed-price flag may change at any time. The limit may
+/// not change after day 7 of the month, nor once spending has been recorded
+/// against the budget this month ([BudgetLimitEditPolicy]). Pass null to leave
+/// a field unchanged.
 @lazySingleton
 class UpdateBudgetLimitUseCase {
-  UpdateBudgetLimitUseCase(this._repository);
-
-  /// Last day of the month on which the limit may still be changed.
-  static const int lastEditableDay = 7;
-
-  /// Whether today falls inside the limit-editing window.
-  static bool get hasLimitEditable => DateTime.now().day <= lastEditableDay;
+  UpdateBudgetLimitUseCase(this._repository, this._editPolicy);
 
   final BudgetLimitRepository _repository;
+  final BudgetLimitEditPolicy _editPolicy;
 
   Future<Result<void, CcFailure>> call(
     String id, {
@@ -48,12 +47,9 @@ class UpdateBudgetLimitUseCase {
     }
 
     if (limit != null && limit != budget.limit) {
-      if (!hasLimitEditable) {
-        return const Error(
-          CcValidationFailure(
-            'Chỉ có thể thay đổi định mức trong 7 ngày đầu tháng.',
-          ),
-        );
+      final lockReason = await _editPolicy.lockReasonFor(budget);
+      if (lockReason != null) {
+        return Error(CcValidationFailure(_lockMessageKey(lockReason)));
       }
       if (limit <= 0) {
         return const Error(
@@ -65,4 +61,12 @@ class UpdateBudgetLimitUseCase {
 
     return _repository.updateBudget(budget);
   }
+
+  /// Locale key explaining [reason]; the caller translates it.
+  static String _lockMessageKey(BudgetLimitLockReason reason) =>
+      switch (reason) {
+        BudgetLimitLockReason.pastFirstWeek => PrjLocaleKeys.budget_limit_locked,
+        BudgetLimitLockReason.hasSpending =>
+          PrjLocaleKeys.budget_limit_locked_has_spending,
+      };
 }

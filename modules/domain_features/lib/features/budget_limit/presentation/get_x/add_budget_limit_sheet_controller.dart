@@ -16,9 +16,10 @@ import '../../../../core/di/di.dart';
 import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/budget_limit_entity.dart';
+import '../../domain/entities/budget_limit_lock_reason.dart';
+import '../../domain/services/budget_limit_edit_policy.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
 import '../../domain/usecases/get_category_average_monthly_spend_usecase.dart';
-import '../../domain/usecases/update_budget_limit_usecase.dart';
 import '../get_x/budget_limit_controller.dart';
 
 @injectable
@@ -28,7 +29,10 @@ class AddBudgetLimitSheetController extends PrjGetController {
     this._getAverageSpend,
     this._budgetLimitController,
     this._guidelineProvider,
+    this._editPolicy,
   );
+
+  final BudgetLimitEditPolicy _editPolicy;
 
   final GuidelineProvider _guidelineProvider;
 
@@ -59,7 +63,10 @@ class AddBudgetLimitSheetController extends PrjGetController {
 
   bool get hasEdit => _editTarget != null;
 
-  bool get limitLocked => hasEdit && !UpdateBudgetLimitUseCase.hasLimitEditable;
+  /// Why the edited budget's limit is locked (null: editable, or creating).
+  final limitLockReason = Rxn<BudgetLimitLockReason>();
+
+  bool get limitLocked => hasEdit && limitLockReason.value != null;
 
   bool get hasValid {
     final name = nameController.text.trim();
@@ -96,12 +103,22 @@ class AddBudgetLimitSheetController extends PrjGetController {
     });
 
     if (editTarget != null) {
+      _loadLimitLock(editTarget);
       selectedCategoryId.value = editTarget.categoryId;
       limitStr.value = editTarget.limit.toString();
       hasFixedPrice.value = editTarget.hasFixedPrice;
     }
 
     if (!hasEdit) _loadCategories();
+  }
+
+  /// The day rule applies at once; the spending check follows from storage.
+  Future<void> _loadLimitLock(BudgetLimitEntity budget) async {
+    limitLockReason.value = BudgetLimitEditPolicy.dayLockReason();
+    final reason = await _editPolicy.lockReasonFor(budget);
+    if (!isClosed && _editTarget?.id == budget.id) {
+      limitLockReason.value = reason;
+    }
   }
 
   void _onNameChanged() {
@@ -228,7 +245,10 @@ class AddBudgetLimitSheetController extends PrjGetController {
       return;
     }
     if (error != null) {
-      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
+      CcSnackBarHelper.showErrorSnackBar(
+        context: context,
+        message: el.tr(error),
+      );
       hasSubmitting.value = false;
       return;
     }

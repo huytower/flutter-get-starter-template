@@ -10,10 +10,12 @@ import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/get_x/prj_get_controller.dart';
+import '../../../../core/presentation/helper/name_suggestions.dart';
 import '../../../../core/presentation/helper/wallet_icon_helper.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import '../helper/wallet_name_suggestions.dart';
 import 'wallet_controller.dart';
 
 /// Backs [AddInvestmentSheet] — specifically for creating/editing investment assets.
@@ -72,7 +74,7 @@ class AddInvestmentSheetController extends PrjGetController {
 
   Future<void> _loadVipStatus() async {
     final settings = await _getProfileSettings();
-    hasVip.value = settings.hasVip;
+    hasVip.value = settings.hasVipAccess;
   }
 
   Future<void> _loadInvestmentCategories({CategoryEntity? preSelected}) async {
@@ -149,9 +151,17 @@ class AddInvestmentSheetController extends PrjGetController {
 
   void hideKeypad() => showKeypad.value = false;
 
+  /// Selects [category] without filling the name: the field stays empty so
+  /// its hint points at the category's suggestions. A name picked from the
+  /// previous category's suggestions is cleared; a typed name is kept.
   void selectInvestmentCategory(CategoryEntity category) {
+    NameSuggestions.clearIfSuggested(
+      nameController,
+      WalletNameSuggestions.keyForInvestmentCategory(
+        selectedInvestmentCategory.value?.id,
+      ),
+    );
     selectedInvestmentCategory.value = category;
-    nameController.text = el.tr(category.nameKey);
   }
 
   Future<void> save(BuildContext context) async {

@@ -7,15 +7,14 @@ import '../../../../core/budget/budget_name_helper.dart';
 
 extension WalletDisplayName on WalletEntity {
   String displayName(BuildContext context) {
-    // The built-in Cash wallet and the default Bank wallet are stored with an
-    // empty name and labelled with a localized string at display time.
+    // The built-in Cash wallet is stored with an empty name and labelled with
+    // a localized string at display time.
     if (type == WalletType.cash) {
       return el.tr(PrjLocaleKeys.wallet_cash);
     }
-    // A bank wallet the user created and named (e.g. "tcb777 99") must show
-    // that name; only an unnamed one falls back to the localized label.
-    if (type == WalletType.bank &&
-        (id == 'wallet_bank' || name.trim().isEmpty)) {
+    // A bank wallet the user named (including the default one, which can be
+    // renamed) shows that name; only an unnamed one falls back to the label.
+    if (type == WalletType.bank && name.trim().isEmpty) {
       return el.tr(PrjLocaleKeys.wallet_bank);
     }
     // For other wallets, use the name (including for investment wallets with categoryNameKey)

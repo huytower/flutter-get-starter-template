@@ -7,9 +7,12 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/presentation/helper/name_suggestions.dart';
 import '../../../../core/presentation/widgets/category/prj_category_item.dart';
+import '../../../../core/presentation/widgets/prj_suggested_name_field.dart';
 import '../../../../core/presentation/widgets/prj_vip_lock_banner.dart';
 import '../get_x/add_investment_sheet_controller.dart';
+import '../helper/wallet_name_suggestions.dart';
 
 class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
   const AddInvestmentSheet({super.key, this.wallet, this.category});
@@ -145,21 +148,18 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
     AddInvestmentSheetController controller,
   ) {
     return Obx(
-      () => CcNameInputField(
+      () => PrjSuggestedNameField(
         controller: controller.nameController,
         labelText: el.tr(PrjLocaleKeys.wallet_investment_name),
-        hintText: el.tr(PrjLocaleKeys.wallet_investment_name_hint),
-        errorText: controller.nameError.value,
         maxLength: 20,
-        maxLengthWarningText: el.tr(
-          PrjLocaleKeys.validation_max_length_reached,
-          namedArgs: {'count': '20'},
+        suggestions: NameSuggestions.fromKey(
+          WalletNameSuggestions.keyForInvestmentCategory(
+            controller.selectedInvestmentCategory.value?.id,
+          ),
         ),
-        onClear: () {
-          controller.hasNameValid.value = false;
-          controller.selectedInvestmentCategory.value = null;
-          controller.nameError.value = null;
-        },
+        errorText: controller.nameError.value,
+        // Keeps the category (and its suggestions) so the user can pick one.
+        onClear: () => controller.nameError.value = null,
       ),
     );
   }

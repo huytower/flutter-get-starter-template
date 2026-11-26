@@ -4,6 +4,7 @@ import 'package:domain_features/core/data/repositories/prj_base_repository.dart'
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
+import 'package:domain_features/features/firestore/pending_cloud_deletes.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -96,9 +97,14 @@ class LiabilityRepositoryImpl
         );
         for (final m in sameGroup) {
           await _local.delete(m.id);
+          await PendingCloudDeletes.add('loans', [
+            m.id,
+            m.syncMetadata.remoteId,
+          ]);
         }
       } else {
         await _local.delete(id);
+        await PendingCloudDeletes.add('loans', [id]);
       }
       _syncService.syncAll();
     });

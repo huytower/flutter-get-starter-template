@@ -19,6 +19,7 @@ import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/exchange_rates/display_currency_converter.dart';
 import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
+import '../../../transaction/domain/services/reconciled_period_lock.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/entities/ai_advice_entity.dart';
 import '../../domain/entities/category_spending_entity.dart';
@@ -49,10 +50,12 @@ class ReportController extends PrjGetController {
     this._generateAiAdvice,
     this._conversionService,
     this._analytics,
-    this._aiPreferences,
+    this.aiPreferences,
+    this._periodLock,
   );
 
-  final AiFallbackPreferenceDataSource _aiPreferences;
+  final AiFallbackPreferenceDataSource aiPreferences;
+  final ReconciledPeriodLock _periodLock;
 
   final GetCategorySpendingUseCase _getCategorySpending;
   final GetFinancialRunwayUseCase _getFinancialRunway;
@@ -113,6 +116,9 @@ class ReportController extends PrjGetController {
   final RxBool hasHeaderHidden = false.obs;
   final RxBool hasEditMode = false.obs;
 
+  /// Books closed up to here (latest reconciliation): no edit/delete before it.
+  final Rxn<DateTime> reconciledUntil = Rxn<DateTime>();
+
   void toggleEditMode() {
     hasEditMode.toggle();
   }
@@ -153,26 +159,7 @@ class ReportController extends PrjGetController {
       ...?liabilityTrend.value?.transactions,
     ];
 
-    if (filterType.value != ReportFilterType.all) {
-      combined = combined.where((t) {
-        switch (filterType.value) {
-          case ReportFilterType.expense:
-            return t.type == TransactionType.expense;
-          case ReportFilterType.income:
-            return t.type == TransactionType.income;
-          case ReportFilterType.investment:
-            return t.hasInvestmentActivity;
-          case ReportFilterType.liability:
-            return t.type == TransactionType.debtBorrow ||
-                t.type == TransactionType.debtRepay;
-          case ReportFilterType.lend:
-            return t.type == TransactionType.debtLend ||
-                t.type == TransactionType.debtCollect;
-          default:
-            return true;
-        }
-      }).toList();
-    }
+    combined = combined.where(filterType.value.matches).toList();
 
     combined.sort((a, b) => b.sortKey.compareTo(a.sortKey));
 
@@ -233,13 +220,13 @@ class ReportController extends PrjGetController {
 
     // The advice sends this month's totals to Gemini: ask for consent first.
     if (!context.mounted ||
-        !await AiConsentSheet.ensure(context, _aiPreferences)) {
+        !await AiConsentSheet.ensure(context, aiPreferences)) {
       if (isClosed) return;
       hasGeneratingAdvice.value = false;
       aiAdviceErrorKey.value = PrjLocaleKeys.report_ai_advice_gemini_disabled;
       return;
     }
-    if (!await _aiPreferences.tryConsumeDailyCall()) {
+    if (!await aiPreferences.tryConsumeDailyCall()) {
       if (isClosed) return;
       hasGeneratingAdvice.value = false;
       aiAdviceErrorKey.value =
@@ -399,6 +386,7 @@ class ReportController extends PrjGetController {
       targetCurrency,
     );
     runway.value = runwayResult.tryGetSuccess();
+    reconciledUntil.value = await _periodLock.lockedUntil();
     investmentTrend.value = await _convertTrend(
       investmentTrendResult.tryGetSuccess(),
       targetCurrency,

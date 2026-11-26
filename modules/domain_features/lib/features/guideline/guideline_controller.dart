@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_config/export_app_config.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -19,23 +20,16 @@ class GuidelineController extends GetxController {
 
   final UserLevelProvider _userLevelController;
 
+  /// The 6 LV1 tasks (the LV2 requirement, one shared list), then the two
+  /// unlocked later. Where each is done: birth_year → Profile birth year;
+  /// categories → CategorySettingsPage; wallet_balance → edit Cash wallet;
+  /// budget_limit → BudgetLimitListPage; min_living → AddBudgetLimitSheet
+  /// (bolt); first_transaction → ExpenseForm; investment / liability → Budget
+  /// Allocation add sheet + the Transaction tab.
   final List<String> taskSequence = [
-    'birth_year',
-    // Profile -> _pickBirthYear
-    'categories',
-    // Profile -> CategorySettingsPage
-    'wallet_balance',
-    // Liquid Wallet List -> Edit Cash Wallet
-    'budget_limit',
-    // Budget Allocation -> BudgetLimitListPage
-    'min_living',
-    // Budget Allocation -> AddBudgetLimitSheet (storm icon)
-    'first_transaction',
-    // Transaction -> ExpenseForm
+    ...UserLevelStatusEntity.lv1GuidelineTaskIds,
     'investment',
-    // Budget Allocation -> Add Investment + Transaction -> Investment tab
     'liability',
-    // Budget Allocation -> Add Liability + Transaction -> Debt/Loan tab
   ];
 
   final Map<String, Color> taskColors = {
@@ -239,14 +233,23 @@ class GuidelineController extends GetxController {
 
   /// Resets all completed guideline tasks, showing the guide banner again.
   Future<void> resetGuideline() async {
-    completedTasks.clear();
     PrjAppStorage.instance.completedGuidelineTaskIds = [];
     await PrjAppStorage.instance.save();
+    await reloadForAccount();
+  }
+
+  /// Re-reads progress from storage (another account's settings were loaded);
+  /// first investment / liability are re-derived from that account's data.
+  Future<void> reloadForAccount() async {
+    completedTasks.assignAll(
+      PrjAppStorage.instance.completedGuidelineTaskIds ?? const [],
+    );
     hasCreatedFirstInvestment.value = false;
     hasCreatedFirstLiability.value = false;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('has_created_first_investment');
     await prefs.remove('has_created_first_liability');
+    await _restoreTaskStatus();
     triggerBounce();
   }
 
@@ -258,12 +261,10 @@ class GuidelineController extends GetxController {
     return (active.length - activeCompletedCount).clamp(0, active.length);
   }
 
-  String get bannerTitle {
-    return el.tr(
-      PrjLocaleKeys.guideline_banner_title_in_progress,
-      namedArgs: {'remaining': remainingGuidelineStep.toString()},
-    );
-  }
+  String get bannerTitle => el.tr(
+    PrjLocaleKeys.guideline_banner_title_in_progress,
+    namedArgs: {'remaining': remainingGuidelineStep.toString()},
+  );
 
   String get bannerDescription {
     if (currentTaskId == null) {

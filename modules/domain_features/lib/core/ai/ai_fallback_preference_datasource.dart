@@ -20,17 +20,31 @@ class AiFallbackPreferenceDataSource {
   @visibleForTesting
   bool enforceDailyLimit = !kDebugMode;
 
+  /// Last known value of [hasGeminiEnabled]; null until it is first read.
+  final ValueNotifier<bool?> _geminiEnabled = ValueNotifier<bool?>(null);
+
+  /// Live view of [hasGeminiEnabled] for the widgets that lock the AI
+  /// features until the user agrees. Null while the stored value is still
+  /// loading (the first read starts here); updated by [setGeminiEnabled].
+  ValueListenable<bool?> get geminiEnabledListenable {
+    if (_geminiEnabled.value == null) unawaited(hasGeminiEnabled());
+    return _geminiEnabled;
+  }
+
   /// Whether the user agreed to share data with Gemini (Google). Opt-in:
   /// defaults to false, so nothing leaves the device until the user allows it
   /// in the AI consent sheet (App Store guidelines 5.1.1(i) / 5.1.2(i)).
   Future<bool> hasGeminiEnabled() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyGeminiEnabled) ?? false;
+    final value = prefs.getBool(_keyGeminiEnabled) ?? false;
+    _geminiEnabled.value = value;
+    return value;
   }
 
   Future<void> setGeminiEnabled(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyGeminiEnabled, value);
+    _geminiEnabled.value = value;
   }
 
   String _todayKey() {

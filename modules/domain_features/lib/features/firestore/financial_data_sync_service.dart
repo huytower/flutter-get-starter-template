@@ -22,12 +22,16 @@ import '../../features/category/data/datasources/category_sync_datasource.dart';
 import '../../features/category/data/models/category_model.dart';
 import '../../features/liability/data/datasources/liability_sync_datasource.dart';
 import '../../features/liability/data/models/liability_model.dart';
+import '../../features/profile/data/datasources/account_settings_sync_datasource.dart';
+import '../../features/profile/data/services/account_settings_sync.dart';
 import '../../features/reconciliation/data/datasources/reconciliation_sync_datasource.dart';
 import '../../features/reconciliation/data/models/reconciliation_model.dart';
 import '../../features/transaction/data/datasources/transaction_sync_datasource.dart';
 import '../../features/transaction/data/models/transaction_model.dart';
 import '../../features/wallet/data/datasources/wallet_sync_datasource.dart';
 import '../../features/wallet/data/models/wallet_hive_model.dart';
+import 'pending_cloud_deletes.dart';
+import 'pending_record_counter.dart';
 
 export 'enum/logout_block.dart';
 export 'enum/logout_result.dart';
@@ -55,9 +59,11 @@ class FinancialDataSyncService {
     this._categorySync,
     this._liabilitySync,
     this._refresh,
+    this._accountSettings,
   );
 
   final FinancialRefreshProvider _refresh;
+  final AccountSettingsSync _accountSettings;
 
   bool get _hasAuthenticated => _session.currentUser != null;
 
@@ -72,20 +78,14 @@ class FinancialDataSyncService {
   /// otherwise report "online" until connectivity actually changed.
   final RxBool hasOnline = false.obs;
 
-  /// Count of locally-stored records not yet backed up to Cloud (across all
-  /// synced entity types) — also drives the sync-status icon. Recomputed
-  /// after every [syncAll] call, so it stays fresh automatically since every
-  /// write-repository already fires `syncAll()` after each local write.
+  /// Local changes not yet in the cloud (records, queued deletes, account
+  /// settings); drives the sync-status icon. Recomputed after every
+  /// [syncAll], which every write already fires.
   final RxInt pendingCount = 0.obs;
 
-  /// Whether a push or pull is currently running — also drives the
-  /// sync-status icon. A pull across six collections can run for tens of
-  /// seconds (see the `MERGE` trace volume), which is exactly when the user
-  /// needs to be told the app is working rather than idle.
-  ///
-  /// [pendingCount] alone cannot express this: it is only recomputed *after* a
-  /// sync completes, so it reads `0` for the whole duration of a clean pull
-  /// and the indicator would sit on "synced" while thousands of records merge.
+  /// Whether a push or pull is running — also drives the sync icon. A pull
+  /// can take tens of seconds, and [pendingCount] is only recomputed *after* a
+  /// sync, so on its own the icon would sit on "synced" during a long pull.
   final RxBool hasSyncing = false.obs;
 
   /// Number of overlapping sync operations. A plain flag would flicker off
@@ -211,6 +211,8 @@ class FinancialDataSyncService {
       if (previousOwner == nextUserId) {
         await syncAll();
       }
+      // Settings first: the book currency must match before records arrive.
+      await _accountSettings.adoptAccount();
       // `pullFromFirestore()` refreshes the loaded controllers itself once the
       // merge completes, so the UI is updated from the post-pull Hive state.
       await pullFromFirestore();
@@ -233,6 +235,7 @@ class FinancialDataSyncService {
       if (previousOwner == userId) {
         await syncAll();
       }
+      await _accountSettings.adoptAccount();
       await pullFromFirestore();
     });
   }
@@ -306,8 +309,10 @@ class FinancialDataSyncService {
     await _wipeBox<BudgetLimitModel>(PrjHiveBox.BUDGET_BOX_NAME);
     await _wipeBox<ReconciliationModel>(PrjHiveBox.RECONCILIATION_BOX_NAME);
     await _wipeBox<LiabilityModel>(PrjHiveBox.LIABILITY_BOX_NAME);
-    PrjAppStorage.instance.financialDataOwnerId = null;
-    await PrjAppStorage.instance.save();
+    PrjAppStorage.instance
+      ..financialDataOwnerId = null
+      ..pendingCloudDeletes = null;
+    await _accountSettings.clearLocal(); // also saves the storage
     pendingCount.value = 0;
   }
 
@@ -394,6 +399,7 @@ class FinancialDataSyncService {
     'reconciliations',
     'categories',
     'loans',
+    AccountSettingsSyncDataSource.collectionName,
   ];
 
   /// Deletes the signed-in user's synced financial data from Firestore. Runs
@@ -466,12 +472,14 @@ class FinancialDataSyncService {
     try {
       final userId = _userId;
       if (userId != null && await _connection.hasInternetAccess) {
+        await PendingCloudDeletes.flush(_syncService, userId);
         await _syncPendingWallets(userId);
         await _syncPendingTransactions(userId);
         await _syncPendingBudgets(userId);
         await _syncPendingReconciliations(userId);
         await _syncPendingCategories(userId);
         await _syncPendingLiabilities(userId);
+        await _accountSettings.push();
       }
     } catch (e) {
       'syncAll failed: $e'.Log('FinancialDataSyncService');
@@ -480,53 +488,9 @@ class FinancialDataSyncService {
     }
   }
 
-  int _countPending() {
-    final walletPending = _countPendingInBox<WalletHiveModel>(
-      PrjHiveBox.WALLET_BOX_NAME,
-      (m) => m.syncMetadata.status,
-    );
-    final txPending = _countPendingInBox<TransactionModel>(
-      PrjHiveBox.TRANSACTION_BOX_NAME,
-      (m) => m.syncMetadata.status,
-    );
-    final budgetPending = _countPendingInBox<BudgetLimitModel>(
-      PrjHiveBox.BUDGET_BOX_NAME,
-      (m) => m.syncMetadata.status,
-    );
-    final reconPending = _countPendingInBox<ReconciliationModel>(
-      PrjHiveBox.RECONCILIATION_BOX_NAME,
-      (m) => m.syncMetadata.status,
-    );
-    final catPending = _countPendingInBox<CategoryModel>(
-      PrjHiveBox.CATEGORY_BOX_NAME,
-      (m) => m.syncMetadata.status,
-    );
-    final liabilityPending = _countPendingInBox<LiabilityModel>(
-      PrjHiveBox.LIABILITY_BOX_NAME,
-      (m) => m.syncMetadata.status,
-    );
-    final total =
-        walletPending +
-        txPending +
-        budgetPending +
-        reconPending +
-        catPending +
-        liabilityPending;
-    return total;
-  }
-
-  int _countPendingInBox<T>(String boxName, SyncStatus Function(T) statusOf) {
-    try {
-      if (!Hive.isBoxOpen(boxName)) return 0;
-      final box = Hive.box<T>(boxName);
-      return box.values.where((m) {
-        final status = statusOf(m);
-        return status == SyncStatus.pending || status == SyncStatus.failed;
-      }).length;
-    } catch (_) {
-      return 0;
-    }
-  }
+  /// Unsynced financial records plus the account settings, if changed.
+  int _countPending() =>
+      PendingRecordCounter.count() + _accountSettings.pendingCount;
 
   /// Merges the current user's Firestore state into Hive and refreshes the UI.
   ///
@@ -863,7 +827,8 @@ class FinancialDataSyncService {
       for (final data in remoteData) {
         final localId = data['localId'] as String;
         final existing = box.get(localId);
-
+        // Deleted here, cloud delete still queued: never pull it back.
+        if (PendingCloudDeletes.has(collectionName, localId)) continue;
         if (existing == null) {
           final model = fromFirestore(data, localId);
           await box.put(localId, model);

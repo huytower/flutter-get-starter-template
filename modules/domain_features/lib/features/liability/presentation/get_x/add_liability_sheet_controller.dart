@@ -14,10 +14,12 @@ import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/get_x/prj_get_controller.dart';
+import '../../../../core/presentation/helper/name_suggestions.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
+import '../helper/liability_name_suggestions.dart';
 import 'borrow_form_controller.dart';
 import 'lend_form_controller.dart';
 import 'liability_list_controller.dart';
@@ -83,7 +85,7 @@ class AddLiabilitySheetController extends PrjGetController {
 
   Future<void> _loadVipStatus() async {
     final settings = await _getProfileSettings();
-    hasVip.value = settings.hasVip;
+    hasVip.value = settings.hasVipAccess;
   }
 
   Future<void> _loadLiabilityCategories() async {
@@ -131,14 +133,23 @@ class AddLiabilitySheetController extends PrjGetController {
   void setDirection(String value) {
     if (direction.value == value) return;
     direction.value = value;
+    _clearSuggestedName();
     selectedLiabilityCategory.value = null;
     _loadLiabilityCategories();
   }
 
+  /// Selects [category] without filling the name: the field stays empty so
+  /// its hint points at the category's suggestions. A name picked from the
+  /// previous category's suggestions is cleared; a typed name is kept.
   void selectLiabilityCategory(CategoryEntity category) {
+    _clearSuggestedName();
     selectedLiabilityCategory.value = category;
-    nameController.text = el.tr(category.nameKey);
   }
+
+  void _clearSuggestedName() => NameSuggestions.clearIfSuggested(
+    nameController,
+    LiabilityNameSuggestions.keyFor(selectedLiabilityCategory.value?.id),
+  );
 
   Future<void> save(BuildContext context) async {
     if (hasSubmitting.value) return;

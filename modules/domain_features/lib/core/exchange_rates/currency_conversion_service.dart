@@ -4,6 +4,7 @@ import 'package:domain_features/core/exchange_rates/conversion_use.dart';
 import 'package:domain_features/core/exchange_rates/currency_amount.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_failure.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_repository.dart';
+import 'package:domain_features/core/exchange_rates/whole_unit_rounding.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -45,7 +46,7 @@ class CurrencyConversionService {
         _memoryRateCache.containsKey(fromDef.code) &&
         _memoryRateCache[fromDef.code]!.containsKey(toDef.code)) {
       final cachedRate = _memoryRateCache[fromDef.code]![toDef.code]!;
-      return Success((amount * cachedRate).round());
+      return Success(WholeUnitRounding.round(amount * cachedRate));
     }
 
     final result = await _repository.getExchangeRates(
@@ -89,7 +90,7 @@ class CurrencyConversionService {
       _memoryRateCache.putIfAbsent(fromDef.code, () => {})[toDef.code] = rate;
     }
 
-    final convertedAmount = (amount * rate).round();
+    final convertedAmount = WholeUnitRounding.round(amount * rate);
     return Success(convertedAmount);
   }
 
@@ -150,24 +151,22 @@ class CurrencyConversionService {
     final converted = <String, int>{};
 
     if (hasBaseVnd) {
-      final vndRateAgainstBase = table.rates['VND'] ?? 25982.50;
+      // Provider rates only: a missing rate is skipped, never hard-coded.
+      final vndRateAgainstBase = table.rates['VND'];
+      if (vndRateAgainstBase == null) {
+        return const Error(CcValidationFailure('Exchange rate not available'));
+      }
       for (final target in uniqueTargets) {
-        final toDef = CurrencyCatalog.tryGetDefinition(target);
-        if (toDef == null) continue;
-
-        final targetRateAgainstBase = table.rates[toDef.code] ?? 1.0;
-        final rateToVnd = vndRateAgainstBase / targetRateAgainstBase;
-        converted[target.toUpperCase()] = rateToVnd.round();
+        final rate =
+            table.rates[CurrencyCatalog.tryGetDefinition(target)?.code];
+        if (rate == null) continue;
+        converted[target.toUpperCase()] = (vndRateAgainstBase / rate).round();
       }
     } else {
       for (final target in uniqueTargets) {
-        final toDef = CurrencyCatalog.tryGetDefinition(target);
-        if (toDef == null) continue;
-
-        final rate = table.rates[toDef.code];
-        if (rate != null) {
-          converted[target.toUpperCase()] = rate.round();
-        }
+        final rate =
+            table.rates[CurrencyCatalog.tryGetDefinition(target)?.code];
+        if (rate != null) converted[target.toUpperCase()] = rate.round();
       }
     }
 
@@ -260,7 +259,7 @@ class CurrencyConversionService {
       }
 
       final invertedRate = 1.0 / rate;
-      converted[currency] = (amount * invertedRate).round();
+      converted[currency] = WholeUnitRounding.round(amount * invertedRate);
     }
 
     return Success(converted);
@@ -358,6 +357,6 @@ class CurrencyConversionService {
 
   int _scaleConvertedAmount(int amount, int sourceTotal, int convertedTotal) {
     if (sourceTotal == 0) return 0;
-    return (amount * convertedTotal / sourceTotal).round();
+    return WholeUnitRounding.round(amount * convertedTotal / sourceTotal);
   }
 }

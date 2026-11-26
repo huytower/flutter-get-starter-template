@@ -3,6 +3,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/models/sync_metadata.dart';
+import 'package:domain_features/features/firestore/pending_cloud_deletes.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -105,10 +106,15 @@ class BudgetLimitRepositoryImpl
               m.name.trim().toLowerCase() == target.name.trim().toLowerCase();
           if (m.id == id || sameCategory || sameName) {
             await _local.delete(m.id);
+            await PendingCloudDeletes.add('budgets', [
+              m.id,
+              m.syncMetadata.remoteId,
+            ]);
           }
         }
       } else {
         await _local.delete(id);
+        await PendingCloudDeletes.add('budgets', [id]);
       }
       _syncService.syncAll();
     });

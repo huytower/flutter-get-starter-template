@@ -69,7 +69,9 @@ class CreateLiabilityUseCase {
   ) async {
     if (params.walletId.isEmpty) {
       return const Error(
-        CcValidationFailure(PrjLocaleKeys.transaction_validation_wallet_required),
+        CcValidationFailure(
+          PrjLocaleKeys.transaction_validation_wallet_required,
+        ),
       );
     }
     if (params.categoryId.isEmpty) {

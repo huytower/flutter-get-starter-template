@@ -73,12 +73,16 @@ class RecordLiabilityPaymentUseCase {
   ) async {
     if (params.amount <= 0) {
       return const Error(
-        CcValidationFailure(PrjLocaleKeys.transaction_validation_amount_required),
+        CcValidationFailure(
+          PrjLocaleKeys.transaction_validation_amount_required,
+        ),
       );
     }
     if (params.walletId.isEmpty) {
       return const Error(
-        CcValidationFailure(PrjLocaleKeys.transaction_validation_wallet_required),
+        CcValidationFailure(
+          PrjLocaleKeys.transaction_validation_wallet_required,
+        ),
       );
     }
     if (params.date.isAfter(DateTime.now())) {

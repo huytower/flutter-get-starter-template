@@ -155,4 +155,20 @@ class FinancialRefreshProviderImpl implements FinancialRefreshProvider {
       }
     } catch (_) {}
   }
+
+  /// The profile screen keeps a full copy of the settings in memory and saves
+  /// it back whole, so it must re-read them before its next save; otherwise
+  /// the previous account's values would overwrite the new account's.
+  @override
+  Future<void> reloadAccountSettings() async {
+    if (Get.isRegistered<GuidelineController>()) {
+      await Get.find<GuidelineController>().reloadForAccount();
+    }
+    if (Get.isRegistered<ProfileController>()) {
+      await Get.find<ProfileController>().reloadSettings();
+    }
+    // Resolved here, not injected: the level use case reads the profile
+    // repository, which depends on the sync service that depends on this.
+    await getIt<UserLevelController>().refresh();
+  }
 }

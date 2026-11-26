@@ -120,7 +120,7 @@ class BorrowFormController extends LiabilityBaseFormController {
   Future<void> _loadAll() async {
     hasLoadingMerged.value = true;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    quickEntry.hasVip.value = settings.hasVip;
+    quickEntry.hasVip.value = settings.hasVipAccess;
     await loadSuggestions();
     await loadLiabilities();
     hasLoadingMerged.value = false;

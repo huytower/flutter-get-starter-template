@@ -20,12 +20,14 @@ class ReportDailyGroup extends StatefulWidget {
     required this.transactions,
     required this.includeInvestmentAndLiability,
     required this.hasEditMode,
+    this.reconciledUntil,
   });
 
   final DateTime date;
   final List<TransactionEntity> transactions;
   final bool includeInvestmentAndLiability;
   final bool hasEditMode;
+  final DateTime? reconciledUntil;
 
   @override
   State<ReportDailyGroup> createState() => _ReportDailyGroupState();
@@ -171,7 +173,11 @@ class _ReportDailyGroupState extends State<ReportDailyGroup> {
                 ),
               ),
               for (final tx in widget.transactions)
-                ReportTransactionTile(transaction: tx, hasEditMode: widget.hasEditMode),
+                ReportTransactionTile(
+                  transaction: tx,
+                  hasEditMode: widget.hasEditMode,
+                  reconciledUntil: widget.reconciledUntil,
+                ),
             ],
           ],
         ),

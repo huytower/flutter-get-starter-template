@@ -12,6 +12,11 @@ import 'exchange_rate_local_datasource.dart';
 import 'frankfurter_remote.dart';
 import 'rate_freshness.dart';
 
+/// Exchange rates from Frankfurter v2, cached locally.
+///
+/// Every rate comes from the provider. When the network fails, the last
+/// cached rates are served (marked stale); with no cache the lookup fails.
+/// No rate is ever hard-coded or estimated.
 @LazySingleton(as: ExchangeRateRepository)
 class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
   ExchangeRateRepositoryImpl(this._remote, this._local, this._freshness);
@@ -21,16 +26,6 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
   final RateFreshness _freshness;
 
   static const String _provider = 'frankfurter';
-
-  /// Baseline pivot rates against USD for robust offline/unsupported currency fallback (e.g., VND).
-  static const Map<String, double> _baselineRatesAgainstUsd = {
-    'USD': 1.0,
-    'VND': 25982.50,
-    'EUR': 0.92,
-    'JPY': 153.50,
-    'KRW': 1350.00,
-    'CNY': 7.20,
-  };
 
   /// In-flight request map for request coalescing.
   final Map<String, Future<Result<ExchangeRateResult, ExchangeRateFailure>>>
@@ -122,57 +117,10 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
       }
     }
 
-    // 2. Fetch from API (Frankfurter v2 /v2/rates returns List<FrankfurterResponse>)
+    // 2. Fetch from the API. A quote the provider does not return fails the
+    // whole lookup: rates are never filled in from anywhere else.
     try {
-      final responseList = await _remote.getRates(
-        validatedBase,
-        date != null ? _formatDate(date) : null,
-      );
-
-      if (responseList.isEmpty) {
-        return const Error(
-          ValidationExchangeRateFailure('Empty rate response from API'),
-        );
-      }
-      final response = responseList.first;
-
-      // 3. Validate response base
-      if (response.base.toUpperCase() != validatedBase.toUpperCase()) {
-        return const Error(
-          ValidationExchangeRateFailure('Response base currency mismatch'),
-        );
-      }
-
-      final validatedRates = <String, double>{};
-      for (final entry in response.rates.entries) {
-        final qDef = CurrencyCatalog.tryGetDefinition(entry.key);
-        if (qDef != null) {
-          final rate = entry.value;
-          if (rate > 0 && rate.isFinite) {
-            validatedRates[qDef.code] = rate;
-          }
-        }
-      }
-
-      // Fill in any missing quotes (such as VND) using USD-pivot baseline rates
-      final baseUsdRate =
-          _baselineRatesAgainstUsd[validatedBase.toUpperCase()] ?? 1.0;
-      for (final q in validatedQuotes) {
-        if (!validatedRates.containsKey(q)) {
-          final qUsdRate = _baselineRatesAgainstUsd[q.toUpperCase()] ?? 1.0;
-          validatedRates[q] = qUsdRate / baseUsdRate;
-        }
-      }
-
-      final effectiveDt =
-          DateTime.tryParse(response.date) ?? (date ?? DateTime.now());
-      final table = ExchangeRateTable(
-        baseCurrency: validatedBase,
-        rates: validatedRates,
-        effectiveDate: effectiveDt,
-        fetchedAt: DateTime.now(),
-        provider: _provider,
-      );
+      final table = await _fetchTable(validatedBase, validatedQuotes, date);
 
       // Cache result immediately and perform opportunistic cleanup
       await _local.cacheRates(table, validatedQuotes);
@@ -191,9 +139,11 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
         ExchangeRateResult(table: table, provenance: RateProvenance.network),
       );
     } catch (e) {
-      '[ExchangeRateRepository] API fetch failed for base $validatedBase: $e (using baseline pivot fallback)'
+      '[ExchangeRateRepository] Rate fetch failed for base $validatedBase: $e'
           .Log('ExchangeRateRepository');
 
+      // 3. Offline or provider error: the last rates the provider gave are
+      // still real data, only older. Without them there is nothing to serve.
       if (cached != null && hasValidCachedQuotes) {
         return Success(
           ExchangeRateResult(
@@ -202,34 +152,47 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
           ),
         );
       }
-
-      final baselineTable = _generateBaselineTable(
-        validatedBase,
-        validatedQuotes,
-      );
-
-      return Success(
-        ExchangeRateResult(
-          table: baselineTable,
-          provenance: RateProvenance.offlineFallback,
-        ),
-      );
+      return Error(NetworkExchangeRateFailure(e.toString()));
     }
   }
 
-  ExchangeRateTable _generateBaselineTable(String base, List<String> quotes) {
-    final baseUsdRate = _baselineRatesAgainstUsd[base.toUpperCase()] ?? 1.0;
-    final rates = <String, double>{};
-    for (final q in quotes) {
-      final qUsdRate = _baselineRatesAgainstUsd[q.toUpperCase()] ?? 1.0;
-      rates[q.toUpperCase()] = qUsdRate / baseUsdRate;
+  /// Builds a table from one `/v2/rates` call. Throws when the provider
+  /// leaves out any requested quote.
+  Future<ExchangeRateTable> _fetchTable(
+    String base,
+    List<String> quotes,
+    DateTime? date,
+  ) async {
+    final rates = <String, double>{if (quotes.contains(base)) base: 1.0};
+    final toFetch = quotes.where((q) => q != base).toList();
+    var effectiveDate = '';
+
+    if (toFetch.isNotEmpty) {
+      final rows = await _remote.getRates(
+        base,
+        toFetch.join(','),
+        date != null ? _formatDate(date) : null,
+      );
+      for (final row in rows) {
+        final isRequested = row.base == base && toFetch.contains(row.quote);
+        if (!isRequested || !(row.rate > 0) || !row.rate.isFinite) continue;
+        rates[row.quote] = row.rate;
+        if (row.date.compareTo(effectiveDate) > 0) effectiveDate = row.date;
+      }
     }
+
+    final missing = quotes.where((q) => !rates.containsKey(q)).toList();
+    if (missing.isNotEmpty) {
+      throw StateError('Provider returned no rate for ${missing.join(',')}');
+    }
+
     return ExchangeRateTable(
-      baseCurrency: base.toUpperCase(),
+      baseCurrency: base,
       rates: rates,
-      effectiveDate: DateTime.now().toUtc(),
-      fetchedAt: DateTime.now().toUtc(),
-      provider: 'baseline_pivot',
+      effectiveDate:
+          DateTime.tryParse(effectiveDate) ?? (date ?? DateTime.now()),
+      fetchedAt: DateTime.now(),
+      provider: _provider,
     );
   }
 

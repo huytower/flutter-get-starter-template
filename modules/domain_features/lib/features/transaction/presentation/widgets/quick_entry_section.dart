@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/prj_locale_keys.dart';
 
-import '../../../../core/ai/ai_fallback_preference_datasource.dart';
 import '../../../../core/constant/currency_constants.dart';
 import 'voice_ripple_animation_widget.dart';
 
@@ -15,7 +14,8 @@ import 'voice_ripple_animation_widget.dart';
 /// Refactored to comply with a glassmorphic design pattern and AI context guardrails:
 /// [camera icon button] [input text] [audio icon button]
 ///
-/// Lock overlay is handled by the parent widget (TransactionHeaderBanner) using Stack.
+/// Locking (level, AI consent) is done by the parent `TransactionHeaderBanner`
+/// with `CcLockOverlay`.
 class QuickEntrySection extends StatelessWidget {
   const QuickEntrySection({
     super.key,
@@ -31,9 +31,7 @@ class QuickEntrySection extends StatelessWidget {
     required this.onScanTap,
     required this.onApplySuggestion,
     required this.onDismissSuggestion,
-    required this.aiPreferences,
     this.onClear,
-    this.hasLocked = false,
   });
 
   final TextEditingController controller;
@@ -48,9 +46,7 @@ class QuickEntrySection extends StatelessWidget {
   final VoidCallback onScanTap;
   final VoidCallback onApplySuggestion;
   final VoidCallback onDismissSuggestion;
-  final AiFallbackPreferenceDataSource aiPreferences;
   final VoidCallback? onClear;
-  final bool hasLocked;
 
   bool _hasSupportedLanguageAndCurrency(BuildContext context) {
     final languageCode = el.EasyLocalization.of(
@@ -66,17 +62,14 @@ class QuickEntrySection extends StatelessWidget {
     if (!_hasSupportedLanguageAndCurrency(context)) {
       return const SizedBox.shrink();
     }
-    return Opacity(
-      opacity: hasLocked ? 0.5 : 1.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildInputBar(context),
-          const CcSpaceXS(),
-          _buildSuggestionChip(context),
-          _buildErrorMessage(context),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildInputBar(context),
+        const CcSpaceXS(),
+        _buildSuggestionChip(context),
+        _buildErrorMessage(context),
+      ],
     );
   }
 
@@ -241,24 +234,15 @@ class QuickEntrySection extends StatelessWidget {
 
     final buttonSize = context.respDim(30);
 
-    return FutureBuilder<bool>(
-      future: aiPreferences.hasGeminiEnabled(),
-      builder: (context, snapshot) {
-        final hasGeminiEnabled = snapshot.data ?? true;
-        if (!hasGeminiEnabled) {
-          return const SizedBox.shrink();
-        }
-        return CcIconButton.bouncing(
-          icon: Icon(
-            Icons.camera_alt_outlined,
-            color: context.ccColorScheme.onSurface.withOpacity(0.45),
-            size: context.respDim(20),
-          ),
-          onTap: onScanTap,
-          width: buttonSize,
-          height: buttonSize,
-        );
-      },
+    return CcIconButton.bouncing(
+      icon: Icon(
+        Icons.camera_alt_outlined,
+        color: context.ccColorScheme.onSurface.withOpacity(0.45),
+        size: context.respDim(20),
+      ),
+      onTap: onScanTap,
+      width: buttonSize,
+      height: buttonSize,
     );
   }
 }

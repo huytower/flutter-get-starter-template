@@ -46,4 +46,8 @@ abstract class FinancialRefreshProvider {
 
   /// Blanks every mounted financial screen's in-memory records (sign-out).
   Future<void> releaseAllLoaded();
+
+  /// Re-reads the account settings (profile, guideline progress, user level)
+  /// after they were replaced in storage, e.g. by another account's.
+  Future<void> reloadAccountSettings();
 }

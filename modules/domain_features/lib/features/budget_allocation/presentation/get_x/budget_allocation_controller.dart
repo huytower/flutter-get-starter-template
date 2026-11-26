@@ -70,10 +70,6 @@ class BudgetAllocationController extends PrjGetController {
   /// insights panel simply doesn't render (see [BudgetInsightsEntity.hasAnything]).
   final Rx<BudgetInsightsEntity?> insights = Rx<BudgetInsightsEntity?>(null);
 
-  void navigateToReconcile(BuildContext context) {
-    context.router.push(const ReconcileRoute());
-  }
-
   void navigateToInvestmentList(BuildContext context) {
     context.router.push(InvestmentListRoute());
   }

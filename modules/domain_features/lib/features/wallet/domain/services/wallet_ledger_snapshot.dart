@@ -22,4 +22,3 @@ class WalletLedgerSnapshot {
   /// Current-month stats of investment wallets, in the target currency.
   final Map<String, InvestmentStats> monthlyInvestmentStats;
 }
-

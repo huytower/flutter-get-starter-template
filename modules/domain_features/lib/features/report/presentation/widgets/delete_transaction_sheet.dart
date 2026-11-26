@@ -6,7 +6,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../transaction/domain/usecases/delete_transaction_usecase.dart';
 
 /// Asks before deleting a transaction from the report, then deletes it,
 /// refreshes the screens that show it and tells the user how it went.
@@ -24,16 +24,14 @@ abstract final class DeleteTransactionSheet {
     );
     if (!confirmed) return;
 
-    final result = await getIt<TransactionRepository>().deleteTransaction(
-      transaction.id,
-    );
+    final result = await getIt<DeleteTransactionUseCase>().call(transaction);
     if (!context.mounted) return;
     if (result.isError()) {
       CcSnackBarHelper.showErrorSnackBar(
         context: context,
-        message:
-            result.tryGetError()?.message ??
-            el.tr(PrjLocaleKeys.app_error_general),
+        message: el.tr(
+          result.tryGetError()?.message ?? PrjLocaleKeys.app_error_general,
+        ),
       );
       return;
     }

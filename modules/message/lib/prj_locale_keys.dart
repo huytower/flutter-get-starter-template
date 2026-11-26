@@ -51,6 +51,7 @@ class CodegenLoader extends AssetLoader {
       "ok": "OK",
       "cancel": "Cancel",
       "save": "Save",
+      "name_suggestion_hint": "Pick a suggestion below",
       "delete": "Delete",
       "edit": "Edit",
       "back": "Back",
@@ -189,6 +190,17 @@ class CodegenLoader extends AssetLoader {
       "investment_empty": "No investment wallets yet\nTap + to add ",
       "investment_name": "Investment Name",
       "investment_name_hint": "e.g. BTC, Apple Stock...",
+      "name_suggestions_bank": "TCB 1234|VCB salary|MB spending|BIDV 5678|VPB 2468|ACB family|Vietin 1357|TPB 9012|Cake|Timo",
+      "name_suggestions_ewallet": "MoMo|ZaloPay|ShopeePay|VNPAY|Viettel Money|VNPT Money|MobiFone Money|Payoo|SmartPay|PayPal",
+      "name_suggestions_emergency_fund": "Emergency fund|6-month fund|Medical fund|Job-loss fund|Car repair fund|Home repair fund|Weddings & funerals|Tet fund|Tuition fund|Parents fund",
+      "investment_name_suggestions_stock": "FPT|HPG|VCB|MWG|VNM|TCB|MBB|VIC|VPS account|TCBS account",
+      "investment_name_suggestions_fund": "VOO|IVV|SPY|QQQ|VTI",
+      "investment_name_suggestions_term_deposit": "VCB 6M deposit|BIDV 12M deposit|Agribank 12M deposit|TCB online 1M|VPB online 3M|Cake 6M|Timo 3M|MB savings|TPB savings plan|Emergency fund",
+      "investment_name_suggestions_real_estate": "District 7 apartment|Long An land plot|Thu Duc townhouse|Vinhomes condo|Hometown land|Bao Loc garden land|Rental apartment|Rental room|Shophouse|Condotel",
+      "investment_name_suggestions_gold": "SJC 1 tael|9999 plain ring|PNJ ring|DOJI|Bao Tin Minh Chau|Than Tai gold|Wedding gold|18K gold|Gold savings|Phu Quy silver",
+      "investment_name_suggestions_crypto": "Bitcoin|Ethereum|USDT|BNB|USDC",
+      "investment_name_suggestions_bond": "Government bond|US Treasury bond|Corporate bond|BND|AGG",
+      "investment_name_suggestions_business": "Coffee shop|Restaurant|Shopee shop|TikTok Shop|Grocery store|Stake with friend|Grab car|Nail/spa salon|Franchise|Startup",
       "investment_delete_title": "Delete Investment",
       "investment_delete_confirm":
           "Deleting an investment item is only possible when its total performance value is 0. All related transactions will be soft-deleted. Continue?",
@@ -279,6 +291,14 @@ class CodegenLoader extends AssetLoader {
       "liability_direction_lend": "Lend",
       "liability_name_label": "Liability name",
       "liability_name_hint": "e.g. Laptop purchase, Bank loan...",
+      "liability_name_suggestions_personal": "Loan from Mom|Loan from Dad|Loan from friend|Loan from brother|Loan from sister|Loan from sibling|Loan from relative|Loan from coworker|Loan from boss|Loan from neighbor",
+      "liability_name_suggestions_bank": "VPB car loan|TPB car loan|VPB personal loan|TCB personal loan|VCB consumer loan|Agribank business|MB student loan|FE car loan|Home Credit loan|Shinhan personal",
+      "liability_name_suggestions_mortgage": "BIDV mortgage|VCB mortgage|TCB mortgage|VPB mortgage|MB mortgage|Vietin mortgage|Agribank mortgage|Social housing loan|Land loan|Home repair loan",
+      "liability_name_suggestions_credit_card": "TCB Visa 1234|VPB Master 5678|VIB Plus 2468|TPB EVO 1357|HSBC Visa 4321|UOB Visa 7777|VCB Visa 8888|STB JCB 9012|ACB Visa 3456|MB Visa 6789",
+      "liability_name_suggestions_installment": "iPhone 16 plan|SH scooter plan|MacBook plan|SPayLater|TCB card 0% plan|Home Credit plan|TGDD plan|FPT Shop plan|Fridge plan|Air-con plan",
+      "liability_name_suggestions_other": "Hui (savings circle)|Salary advance|Rent owed|Utility bills owed|Owed to a shop|Owed to a partner|Owed for goods|Tuition owed|Building fees owed|Hospital bills owed",
+      "liability_name_suggestions_lend_personal": "Lent to Mom|Lent to Dad|Lent to friend|Lent to brother|Lent to sister|Lent to sibling|Lent to relative|Lent to coworker|Lent to partner|Lent to neighbor",
+      "liability_name_suggestions_lend_other": "Rental deposit|Purchase deposit|Unfinished hui|Paid on behalf|Covered a meal|Customer owes goods|Pending COD|Staff advance|Business capital|Pending refund",
       "record_liability": "Record Liability",
       "liability_amount_borrow_label": "Liability amount",
       "liability_amount_lend_label": "Lending amount",
@@ -382,6 +402,7 @@ class CodegenLoader extends AssetLoader {
         "amount_exceeds_outstanding": "Amount exceeds remaining balance",
         "liability_settled": "This liability is already settled",
         "not_editable": "This transaction can't be edited",
+        "reconciled": "This transaction is in a reconciled period. Add a new transaction to offset it instead.",
         "edit_window": "You can only edit transactions from the last 30 days",
       },
       "transfer_money": "Transfer money",
@@ -449,6 +470,8 @@ class CodegenLoader extends AssetLoader {
       "edit_title": "Edit Budget",
       "limit_locked":
           "The limit can only be changed in the first 7 days of the month.",
+      "limit_locked_has_spending":
+          "The limit can't be changed once spending has been recorded this month. You can delete the budget and create it again.",
       "delete_title": "Delete Budget",
       "delete_confirm": "Delete \"{name}\"?",
       "reset_period": "Reset Period",
@@ -519,7 +542,8 @@ class CodegenLoader extends AssetLoader {
       "book": "Book",
       "actual": "Actual",
       "book_balance": "Book: {amount}",
-      "cycle_subtitle": "This week · due Sunday",
+      "cycle_subtitle": "**Reconcile once per 7-day cycle**, ending on the weekly audit day you pick in Profile. Any day of the cycle works.",
+      "cycle_current": "**Reconcile once per 7-day cycle**, ending on **{day}** (your weekly audit day). Any day of the cycle works. Current cycle: {start} – {end}.",
       "description_line_1":
           "Reconciliation helps you **match actual balances with the app** to ensure all financial records are always accurate and transparent.",
       "description_line_2":
@@ -540,6 +564,13 @@ class CodegenLoader extends AssetLoader {
       "adjustment_shortfall": "Reconciliation - shortfall adjustment",
       "lech": "Off by {amount}",
       "review_transactions": "Review transactions",
+      "locked_title": "Already reconciled this cycle",
+      "locked_done": "You reconciled on {date}.",
+      "locked_next": "Next reconciliation: from {opens} to {due}.",
+      "locked_reason": "Books are closed once per 7-day cycle, so each week's figures stay separate and your streak counts correctly. To reconcile sooner, change your weekly audit day in Profile.",
+      "locked_got_it": "Got it",
+      "locked_view_history": "View history",
+      "locked_message": "You have already reconciled this cycle. The next one opens after your audit day.",
     },
     "report": {
       "title": "Report",
@@ -773,9 +804,9 @@ class CodegenLoader extends AssetLoader {
       "vip": "VIP",
       "vip_subtitle":
           "Lifts the free-tier limit on Investment items / Loan records (local toggle, no real payment yet)",
-      "force_full_access": "Unlock all features",
+      "force_full_access": "Unlock Invest, Liability, AI (experiment)",
       "force_full_access_subtitle":
-          "Debug/QA override — instantly unlocks Investment + Debt/Loan (LV3), regardless of your actual progress",
+          "Experimental feature — the advanced edition for users who want to go deeper",
       "gemini_ai": "Gemini AI features",
       "gemini_ai_subtitle":
           "Debug/QA — on: text, voice and receipt entries are parsed by Gemini first (local as fallback). Off: nothing is sent to Gemini, only local parsing runs",
@@ -791,7 +822,7 @@ class CodegenLoader extends AssetLoader {
       "currency": "Currency unit",
       "currency_subtitle": "Change your primary currency unit",
       "currency_convert_title": "Switch to {to}?",
-      "currency_convert_message": "All balances, transactions, budgets and debts will be converted from {from} to {to} at the current exchange rate. From then on every amount is recorded in {to}.",
+      "currency_convert_message": "All balances, transactions, budgets and debts will be converted from {from} to {to} at the current exchange rate. From then on every amount is recorded in {to}. Amounts are kept in whole units (no cents): each one is rounded, an amount under 1 {to} becomes 1 {to}, and switching back does not restore the original figures.",
       "currency_dong": "Dong",
       "currency_vnd": "Vietnamese Dong",
       "currency_usd": "United States Dollar",
@@ -940,6 +971,7 @@ class CodegenLoader extends AssetLoader {
       "ok": "Đồng ý",
       "cancel": "Hủy",
       "save": "Lưu",
+      "name_suggestion_hint": "Chọn đề xuất như bên dưới",
       "delete": "Xóa",
       "edit": "Sửa",
       "back": "Quay lại",
@@ -1081,6 +1113,17 @@ class CodegenLoader extends AssetLoader {
       "investment_empty": "Chưa có danh mục đầu tư nào\nNhấn + để thêm ",
       "investment_name": "Tên khoản đầu tư",
       "investment_name_hint": "Ví dụ: BTC, Cổ phiếu Apple...",
+      "name_suggestions_bank": "TCB 1234|VCB lương|MB chi tiêu|BIDV 5678|VPB 2468|ACB gia đình|Vietin 1357|TPB 9012|Cake|Timo",
+      "name_suggestions_ewallet": "MoMo|ZaloPay|ShopeePay|VNPAY|Viettel Money|VNPT Money|MobiFone Money|Payoo|SmartPay|PayPal",
+      "name_suggestions_emergency_fund": "Quỹ khẩn cấp|Quỹ 6 tháng sống|Quỹ y tế|Quỹ mất việc|Quỹ sửa xe|Quỹ sửa nhà|Quỹ hiếu hỷ|Quỹ Tết|Quỹ học phí|Quỹ bố mẹ",
+      "investment_name_suggestions_stock": "FPT|HPG|VCB|MWG|VNM|TCB|MBB|VIC|TK VPS|TK TCBS",
+      "investment_name_suggestions_fund": "VOO|IVV|SPY|QQQ|VTI",
+      "investment_name_suggestions_term_deposit": "Sổ VCB 6T|Sổ BIDV 12T|Sổ Agribank 12T|Online TCB 1T|Online VPB 3T|Cake 6T|Timo 3T|MB tích lũy|TPB gửi góp|Quỹ khẩn cấp",
+      "investment_name_suggestions_real_estate": "Căn hộ Q.7|Đất nền Long An|Nhà phố Thủ Đức|Chung cư Vinhomes|Đất quê|Đất vườn Bảo Lộc|Căn hộ cho thuê|Phòng trọ cho thuê|Shophouse|Condotel",
+      "investment_name_suggestions_gold": "SJC 1 lượng|Nhẫn trơn 9999|PNJ nhẫn|DOJI|Bảo Tín Minh Châu|Kim Thần Tài|Vàng cưới|Vàng 18K|Vàng tích lũy|Bạc Phú Quý",
+      "investment_name_suggestions_crypto": "Bitcoin|Ethereum|USDT|BNB|USDC",
+      "investment_name_suggestions_bond": "TP Chính phủ|TP kho bạc Mỹ|TP doanh nghiệp|BND|AGG",
+      "investment_name_suggestions_business": "Quán cà phê|Quán ăn|Shop Shopee|TikTok Shop|Tạp hóa|Góp vốn bạn|Xe chạy Grab|Tiệm nail/spa|Nhượng quyền|Startup",
       "investment_delete_title": "Xoá khoản đầu tư",
       "investment_delete_confirm":
           "Chỉ có thể xoá khoản đầu tư khi tổng giá trị hiệu suất bằng 0. Mọi giao dịch liên quan sẽ bị xoá (soft-delete). Tiếp tục?",
@@ -1170,6 +1213,14 @@ class CodegenLoader extends AssetLoader {
       "liability_direction_lend": "Cho mượn",
       "liability_name_label": "Tên khoản nợ/vay",
       "liability_name_hint": "VD: Mua laptop, Vay ngân hàng...",
+      "liability_name_suggestions_personal": "Mượn Mẹ|Mượn Bố|Mượn bạn|Mượn anh|Mượn chị|Mượn em|Mượn họ hàng|Mượn đồng nghiệp|Mượn sếp|Mượn hàng xóm",
+      "liability_name_suggestions_bank": "Vay xe VPB|Vay xe TPB|Tín chấp VPB|Tín chấp TCB|Vay tiêu dùng VCB|Vay KD Agribank|Vay học MB|FE vay xe|Home Credit vay|Shinhan tín chấp",
+      "liability_name_suggestions_mortgage": "Vay nhà BIDV|Vay nhà VCB|Vay nhà TCB|Vay nhà VPB|Vay nhà MB|Vay nhà Vietin|Vay nhà Agribank|Vay nhà ở XH|Vay mua đất|Vay sửa nhà",
+      "liability_name_suggestions_credit_card": "TCB Visa 1234|VPB Master 5678|VIB Plus 2468|TPB EVO 1357|HSBC Visa 4321|UOB Visa 7777|VCB Visa 8888|STB JCB 9012|ACB Visa 3456|MB Visa 6789",
+      "liability_name_suggestions_installment": "Góp iPhone 16|Góp xe SH|Góp MacBook|SPayLater|Thẻ TCB góp 0%|Home Credit góp|Góp TGDĐ|Góp FPT Shop|Góp tủ lạnh|Góp điều hòa",
+      "liability_name_suggestions_other": "Hụi|Ứng lương|Nợ tiền nhà|Nợ điện nước|Nợ cửa hàng|Nợ đối tác|Nợ tiền hàng|Nợ học phí|Nợ phí chung cư|Nợ viện phí",
+      "liability_name_suggestions_lend_personal": "Cho Mẹ mượn|Cho Bố mượn|Cho bạn mượn|Cho anh mượn|Cho chị mượn|Cho em mượn|Cho họ hàng mượn|Cho đồng nghiệp mượn|Cho người yêu mượn|Cho hàng xóm mượn",
+      "liability_name_suggestions_lend_other": "Cọc thuê nhà|Đặt cọc mua hàng|Hụi chưa hốt|Chi hộ|Trả hộ tiền ăn|Khách nợ tiền hàng|COD chưa nhận|Ứng lương NV|Góp vốn KD|Tiền hoàn chờ về",
       "liability_amount_borrow_label": "Số tiền vay",
       "liability_amount_lend_label": "Số tiền cho mượn",
       "liability_wallet_borrow_label": "Ví nhận tiền",
@@ -1274,6 +1325,7 @@ class CodegenLoader extends AssetLoader {
         "amount_exceeds_outstanding": "Số tiền vượt quá số dư còn lại!",
         "liability_settled": "Khoản nợ/vay này đã tất toán!",
         "not_editable": "Không thể sửa giao dịch này!",
+        "reconciled": "Giao dịch thuộc kỳ đã kiểm toán. Hãy thêm giao dịch mới để bù trừ.",
         "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!",
       },
       "transfer_money": "Chuyển tiền",
@@ -1291,6 +1343,8 @@ class CodegenLoader extends AssetLoader {
       "edit_title": "Sửa ngân sách",
       "limit_locked":
           "Giới hạn chỉ có thể thay đổi trong 7 ngày đầu tiên của tháng.",
+      "limit_locked_has_spending":
+          "Không thể đổi giới hạn khi tháng này đã có chi tiêu. Bạn có thể xóa ngân sách và tạo lại.",
       "delete_title": "Xóa ngân sách",
       "delete_confirm": "Xóa \"{name}\"?",
       "reset_period": "Đặt lại kỳ",
@@ -1344,7 +1398,8 @@ class CodegenLoader extends AssetLoader {
       "book": "Sổ sách",
       "actual": "Thực tế",
       "book_balance": "Sổ sách: {amount}",
-      "cycle_subtitle": "Tuần này • đến hạn Chủ Nhật",
+      "cycle_subtitle": "**Mỗi chu kỳ 7 ngày kiểm toán một lần**, kết thúc vào ngày kiểm tra hàng tuần bạn chọn trong Hồ sơ. Có thể làm vào bất kỳ ngày nào trong chu kỳ.",
+      "cycle_current": "**Mỗi chu kỳ 7 ngày kiểm toán một lần**, kết thúc vào **{day}** (ngày kiểm tra hàng tuần). Có thể làm vào bất kỳ ngày nào trong chu kỳ. Chu kỳ hiện tại: {start} – {end}.",
       "description_line_1":
           "Đối soát giúp bạn **khớp số dư thực tế với ứng dụng** để đảm bảo mọi ghi chép tài chính luôn chính xác và minh bạch.",
       "description_line_2":
@@ -1364,6 +1419,13 @@ class CodegenLoader extends AssetLoader {
       "adjustment_shortfall": "Khớp sổ - Điều chỉnh hao hụt",
       "lech": "Lệch {amount}",
       "review_transactions": "Xem giao dịch",
+      "locked_title": "Chu kỳ này đã kiểm toán xong",
+      "locked_done": "Bạn đã kiểm toán vào {date}.",
+      "locked_next": "Lần kiểm toán tiếp theo: từ {opens} đến {due}.",
+      "locked_reason": "Mỗi chu kỳ 7 ngày chỉ chốt sổ một lần, để số liệu từng tuần tách bạch và chuỗi kiểm toán được tính đúng. Muốn kiểm toán sớm hơn, hãy đổi ngày kiểm tra hàng tuần trong Hồ sơ.",
+      "locked_got_it": "Đã hiểu",
+      "locked_view_history": "Xem lịch sử",
+      "locked_message": "Chu kỳ này bạn đã kiểm toán. Lần tiếp theo mở sau ngày kiểm tra hàng tuần.",
       "empty": "Không có ví nào để đối soát.",
       "instruction": "Nhập số dư thực tế kiểm đếm cho mỗi ví:",
       "book_total": "Tổng sổ sách",
@@ -1513,9 +1575,9 @@ class CodegenLoader extends AssetLoader {
       "vip": "VIP",
       "vip_subtitle":
           "Nâng giới hạn miễn phí cho mục Đầu tư / bản ghi Nợ (chuyển đổi cục bộ, chưa có thanh toán thực tế)",
-      "force_full_access": "Mở khóa tất cả tính năng",
+      "force_full_access": "Mở khóa Đầu tư, Vay nợ, AI (thử nghiệm)",
       "force_full_access_subtitle":
-          "Ghi đè Debug/QA — mở khóa ngay lập tức Đầu tư + Nợ/Vay (LV3), bất kể tiến độ thực tế của bạn",
+          "Tính năng trải nghiệm, bản nâng cao cho người tìm hiểu chuyên môn",
       "gemini_ai": "Tính năng Gemini AI",
       "gemini_ai_subtitle":
           "Debug/QA — bật: nhập văn bản, giọng nói và hóa đơn được Gemini phân tích trước (cục bộ làm dự phòng). Tắt: không gửi gì tới Gemini, chỉ phân tích cục bộ",
@@ -1531,7 +1593,7 @@ class CodegenLoader extends AssetLoader {
       "currency": "Đơn vị tiền tệ",
       "currency_subtitle": "Thay đổi đơn vị tiền tệ chính",
       "currency_convert_title": "Chuyển sang {to}?",
-      "currency_convert_message": "Toàn bộ số dư, giao dịch, ngân sách và khoản nợ sẽ được quy đổi từ {from} sang {to} theo tỷ giá hiện tại. Từ đó mọi số tiền được ghi bằng {to}.",
+      "currency_convert_message": "Toàn bộ số dư, giao dịch, ngân sách và khoản nợ sẽ được quy đổi từ {from} sang {to} theo tỷ giá hiện tại. Từ đó mọi số tiền được ghi bằng {to}. Số tiền chỉ lưu số nguyên (không có số lẻ, xu): mỗi khoản được làm tròn, khoản dưới 1 {to} được tính thành 1 {to}, và chuyển ngược lại không khôi phục số liệu cũ.",
       "currency_dong": "Đồng",
       "currency_vnd": "Đồng Việt Nam",
       "currency_usd": "Đô la Mỹ",
@@ -1826,6 +1888,7 @@ class CodegenLoader extends AssetLoader {
       "ok": "확인",
       "cancel": "취소",
       "save": "저장",
+      "name_suggestion_hint": "아래 추천에서 선택하세요",
       "delete": "삭제",
       "edit": "편집",
       "back": "뒤로",
@@ -2143,6 +2206,7 @@ class CodegenLoader extends AssetLoader {
         "amount_exceeds_outstanding": "금액이 남은 잔액을 초과합니다",
         "liability_settled": "이 부채는 이미 정산되었습니다",
         "not_editable": "이 거래는 편집할 수 없습니다",
+        "reconciled": "이 거래는 대사가 완료된 기간에 속합니다. 상쇄할 새 거래를 추가하세요.",
         "edit_window": "최근 30일 이내의 거래만 편집할 수 있습니다",
       },
       "transfer_money": "송금",
@@ -2205,6 +2269,7 @@ class CodegenLoader extends AssetLoader {
       "edit_limit": "한도 편집",
       "edit_title": "예산 편집",
       "limit_locked": "한도는 월초 7일 동안만 변경할 수 있습니다.",
+      "limit_locked_has_spending": "이번 달에 지출이 기록되어 한도를 변경할 수 없습니다. 예산을 삭제하고 다시 만들 수 있습니다.",
       "delete_title": "예산 삭제",
       "delete_confirm": "\"{name}\"을(를) 삭제하시겠습니까?",
       "reset_period": "기간 재설정",
@@ -2269,7 +2334,8 @@ class CodegenLoader extends AssetLoader {
       "book": "장부",
       "actual": "실제",
       "book_balance": "장부: {amount}",
-      "cycle_subtitle": "이번 주 · 일요일 마감",
+      "cycle_subtitle": "**7일 주기마다 한 번 대조해요**. 주기는 프로필에서 고른 대조일에 끝나요. 주기 안이라면 언제든 대조할 수 있어요.",
+      "cycle_current": "**7일 주기마다 한 번 대조해요**. 주기는 **{day}**(대조일)에 끝나요. 주기 안이라면 언제든 대조할 수 있어요. 현재 주기: {start} – {end}",
       "description_line_1":
           "조정은 **실제 잔액을 앱과 일치**시켜 모든 재무 기록이 항상 정확하고 투명하게 유지되도록 돕습니다.",
       "description_line_2":
@@ -2289,6 +2355,13 @@ class CodegenLoader extends AssetLoader {
       "adjustment_shortfall": "대사 - 부족분 조정",
       "lech": "{amount} 차이",
       "review_transactions": "거래 검토",
+      "locked_title": "이번 주기는 이미 대조했어요",
+      "locked_done": "{date}에 대조했어요.",
+      "locked_next": "다음 대조: {opens}부터 {due}까지",
+      "locked_reason": "장부는 7일 주기마다 한 번만 마감해요. 주별 수치를 따로 관리하고 연속 기록을 정확히 세기 위해서예요. 더 일찍 대조하려면 프로필에서 대조일을 바꿔 주세요.",
+      "locked_got_it": "확인",
+      "locked_view_history": "기록 보기",
+      "locked_message": "이번 주기는 이미 대조했어요. 다음 대조는 대조일 다음 날부터 가능해요.",
     },
     "report": {
       "title": "보고서",
@@ -2508,9 +2581,9 @@ class CodegenLoader extends AssetLoader {
       "unlocked": "잠금 해제됨",
       "vip": "VIP",
       "vip_subtitle": "투자 항목 / 대출 기록의 무료 계층 한도를 해제합니다 (로컬 토글, 실제 결제 없음)",
-      "force_full_access": "모든 기능 잠금 해제",
+      "force_full_access": "투자·부채·AI 잠금 해제 (실험)",
       "force_full_access_subtitle":
-          "디버그/QA 재정의 — 실제 진행 상관없이 투자 + 부채/대출(LV3)을 즉시 잠금 해제",
+          "체험용 기능 — 전문적으로 알아보려는 분을 위한 고급 버전",
       "gemini_ai": "Gemini AI 기능",
       "gemini_ai_subtitle":
           "디버그/QA — 켜짐: 텍스트, 음성 및 영수증 항목이 Gemini에 의해 먼저 구문 분석됨(로컬 대체). 꺼짐: Gemini에 아무것도 전송되지 않고 로컬 구문 분석만 실행",
@@ -2525,7 +2598,7 @@ class CodegenLoader extends AssetLoader {
       "currency": "통화 단위",
       "currency_subtitle": "기본 통화 단위 변경",
       "currency_convert_title": "{to}(으)로 전환할까요?",
-      "currency_convert_message": "모든 잔액, 거래, 예산, 부채가 현재 환율로 {from}에서 {to}(으)로 환산됩니다. 이후 모든 금액은 {to}(으)로 기록됩니다.",
+      "currency_convert_message": "모든 잔액, 거래, 예산, 부채가 현재 환율로 {from}에서 {to}(으)로 환산됩니다. 이후 모든 금액은 {to}(으)로 기록됩니다. 금액은 정수 단위로만 저장됩니다(센트 등 소수 없음). 각 금액은 반올림되며 1 {to} 미만은 1 {to}로 처리되고, 다시 전환해도 원래 수치로 돌아가지 않습니다.",
       "currency_dong": "동",
       "currency_vnd": "베트남 동",
       "currency_usd": "미국 달러",
@@ -2660,6 +2733,7 @@ class CodegenLoader extends AssetLoader {
       "ok": "OK",
       "cancel": "キャンセル",
       "save": "保存",
+      "name_suggestion_hint": "下の候補から選んでください",
       "delete": "削除",
       "edit": "編集",
       "back": "戻る",
@@ -2975,6 +3049,7 @@ class CodegenLoader extends AssetLoader {
         "amount_exceeds_outstanding": "金額が残りの残高を超えています",
         "liability_settled": "この負債はすでに決済されています",
         "not_editable": "この取引は編集できません",
+        "reconciled": "この取引は照合済みの期間に含まれます。相殺する新しい取引を追加してください。",
         "edit_window": "過去30日以内の取引のみ編集できます",
       },
       "transfer_money": "送金",
@@ -3035,6 +3110,7 @@ class CodegenLoader extends AssetLoader {
       "edit_limit": "上限を編集",
       "edit_title": "予算を編集",
       "limit_locked": "上限は月の最初の7日間のみ変更できます。",
+      "limit_locked_has_spending": "今月すでに支出が記録されているため、上限は変更できません。予算を削除して作り直すことはできます。",
       "delete_title": "予算を削除",
       "delete_confirm": "\"{name}\"を削除しますか？",
       "reset_period": "期間をリセット",
@@ -3097,7 +3173,8 @@ class CodegenLoader extends AssetLoader {
       "book": "帳簿",
       "actual": "実際",
       "book_balance": "帳簿: {amount}",
-      "cycle_subtitle": "今週 · 日曜日期限",
+      "cycle_subtitle": "**照合は7日間の期間ごとに1回**。期間はプロフィールで選んだ照合日に終わります。期間中ならいつでも照合できます。",
+      "cycle_current": "**照合は7日間の期間ごとに1回**。期間は**{day}**（照合日）に終わります。期間中ならいつでも照合できます。現在の期間：{start} – {end}",
       "description_line_1": "調整は**実際の残高をアプリと一致**させ、すべての財務記録が常に正確で透明であることを保証します。",
       "description_line_2":
           "見落とした取引を確認する必要なく、実際と一致するように帳簿残高を調整する**調整エントリを自動的に生成**します。",
@@ -3116,6 +3193,13 @@ class CodegenLoader extends AssetLoader {
       "adjustment_shortfall": "照合 - 不足分の調整",
       "lech": "{amount}の差",
       "review_transactions": "取引を確認",
+      "locked_title": "この期間の照合は完了しています",
+      "locked_done": "{date}に照合しました。",
+      "locked_next": "次回の照合：{opens}〜{due}",
+      "locked_reason": "帳簿の締めは7日間の期間ごとに1回です。週ごとの数字を分けて記録し、連続記録を正しく数えるためです。早めに照合したい場合は、プロフィールで照合日を変更してください。",
+      "locked_got_it": "了解",
+      "locked_view_history": "履歴を見る",
+      "locked_message": "この期間はすでに照合済みです。次回は照合日の翌日から可能です。",
     },
     "report": {
       "title": "レポート",
@@ -3333,9 +3417,9 @@ class CodegenLoader extends AssetLoader {
       "unlocked": "ロック解除済み",
       "vip": "VIP",
       "vip_subtitle": "投資アイテム / ローン記録の無料階層制限を解除します（ローカルトグル、実際の支払いなし）",
-      "force_full_access": "すべての機能をロック解除",
+      "force_full_access": "投資・負債・AIをロック解除（試験版）",
       "force_full_access_subtitle":
-          "デバッグ/QAオーバーライド — 実際の進行状況に関係なく、投資 + 負債/ローン(LV3)を即座にロック解除",
+          "試験的な機能 — 専門的に学びたい方向けの上級版",
       "gemini_ai": "Gemini AI機能",
       "gemini_ai_subtitle":
           "デバッグ/QA — オン: テキスト、音声、レシートエントリがGeminiによって最初に解析されます（ローカルフォールバック）。オフ: Geminiには何も送信されず、ローカル解析のみ実行",
@@ -3350,7 +3434,7 @@ class CodegenLoader extends AssetLoader {
       "currency": "通貨単位",
       "currency_subtitle": "主な通貨単位を変更",
       "currency_convert_title": "{to}に切り替えますか？",
-      "currency_convert_message": "すべての残高、取引、予算、借入が現在の為替レートで{from}から{to}に換算されます。以後、すべての金額は{to}で記録されます。",
+      "currency_convert_message": "すべての残高、取引、予算、借入が現在の為替レートで{from}から{to}に換算されます。以後、すべての金額は{to}で記録されます。金額は整数単位で保存されます（セントなどの端数なし）。各金額は四捨五入され、1 {to}未満の金額は1 {to}になります。元に戻しても元の数値には戻りません。",
       "currency_dong": "ドン",
       "currency_vnd": "ベトナムドン",
       "currency_usd": "米ドル",
@@ -3483,6 +3567,7 @@ class CodegenLoader extends AssetLoader {
       "ok": "确定",
       "cancel": "取消",
       "save": "保存",
+      "name_suggestion_hint": "从下方建议中选择",
       "delete": "删除",
       "edit": "编辑",
       "back": "返回",
@@ -3794,6 +3879,7 @@ class CodegenLoader extends AssetLoader {
         "amount_exceeds_outstanding": "金额超过剩余余额",
         "liability_settled": "此债务已清算",
         "not_editable": "此交易无法编辑",
+        "reconciled": "此交易属于已对账期间。请添加一笔新交易进行冲抵。",
         "edit_window": "您只能编辑过去 30 天内的交易",
       },
       "transfer_money": "转账",
@@ -3852,6 +3938,7 @@ class CodegenLoader extends AssetLoader {
       "edit_limit": "编辑限额",
       "edit_title": "编辑预算",
       "limit_locked": "限额只能在每月的前 7 天内更改。",
+      "limit_locked_has_spending": "本月已有支出记录，无法更改限额。您可以删除预算后重新创建。",
       "delete_title": "删除预算",
       "delete_confirm": "删除 \"{name}\"？",
       "reset_period": "重置周期",
@@ -3914,7 +4001,8 @@ class CodegenLoader extends AssetLoader {
       "book": "账面",
       "actual": "实际",
       "book_balance": "账面: {amount}",
-      "cycle_subtitle": "本周 · 周日到期",
+      "cycle_subtitle": "**每7天周期对账一次**，周期在你于个人资料中选择的对账日结束。周期内任意一天都可以对账。",
+      "cycle_current": "**每7天周期对账一次**，周期在**{day}**（对账日）结束。周期内任意一天都可以对账。当前周期：{start} – {end}",
       "description_line_1": "对账帮助您**将实际余额与应用匹配**，确保所有财务记录始终准确透明。",
       "description_line_2": "**自动生成调整条目**以使应用余额与现实匹配，而无需查看遗漏的交易。",
       "guide_count":
@@ -3932,6 +4020,13 @@ class CodegenLoader extends AssetLoader {
       "adjustment_shortfall": "对账 - 短缺调整",
       "lech": "差额 {amount}",
       "review_transactions": "查看交易",
+      "locked_title": "本周期已对账",
+      "locked_done": "你已于{date}完成对账。",
+      "locked_next": "下次对账：{opens} 至 {due}",
+      "locked_reason": "每个7天周期只结账一次，这样每周的数据保持独立，连续记录也能正确计算。想提前对账，请在个人资料中更改对账日。",
+      "locked_got_it": "知道了",
+      "locked_view_history": "查看记录",
+      "locked_message": "本周期已对账。下次对账在对账日之后开放。",
     },
     "report": {
       "title": "报告",
@@ -4146,8 +4241,8 @@ class CodegenLoader extends AssetLoader {
       "unlocked": "已解锁",
       "vip": "VIP",
       "vip_subtitle": "解除投资项目 / 贷款记录的免费层级限制（本地切换，暂无实际付款）",
-      "force_full_access": "解锁所有功能",
-      "force_full_access_subtitle": "调试/QA 覆盖 — 立即解锁投资 + 债务/贷款（LV3），无论您的实际进度如何",
+      "force_full_access": "解锁投资、借贷、AI（实验）",
+      "force_full_access_subtitle": "体验功能 — 面向深入了解专业知识用户的进阶版",
       "gemini_ai": "Gemini AI 功能",
       "gemini_ai_subtitle":
           "调试/QA — 开启: 文本、语音和收据条目首先由 Gemini 解析（本地回退）。关闭: 不会向 Gemini 发送任何内容，仅运行本地解析",
@@ -4162,7 +4257,7 @@ class CodegenLoader extends AssetLoader {
       "currency": "货币单位",
       "currency_subtitle": "更改您的主要货币单位",
       "currency_convert_title": "切换到{to}？",
-      "currency_convert_message": "所有余额、交易、预算和债务将按当前汇率从{from}换算为{to}。此后所有金额都以{to}记录。",
+      "currency_convert_message": "所有余额、交易、预算和债务将按当前汇率从{from}换算为{to}。此后所有金额都以{to}记录。金额仅以整数单位保存（无分等小数）：每笔金额四舍五入，不足 1 {to} 的金额按 1 {to} 计，切换回原币种也不会恢复原始数值。",
       "currency_dong": "盾",
       "currency_vnd": "越南盾",
       "currency_usd": "美元",
@@ -4308,6 +4403,8 @@ class PrjLocaleKeys {
   static const common_ok = 'common.ok';
   static const common_cancel = 'common.cancel';
   static const common_save = 'common.save';
+  static const common_name_suggestion_hint =
+      'common.name_suggestion_hint';
   static const common_delete = 'common.delete';
   static const common_edit = 'common.edit';
   static const common_back = 'common.back';
@@ -4451,6 +4548,28 @@ class PrjLocaleKeys {
   static const wallet_investment_empty = 'wallet.investment_empty';
   static const wallet_investment_name = 'wallet.investment_name';
   static const wallet_investment_name_hint = 'wallet.investment_name_hint';
+  static const wallet_name_suggestions_bank =
+      'wallet.name_suggestions_bank';
+  static const wallet_name_suggestions_ewallet =
+      'wallet.name_suggestions_ewallet';
+  static const wallet_name_suggestions_emergency_fund =
+      'wallet.name_suggestions_emergency_fund';
+  static const wallet_investment_name_suggestions_stock =
+      'wallet.investment_name_suggestions_stock';
+  static const wallet_investment_name_suggestions_fund =
+      'wallet.investment_name_suggestions_fund';
+  static const wallet_investment_name_suggestions_term_deposit =
+      'wallet.investment_name_suggestions_term_deposit';
+  static const wallet_investment_name_suggestions_real_estate =
+      'wallet.investment_name_suggestions_real_estate';
+  static const wallet_investment_name_suggestions_gold =
+      'wallet.investment_name_suggestions_gold';
+  static const wallet_investment_name_suggestions_crypto =
+      'wallet.investment_name_suggestions_crypto';
+  static const wallet_investment_name_suggestions_bond =
+      'wallet.investment_name_suggestions_bond';
+  static const wallet_investment_name_suggestions_business =
+      'wallet.investment_name_suggestions_business';
   static const wallet_add_title = 'wallet.add_title';
   static const wallet_edit_title = 'wallet.edit_title';
   static const wallet_investment_edit_title = 'wallet.investment_edit_title';
@@ -4541,6 +4660,22 @@ class PrjLocaleKeys {
       'transaction.liability_name_label';
   static const transaction_liability_name_hint =
       'transaction.liability_name_hint';
+  static const transaction_liability_name_suggestions_personal =
+      'transaction.liability_name_suggestions_personal';
+  static const transaction_liability_name_suggestions_bank =
+      'transaction.liability_name_suggestions_bank';
+  static const transaction_liability_name_suggestions_mortgage =
+      'transaction.liability_name_suggestions_mortgage';
+  static const transaction_liability_name_suggestions_credit_card =
+      'transaction.liability_name_suggestions_credit_card';
+  static const transaction_liability_name_suggestions_installment =
+      'transaction.liability_name_suggestions_installment';
+  static const transaction_liability_name_suggestions_other =
+      'transaction.liability_name_suggestions_other';
+  static const transaction_liability_name_suggestions_lend_personal =
+      'transaction.liability_name_suggestions_lend_personal';
+  static const transaction_liability_name_suggestions_lend_other =
+      'transaction.liability_name_suggestions_lend_other';
   static const transaction_record_liability = 'transaction.record_liability';
   static const transaction_liability_amount_borrow_label =
       'transaction.liability_amount_borrow_label';
@@ -4763,6 +4898,8 @@ class PrjLocaleKeys {
       'transaction.validation.liability_settled';
   static const transaction_validation_not_editable =
       'transaction.validation.not_editable';
+  static const transaction_validation_reconciled =
+      'transaction.validation.reconciled';
   static const transaction_validation_edit_window =
       'transaction.validation.edit_window';
   static const transaction_transfer_money = 'transaction.transfer_money';
@@ -4828,6 +4965,8 @@ class PrjLocaleKeys {
   static const budget_edit_limit = 'budget.edit_limit';
   static const budget_edit_title = 'budget.edit_title';
   static const budget_limit_locked = 'budget.limit_locked';
+  static const budget_limit_locked_has_spending =
+      'budget.limit_locked_has_spending';
   static const budget_delete_title = 'budget.delete_title';
   static const budget_delete_confirm = 'budget.delete_confirm';
   static const budget_reset_period = 'budget.reset_period';
@@ -4893,6 +5032,8 @@ class PrjLocaleKeys {
   static const reconciliation_actual = 'reconciliation.actual';
   static const reconciliation_book_balance = 'reconciliation.book_balance';
   static const reconciliation_cycle_subtitle = 'reconciliation.cycle_subtitle';
+  static const reconciliation_cycle_current =
+      'reconciliation.cycle_current';
   static const reconciliation_description_line_1 =
       'reconciliation.description_line_1';
   static const reconciliation_description_line_2 =
@@ -4913,6 +5054,13 @@ class PrjLocaleKeys {
   static const reconciliation_adjustment_shortfall =
       'reconciliation.adjustment_shortfall';
   static const reconciliation_lech = 'reconciliation.lech';
+  static const reconciliation_locked_title = 'reconciliation.locked_title';
+  static const reconciliation_locked_done = 'reconciliation.locked_done';
+  static const reconciliation_locked_next = 'reconciliation.locked_next';
+  static const reconciliation_locked_reason = 'reconciliation.locked_reason';
+  static const reconciliation_locked_got_it = 'reconciliation.locked_got_it';
+  static const reconciliation_locked_view_history = 'reconciliation.locked_view_history';
+  static const reconciliation_locked_message = 'reconciliation.locked_message';
   static const reconciliation_review_transactions =
       'reconciliation.review_transactions';
 

@@ -6,10 +6,12 @@ import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/get_x/prj_get_controller.dart';
+import 'package:domain_features/core/presentation/helper/name_suggestions.dart';
 import 'package:domain_features/core/presentation/helper/wallet_icon_helper.dart';
 import 'package:domain_features/features/category/domain/usecases/get_categories_usecase.dart';
 import 'package:domain_features/features/profile/domain/usecases/get_profile_settings_usecase.dart';
 import 'package:domain_features/features/wallet/domain/services/emergency_fund_access.dart';
+import 'package:domain_features/features/wallet/presentation/helper/wallet_name_suggestions.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -68,11 +70,10 @@ class AddLiquidSheetController extends PrjGetController {
 
   bool get hasCash => _wallet?.type == WalletType.cash;
 
-  /// The built-in Cash and default Bank wallets keep a fixed, localized name:
-  /// they are stored with an empty name and labelled at display time, so the
-  /// name must not be edited (or overwritten with the translated label).
-  bool get hasNameLocked =>
-      hasEditing && !_walletController.canDeleteWallet(_wallet!);
+  /// Only the built-in Cash wallet keeps a fixed, localized name (stored empty,
+  /// labelled at display time). The default Bank wallet can be renamed; while
+  /// unnamed it shows the localized label too (see `WalletDisplayName`).
+  bool get hasNameLocked => hasCash;
 
   bool get balanceLocked =>
       hasEditing && _walletController.walletHasTransactions(_wallet!.id);
@@ -226,18 +227,15 @@ class AddLiquidSheetController extends PrjGetController {
       showEmergencyFundLockedHint.value = true;
       return;
     }
+    NameSuggestions.clearIfSuggested(
+      nameController,
+      WalletNameSuggestions.keyForType(newType.value),
+    );
     newType.value = type;
     showEmergencyFundLockedHint.value = false;
 
     if (type != WalletType.investment) {
       selectedInvestmentCategory.value = null;
-    }
-  }
-
-  void selectInvestmentCategory(CategoryEntity category) {
-    selectedInvestmentCategory.value = category;
-    if (nameController.text.trim().isEmpty) {
-      nameController.text = el.tr(category.nameKey);
     }
   }
 

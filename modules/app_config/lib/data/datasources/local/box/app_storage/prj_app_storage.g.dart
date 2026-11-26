@@ -47,13 +47,16 @@ class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
       hasShownGuestLoginFirstReminder: fields[28] as bool?,
       hasDismissedGuestLoginFinalWarning: fields[29] as bool?,
       guestLoginPromptSessionUid: fields[30] as String?,
+      accountSettingsSyncedJson: fields[31] as String?,
+      hasPaidVip: fields[32] as bool?,
+      pendingCloudDeletes: (fields[33] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, PrjAppStorage obj) {
     writer
-      ..writeByte(30)
+      ..writeByte(33)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -113,7 +116,13 @@ class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
       ..writeByte(29)
       ..write(obj.hasDismissedGuestLoginFinalWarning)
       ..writeByte(30)
-      ..write(obj.guestLoginPromptSessionUid);
+      ..write(obj.guestLoginPromptSessionUid)
+      ..writeByte(31)
+      ..write(obj.accountSettingsSyncedJson)
+      ..writeByte(32)
+      ..write(obj.hasPaidVip)
+      ..writeByte(33)
+      ..write(obj.pendingCloudDeletes);
   }
 
   @override
@@ -180,6 +189,11 @@ PrjAppStorage _$PrjAppStorageFromJson(
   hasDismissedGuestLoginFinalWarning:
       json['hasDismissedGuestLoginFinalWarning'] as bool?,
   guestLoginPromptSessionUid: json['guestLoginPromptSessionUid'] as String?,
+  accountSettingsSyncedJson: json['accountSettingsSyncedJson'] as String?,
+  hasPaidVip: json['hasPaidVip'] as bool?,
+  pendingCloudDeletes: (json['pendingCloudDeletes'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
 );
 
 Map<String, dynamic> _$PrjAppStorageToJson(
@@ -219,4 +233,7 @@ Map<String, dynamic> _$PrjAppStorageToJson(
   'hasDismissedGuestLoginFinalWarning':
       instance.hasDismissedGuestLoginFinalWarning,
   'guestLoginPromptSessionUid': instance.guestLoginPromptSessionUid,
+  'accountSettingsSyncedJson': instance.accountSettingsSyncedJson,
+  'hasPaidVip': instance.hasPaidVip,
+  'pendingCloudDeletes': instance.pendingCloudDeletes,
 };

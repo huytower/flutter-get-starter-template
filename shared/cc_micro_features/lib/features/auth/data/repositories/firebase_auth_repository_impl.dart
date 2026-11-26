@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:catcher_2/catcher_2.dart';
-import 'package:cc_micro_features/features/auth/data/diagnostics/delete_account_trace.dart';
 import 'package:cc_micro_features/features/auth/domain/auth_failures.dart';
 import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
 import 'package:cc_micro_features/features/auth/domain/repositories/auth_repository.dart';
@@ -610,16 +609,13 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   Future<Result<Unit, CcFailure>> deleteAccount({
     Future<void> Function()? beforeDelete,
   }) async {
-    final trace = _deleteTrace = DeleteAccountTrace();
     final result = await _runDeleteAccount(beforeDelete: beforeDelete);
-    _deleteTrace = null;
     final outcome = switch (result) {
       Success() => 'deleted',
       Error(error: AuthCancelledFailure()) => 'cancelled by the user',
       Error(:final error) => 'failed: ${error.runtimeType} ${error.message}',
     };
     '[DeleteAccount] outcome: $outcome'.Log(_tag);
-    trace.send(outcome);
     return result;
   }
 
@@ -642,35 +638,30 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         'providers=${providerIds.join(',')} signedInWith=$signInProvider',
       );
 
-      // The confirmation step must show the SAME account that is being
-      // deleted, so it uses the provider the user signed in with this time:
-      //
-      // - Signed in with Apple → the Apple sheet, but only once Apple confirms
-      //   the Apple ID on this device is the one linked to this account (the
-      //   Apple sheet always shows the device's Apple ID and cannot be pointed
-      //   at another one). This also lets us revoke the Apple token, as App
-      //   Store guideline 5.1.1(v) requires.
-      // - Signed in with Google (even if Apple is also linked, e.g. through
-      //   Firebase's same-email account linking) → the Google sheet, never the
-      //   Apple one: the Apple sheet would show an unrelated Apple ID.
+      // Apple linked (signed in with Apple or Google): the Apple sheet, to
+      // revoke the token (guideline 5.1.1(v)), only once Apple confirms this
+      // device's Apple ID is the linked one — the sheet always shows the
+      // device's Apple ID. Unconfirmed (other Apple ID, revoked, Android): no
+      // sheet. For a non-Apple sign-in a failed Apple step falls back to the
+      // path below instead of failing the deletion (the 24/11 failure).
       var hasAppleReauthenticated = false;
-      if (hasApple &&
-          signInProvider == 'apple.com' &&
-          await _canConfirmAppleOnThisDevice(user)) {
+      if (hasApple && await _canConfirmAppleOnThisDevice(user)) {
         final failure = await _reauthenticateAndRevokeApple(user);
-        if (failure != null) return Error(failure);
-        hasAppleReauthenticated = true;
+        if (failure == null) {
+          hasAppleReauthenticated = true;
+        } else if (failure is AuthCancelledFailure ||
+            signInProvider == 'apple.com') {
+          return Error(failure);
+        } else {
+          _trace('Apple step failed (${failure.message}) | continuing');
+        }
       } else if (hasApple) {
-        _trace(
-          'Apple linked but not confirmable here | no Apple sheet, '
-          'Apple token NOT revoked from this device',
-        );
+        _trace('Apple linked, not confirmable here | Apple token NOT revoked');
       }
 
-      // Firebase refuses to delete an account whose sign-in is older than a
-      // few minutes. Re-authenticate BEFORE [beforeDelete] removes the user's
-      // data, so cancelling the Google sheet can never leave an account with
-      // its data already gone.
+      // Re-authenticate BEFORE [beforeDelete] removes the user's data (Firebase
+      // refuses old sign-ins), so a cancelled sheet never leaves an account
+      // without its data.
       if (!hasAppleReauthenticated) {
         final hasRecentLogin = await _hasRecentLogin(user);
         _trace('recent login: $hasRecentLogin');
@@ -727,15 +718,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
 
   static const String _tag = 'FirebaseAuthRepositoryImpl';
 
-  /// Steps of the account deletion in progress, sent to Slack once it ends.
-  DeleteAccountTrace? _deleteTrace;
-
-  /// Records one step of the account deletion: printed locally with `.Log()`
-  /// and kept for the single Slack report sent when the deletion ends.
-  void _trace(String step) {
-    '[DeleteAccount] $step'.Log(_tag);
-    _deleteTrace?.add(step);
-  }
+  /// Records one step of the account deletion in the local log (`.Log()`).
+  /// Nothing is sent off the device: the temporary Slack report of each
+  /// deletion (which carried a masked email) was removed before release.
+  void _trace(String step) => '[DeleteAccount] $step'.Log(_tag);
 
   /// The provider used for the current sign-in (`google.com`, `apple.com`,
   /// `phone`, ...), read from the ID token. Null when it cannot be read.
@@ -819,7 +805,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   ///
   /// A failed revoke does NOT block the deletion — the user asked to leave and
   /// a broken Apple key setup in Firebase must not trap them — but it is
-  /// recorded in the deletion's Slack report so the gap is visible.
+  /// recorded in the local log (`[DeleteAccount]`) so the gap is visible.
   Future<CcFailure?> _reauthenticateAndRevokeApple(
     firebase_auth.User user,
   ) async {

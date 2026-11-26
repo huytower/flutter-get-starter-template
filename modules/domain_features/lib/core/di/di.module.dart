@@ -5,7 +5,6 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'dart:async' as _i687;
-import 'dart:typed_data' as _i100;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:cc_micro_features/features/auth/domain/repositories/auth_repository.dart'
@@ -47,6 +46,8 @@ import 'package:domain_features/features/budget_limit/data/repositories/budget_l
     as _i150;
 import 'package:domain_features/features/budget_limit/domain/repositories/budget_limit_repository.dart'
     as _i544;
+import 'package:domain_features/features/budget_limit/domain/services/budget_limit_edit_policy.dart'
+    as _i998;
 import 'package:domain_features/features/budget_limit/domain/usecases/create_budget_limit_usecase.dart'
     as _i77;
 import 'package:domain_features/features/budget_limit/domain/usecases/delete_budget_limit_usecase.dart'
@@ -151,10 +152,14 @@ import 'package:domain_features/features/notification/domain/usecases/check_clou
     as _i575;
 import 'package:domain_features/features/notification/notification_service.dart'
     as _i483;
+import 'package:domain_features/features/profile/data/datasources/account_settings_sync_datasource.dart'
+    as _i902;
 import 'package:domain_features/features/profile/data/datasources/local/profile_local_datasource.dart'
     as _i755;
 import 'package:domain_features/features/profile/data/repositories/profile_repository_impl.dart'
     as _i609;
+import 'package:domain_features/features/profile/data/services/account_settings_sync.dart'
+    as _i259;
 import 'package:domain_features/features/profile/domain/repositories/profile_repository.dart'
     as _i270;
 import 'package:domain_features/features/profile/domain/usecases/get_profile_settings_usecase.dart'
@@ -185,12 +190,18 @@ import 'package:domain_features/features/reconciliation/data/repositories/reconc
     as _i513;
 import 'package:domain_features/features/reconciliation/domain/repositories/reconciliation_repository.dart'
     as _i944;
+import 'package:domain_features/features/reconciliation/domain/usecases/get_reconciliation_availability_usecase.dart'
+    as _i29;
 import 'package:domain_features/features/reconciliation/domain/usecases/get_reconciliation_history_usecase.dart'
     as _i446;
 import 'package:domain_features/features/reconciliation/domain/usecases/perform_reconciliation_usecase.dart'
     as _i804;
 import 'package:domain_features/features/reconciliation/domain/usecases/undo_reconciliation_usecase.dart'
     as _i196;
+import 'package:domain_features/features/reconciliation/presentation/actions/reconciliation_entry_guard.dart'
+    as _i592;
+import 'package:domain_features/features/reconciliation/presentation/actions/reconciliation_record_actions.dart'
+    as _i384;
 import 'package:domain_features/features/reconciliation/presentation/get_x/reconciliation_controller.dart'
     as _i1051;
 import 'package:domain_features/features/report/domain/usecases/generate_ai_financial_advice_usecase.dart'
@@ -217,6 +228,8 @@ import 'package:domain_features/features/transaction/data/repositories/transacti
     as _i1032;
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart'
     as _i1027;
+import 'package:domain_features/features/transaction/domain/services/reconciled_period_lock.dart'
+    as _i179;
 import 'package:domain_features/features/transaction/domain/usecases/create_investment_transaction_usecase.dart'
     as _i240;
 import 'package:domain_features/features/transaction/domain/usecases/create_transaction_batch_usecase.dart'
@@ -225,6 +238,8 @@ import 'package:domain_features/features/transaction/domain/usecases/create_tran
     as _i28;
 import 'package:domain_features/features/transaction/domain/usecases/create_wallet_transfer_usecase.dart'
     as _i954;
+import 'package:domain_features/features/transaction/domain/usecases/delete_transaction_usecase.dart'
+    as _i455;
 import 'package:domain_features/features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart'
     as _i895;
 import 'package:domain_features/features/transaction/domain/usecases/get_monthly_recurring_match_usecase.dart'
@@ -253,8 +268,6 @@ import 'package:domain_features/features/transaction/presentation/get_x/quick_en
     as _i1005;
 import 'package:domain_features/features/transaction/presentation/get_x/transaction_controller.dart'
     as _i700;
-import 'package:domain_features/features/transaction/presentation/helper/receipt_image_picker_helper.dart'
-    as _i395;
 import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart'
     as _i1058;
 import 'package:domain_features/features/wallet/data/datasources/wallet_sync_datasource.dart'
@@ -345,6 +358,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i556.FirestoreSyncService>(),
               gh<_i727.SessionContract>(),
             ));
+    gh.factory<_i902.AccountSettingsSyncDataSource>(
+        () => _i902.AccountSettingsSyncDataSource(
+              gh<_i556.FirestoreSyncService>(),
+              gh<_i727.SessionContract>(),
+            ));
     gh.factory<_i945.ReconciliationSyncDataSource>(
         () => _i945.ReconciliationSyncDataSource(
               gh<_i556.FirestoreSyncService>(),
@@ -359,6 +377,55 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i556.FirestoreSyncService>(),
           gh<_i727.SessionContract>(),
         ));
+    gh.factory<_i237.ProfileAppActions>(() => _i237.ProfileAppActions(
+          gh<_i305.AiFallbackPreferenceDataSource>(),
+          gh<_i54.CcFeedbackReporter>(),
+        ));
+    gh.lazySingleton<_i130.CommentRemote>(
+        () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.lazySingleton<_i195.CurrencyConversionService>(() =>
+        _i195.CurrencyConversionService(gh<_i104.ExchangeRateRepository>()));
+    gh.factory<_i429.CurrencySelectionController>(() =>
+        _i429.CurrencySelectionController(
+            gh<_i195.CurrencyConversionService>()));
+    gh.lazySingleton<_i402.SimpleCubitInterface>(
+      () => _i691.SimpleCubit(),
+      dispose: (i) => i.close(),
+    );
+    gh.lazySingleton<_i572.WalletRepository>(() => _i590.WalletRepositoryImpl(
+          crashReporter: gh<_i54.CcCrashReporter>(),
+          local: gh<_i1058.WalletLocalDataSource>(),
+          sync: gh<_i156.WalletSyncDataSource>(),
+        ));
+    gh.lazySingleton<_i288.CrashLogRemote>(
+        () => _i288.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.lazySingleton<_i259.AccountSettingsSync>(() => _i259.AccountSettingsSync(
+          gh<_i902.AccountSettingsSyncDataSource>(),
+          gh<_i727.SessionContract>(),
+          gh<_i953.FinancialRefreshProvider>(),
+        ));
+    gh.lazySingleton<_i232.GuestLoginPromptService>(
+        () => _i232.GuestLoginPromptService(
+              gh<_i727.SessionContract>(),
+              gh<_i727.AuthCoordinator>(),
+            ));
+    gh.factory<_i606.WalletChangeEffects>(() => _i606.WalletChangeEffects(
+          gh<_i953.FinancialRefreshProvider>(),
+          gh<_i373.GuidelineProvider>(),
+          gh<_i232.GuestLoginPromptService>(),
+        ));
+    gh.lazySingleton<_i857.CommentRepository>(() => _i536.CommentRepositoryImpl(
+          remote: gh<_i130.CommentRemote>(),
+          crashReporter: gh<_i54.CcCrashReporter>(),
+        ));
+    gh.lazySingleton<_i755.ProfileLocalDataSource>(
+        () => _i755.ProfileLocalDataSource(gh<_i54.CcLocationService>()));
+    gh.lazySingleton<_i473.CrashLogRepository>(
+        () => _i689.CrashLogRepositoryImpl(gh<_i288.CrashLogRemote>()));
+    gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
+        _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
+    gh.factory<_i730.CommentController>(
+        () => _i730.CommentController(gh<_i670.CommentRepository>()));
     gh.lazySingleton<_i963.FinancialDataSyncService>(
         () => _i963.FinancialDataSyncService(
               gh<_i556.FirestoreSyncService>(),
@@ -371,65 +438,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i589.CategorySyncDataSource>(),
               gh<_i622.LiabilitySyncDatasource>(),
               gh<_i953.FinancialRefreshProvider>(),
-            ));
-    gh.factory<_i237.ProfileAppActions>(() => _i237.ProfileAppActions(
-          gh<_i305.AiFallbackPreferenceDataSource>(),
-          gh<_i54.CcFeedbackReporter>(),
-        ));
-    gh.lazySingleton<_i130.CommentRemote>(
-        () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.lazySingleton<_i944.ReconciliationRepository>(
-        () => _i513.ReconciliationRepositoryImpl(
-              crashReporter: gh<_i54.CcCrashReporter>(),
-              local: gh<_i896.ReconciliationLocalDataSource>(),
-              syncService: gh<_i963.FinancialDataSyncService>(),
-            ));
-    gh.lazySingleton<_i195.CurrencyConversionService>(() =>
-        _i195.CurrencyConversionService(gh<_i104.ExchangeRateRepository>()));
-    gh.factory<_i429.CurrencySelectionController>(() =>
-        _i429.CurrencySelectionController(
-            gh<_i195.CurrencyConversionService>()));
-    gh.factory<_i395.ReceiptImage>(() => _i395.ReceiptImage(
-          path: gh<String>(),
-          bytes: gh<_i100.Uint8List>(),
-          mimeType: gh<String>(),
-        ));
-    gh.lazySingleton<_i1059.CategoryRepository>(
-        () => _i658.CategoryRepositoryImpl(
-              crashReporter: gh<_i54.CcCrashReporter>(),
-              local: gh<_i547.CategoryLocalDataSource>(),
-              syncService: gh<_i963.FinancialDataSyncService>(),
-            ));
-    gh.lazySingleton<_i402.SimpleCubitInterface>(
-      () => _i691.SimpleCubit(),
-      dispose: (i) => i.close(),
-    );
-    gh.lazySingleton<_i572.WalletRepository>(() => _i590.WalletRepositoryImpl(
-          crashReporter: gh<_i54.CcCrashReporter>(),
-          local: gh<_i1058.WalletLocalDataSource>(),
-          sync: gh<_i156.WalletSyncDataSource>(),
-        ));
-    gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
-        _i446.GetReconciliationHistoryUseCase(
-            gh<_i944.ReconciliationRepository>()));
-    gh.lazySingleton<_i288.CrashLogRemote>(
-        () => _i288.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.factory<_i395.ReceiptImageBatchPickResult>(
-        () => _i395.ReceiptImageBatchPickResult(
-              images: gh<List<_i395.ReceiptImage>>(),
-              permissionDenied: gh<bool>(),
-              failed: gh<bool>(),
-            ));
-    gh.lazySingleton<_i813.LiabilityRepository>(
-        () => _i230.LiabilityRepositoryImpl(
-              crashReporter: gh<_i54.CcCrashReporter>(),
-              local: gh<_i783.LiabilityLocalDatasource>(),
-              syncService: gh<_i963.FinancialDataSyncService>(),
-            ));
-    gh.lazySingleton<_i232.GuestLoginPromptService>(
-        () => _i232.GuestLoginPromptService(
-              gh<_i727.SessionContract>(),
-              gh<_i727.AuthCoordinator>(),
+              gh<_i259.AccountSettingsSync>(),
             ));
     gh.factory<_i189.ProfileAccountActions>(() => _i189.ProfileAccountActions(
           gh<_i727.SessionContract>(),
@@ -437,15 +446,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i308.DeleteAccountUseCase>(),
           gh<_i963.FinancialDataSyncService>(),
           gh<_i727.AuthCoordinator>(),
-        ));
-    gh.factory<_i606.WalletChangeEffects>(() => _i606.WalletChangeEffects(
-          gh<_i953.FinancialRefreshProvider>(),
-          gh<_i373.GuidelineProvider>(),
-          gh<_i232.GuestLoginPromptService>(),
-        ));
-    gh.factory<_i395.ReceiptImagePickResult>(() => _i395.ReceiptImagePickResult(
-          image: gh<_i395.ReceiptImage>(),
-          permissionDenied: gh<bool>(),
         ));
     gh.lazySingleton<_i857.TransactionRepository>(
         () => _i1032.TransactionRepositoryImpl(
@@ -458,40 +458,18 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i1027.TransactionRepository>(),
           gh<_i195.CurrencyConversionService>(),
         ));
-    gh.lazySingleton<_i857.CommentRepository>(() => _i536.CommentRepositoryImpl(
-          remote: gh<_i130.CommentRemote>(),
-          crashReporter: gh<_i54.CcCrashReporter>(),
-        ));
-    gh.lazySingleton<_i755.ProfileLocalDataSource>(
-        () => _i755.ProfileLocalDataSource(gh<_i54.CcLocationService>()));
     gh.lazySingleton<_i544.BudgetLimitRepository>(
         () => _i150.BudgetLimitRepositoryImpl(
               crashReporter: gh<_i54.CcCrashReporter>(),
               local: gh<_i585.BudgetLimitLocalDataSource>(),
               syncService: gh<_i963.FinancialDataSyncService>(),
             ));
-    gh.factory<_i676.RecordCurrencyRebaser>(() => _i676.RecordCurrencyRebaser(
-          gh<_i813.LiabilityRepository>(),
-          gh<_i544.BudgetLimitRepository>(),
-          gh<_i944.ReconciliationRepository>(),
-          gh<_i195.CurrencyConversionService>(),
-        ));
-    gh.lazySingleton<_i169.GetCategorySpendingUseCase>(
-        () => _i169.GetCategorySpendingUseCase(
-              gh<_i1027.TransactionRepository>(),
-              gh<_i1059.CategoryRepository>(),
-              gh<_i195.CurrencyConversionService>(),
+    gh.lazySingleton<_i944.ReconciliationRepository>(
+        () => _i513.ReconciliationRepositoryImpl(
+              crashReporter: gh<_i54.CcCrashReporter>(),
+              local: gh<_i896.ReconciliationLocalDataSource>(),
+              syncService: gh<_i963.FinancialDataSyncService>(),
             ));
-    gh.lazySingleton<_i951.GetTrendDataUseCase>(() => _i951.GetTrendDataUseCase(
-          gh<_i1027.TransactionRepository>(),
-          gh<_i1059.CategoryRepository>(),
-        ));
-    gh.lazySingleton<_i224.GetCategoriesUseCase>(
-        () => _i224.GetCategoriesUseCase(gh<_i1059.CategoryRepository>()));
-    gh.lazySingleton<_i397.GetCategoryGroupsUseCase>(
-        () => _i397.GetCategoryGroupsUseCase(gh<_i1059.CategoryRepository>()));
-    gh.lazySingleton<_i110.ToggleCategoryEnabledUseCase>(() =>
-        _i110.ToggleCategoryEnabledUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
         () => _i167.GetWalletBalancesUseCase(
               gh<_i572.WalletRepository>(),
@@ -509,15 +487,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i944.ReconciliationRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
-    gh.lazySingleton<_i473.CrashLogRepository>(
-        () => _i689.CrashLogRepositoryImpl(gh<_i288.CrashLogRemote>()));
-    gh.lazySingleton<_i610.DeleteLiabilityUseCase>(
-        () => _i610.DeleteLiabilityUseCase(
-              gh<_i813.LiabilityRepository>(),
-              gh<_i1027.TransactionRepository>(),
+    gh.lazySingleton<_i1059.CategoryRepository>(
+        () => _i658.CategoryRepositoryImpl(
+              crashReporter: gh<_i54.CcCrashReporter>(),
+              local: gh<_i547.CategoryLocalDataSource>(),
+              syncService: gh<_i963.FinancialDataSyncService>(),
             ));
-    gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
-        _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
     gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
           gh<_i569.GetWalletBalancesUseCase>(),
           gh<_i569.WalletRepository>(),
@@ -538,8 +513,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i256.UpdateBudgetLimitOrdersUseCase>(() =>
         _i256.UpdateBudgetLimitOrdersUseCase(
             gh<_i544.BudgetLimitRepository>()));
-    gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(() =>
-        _i829.UpdateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i393.GetCategoryAverageMonthlySpendUseCase>(() =>
         _i393.GetCategoryAverageMonthlySpendUseCase(
             gh<_i1027.TransactionRepository>()));
@@ -552,27 +525,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i419.GetMonthlyRecurringMatchUseCase>(() =>
         _i419.GetMonthlyRecurringMatchUseCase(
             gh<_i1027.TransactionRepository>()));
-    gh.lazySingleton<_i663.GetLiabilityBalancesUseCase>(
-        () => _i663.GetLiabilityBalancesUseCase(
-              gh<_i813.LiabilityRepository>(),
-              gh<_i1027.TransactionRepository>(),
-              gh<_i1059.CategoryRepository>(),
-            ));
-    gh.lazySingleton<_i804.PerformReconciliationUseCase>(
-        () => _i804.PerformReconciliationUseCase(
-              gh<_i167.GetWalletBalancesUseCase>(),
-              gh<_i1027.TransactionRepository>(),
-              gh<_i944.ReconciliationRepository>(),
-            ));
-    gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
-        () => _i121.ParseQuickEntryUseCase(
-              gh<_i224.GetCategoriesUseCase>(),
-              gh<_i572.WalletRepository>(),
-            ));
-    gh.factory<_i615.CategorySelectionController>(() =>
-        _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
-    gh.factory<_i730.CommentController>(
-        () => _i730.CommentController(gh<_i670.CommentRepository>()));
+    gh.factory<_i998.BudgetLimitEditPolicy>(
+        () => _i998.BudgetLimitEditPolicy(gh<_i1027.TransactionRepository>()));
+    gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
+        _i446.GetReconciliationHistoryUseCase(
+            gh<_i944.ReconciliationRepository>()));
     gh.lazySingleton<_i463.GetBudgetAnomaliesUseCase>(
         () => _i463.GetBudgetAnomaliesUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
@@ -583,31 +540,41 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i544.BudgetLimitRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
-    gh.lazySingleton<_i270.ProfileRepository>(() =>
-        _i609.ProfileRepositoryImpl(local: gh<_i755.ProfileLocalDataSource>()));
     gh.lazySingleton<_i206.GetBudgetInsightsUseCase>(
         () => _i206.GetBudgetInsightsUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i895.GetMonthlyCashFlowUseCase>(),
               gh<_i463.GetBudgetAnomaliesUseCase>(),
             ));
+    gh.lazySingleton<_i813.LiabilityRepository>(
+        () => _i230.LiabilityRepositoryImpl(
+              crashReporter: gh<_i54.CcCrashReporter>(),
+              local: gh<_i783.LiabilityLocalDatasource>(),
+              syncService: gh<_i963.FinancialDataSyncService>(),
+            ));
+    gh.lazySingleton<_i270.ProfileRepository>(() => _i609.ProfileRepositoryImpl(
+          local: gh<_i755.ProfileLocalDataSource>(),
+          syncService: gh<_i963.FinancialDataSyncService>(),
+        ));
+    gh.factory<_i179.ReconciledPeriodLock>(
+        () => _i179.ReconciledPeriodLock(gh<_i944.ReconciliationRepository>()));
     gh.lazySingleton<_i390.CheckBudgetThresholdUseCase>(
         () => _i390.CheckBudgetThresholdUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i483.NotificationService>(),
             ));
-    gh.lazySingleton<_i62.BookCurrencyAligner>(() => _i62.BookCurrencyAligner(
-          gh<_i572.WalletRepository>(),
-          gh<_i1027.TransactionRepository>(),
-          gh<_i430.WalletLedger>(),
-          gh<_i195.CurrencyConversionService>(),
-          gh<_i676.RecordCurrencyRebaser>(),
-        ));
-    gh.factory<_i750.ProfileOnboardingActions>(
-        () => _i750.ProfileOnboardingActions(
-              gh<_i1041.ToggleCategoryEnabledUseCase>(),
-              gh<_i953.FinancialRefreshProvider>(),
-              gh<_i373.GuidelineProvider>(),
+    gh.factory<_i29.GetReconciliationAvailabilityUseCase>(
+        () => _i29.GetReconciliationAvailabilityUseCase(
+              gh<_i270.ProfileRepository>(),
+              gh<_i944.ReconciliationRepository>(),
+            ));
+    gh.lazySingleton<_i756.UpdateTransactionUseCase>(
+        () => _i756.UpdateTransactionUseCase(
+              gh<_i1027.TransactionRepository>(),
+              gh<_i572.WalletRepository>(),
+              gh<_i105.GetWalletBookBalanceUseCase>(),
+              gh<_i195.CurrencyConversionService>(),
+              gh<_i179.ReconciledPeriodLock>(),
             ));
     gh.lazySingleton<_i240.CreateInvestmentTransactionUseCase>(
         () => _i240.CreateInvestmentTransactionUseCase(
@@ -630,20 +597,16 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i105.GetWalletBookBalanceUseCase>(),
               gh<_i195.CurrencyConversionService>(),
             ));
-    gh.lazySingleton<_i756.UpdateTransactionUseCase>(
-        () => _i756.UpdateTransactionUseCase(
-              gh<_i1027.TransactionRepository>(),
-              gh<_i572.WalletRepository>(),
-              gh<_i105.GetWalletBookBalanceUseCase>(),
-              gh<_i195.CurrencyConversionService>(),
+    gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(
+        () => _i829.UpdateBudgetLimitUseCase(
+              gh<_i544.BudgetLimitRepository>(),
+              gh<_i998.BudgetLimitEditPolicy>(),
             ));
-    gh.lazySingleton<_i263.ParseSmartEntryUseCase>(
-        () => _i263.ParseSmartEntryUseCase(
-              gh<_i224.GetCategoriesUseCase>(),
-              gh<_i195.CurrencyConversionService>(),
-              gh<_i54.CcAiClient>(),
-              gh<_i572.WalletRepository>(),
-              gh<_i305.AiFallbackPreferenceDataSource>(),
+    gh.lazySingleton<_i340.CheckAuditReminderUseCase>(
+        () => _i340.CheckAuditReminderUseCase(
+              gh<_i270.ProfileRepository>(),
+              gh<_i29.GetReconciliationAvailabilityUseCase>(),
+              gh<_i483.NotificationService>(),
             ));
     gh.lazySingleton<_i805.CreateLiabilityUseCase>(
         () => _i805.CreateLiabilityUseCase(
@@ -661,18 +624,34 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i105.GetWalletBookBalanceUseCase>(),
               gh<_i195.CurrencyConversionService>(),
             ));
+    gh.factory<_i676.RecordCurrencyRebaser>(() => _i676.RecordCurrencyRebaser(
+          gh<_i813.LiabilityRepository>(),
+          gh<_i544.BudgetLimitRepository>(),
+          gh<_i944.ReconciliationRepository>(),
+          gh<_i195.CurrencyConversionService>(),
+        ));
     gh.lazySingleton<_i109.CreateTransactionBatchUseCase>(
         () => _i109.CreateTransactionBatchUseCase(
               gh<_i28.CreateTransactionUseCase>(),
               gh<_i572.WalletRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
-    gh.lazySingleton<_i971.LiabilityListController>(
-        () => _i971.LiabilityListController(
-              gh<_i663.GetLiabilityBalancesUseCase>(),
-              gh<_i610.DeleteLiabilityUseCase>(),
-              gh<_i953.FinancialRefreshProvider>(),
+    gh.lazySingleton<_i169.GetCategorySpendingUseCase>(
+        () => _i169.GetCategorySpendingUseCase(
+              gh<_i1027.TransactionRepository>(),
+              gh<_i1059.CategoryRepository>(),
+              gh<_i195.CurrencyConversionService>(),
             ));
+    gh.lazySingleton<_i951.GetTrendDataUseCase>(() => _i951.GetTrendDataUseCase(
+          gh<_i1027.TransactionRepository>(),
+          gh<_i1059.CategoryRepository>(),
+        ));
+    gh.lazySingleton<_i224.GetCategoriesUseCase>(
+        () => _i224.GetCategoriesUseCase(gh<_i1059.CategoryRepository>()));
+    gh.lazySingleton<_i397.GetCategoryGroupsUseCase>(
+        () => _i397.GetCategoryGroupsUseCase(gh<_i1059.CategoryRepository>()));
+    gh.lazySingleton<_i110.ToggleCategoryEnabledUseCase>(() =>
+        _i110.ToggleCategoryEnabledUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i1003.BudgetLimitController>(
         () => _i1003.BudgetLimitController(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
@@ -688,13 +667,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1059.CategoryRepository>(),
               gh<_i544.BudgetLimitRepository>(),
             ));
-    gh.factory<_i1051.ReconciliationController>(
-        () => _i1051.ReconciliationController(
-              gh<_i167.GetWalletBalancesUseCase>(),
-              gh<_i804.PerformReconciliationUseCase>(),
-              gh<_i196.UndoReconciliationUseCase>(),
-              gh<_i446.GetReconciliationHistoryUseCase>(),
-              gh<_i136.UserLevelProvider>(),
+    gh.lazySingleton<_i610.DeleteLiabilityUseCase>(
+        () => _i610.DeleteLiabilityUseCase(
+              gh<_i813.LiabilityRepository>(),
+              gh<_i1027.TransactionRepository>(),
             ));
     gh.lazySingleton<_i570.GetProfileSettingsUseCase>(
         () => _i570.GetProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
@@ -706,11 +682,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i727.SessionContract>(),
               gh<_i483.NotificationService>(),
             ));
-    gh.lazySingleton<_i340.CheckAuditReminderUseCase>(
-        () => _i340.CheckAuditReminderUseCase(
-              gh<_i270.ProfileRepository>(),
-              gh<_i944.ReconciliationRepository>(),
-              gh<_i483.NotificationService>(),
+    gh.factory<_i455.DeleteTransactionUseCase>(
+        () => _i455.DeleteTransactionUseCase(
+              gh<_i1027.TransactionRepository>(),
+              gh<_i179.ReconciledPeriodLock>(),
             ));
     gh.lazySingleton<_i973.GetUserLevelStatusUseCase>(
         () => _i973.GetUserLevelStatusUseCase(
@@ -719,21 +694,37 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i270.ProfileRepository>(),
             ));
+    gh.lazySingleton<_i804.PerformReconciliationUseCase>(
+        () => _i804.PerformReconciliationUseCase(
+              gh<_i167.GetWalletBalancesUseCase>(),
+              gh<_i1027.TransactionRepository>(),
+              gh<_i944.ReconciliationRepository>(),
+              gh<_i29.GetReconciliationAvailabilityUseCase>(),
+            ));
+    gh.lazySingleton<_i663.GetLiabilityBalancesUseCase>(
+        () => _i663.GetLiabilityBalancesUseCase(
+              gh<_i813.LiabilityRepository>(),
+              gh<_i1027.TransactionRepository>(),
+              gh<_i1059.CategoryRepository>(),
+            ));
     gh.lazySingleton<_i811.UserLevelController>(
         () => _i811.UserLevelController(gh<_i973.GetUserLevelStatusUseCase>()));
+    gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
+        () => _i121.ParseQuickEntryUseCase(
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i572.WalletRepository>(),
+            ));
+    gh.factory<_i615.CategorySelectionController>(() =>
+        _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
     gh.factory<_i591.LoadWalletOverviewUseCase>(
         () => _i591.LoadWalletOverviewUseCase(
               gh<_i572.WalletRepository>(),
               gh<_i1059.CategoryRepository>(),
               gh<_i570.GetProfileSettingsUseCase>(),
             ));
-    gh.factory<_i1005.QuickEntryParser>(() => _i1005.QuickEntryParser(
-          gh<_i224.GetCategoriesUseCase>(),
-          gh<_i121.ParseQuickEntryUseCase>(),
-          gh<_i263.ParseSmartEntryUseCase>(),
-          gh<_i305.AiFallbackPreferenceDataSource>(),
-          gh<_i136.UserLevelProvider>(),
-        ));
+    gh.factory<_i592.ReconciliationEntryGuard>(() =>
+        _i592.ReconciliationEntryGuard(
+            gh<_i29.GetReconciliationAvailabilityUseCase>()));
     gh.lazySingleton<_i436.GenerateAiFinancialAdviceUseCase>(
         () => _i436.GenerateAiFinancialAdviceUseCase(
               gh<_i206.GetBudgetInsightsUseCase>(),
@@ -743,12 +734,55 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i54.CcAiClient>(),
               gh<_i305.AiFallbackPreferenceDataSource>(),
             ));
+    gh.lazySingleton<_i62.BookCurrencyAligner>(() => _i62.BookCurrencyAligner(
+          gh<_i572.WalletRepository>(),
+          gh<_i1027.TransactionRepository>(),
+          gh<_i430.WalletLedger>(),
+          gh<_i195.CurrencyConversionService>(),
+          gh<_i676.RecordCurrencyRebaser>(),
+        ));
+    gh.factory<_i750.ProfileOnboardingActions>(
+        () => _i750.ProfileOnboardingActions(
+              gh<_i1041.ToggleCategoryEnabledUseCase>(),
+              gh<_i953.FinancialRefreshProvider>(),
+              gh<_i373.GuidelineProvider>(),
+            ));
+    gh.lazySingleton<_i263.ParseSmartEntryUseCase>(
+        () => _i263.ParseSmartEntryUseCase(
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i195.CurrencyConversionService>(),
+              gh<_i54.CcAiClient>(),
+              gh<_i572.WalletRepository>(),
+              gh<_i305.AiFallbackPreferenceDataSource>(),
+            ));
+    gh.factory<_i384.ReconciliationRecordActions>(
+        () => _i384.ReconciliationRecordActions(
+              gh<_i804.PerformReconciliationUseCase>(),
+              gh<_i196.UndoReconciliationUseCase>(),
+              gh<_i446.GetReconciliationHistoryUseCase>(),
+              gh<_i29.GetReconciliationAvailabilityUseCase>(),
+              gh<_i340.CheckAuditReminderUseCase>(),
+            ));
     gh.factory<_i985.QuickEntryBatchCommitter>(
         () => _i985.QuickEntryBatchCommitter(
               gh<_i109.CreateTransactionBatchUseCase>(),
               gh<_i390.CheckBudgetThresholdUseCase>(),
               gh<_i373.GuidelineProvider>(),
               gh<_i232.GuestLoginPromptService>(),
+            ));
+    gh.factory<_i752.AddBudgetLimitSheetController>(
+        () => _i752.AddBudgetLimitSheetController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
+              gh<_i1003.BudgetLimitController>(),
+              gh<_i373.GuidelineProvider>(),
+              gh<_i998.BudgetLimitEditPolicy>(),
+            ));
+    gh.factory<_i1051.ReconciliationController>(
+        () => _i1051.ReconciliationController(
+              gh<_i167.GetWalletBalancesUseCase>(),
+              gh<_i384.ReconciliationRecordActions>(),
+              gh<_i136.UserLevelProvider>(),
             ));
     gh.factory<_i174.CategorySettingsController>(
         () => _i174.CategorySettingsController(
@@ -759,6 +793,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i220.UpdateProfileSettingsUseCase>(),
               gh<_i373.GuidelineProvider>(),
             ));
+    gh.lazySingleton<_i971.LiabilityListController>(
+        () => _i971.LiabilityListController(
+              gh<_i663.GetLiabilityBalancesUseCase>(),
+              gh<_i610.DeleteLiabilityUseCase>(),
+              gh<_i953.FinancialRefreshProvider>(),
+            ));
     gh.factory<_i470.ProfileSettingsActions>(() => _i470.ProfileSettingsActions(
           gh<_i570.GetProfileSettingsUseCase>(),
           gh<_i220.UpdateProfileSettingsUseCase>(),
@@ -766,35 +806,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i577.ThemeProvider>(),
           gh<_i54.CcDeviceInfoService>(),
         ));
-    gh.factory<_i752.AddBudgetLimitSheetController>(
-        () => _i752.AddBudgetLimitSheetController(
-              gh<_i1041.GetCategoriesUseCase>(),
-              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
-              gh<_i1003.BudgetLimitController>(),
-              gh<_i373.GuidelineProvider>(),
-            ));
     gh.factory<_i427.EmergencyFundAccess>(() => _i427.EmergencyFundAccess(
           gh<_i136.UserLevelProvider>(),
           gh<_i570.GetProfileSettingsUseCase>(),
           gh<_i220.UpdateProfileSettingsUseCase>(),
-        ));
-    gh.factory<_i353.ReportController>(() => _i353.ReportController(
-          gh<_i169.GetCategorySpendingUseCase>(),
-          gh<_i701.GetFinancialRunwayUseCase>(),
-          gh<_i951.GetTrendDataUseCase>(),
-          gh<_i229.GetInvestmentTrendUseCase>(),
-          gh<_i768.GetLiabilityTrendUseCase>(),
-          gh<_i572.WalletRepository>(),
-          gh<_i136.UserLevelProvider>(),
-          gh<_i436.GenerateAiFinancialAdviceUseCase>(),
-          gh<_i195.CurrencyConversionService>(),
-          gh<_i54.CcAnalytics>(),
-          gh<_i305.AiFallbackPreferenceDataSource>(),
-        ));
-    gh.factory<_i1040.QuickEntryHandler>(() => _i1040.QuickEntryHandler(
-          gh<_i1005.QuickEntryParser>(),
-          gh<_i54.CcSpeechRecognizer>(),
-          gh<_i985.QuickEntryBatchCommitter>(),
         ));
     gh.lazySingleton<_i231.WalletController>(() => _i231.WalletController(
           gh<_i572.WalletRepository>(),
@@ -810,6 +825,27 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i237.ProfileAppActions>(),
           gh<_i811.UserLevelController>(),
         ));
+    gh.factory<_i1005.QuickEntryParser>(() => _i1005.QuickEntryParser(
+          gh<_i224.GetCategoriesUseCase>(),
+          gh<_i121.ParseQuickEntryUseCase>(),
+          gh<_i263.ParseSmartEntryUseCase>(),
+          gh<_i305.AiFallbackPreferenceDataSource>(),
+          gh<_i136.UserLevelProvider>(),
+        ));
+    gh.factory<_i353.ReportController>(() => _i353.ReportController(
+          gh<_i169.GetCategorySpendingUseCase>(),
+          gh<_i701.GetFinancialRunwayUseCase>(),
+          gh<_i951.GetTrendDataUseCase>(),
+          gh<_i229.GetInvestmentTrendUseCase>(),
+          gh<_i768.GetLiabilityTrendUseCase>(),
+          gh<_i572.WalletRepository>(),
+          gh<_i136.UserLevelProvider>(),
+          gh<_i436.GenerateAiFinancialAdviceUseCase>(),
+          gh<_i195.CurrencyConversionService>(),
+          gh<_i54.CcAnalytics>(),
+          gh<_i305.AiFallbackPreferenceDataSource>(),
+          gh<_i179.ReconciledPeriodLock>(),
+        ));
     gh.lazySingleton<_i451.BudgetAllocationController>(
         () => _i451.BudgetAllocationController(
               gh<_i231.WalletController>(),
@@ -818,14 +854,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i136.UserLevelProvider>(),
               gh<_i206.GetBudgetInsightsUseCase>(),
               gh<_i953.FinancialRefreshProvider>(),
-            ));
-    gh.factory<_i135.InvestmentFormController>(
-        () => _i135.InvestmentFormController(
-              gh<_i1041.GetCategoriesUseCase>(),
-              gh<_i570.GetProfileSettingsUseCase>(),
-              gh<_i240.CreateInvestmentTransactionUseCase>(),
-              gh<_i373.GuidelineProvider>(),
-              gh<_i1040.QuickEntryHandler>(),
             ));
     gh.factory<_i1007.AddLiabilitySheetController>(
         () => _i1007.AddLiabilitySheetController(
@@ -852,6 +880,19 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i570.GetProfileSettingsUseCase>(),
               gh<_i427.EmergencyFundAccess>(),
               gh<_i606.WalletChangeEffects>(),
+            ));
+    gh.factory<_i1040.QuickEntryHandler>(() => _i1040.QuickEntryHandler(
+          gh<_i1005.QuickEntryParser>(),
+          gh<_i54.CcSpeechRecognizer>(),
+          gh<_i985.QuickEntryBatchCommitter>(),
+        ));
+    gh.factory<_i135.InvestmentFormController>(
+        () => _i135.InvestmentFormController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i570.GetProfileSettingsUseCase>(),
+              gh<_i240.CreateInvestmentTransactionUseCase>(),
+              gh<_i373.GuidelineProvider>(),
+              gh<_i1040.QuickEntryHandler>(),
             ));
     gh.factory<_i754.ExpenseFormController>(() => _i754.ExpenseFormController(
           gh<_i1027.TransactionRepository>(),

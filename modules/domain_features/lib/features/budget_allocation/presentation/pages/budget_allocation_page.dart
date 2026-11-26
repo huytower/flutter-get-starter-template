@@ -9,6 +9,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/get_x/prj_get_view.dart';
 import '../../../liability/export_liability.dart';
+import '../../../reconciliation/presentation/actions/reconciliation_entry_guard.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_allocation_header.dart';
 import '../widgets/budget_insights_section.dart';
@@ -30,7 +31,10 @@ class BudgetAllocationPage extends PrjGetView<BudgetAllocationController>
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return buildBudgetAllocationHeader(context);
+    return buildBudgetAllocationHeader(
+      context,
+      onReconcile: () => getIt<ReconciliationEntryGuard>().open(context),
+    );
   }
 
   @override

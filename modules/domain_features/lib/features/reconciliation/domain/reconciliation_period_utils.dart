@@ -11,7 +11,16 @@
   return (yearly: thursday.year, week: week);
 }
 
-/// Number of ISO-8601 weeks in [year] — 52 for most years, 53 for "leap
-/// weeks" years. December 28 always falls in the last ISO week of its
-/// calendar year, so its week number is the answer.
-int lastIsoWeekOfYear(int year) => isoWeekOf(DateTime.utc(year, 12, 28)).week;
+/// The audit cycle that contains [date]: the 7 calendar days that end on the
+/// audit day, that day included. [auditWeekday] uses [DateTime.weekday]
+/// (1 = Monday .. 7 = Sunday).
+///
+/// Audit day Sunday gives Monday–Sunday; audit day Wednesday gives
+/// Thursday–Wednesday. Both bounds are UTC midnights of calendar days, so a
+/// daylight-saving change never moves a boundary and two cycles compare equal
+/// with `==`.
+({DateTime start, DateTime end}) auditCycleOf(DateTime date, int auditWeekday) {
+  final day = DateTime.utc(date.year, date.month, date.day);
+  final end = day.add(Duration(days: (auditWeekday - day.weekday) % 7));
+  return (start: end.subtract(const Duration(days: 6)), end: end);
+}

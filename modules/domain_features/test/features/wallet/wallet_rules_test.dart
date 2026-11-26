@@ -83,7 +83,9 @@ void main() {
     });
 
     test('VIP is unlocked at any level', () async {
-      final profile = _FakeProfile(const ProfileSettingsEntity(hasVip: true));
+      final profile = _FakeProfile(
+        const ProfileSettingsEntity(hasVipSwitch: true),
+      );
       expect(await _access(0, profile).hasUnlocked(), isTrue);
     });
   });

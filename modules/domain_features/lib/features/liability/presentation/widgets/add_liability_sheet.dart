@@ -6,8 +6,11 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/presentation/helper/name_suggestions.dart';
 import '../../../../core/presentation/widgets/category/prj_category_item.dart';
+import '../../../../core/presentation/widgets/prj_suggested_name_field.dart';
 import '../get_x/add_liability_sheet_controller.dart';
+import '../helper/liability_name_suggestions.dart';
 
 class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
   const AddLiabilitySheet({
@@ -98,7 +101,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
         ],
         _buildLiabilityCategoryPicker(context, controller),
         const CcSpaceMD(),
-        _buildNameField(context, controller),
+        _buildNameField(controller),
         const CcSpaceMD(),
         _buildSaveButton(context, controller),
       ],
@@ -253,26 +256,20 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     });
   }
 
-  Widget _buildNameField(
-    BuildContext context,
-    AddLiabilitySheetController controller,
-  ) {
+  Widget _buildNameField(AddLiabilitySheetController controller) {
     return Obx(
-      () => CcNameInputField(
+      () => PrjSuggestedNameField(
         controller: controller.nameController,
         labelText: el.tr(PrjLocaleKeys.transaction_liability_name_label),
-        hintText: el.tr(PrjLocaleKeys.transaction_liability_name_hint),
-        errorText: controller.nameError.value,
         maxLength: 25,
-        maxLengthWarningText: el.tr(
-          PrjLocaleKeys.validation_max_length_reached,
-          namedArgs: {'count': '25'},
+        suggestions: NameSuggestions.fromKey(
+          LiabilityNameSuggestions.keyFor(
+            controller.selectedLiabilityCategory.value?.id,
+          ),
         ),
-        onClear: () {
-          controller.hasNameValid.value = false;
-          controller.selectedLiabilityCategory.value = null;
-          controller.nameError.value = null;
-        },
+        errorText: controller.nameError.value,
+        // Keeps the category (and its suggestions) so the user can pick one.
+        onClear: () => controller.nameError.value = null,
       ),
     );
   }
@@ -284,6 +281,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     return Obx(() {
       final bool canSave =
           controller.selectedLiabilityCategory.value != null &&
+          controller.hasNameValid.value &&
           !controller.hasSubmitting.value;
 
       return CcSaveButton(
