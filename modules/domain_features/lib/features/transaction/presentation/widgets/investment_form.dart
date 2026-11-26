@@ -169,7 +169,6 @@ class _InvestmentFormState extends State<InvestmentForm> {
                 size: context.respDim(6),
                 label: guideline.bannerDescription,
                 labelAbove: false,
-                growRight: false,
               ),
             ),
           );

@@ -1,6 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
+import 'guideline_hint_bubble.dart';
+
 /// Pulsing dot with an optional label bubble pointing at the next step of the
 /// onboarding guideline. Pure view: `PrjGuidelineBadge` feeds it the
 /// guideline state.
@@ -19,6 +21,8 @@ class GuidelineBadgeView extends StatefulWidget {
     this.forceHideLabel = false,
     this.labelAbove = true,
     this.icon,
+    this.labelWidthFactorOnTablet =
+        GuidelineHintBubble.defaultWidthFactorOnTablet,
   });
 
   final double size;
@@ -28,6 +32,10 @@ class GuidelineBadgeView extends StatefulWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLabelTap;
   final IconData? icon;
+
+  /// Width scale of the label's [GuidelineHintBubble] on tablets (phones
+  /// unchanged). Defaults to [GuidelineHintBubble.defaultWidthFactorOnTablet].
+  final double labelWidthFactorOnTablet;
 
   /// Whether the label bubble should align its left edge with the dot and grow
   /// to the right. Useful for badges on the left side of the screen.
@@ -213,100 +221,11 @@ class _GuidelineBadgeViewState extends State<GuidelineBadgeView>
       return null;
     }
 
-    final badgeColor = widget.color ?? context.ccColorScheme.primary;
-
-    return LayoutBuilder(
-      builder: (context, constraints) => ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: _labelMaxWidth(context, constraints),
-        ),
-        child: _buildLabelBody(context, badgeColor),
-      ),
-    );
-  }
-
-  /// Half the window fits a phone, but on a small (~7") tablet held sideways
-  /// the badge sits in one of two half-width columns: half the window would
-  /// run past the column's edge, so the label is narrower there and wraps
-  /// onto a second line instead. The result is also capped to the space the
-  /// badge is given, so it never runs past its parent.
-  double _labelMaxWidth(BuildContext context, BoxConstraints constraints) {
-    final windowWidth = MediaQuery.sizeOf(context).width;
-    final windowCap = CcTwoColumn.hasSmallTablet(context)
-        ? windowWidth * 0.3
-        : windowWidth * 0.5;
-    return constraints.hasBoundedWidth
-        ? windowCap.clamp(0, constraints.maxWidth).toDouble()
-        : windowCap;
-  }
-
-  Widget _buildLabelBody(BuildContext context, Color badgeColor) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surface,
-        borderRadius: context.brLg,
-        border: Border.all(
-          color: context.ccColorScheme.onSurface.withValues(alpha: 0.08),
-          width: 0.5,
-        ),
-        boxShadow: [
-          const BoxShadow(
-            color: CcBaseColors.neutral40,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildLabelLeadingIcon(context, badgeColor),
-          const CcSpaceXS(),
-          _buildLabelText(context),
-          const CcSpaceXS(),
-          _buildLabelTrailingIcon(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLabelLeadingIcon(BuildContext context, Color badgeColor) {
-    return Container(
-      width: context.respDim(15),
-      height: context.respDim(15),
-      decoration: BoxDecoration(color: badgeColor, shape: BoxShape.circle),
-      child: Icon(
-        Icons.info_sharp,
-        size: context.respDim(14),
-        color: context.ccColorScheme.onPrimary,
-      ),
-    );
-  }
-
-  Widget _buildLabelText(BuildContext context) {
-    return Flexible(
-      child: CcText(
-        widget.label!,
-        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-          color: context.ccColorScheme.onSurface,
-          fontWeight: CcTypographyParams.medium,
-        ),
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
-
-  Widget _buildLabelTrailingIcon(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onLabelTap,
-      behavior: HitTestBehavior.opaque,
-      child: Icon(
-        Icons.close_outlined,
-        size: context.respDim(15),
-        color: context.ccColorScheme.onSurface.withValues(alpha: 0.3),
-      ),
+    return GuidelineHintBubble(
+      text: widget.label!,
+      color: widget.color ?? context.ccColorScheme.primary,
+      onClose: widget.onLabelTap,
+      widthFactorOnTablet: widget.labelWidthFactorOnTablet,
     );
   }
 }

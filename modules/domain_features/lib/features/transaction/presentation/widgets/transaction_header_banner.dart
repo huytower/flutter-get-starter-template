@@ -77,24 +77,9 @@ class TransactionHeaderBanner extends StatelessWidget {
           guideline.hasBannerHidden = false;
         }
       },
-      child: _buildGuidelineBannerWidth(
-        context,
-        TransactionGuidelineBanner(
-          shouldHideDescription: hideGuidelineDescription,
-        ),
+      child: TransactionChallengeBanner(
+        shouldHideDescription: hideGuidelineDescription,
       ),
-    );
-  }
-
-  /// Phones keep the full-width banner; from a tablet window (medium, 600 dp)
-  /// up it takes half the width it is given, aligned to the start.
-  Widget _buildGuidelineBannerWidth(BuildContext context, Widget banner) {
-    if (context.windowSizeClass.hasBelow(CcWindowSizeClass.medium)) {
-      return banner;
-    }
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: FractionallySizedBox(widthFactor: 0.5, child: banner),
     );
   }
 

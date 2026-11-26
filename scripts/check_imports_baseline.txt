@@ -78,7 +78,6 @@ file-size modules/domain_features/lib/features/budget_limit/presentation/widgets
 file-size modules/domain_features/lib/features/category/data/datasources/local/category_seed.dart 649
 file-size modules/domain_features/lib/features/category/presentation/pages/category_settings_page.dart 95
 file-size modules/domain_features/lib/features/firestore/financial_data_sync_service.dart 621
-file-size modules/domain_features/lib/features/guideline/presentation/widgets/guideline_badge_view.dart 12
 file-size modules/domain_features/lib/features/liability/presentation/get_x/borrow_form_controller.dart 183
 file-size modules/domain_features/lib/features/liability/presentation/get_x/lend_form_controller.dart 213
 file-size modules/domain_features/lib/features/liability/presentation/widgets/borrow_form.dart 32
@@ -99,7 +98,7 @@ file-size modules/domain_features/lib/features/transaction/presentation/get_x/in
 file-size modules/domain_features/lib/features/transaction/presentation/get_x/quick_entry_session.dart 68
 file-size modules/domain_features/lib/features/transaction/presentation/get_x/transaction_controller.dart 28
 file-size modules/domain_features/lib/features/transaction/presentation/get_x/transaction_form_controller.dart 11
-file-size modules/domain_features/lib/features/transaction/presentation/widgets/investment_form.dart 45
+file-size modules/domain_features/lib/features/transaction/presentation/widgets/investment_form.dart 44
 file-size modules/domain_features/lib/features/transaction/presentation/widgets/transaction_tab_bar.dart 22
 file-size modules/domain_features/lib/features/wallet/presentation/get_x/add_liquid_sheet_controller.dart 70
 file-size modules/domain_features/lib/features/wallet/presentation/get_x/wallet_controller.dart 92

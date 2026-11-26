@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 
 import '../../guideline_controller.dart';
 
-/// A specialized banner for the Transaction page that displays the current
-/// guideline task and cannot be dismissed via tap.
-class TransactionGuidelineBanner extends StatelessWidget {
-  const TransactionGuidelineBanner({
+/// The "Challenge: N remaining steps" banner in the Transaction page header:
+/// shows the current guideline task and cannot be dismissed via tap.
+///
+/// Not to be confused with the `GuidelineHintBubble` next to a guideline dot.
+class TransactionChallengeBanner extends StatelessWidget {
+  const TransactionChallengeBanner({
     super.key,
     this.onTap,
     this.shouldHideDescription = false,

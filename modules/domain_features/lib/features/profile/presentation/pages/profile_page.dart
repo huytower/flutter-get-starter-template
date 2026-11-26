@@ -225,7 +225,7 @@ class ProfilePage extends PrjGetView<ProfileController> {
                   size: context.respDim(8),
                   label: guideline.bannerDescription,
                   growRight: false,
-                  labelAbove: true,
+                  labelAbove: false,
                 )
               : null,
         ),

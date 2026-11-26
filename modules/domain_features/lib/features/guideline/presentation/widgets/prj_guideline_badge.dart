@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../guideline_controller.dart';
 import 'guideline_badge_view.dart';
+import 'guideline_hint_bubble.dart';
 
 /// A wrapper around [GuidelineBadgeView] that automatically connects to
 /// [GuidelineController] for centralized state (colors, bounce, and visibility).
@@ -21,6 +22,8 @@ class PrjGuidelineBadge extends StatelessWidget {
     this.forceHideLabel = false,
     this.labelAbove = true,
     this.icon,
+    this.labelWidthFactorOnTablet =
+        GuidelineHintBubble.defaultWidthFactorOnTablet,
   });
 
   final double size;
@@ -32,6 +35,11 @@ class PrjGuidelineBadge extends StatelessWidget {
   final bool forceHideLabel;
   final bool labelAbove;
   final IconData? icon;
+
+  /// Width scale of the label bubble ([GuidelineHintBubble]) on tablets;
+  /// phones are unchanged. Defaults to
+  /// [GuidelineHintBubble.defaultWidthFactorOnTablet].
+  final double labelWidthFactorOnTablet;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +69,7 @@ class PrjGuidelineBadge extends StatelessWidget {
         forceHideLabel: forceHideLabel,
         labelAbove: labelAbove,
         icon: icon,
+        labelWidthFactorOnTablet: labelWidthFactorOnTablet,
       ),
     );
   }
