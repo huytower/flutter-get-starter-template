@@ -149,6 +149,14 @@ The Sổ Sách Xịn (Quản Lý Tài Chính) application is a modular personal 
     - **Debt/Loan (Vay/Nợ)**: Borrow, Lend, Repay, Collect — each tagged with its liability record.
     - **Emergency Fund**: not a transaction type. The Emergency Fund is a wallet; using it is an ordinary expense or transfer from that wallet.
 - **Correcting entries**: income, expense, debt/loan and investment entries can be edited only within **30 days** of their date. Transfers cannot be edited. Deletes are soft deletes.
+  - **Soft delete, synced.** A deleted transaction keeps a `deletedAt` stamp and is marked pending, so the delete
+    reaches the cloud like any edit — also when made offline — and a later pull cannot bring it back.
+  - **A Chi ra is one entry with two legs** (`investmentOut` on the liquid wallet, `investmentIn` on the position,
+    same `transferId`). Deleting or editing it in the Report always applies to **both legs** (`TransactionLegs`):
+    a delete refunds the liquid wallet **and** removes the contribution from the position and ROI; an edit
+    rewrites the mirror leg's amount (converted to its currency), date, category and note. The lock below is
+    checked on both legs. Edits keep the entry's link to its position (`investmentWalletId`).
+  - Debug trace: `[DeleteTransaction]` / `[UpdateTransaction]` log every leg with its `RECONCILED` / `open` state.
   - **Reconciled entries are closed.** A transaction dated at or before the latest reconciliation is part of the balances that reconciliation confirmed, so it can no longer be edited or deleted (in edit mode the Report shows an **info** button instead of the edit/delete buttons; tapping it opens a bottom sheet "Already reconciled" explaining why and suggesting an offsetting transaction — `transaction.reconciled_title` / `transaction.reconciled_info`; the save/delete is refused in the use cases too). Only unreconciled transactions — dated after the latest reconciliation — can be edited or deleted, still within the 30-day window.
   - **To correct a reconciled entry, add a new transaction** that offsets it, with a matching reason in its note (e.g. an income "Hoàn lại — nhập nhầm chi 50k ngày 20/11"). This does not conflict with the lock: the closed period stays as it was confirmed, and the correction is recorded, and later reconciled, in the open period.
   - **The lock follows the transaction's date, not when it was entered.** A new entry back-dated into a reconciled period is locked as soon as it is saved, so check it before saving; a later mistake in it is again corrected with another offsetting entry. Entries dated today (the default) stay editable.

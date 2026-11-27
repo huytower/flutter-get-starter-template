@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cc_sdk/export_cc_sdk.dart' show CcCrashReporter;
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:domain_features/export_domain_features.dart';
@@ -9,7 +9,6 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../datasources/local/transaction_local_datasource.dart';
-import '../datasources/transaction_sync_datasource.dart';
 
 @LazySingleton(as: TransactionRepository)
 class TransactionRepositoryImpl
@@ -19,16 +18,13 @@ class TransactionRepositoryImpl
   TransactionRepositoryImpl({
     required this.crashReporter,
     required TransactionLocalDataSource local,
-    required TransactionSyncDataSource syncDataSource,
     required FinancialDataSyncService syncService,
   }) : _local = local,
-       _syncDataSource = syncDataSource,
        _syncService = syncService;
 
   @override
   final CcCrashReporter crashReporter;
   final TransactionLocalDataSource _local;
-  final TransactionSyncDataSource _syncDataSource;
   final FinancialDataSyncService _syncService;
 
   Future<List<TransactionEntity>> _allSortedDesc() async {
@@ -100,19 +96,14 @@ class TransactionRepositoryImpl
 
   @override
   Future<Result<void, CcFailure>> deleteTransaction(String id) {
+    // Soft delete (BR §4.B): the record keeps a `deletedAt` stamp and is
+    // marked pending, so the delete syncs like any edit — also when offline,
+    // and a later pull can't bring the transaction back.
     return safeRequest(() async {
-      final model = await _local.getById(id);
-      await _local.delete(id);
-
-      final remoteId = model?.syncMetadata.remoteId ?? model?.id ?? id;
-      if (remoteId.isNotEmpty) {
-        try {
-          await _syncDataSource.deleteTransaction(remoteId);
-        } catch (_) {
-          // Ignore offline errors during remote delete
-        }
-      }
-
+      await _local.softDeleteByIds([id], DateTime.now());
+      '[DeleteTransaction] soft-deleted $id (pending sync)'.Log(
+        'DeleteTransaction',
+      );
       _syncService.syncAll();
     });
   }

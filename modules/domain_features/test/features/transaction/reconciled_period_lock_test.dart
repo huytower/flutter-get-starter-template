@@ -1,9 +1,12 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_repository.dart';
 import 'package:domain_features/features/reconciliation/domain/entities/reconciliation_entity.dart';
 import 'package:domain_features/features/reconciliation/domain/repositories/reconciliation_repository.dart';
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart';
 import 'package:domain_features/features/transaction/domain/services/reconciled_period_lock.dart';
+import 'package:domain_features/features/transaction/domain/services/transaction_legs.dart';
 import 'package:domain_features/features/transaction/domain/usecases/delete_transaction_usecase.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:message/prj_locale_keys.dart';
@@ -36,11 +39,18 @@ class _Reconciliations implements ReconciliationRepository {
 }
 
 class _Transactions implements TransactionRepository {
+  _Transactions([this.all = const []]);
+
+  final List<TransactionEntity> all;
   final List<String> deleted = [];
 
   @override
-  Future<Result<void, CcFailure>> deleteTransaction(String id) async {
-    deleted.add(id);
+  Future<Result<List<TransactionEntity>, CcFailure>>
+  getListTransactions() async => Success(all);
+
+  @override
+  Future<Result<void, CcFailure>> softDeleteByIds(List<String> ids) async {
+    deleted.addAll(ids);
     return const Success(null);
   }
 
@@ -85,7 +95,11 @@ void main() {
       final transactions = _Transactions();
       final useCase = DeleteTransactionUseCase(
         transactions,
-        ReconciledPeriodLock(_Reconciliations(reconciledAt)),
+        TransactionLegs(
+          transactions,
+          CurrencyConversionService(_NoRates()),
+          ReconciledPeriodLock(_Reconciliations(reconciledAt)),
+        ),
       );
 
       final result = await useCase(_tx(DateTime(2026, 11, 20)));
@@ -101,7 +115,11 @@ void main() {
       final transactions = _Transactions();
       final useCase = DeleteTransactionUseCase(
         transactions,
-        ReconciledPeriodLock(_Reconciliations(reconciledAt)),
+        TransactionLegs(
+          transactions,
+          CurrencyConversionService(_NoRates()),
+          ReconciledPeriodLock(_Reconciliations(reconciledAt)),
+        ),
       );
 
       final result = await useCase(_tx(DateTime(2026, 11, 23)));
@@ -110,4 +128,61 @@ void main() {
       expect(transactions.deleted, ['t1']);
     });
   });
+  group('DeleteTransactionUseCase on a Chi ra pair', () {
+    TransactionEntity leg(String id, String type, String wallet, DateTime d) =>
+        TransactionEntity(
+          id: id,
+          type: type,
+          amount: 6000000,
+          category: 'Stocks',
+          date: d,
+          walletId: wallet,
+          transferId: 'chi-ra-1',
+          investmentWalletId: 'stock',
+        );
+
+    List<TransactionEntity> pair(DateTime d) => [
+      leg('chi-ra-1_out', TransactionType.investmentOut, 'cash', d),
+      leg('chi-ra-1_in', TransactionType.investmentIn, 'stock', d),
+    ];
+
+    DeleteTransactionUseCase useCase(_Transactions transactions) =>
+        DeleteTransactionUseCase(
+          transactions,
+          TransactionLegs(
+            transactions,
+            CurrencyConversionService(_NoRates()),
+            ReconciledPeriodLock(_Reconciliations(reconciledAt)),
+          ),
+        );
+
+    test('deleting the cash leg soft-deletes both legs', () async {
+      final legs = pair(DateTime(2026, 11, 23));
+      final transactions = _Transactions(legs);
+
+      final result = await useCase(transactions)(legs.first);
+
+      expect(result.isSuccess(), true);
+      expect(transactions.deleted, ['chi-ra-1_out', 'chi-ra-1_in']);
+    });
+
+    test('a reconciled pair is refused and nothing is deleted', () async {
+      final legs = pair(DateTime(2026, 11, 20));
+      final transactions = _Transactions(legs);
+
+      final result = await useCase(transactions)(legs.first);
+
+      expect(
+        result.tryGetError()?.message,
+        PrjLocaleKeys.transaction_validation_reconciled,
+      );
+      expect(transactions.deleted, isEmpty);
+    });
+  });
+}
+
+/// One currency everywhere, so no rate is ever looked up.
+class _NoRates implements ExchangeRateRepository {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

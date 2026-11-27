@@ -3,7 +3,6 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/transaction/data/datasources/local/transaction_local_datasource.dart';
-import 'package:domain_features/features/transaction/data/datasources/transaction_sync_datasource.dart';
 import 'package:domain_features/features/transaction/data/models/transaction_model.dart';
 import 'package:domain_features/features/transaction/data/repositories/transaction_repository_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,11 +15,6 @@ class _FakeLocal implements TransactionLocalDataSource {
   @override
   Future<List<TransactionModel>> getAll() async => _models;
 
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class _FakeSync implements TransactionSyncDataSource {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -44,7 +38,6 @@ TransactionModel _model(String type, int index) => TransactionModel.fromEntity(
 TransactionRepositoryImpl _repository(List<TransactionModel> models) =>
     TransactionRepositoryImpl(
       local: _FakeLocal(models),
-      syncDataSource: _FakeSync(),
       syncService: _FakeSyncService(),
       crashReporter: const CcNoopCrashReporter(),
     );

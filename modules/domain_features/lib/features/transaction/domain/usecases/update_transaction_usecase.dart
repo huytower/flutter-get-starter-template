@@ -9,7 +9,7 @@ import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../repositories/transaction_repository.dart';
-import '../services/reconciled_period_lock.dart';
+import '../services/transaction_legs.dart';
 
 /// Input for [UpdateTransactionUseCase].
 class UpdateTransactionParams {
@@ -62,11 +62,11 @@ class UpdateTransactionUseCase {
     this._walletRepository,
     this._getWalletBookBalance,
     this._conversionService,
-    this._periodLock,
+    this._legs,
   );
 
   final TransactionRepository _transactionRepository;
-  final ReconciledPeriodLock _periodLock;
+  final TransactionLegs _legs;
   final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
   final CurrencyConversionService _conversionService;
@@ -99,19 +99,25 @@ class UpdateTransactionUseCase {
         CcValidationFailure(PrjLocaleKeys.transaction_validation_edit_window),
       );
     }
-    if (await _periodLock.hasReconciled(original)) {
+    final legs = await _legs.legsOf(original);
+    await _legs.trace('UpdateTransaction', legs);
+    if (await _legs.hasReconciled(legs)) {
       return const Error(
         CcValidationFailure(PrjLocaleKeys.transaction_validation_reconciled),
       );
     }
     if (params.amount <= 0) {
       return const Error(
-        CcValidationFailure(PrjLocaleKeys.transaction_validation_amount_required),
+        CcValidationFailure(
+          PrjLocaleKeys.transaction_validation_amount_required,
+        ),
       );
     }
     if (params.walletId.isEmpty) {
       return const Error(
-        CcValidationFailure(PrjLocaleKeys.transaction_validation_wallet_required),
+        CcValidationFailure(
+          PrjLocaleKeys.transaction_validation_wallet_required,
+        ),
       );
     }
     if (params.categoryId.isEmpty) {
@@ -181,16 +187,30 @@ class UpdateTransactionUseCase {
       date: params.date,
       walletId: params.walletId,
       transferId: original.transferId,
+      // Keeps the link to the investment position (ROI, wallet-delete cascade).
+      investmentWalletId: original.investmentWalletId,
       liabilityId: original.liabilityId,
       lat: original.lat,
       lng: original.lng,
       currencyCode: finalCurrency,
     );
 
+    // A Chi ra leg moves with its mirror leg (cash side ↔ position side).
+    final mirrors = await _legs.mirrorsFor(updated);
+    if (mirrors.isError()) return Error(mirrors.tryGetError()!);
+
     final result = await _transactionRepository.updateTransaction(updated);
     if (result.isError()) {
       return Error(result.tryGetError()!);
     }
+    for (final mirror in mirrors.tryGetSuccess()!) {
+      final saved = await _transactionRepository.updateTransaction(mirror);
+      if (saved.isError()) return Error(saved.tryGetError()!);
+    }
+    await _legs.trace('UpdateTransaction', [
+      updated,
+      ...mirrors.tryGetSuccess()!,
+    ]);
     return Success(updated);
   }
 }
