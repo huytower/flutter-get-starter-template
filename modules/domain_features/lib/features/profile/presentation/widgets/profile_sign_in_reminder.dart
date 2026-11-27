@@ -66,6 +66,15 @@ class ProfileSignInReminder extends StatelessWidget {
                       color: scheme.onPrimary.withOpacity(0.85),
                     ),
                   ),
+                  const CcSpaceXS(),
+                  CcText(
+                    el.tr(PrjLocaleKeys.profile_sign_in_reminder_commitment),
+                    maxLines: 3,
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: scheme.onPrimary,
+                      fontWeight: CcTypographyParams.bold,
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -800,8 +800,8 @@ class CodegenLoader extends AssetLoader {
       "birth_year_hint":
           "Choose your actual birth year, it affects your daily income and expense calculations",
       "sign_in_reminder_title": "Sign in to protect your data",
-      "sign_in_reminder_body":
-          "You can keep using the app without an account, but your financial data may be lost if you change or reset your device.",
+      "sign_in_reminder_body": "You can use the app without signing in, but your data will be lost if you change or reset your device.",
+      "sign_in_reminder_commitment": "Sign in when you start managing your finances seriously and thoughtfully.",
       "birth_year_task_desc": "Task: set up your birth year",
       "weekly_audit": "Weekly audit",
       "days_left": "{count} days left",
@@ -1578,8 +1578,8 @@ class CodegenLoader extends AssetLoader {
       "birth_year_hint":
           "Chọn năm sinh thực tế của bạn, nó ảnh hưởng đến tính toán thu nhập và chi tiêu hàng ngày",
       "sign_in_reminder_title": "Đăng nhập để bảo vệ dữ liệu",
-      "sign_in_reminder_body":
-          "Bạn vẫn có thể dùng ứng dụng khi chưa đăng nhập, nhưng dữ liệu tài chính có thể bị mất khi bạn đổi hoặc đặt lại thiết bị.",
+      "sign_in_reminder_body": "Bạn vẫn dùng được ứng dụng khi chưa đăng nhập, nhưng dữ liệu sẽ mất nếu bạn đổi hoặc đặt lại thiết bị.",
+      "sign_in_reminder_commitment": "Hãy đăng nhập khi bạn bắt đầu nghiêm túc quản lý tài chính có tư duy.",
       "birth_year_task_desc": "Nhiệm vụ: thiết lập năm sinh",
       "weekly_audit": "Kiểm tra hàng tuần",
       "days_left": "Còn {count} ngày",
@@ -2592,8 +2592,8 @@ class CodegenLoader extends AssetLoader {
       "birth_year_subtitle": "적절한 카테고리를 제안하는 데 사용",
       "birth_year_hint": "실제 출생 연도를 선택하세요. 일일 수입 및 지출 계산에 영향을 미칩니다",
       "sign_in_reminder_title": "로그인하여 데이터를 보호하세요",
-      "sign_in_reminder_body":
-          "계정 없이도 앱을 계속 사용할 수 있지만, 기기를 교체하거나 초기화하면 재무 데이터가 사라질 수 있습니다.",
+      "sign_in_reminder_body": "로그인하지 않아도 앱을 사용할 수 있지만, 기기를 교체하거나 초기화하면 데이터가 사라집니다.",
+      "sign_in_reminder_commitment": "재무 관리를 진지하고 신중하게 시작할 때 로그인하세요.",
       "birth_year_task_desc": "작업: 출생 연도 설정",
       "weekly_audit": "주간 감사",
       "days_left": "{count}일 남음",
@@ -3435,8 +3435,8 @@ class CodegenLoader extends AssetLoader {
       "birth_year_subtitle": "適切なカテゴリを提案するために使用",
       "birth_year_hint": "実際の生年を選択してください。日次収入および支出計算に影響します",
       "sign_in_reminder_title": "ログインしてデータを守りましょう",
-      "sign_in_reminder_body":
-          "アカウントなしでもアプリを使い続けられますが、端末を変更または初期化すると財務データが失われる可能性があります。",
+      "sign_in_reminder_body": "ログインしなくてもアプリは使えますが、端末を変更または初期化するとデータは失われます。",
+      "sign_in_reminder_commitment": "お金の管理を真剣に、考えて始めるときはログインしましょう。",
       "birth_year_task_desc": "タスク: 生年を設定",
       "weekly_audit": "週次監査",
       "days_left": "{count}日残り",
@@ -4268,7 +4268,8 @@ class CodegenLoader extends AssetLoader {
       "birth_year_subtitle": "用于建议适当的类别",
       "birth_year_hint": "选择您的实际出生年份，它会影响您的每日收入和支出计算",
       "sign_in_reminder_title": "登录以保护您的数据",
-      "sign_in_reminder_body": "未登录也可以继续使用应用，但更换或重置设备后，您的财务数据可能会丢失。",
+      "sign_in_reminder_body": "不登录也可以使用应用，但更换或重置设备后数据会丢失。",
+      "sign_in_reminder_commitment": "当你开始认真、有思考地管理财务时，请登录。",
       "birth_year_task_desc": "任务: 设置出生年份",
       "weekly_audit": "每周对账",
       "days_left": "剩余 {count} 天",
@@ -5344,6 +5345,8 @@ class PrjLocaleKeys {
   static const profile_sign_in_reminder_title =
       'profile.sign_in_reminder_title';
   static const profile_sign_in_reminder_body = 'profile.sign_in_reminder_body';
+  static const profile_sign_in_reminder_commitment =
+      'profile.sign_in_reminder_commitment';
   static const profile_birth_year_hint = 'profile.birth_year_hint';
   static const profile_birth_year_task_desc = 'profile.birth_year_task_desc';
   static const profile_weekly_audit = 'profile.weekly_audit';
