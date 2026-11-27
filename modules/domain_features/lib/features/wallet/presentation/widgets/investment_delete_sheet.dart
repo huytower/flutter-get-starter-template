@@ -44,9 +44,8 @@ class InvestmentDeleteSheet extends StatelessWidget {
       ),
       // Scroll-controlled with its own scroll view: the bullets may be taller
       // than the default half-height sheet on small phones.
-      builder: (_) => const SingleChildScrollView(
-        child: InvestmentDeleteSheet(),
-      ),
+      builder: (_) =>
+          const SingleChildScrollView(child: InvestmentDeleteSheet()),
     );
     return confirmed ?? false;
   }
@@ -56,7 +55,7 @@ class InvestmentDeleteSheet extends StatelessWidget {
     return CcConfirmSheet(
       icon: Icons.delete_outline_rounded,
       title: tr(PrjLocaleKeys.wallet_investment_delete_title),
-      message: tr(PrjLocaleKeys.wallet_investment_delete_intro),
+      message: "",
       confirmLabel: tr(PrjLocaleKeys.common_delete),
       extra: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

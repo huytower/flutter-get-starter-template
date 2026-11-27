@@ -193,14 +193,6 @@ class CodegenLoader extends AssetLoader {
       "name_suggestions_bank": "TCB 1234|VCB salary|MB spending|BIDV 5678|VPB 2468|ACB family|Vietin 1357|TPB 9012|Cake|Timo",
       "name_suggestions_ewallet": "MoMo|ZaloPay|ShopeePay|VNPAY|Viettel Money|VNPT Money|MobiFone Money|Payoo|SmartPay|PayPal",
       "name_suggestions_emergency_fund": "Emergency fund|6-month fund|Medical fund|Job-loss fund|Car repair fund|Home repair fund|Weddings & funerals|Tet fund|Tuition fund|Parents fund",
-      "investment_name_suggestions_stock": "FPT|HPG|VCB|MWG|VNM|TCB|MBB|VIC|VPS account|TCBS account",
-      "investment_name_suggestions_fund": "VOO|IVV|SPY|QQQ|VTI",
-      "investment_name_suggestions_term_deposit": "VCB 6M deposit|BIDV 12M deposit|Agribank 12M deposit|TCB online 1M|VPB online 3M|Cake 6M|Timo 3M|MB savings|TPB savings plan|Emergency fund",
-      "investment_name_suggestions_real_estate": "District 7 apartment|Long An land plot|Thu Duc townhouse|Vinhomes condo|Hometown land|Bao Loc garden land|Rental apartment|Rental room|Shophouse|Condotel",
-      "investment_name_suggestions_gold": "SJC 1 tael|9999 plain ring|PNJ ring|DOJI|Bao Tin Minh Chau|Than Tai gold|Wedding gold|18K gold|Gold savings|Phu Quy silver",
-      "investment_name_suggestions_crypto": "Bitcoin|Ethereum|USDT|BNB|USDC",
-      "investment_name_suggestions_bond": "Government bond|US Treasury bond|Corporate bond|BND|AGG",
-      "investment_name_suggestions_business": "Coffee shop|Restaurant|Shopee shop|TikTok Shop|Grocery store|Stake with friend|Grab car|Nail/spa salon|Franchise|Startup",
       "investment_delete_title": "Delete Investment",
       "investment_delete_intro": "Deleting this investment:",
       "investment_delete_entries": "Its **Contribute** and **Return** entries are deleted too.",
@@ -412,7 +404,9 @@ class CodegenLoader extends AssetLoader {
       },
       "transfer_money": "Transfer money",
       "reconciled_title": "Already reconciled",
-      "reconciled_info": "This transaction is in a reconciled period, so it can't be edited or deleted: that would change confirmed balances (your cash or bank balance, ROI). Add a new transaction to offset it instead.",
+      "reconciled_info_closed": "This transaction **is reconciled**, so it **cannot be edited or deleted**.",
+      "reconciled_info_balances": "A change would **break confirmed balances**: cash, bank, ROI.",
+      "reconciled_info_offset": "To correct it, **add a new offsetting transaction**.",
       "transfer_from": "From wallet",
       "transfer_to": "To wallet",
       "transfer_swap": "Swap wallets",
@@ -829,7 +823,11 @@ class CodegenLoader extends AssetLoader {
       "currency": "Currency unit",
       "currency_subtitle": "Change your primary currency unit",
       "currency_convert_title": "Switch to {to}?",
-      "currency_convert_message": "All balances, transactions, budgets and debts will be converted from {from} to {to} at the current exchange rate. From then on every amount is recorded in {to}. Amounts are kept in whole units (no cents): each one is rounded, an amount under 1 {to} becomes 1 {to}, and switching back does not restore the original figures.",
+      "currency_convert_converted": "All **balances, transactions, budgets and debts** are converted from **{from} to {to}** at the current rate.",
+      "currency_convert_recorded": "From then on every amount is **recorded in {to}**.",
+      "currency_convert_rounded": "Only **whole units** are kept (no cents): each amount is **rounded**.",
+      "currency_convert_minimum": "An amount under 1 {to} becomes **1 {to}**.",
+      "currency_convert_irreversible": "Switching back **does not restore** the original figures.",
       "currency_dong": "Dong",
       "currency_vnd": "Vietnamese Dong",
       "currency_usd": "United States Dollar",
@@ -1123,14 +1121,6 @@ class CodegenLoader extends AssetLoader {
       "name_suggestions_bank": "TCB 1234|VCB lương|MB chi tiêu|BIDV 5678|VPB 2468|ACB gia đình|Vietin 1357|TPB 9012|Cake|Timo",
       "name_suggestions_ewallet": "MoMo|ZaloPay|ShopeePay|VNPAY|Viettel Money|VNPT Money|MobiFone Money|Payoo|SmartPay|PayPal",
       "name_suggestions_emergency_fund": "Quỹ khẩn cấp|Quỹ 6 tháng sống|Quỹ y tế|Quỹ mất việc|Quỹ sửa xe|Quỹ sửa nhà|Quỹ hiếu hỷ|Quỹ Tết|Quỹ học phí|Quỹ bố mẹ",
-      "investment_name_suggestions_stock": "FPT|HPG|VCB|MWG|VNM|TCB|MBB|VIC|TK VPS|TK TCBS",
-      "investment_name_suggestions_fund": "VOO|IVV|SPY|QQQ|VTI",
-      "investment_name_suggestions_term_deposit": "Sổ VCB 6T|Sổ BIDV 12T|Sổ Agribank 12T|Online TCB 1T|Online VPB 3T|Cake 6T|Timo 3T|MB tích lũy|TPB gửi góp|Quỹ khẩn cấp",
-      "investment_name_suggestions_real_estate": "Căn hộ Q.7|Đất nền Long An|Nhà phố Thủ Đức|Chung cư Vinhomes|Đất quê|Đất vườn Bảo Lộc|Căn hộ cho thuê|Phòng trọ cho thuê|Shophouse|Condotel",
-      "investment_name_suggestions_gold": "SJC 1 lượng|Nhẫn trơn 9999|PNJ nhẫn|DOJI|Bảo Tín Minh Châu|Kim Thần Tài|Vàng cưới|Vàng 18K|Vàng tích lũy|Bạc Phú Quý",
-      "investment_name_suggestions_crypto": "Bitcoin|Ethereum|USDT|BNB|USDC",
-      "investment_name_suggestions_bond": "TP Chính phủ|TP kho bạc Mỹ|TP doanh nghiệp|BND|AGG",
-      "investment_name_suggestions_business": "Quán cà phê|Quán ăn|Shop Shopee|TikTok Shop|Tạp hóa|Góp vốn bạn|Xe chạy Grab|Tiệm nail/spa|Nhượng quyền|Startup",
       "investment_delete_title": "Xoá khoản đầu tư",
       "investment_delete_intro": "Khi xoá khoản đầu tư này:",
       "investment_delete_entries": "Các giao dịch **Chi ra** và **Thu vào** của khoản này cũng bị xoá.",
@@ -1342,7 +1332,9 @@ class CodegenLoader extends AssetLoader {
       },
       "transfer_money": "Chuyển tiền",
       "reconciled_title": "Đã kiểm toán",
-      "reconciled_info": "Giao dịch này đã được kiểm toán nên không thể sửa hoặc xoá: thay đổi sẽ làm sai số dư đã chốt (tiền mặt, ngân hàng, ROI). Hãy thêm giao dịch mới để bù trừ.",
+      "reconciled_info_closed": "Giao dịch này **đã được kiểm toán** nên **không thể sửa hoặc xoá**.",
+      "reconciled_info_balances": "Thay đổi sẽ làm **sai số dư đã chốt**: tiền mặt, ngân hàng, ROI.",
+      "reconciled_info_offset": "Cần điều chỉnh, hãy **thêm giao dịch mới để bù trừ**.",
       "transfer_from": "Ví nguồn",
       "transfer_to": "Ví nhận",
       "transfer_swap": "Đổi ví",
@@ -1607,7 +1599,11 @@ class CodegenLoader extends AssetLoader {
       "currency": "Đơn vị tiền tệ",
       "currency_subtitle": "Thay đổi đơn vị tiền tệ chính",
       "currency_convert_title": "Chuyển sang {to}?",
-      "currency_convert_message": "Toàn bộ số dư, giao dịch, ngân sách và khoản nợ sẽ được quy đổi từ {from} sang {to} theo tỷ giá hiện tại. Từ đó mọi số tiền được ghi bằng {to}. Số tiền chỉ lưu số nguyên (không có số lẻ, xu): mỗi khoản được làm tròn, khoản dưới 1 {to} được tính thành 1 {to}, và chuyển ngược lại không khôi phục số liệu cũ.",
+      "currency_convert_converted": "Toàn bộ **số dư, giao dịch, ngân sách và khoản nợ** được quy đổi từ **{from} sang {to}** theo tỷ giá hiện tại.",
+      "currency_convert_recorded": "Từ đó mọi số tiền được **ghi bằng {to}**.",
+      "currency_convert_rounded": "Chỉ lưu **số nguyên** (không có số lẻ, xu): mỗi khoản được **làm tròn**.",
+      "currency_convert_minimum": "Khoản dưới 1 {to} được tính thành **1 {to}**.",
+      "currency_convert_irreversible": "Chuyển ngược lại **không khôi phục** số liệu cũ.",
       "currency_dong": "Đồng",
       "currency_vnd": "Đồng Việt Nam",
       "currency_usd": "Đô la Mỹ",
@@ -2230,7 +2226,9 @@ class CodegenLoader extends AssetLoader {
       },
       "transfer_money": "송금",
       "reconciled_title": "대사 완료",
-      "reconciled_info": "이 거래는 이미 대사가 완료되어 수정하거나 삭제할 수 없습니다. 변경하면 확정된 잔액(현금, 은행, ROI)이 바뀝니다. 대신 상쇄하는 새 거래를 추가하세요.",
+      "reconciled_info_closed": "이 거래는 **대사가 완료**되어 **수정하거나 삭제할 수 없습니다**.",
+      "reconciled_info_balances": "변경하면 **확정된 잔액**(현금, 은행, ROI)이 **틀어집니다**.",
+      "reconciled_info_offset": "바로잡으려면 **상쇄하는 새 거래를 추가**하세요.",
       "transfer_from": "출금 지갑",
       "transfer_to": "입금 지갑",
       "transfer_swap": "지갑 바꾸기",
@@ -2619,7 +2617,11 @@ class CodegenLoader extends AssetLoader {
       "currency": "통화 단위",
       "currency_subtitle": "기본 통화 단위 변경",
       "currency_convert_title": "{to}(으)로 전환할까요?",
-      "currency_convert_message": "모든 잔액, 거래, 예산, 부채가 현재 환율로 {from}에서 {to}(으)로 환산됩니다. 이후 모든 금액은 {to}(으)로 기록됩니다. 금액은 정수 단위로만 저장됩니다(센트 등 소수 없음). 각 금액은 반올림되며 1 {to} 미만은 1 {to}로 처리되고, 다시 전환해도 원래 수치로 돌아가지 않습니다.",
+      "currency_convert_converted": "모든 **잔액, 거래, 예산, 부채**가 현재 환율로 **{from}에서 {to}**(으)로 환산됩니다.",
+      "currency_convert_recorded": "이후 모든 금액은 **{to}(으)로 기록**됩니다.",
+      "currency_convert_rounded": "**정수 단위**만 저장됩니다(센트 등 소수 없음). 각 금액은 **반올림**됩니다.",
+      "currency_convert_minimum": "1 {to} 미만의 금액은 **1 {to}**로 처리됩니다.",
+      "currency_convert_irreversible": "다시 전환해도 **원래 수치로 돌아가지 않습니다**.",
       "currency_dong": "동",
       "currency_vnd": "베트남 동",
       "currency_usd": "미국 달러",
@@ -3080,7 +3082,9 @@ class CodegenLoader extends AssetLoader {
       },
       "transfer_money": "送金",
       "reconciled_title": "照合済み",
-      "reconciled_info": "この取引は照合済みのため、編集・削除できません。変更すると確定済みの残高（現金・銀行・ROI）が変わります。代わりに相殺する新しい取引を追加してください。",
+      "reconciled_info_closed": "この取引は**照合済み**のため、**編集・削除できません**。",
+      "reconciled_info_balances": "変更すると**確定済みの残高**（現金・銀行・ROI）が**ずれます**。",
+      "reconciled_info_offset": "修正するには、**相殺する新しい取引を追加**してください。",
       "transfer_from": "送金元ウォレット",
       "transfer_to": "送金先ウォレット",
       "transfer_swap": "ウォレットを入れ替え",
@@ -3462,7 +3466,11 @@ class CodegenLoader extends AssetLoader {
       "currency": "通貨単位",
       "currency_subtitle": "主な通貨単位を変更",
       "currency_convert_title": "{to}に切り替えますか？",
-      "currency_convert_message": "すべての残高、取引、予算、借入が現在の為替レートで{from}から{to}に換算されます。以後、すべての金額は{to}で記録されます。金額は整数単位で保存されます（セントなどの端数なし）。各金額は四捨五入され、1 {to}未満の金額は1 {to}になります。元に戻しても元の数値には戻りません。",
+      "currency_convert_converted": "すべての**残高・取引・予算・借入**が現在のレートで**{from}から{to}**に換算されます。",
+      "currency_convert_recorded": "以後、すべての金額は**{to}で記録**されます。",
+      "currency_convert_rounded": "**整数単位**のみ保存されます（セントなどの端数なし）。各金額は**四捨五入**されます。",
+      "currency_convert_minimum": "1 {to}未満の金額は**1 {to}**になります。",
+      "currency_convert_irreversible": "元に戻しても**元の数値には戻りません**。",
       "currency_dong": "ドン",
       "currency_vnd": "ベトナムドン",
       "currency_usd": "米ドル",
@@ -3918,7 +3926,9 @@ class CodegenLoader extends AssetLoader {
       },
       "transfer_money": "转账",
       "reconciled_title": "已对账",
-      "reconciled_info": "此交易已对账，无法编辑或删除：更改会使已确认的余额（现金、银行、ROI）出错。请添加一笔新交易进行冲抵。",
+      "reconciled_info_closed": "此交易**已对账**，**无法编辑或删除**。",
+      "reconciled_info_balances": "更改会使**已确认的余额**（现金、银行、ROI）**出错**。",
+      "reconciled_info_offset": "如需更正，请**添加一笔新交易进行冲抵**。",
       "transfer_from": "转出钱包",
       "transfer_to": "转入钱包",
       "transfer_swap": "交换钱包",
@@ -4294,7 +4304,11 @@ class CodegenLoader extends AssetLoader {
       "currency": "货币单位",
       "currency_subtitle": "更改您的主要货币单位",
       "currency_convert_title": "切换到{to}？",
-      "currency_convert_message": "所有余额、交易、预算和债务将按当前汇率从{from}换算为{to}。此后所有金额都以{to}记录。金额仅以整数单位保存（无分等小数）：每笔金额四舍五入，不足 1 {to} 的金额按 1 {to} 计，切换回原币种也不会恢复原始数值。",
+      "currency_convert_converted": "所有**余额、交易、预算和债务**将按当前汇率从**{from}换算为{to}**。",
+      "currency_convert_recorded": "此后所有金额都**以{to}记录**。",
+      "currency_convert_rounded": "仅保存**整数单位**（无分等小数）：每笔金额**四舍五入**。",
+      "currency_convert_minimum": "不足 1 {to} 的金额按 **1 {to}** 计。",
+      "currency_convert_irreversible": "切换回原币种**不会恢复**原始数值。",
       "currency_dong": "盾",
       "currency_vnd": "越南盾",
       "currency_usd": "美元",
@@ -4591,22 +4605,6 @@ class PrjLocaleKeys {
       'wallet.name_suggestions_ewallet';
   static const wallet_name_suggestions_emergency_fund =
       'wallet.name_suggestions_emergency_fund';
-  static const wallet_investment_name_suggestions_stock =
-      'wallet.investment_name_suggestions_stock';
-  static const wallet_investment_name_suggestions_fund =
-      'wallet.investment_name_suggestions_fund';
-  static const wallet_investment_name_suggestions_term_deposit =
-      'wallet.investment_name_suggestions_term_deposit';
-  static const wallet_investment_name_suggestions_real_estate =
-      'wallet.investment_name_suggestions_real_estate';
-  static const wallet_investment_name_suggestions_gold =
-      'wallet.investment_name_suggestions_gold';
-  static const wallet_investment_name_suggestions_crypto =
-      'wallet.investment_name_suggestions_crypto';
-  static const wallet_investment_name_suggestions_bond =
-      'wallet.investment_name_suggestions_bond';
-  static const wallet_investment_name_suggestions_business =
-      'wallet.investment_name_suggestions_business';
   static const wallet_add_title = 'wallet.add_title';
   static const wallet_edit_title = 'wallet.edit_title';
   static const wallet_investment_edit_title = 'wallet.investment_edit_title';
@@ -4953,7 +4951,12 @@ class PrjLocaleKeys {
       'transaction.validation.edit_window';
   static const transaction_transfer_money = 'transaction.transfer_money';
   static const transaction_reconciled_title = 'transaction.reconciled_title';
-  static const transaction_reconciled_info = 'transaction.reconciled_info';
+  static const transaction_reconciled_info_closed =
+      'transaction.reconciled_info_closed';
+  static const transaction_reconciled_info_balances =
+      'transaction.reconciled_info_balances';
+  static const transaction_reconciled_info_offset =
+      'transaction.reconciled_info_offset';
   static const transaction_transfer_from = 'transaction.transfer_from';
   static const transaction_transfer_to = 'transaction.transfer_to';
   static const transaction_transfer_swap = 'transaction.transfer_swap';
@@ -5373,8 +5376,16 @@ class PrjLocaleKeys {
   static const profile_currency_subtitle = 'profile.currency_subtitle';
   static const profile_currency_convert_title =
       'profile.currency_convert_title';
-  static const profile_currency_convert_message =
-      'profile.currency_convert_message';
+  static const profile_currency_convert_converted =
+      'profile.currency_convert_converted';
+  static const profile_currency_convert_recorded =
+      'profile.currency_convert_recorded';
+  static const profile_currency_convert_rounded =
+      'profile.currency_convert_rounded';
+  static const profile_currency_convert_minimum =
+      'profile.currency_convert_minimum';
+  static const profile_currency_convert_irreversible =
+      'profile.currency_convert_irreversible';
   static const profile_currency_dong = 'profile.currency_dong';
   static const profile_currency_vnd = 'profile.currency_vnd';
   static const profile_currency_usd = 'profile.currency_usd';

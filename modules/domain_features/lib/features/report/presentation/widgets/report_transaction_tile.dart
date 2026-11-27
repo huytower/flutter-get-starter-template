@@ -12,6 +12,7 @@ import 'package:message/export_message.dart';
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import 'delete_transaction_sheet.dart';
 import 'quick_edit_transaction_sheet.dart';
+import 'reconciled_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';
 import 'report_source_chip.dart';
 
@@ -148,12 +149,7 @@ class ReportTransactionTile extends StatelessWidget {
                   size: context.respIconSize(baseSize: 16),
                   color: context.ccColorScheme.primary,
                 ),
-                onTap: () => CcDialogHelper.showMessageBottomSheet(
-                  context: context,
-                  title: el.tr(PrjLocaleKeys.transaction_reconciled_title),
-                  content: el.tr(PrjLocaleKeys.transaction_reconciled_info),
-                  hasOnlyConfirm: true,
-                ),
+                onTap: () => ReconciledTransactionSheet.show(context),
               ),
             ] else if (hasEditMode &&
                 hasEditableTransaction(

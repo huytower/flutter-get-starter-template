@@ -142,6 +142,7 @@ class AccountSettingsSnapshot {
       ..levelFeatureAnchorAt = now
       ..hasVip = null
       ..hasPaidVip = null
+      ..lastEntryWalletId = null
       ..highestUserLevelReached = null
       ..hasViewedEmergencyFundEbook = null
       ..hasCustomizedCategories = null

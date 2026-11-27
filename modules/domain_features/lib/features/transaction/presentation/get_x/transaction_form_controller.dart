@@ -4,26 +4,27 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/get_x/prj_get_controller.dart';
+import '../../../../core/presentation/helper/last_entry_wallet.dart';
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import '../../../../core/quick_entry/quick_entry_intent.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import 'quick_entry_session.dart';
 import 'transaction_controller.dart';
+import 'wallet_selection_mixin.dart';
 
-abstract class TransactionFormController extends PrjGetController {
+abstract class TransactionFormController extends PrjGetController
+    with WalletSelectionMixin {
   final RxString amountStr = '0'.obs;
   final TextEditingController noteController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final GlobalKey amountFieldKey = GlobalKey();
 
-  final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
   final Rx<DateTime> date = DateTime.now().obs;
   final RxBool hasSubmitting = false.obs;
   final RxBool showKeypad = false.obs;
@@ -31,14 +32,11 @@ abstract class TransactionFormController extends PrjGetController {
   final RxBool hasNoteText = false.obs;
   final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
 
-  final Rx<String?> selectedWalletId = Rx<String?>(null);
-
-  Worker? _walletsWorker;
-
   /// Set (via [loadForEdit]) when this controller instance is editing an
   /// existing transaction rather than recording a new one.
   TransactionEntity? editingTransaction;
 
+  @override
   bool get hasEditing => editingTransaction != null;
 
   /// Called by [submitForm] after a successful edit — the edit sheet uses
@@ -66,36 +64,13 @@ abstract class TransactionFormController extends PrjGetController {
 
   @override
   void onClose() {
-    _walletsWorker?.dispose();
     noteController.removeListener(_updateNoteState);
     noteController.dispose();
     scrollController.dispose();
     super.onClose();
   }
 
-  void _loadWallets() {
-    final parentController = Get.find<TransactionController>();
-    wallets.assignAll(_liquidOnly(parentController.wallets));
-    _ensureValidWalletSelection();
-
-    // Listen to changes in parent's wallets
-    _walletsWorker = ever(parentController.wallets, (
-      List<WalletEntity> newWallets,
-    ) {
-      wallets.assignAll(_liquidOnly(newWallets));
-      _ensureValidWalletSelection();
-    });
-  }
-
-  /// Keeps [selectedWalletId] pointing at a wallet that still exists: a wallet
-  /// can be deleted, or replaced by a Firestore sync, while this form is open
-  /// (or before an old transaction is edited). A stale id would only fail later
-  /// at save time, so fall back to the first available wallet instead.
-  void _ensureValidWalletSelection() {
-    final current = selectedWalletId.value;
-    if (current != null && wallets.any((w) => w.id == current)) return;
-    selectedWalletId.value = wallets.isNotEmpty ? wallets.first.id : null;
-  }
+  void _loadWallets() => bindWallets(Get.find<TransactionController>().wallets);
 
   /// Prefills the form from [transaction] for editing. Category selection is
   /// left to the category picker itself (pass `transaction.categoryId` as
@@ -106,15 +81,10 @@ abstract class TransactionFormController extends PrjGetController {
     editingTransaction = transaction;
     amountStr.value = transaction.amount.toString();
     selectedWalletId.value = transaction.walletId;
-    _ensureValidWalletSelection();
+    ensureValidWalletSelection();
     date.value = transaction.date;
     noteController.text = transaction.note ?? '';
   }
-
-  /// Investment positions (`WalletType.investment`) aren't spendable/receivable
-  /// like a normal wallet, so they never appear as a liquid-wallet choice here.
-  List<WalletEntity> _liquidOnly(List<WalletEntity> source) =>
-      source.where((w) => w.type != WalletType.investment).toList();
 
   void handleKeyPress(String key) {
     if (amountStr.value == '0') {
@@ -161,6 +131,7 @@ abstract class TransactionFormController extends PrjGetController {
   }
 
   Future<void> resetForm() async {
+    if (!hasEditing) await LastEntryWallet.remember(selectedWalletId.value);
     amountStr.value = '0';
     noteController.clear();
     date.value = DateTime.now();
@@ -196,12 +167,6 @@ abstract class TransactionFormController extends PrjGetController {
   void _notifyParentKeypad(bool open) {
     if (Get.isRegistered<TransactionController>()) {
       Get.find<TransactionController>().hasKeypadOpen.value = open;
-    }
-  }
-
-  void setWalletId(String id) {
-    if (wallets.any((w) => w.id == id)) {
-      selectedWalletId.value = id;
     }
   }
 

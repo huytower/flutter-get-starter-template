@@ -12,7 +12,6 @@ import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../../../../core/presentation/widgets/prj_suggested_name_field.dart';
 import '../../../../core/presentation/widgets/prj_vip_lock_banner.dart';
 import '../get_x/add_investment_sheet_controller.dart';
-import '../helper/wallet_name_suggestions.dart';
 
 class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
   const AddInvestmentSheet({super.key, this.wallet, this.category});
@@ -151,12 +150,9 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
       () => PrjSuggestedNameField(
         controller: controller.nameController,
         labelText: el.tr(PrjLocaleKeys.wallet_investment_name),
-        maxLength: 20,
-        suggestions: NameSuggestions.fromKey(
-          WalletNameSuggestions.keyForInvestmentCategory(
-            controller.selectedInvestmentCategory.value?.id,
-          ),
-        ),
+        // Room for the longest regional fund names.
+        maxLength: 30,
+        suggestions: NameSuggestions.fromNames(controller.nameSuggestions),
         errorText: controller.nameError.value,
         // Keeps the category (and its suggestions) so the user can pick one.
         onClear: () => controller.nameError.value = null,

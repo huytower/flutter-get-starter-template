@@ -194,6 +194,11 @@ class PrjAppStorage extends HiveObject {
   @HiveField(33)
   List<String>? pendingCloudDeletes;
 
+  /// The liquid wallet last used in the transaction forms, preselected in all
+  /// of them (see `LastEntryWallet`).
+  @HiveField(34)
+  String? lastEntryWalletId;
+
   PrjAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -228,5 +233,6 @@ class PrjAppStorage extends HiveObject {
     this.accountSettingsSyncedJson,
     this.hasPaidVip,
     this.pendingCloudDeletes,
+    this.lastEntryWalletId,
   });
 }

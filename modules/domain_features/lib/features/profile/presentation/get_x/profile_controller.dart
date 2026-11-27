@@ -24,6 +24,7 @@ import '../actions/profile_settings_actions.dart';
 import '../helper/profile_display_text.dart';
 import '../helper/profile_routes.dart';
 import '../helper/profile_sheets.dart';
+import '../widgets/currency_convert_sheet.dart';
 
 @lazySingleton
 class ProfileController extends PrjGetController {
@@ -330,18 +331,12 @@ class ProfileController extends PrjGetController {
       // The whole book is converted into the new currency (see
       // BookCurrencyAligner), so ask first.
       if (!context.mounted) return;
-      final confirmed = await CcDialogHelper.showMessageBottomSheet(
-        context: context,
-        title: el.tr(
-          PrjLocaleKeys.profile_currency_convert_title,
-          namedArgs: {'to': picked},
-        ),
-        content: el.tr(
-          PrjLocaleKeys.profile_currency_convert_message,
-          namedArgs: {'from': current, 'to': picked},
-        ),
+      final confirmed = await CurrencyConvertSheet.show(
+        context,
+        from: current,
+        to: picked,
       );
-      if (confirmed != true) return;
+      if (!confirmed) return;
       await _save(
         settings.value.copyWith(
           currencyCode: picked,

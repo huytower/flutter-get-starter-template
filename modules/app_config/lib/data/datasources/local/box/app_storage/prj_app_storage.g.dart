@@ -50,13 +50,14 @@ class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
       accountSettingsSyncedJson: fields[31] as String?,
       hasPaidVip: fields[32] as bool?,
       pendingCloudDeletes: (fields[33] as List?)?.cast<String>(),
+      lastEntryWalletId: fields[34] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, PrjAppStorage obj) {
     writer
-      ..writeByte(33)
+      ..writeByte(34)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -122,7 +123,9 @@ class PrjAppStorageAdapter extends TypeAdapter<PrjAppStorage> {
       ..writeByte(32)
       ..write(obj.hasPaidVip)
       ..writeByte(33)
-      ..write(obj.pendingCloudDeletes);
+      ..write(obj.pendingCloudDeletes)
+      ..writeByte(34)
+      ..write(obj.lastEntryWalletId);
   }
 
   @override
@@ -194,6 +197,7 @@ PrjAppStorage _$PrjAppStorageFromJson(
   pendingCloudDeletes: (json['pendingCloudDeletes'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
+  lastEntryWalletId: json['lastEntryWalletId'] as String?,
 );
 
 Map<String, dynamic> _$PrjAppStorageToJson(
@@ -236,4 +240,5 @@ Map<String, dynamic> _$PrjAppStorageToJson(
   'accountSettingsSyncedJson': instance.accountSettingsSyncedJson,
   'hasPaidVip': instance.hasPaidVip,
   'pendingCloudDeletes': instance.pendingCloudDeletes,
+  'lastEntryWalletId': instance.lastEntryWalletId,
 };

@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
@@ -9,13 +10,15 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
+import '../../../../core/constant/currency_selection_sources.dart';
 import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../../core/presentation/helper/name_suggestions.dart';
 import '../../../../core/presentation/helper/wallet_icon_helper.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../helper/wallet_name_suggestions.dart';
+import '../../domain/entities/suggestion_region.dart';
+import '../helper/investment_name_catalog.dart';
 import 'wallet_controller.dart';
 
 /// Backs [AddInvestmentSheet] — specifically for creating/editing investment assets.
@@ -49,6 +52,15 @@ class AddInvestmentSheetController extends PrjGetController {
   final RxnString nameError = RxnString();
   final RxBool hasVip = false.obs;
 
+  /// The market whose names are suggested, from the user's settings.
+  final Rx<SuggestionRegion> region = SuggestionRegion.global.obs;
+
+  /// Name suggestions for the selected category in the user's [region].
+  List<String> get nameSuggestions => InvestmentNameCatalog.names(
+    region.value,
+    selectedInvestmentCategory.value?.id,
+  );
+
   bool get hasEditing => _wallet != null;
 
   /// Opening balance is locked once the asset has any transaction.
@@ -69,12 +81,24 @@ class AddInvestmentSheetController extends PrjGetController {
     }
 
     _loadInvestmentCategories(preSelected: category);
-    _loadVipStatus();
+    _loadSettings();
   }
 
-  Future<void> _loadVipStatus() async {
+  Future<void> _loadSettings() async {
     final settings = await _getProfileSettings();
     hasVip.value = settings.hasVipAccess;
+    region.value = SuggestionRegion.resolve(
+      currencyCode: settings.currencyCode,
+      hasChosenCurrency:
+          settings.currencySelectionSource ==
+          CurrencySelectionSources.userSelected,
+      countryCode: settings.currencyDetectionCountryCode,
+    );
+    '[NameSuggestions] region=${region.value.name} '
+            'currency=${settings.currencyCode} '
+            'source=${settings.currencySelectionSource} '
+            'country=${settings.currencyDetectionCountryCode}'
+        .Log('NameSuggestions');
   }
 
   Future<void> _loadInvestmentCategories({CategoryEntity? preSelected}) async {
@@ -155,12 +179,7 @@ class AddInvestmentSheetController extends PrjGetController {
   /// its hint points at the category's suggestions. A name picked from the
   /// previous category's suggestions is cleared; a typed name is kept.
   void selectInvestmentCategory(CategoryEntity category) {
-    NameSuggestions.clearIfSuggested(
-      nameController,
-      WalletNameSuggestions.keyForInvestmentCategory(
-        selectedInvestmentCategory.value?.id,
-      ),
-    );
+    NameSuggestions.clearIfListed(nameController, nameSuggestions);
     selectedInvestmentCategory.value = category;
   }
 

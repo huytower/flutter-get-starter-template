@@ -157,10 +157,15 @@ The Sổ Sách Xịn (Quản Lý Tài Chính) application is a modular personal 
     rewrites the mirror leg's amount (converted to its currency), date, category and note. The lock below is
     checked on both legs. Edits keep the entry's link to its position (`investmentWalletId`).
   - Debug trace: `[DeleteTransaction]` / `[UpdateTransaction]` log every leg with its `RECONCILED` / `open` state.
-  - **Reconciled entries are closed.** A transaction dated at or before the latest reconciliation is part of the balances that reconciliation confirmed, so it can no longer be edited or deleted (in edit mode the Report shows an **info** button instead of the edit/delete buttons; tapping it opens a bottom sheet "Already reconciled" explaining why and suggesting an offsetting transaction — `transaction.reconciled_title` / `transaction.reconciled_info`; the save/delete is refused in the use cases too). Only unreconciled transactions — dated after the latest reconciliation — can be edited or deleted, still within the 30-day window.
+  - **Reconciled entries are closed.** A transaction dated at or before the latest reconciliation is part of the balances that reconciliation confirmed, so it can no longer be edited or deleted (in edit mode the Report shows an **info** button instead of the edit/delete buttons; tapping it opens a bottom sheet "Already reconciled" with bullets (`ReconciledTransactionSheet`, styled like the reconciliation guide): why it is locked, which balances a change would break, and to add an offsetting transaction — `transaction.reconciled_title` / `transaction.reconciled_info_*`; the save/delete is refused in the use cases too). Only unreconciled transactions — dated after the latest reconciliation — can be edited or deleted, still within the 30-day window.
   - **To correct a reconciled entry, add a new transaction** that offsets it, with a matching reason in its note (e.g. an income "Hoàn lại — nhập nhầm chi 50k ngày 20/11"). This does not conflict with the lock: the closed period stays as it was confirmed, and the correction is recorded, and later reconciled, in the open period.
   - **The lock follows the transaction's date, not when it was entered.** A new entry back-dated into a reconciled period is locked as soon as it is saved, so check it before saving; a later mistake in it is again corrected with another offsetting entry. Entries dated today (the default) stay editable.
   - Undoing the latest reconciliation (§4.C) re-opens its transactions for editing, back to the previous reconciliation. This is an **allowed** way to fix an entry in the last closed period: undo, edit, then reconcile again. It reaches only that one period, and it has a cost: if the cycle is already over, the new reconciliation falls in the current cycle, so the old cycle loses its reconciliation and the streak (§8) can break.
+
+- **Sticky wallet choice.** The liquid wallet used for an entry stays selected after saving, is preselected in
+  every entry form (Expense, Income, Investment, Liability, Lend) and is remembered across app launches. If that
+  wallet no longer exists, the first one is selected. Editing an old entry keeps that entry's wallet and does not
+  change the remembered one. Stored on the device, cleared when another account or a guest takes it over.
 
 **Transaction Entry Flow (Normal):**
 1. User opens App → lands on the Transaction tab → enters amount in "Chi tiền"
@@ -279,7 +284,7 @@ cycle.
 - **Currencies**: VND (default), USD, JPY, EUR, KRW, CNY
   - **One book currency.** The whole book (wallets, transactions, budgets, liabilities, reconciliations) is kept in the primary currency chosen in Profile; the initial choice is detected from the device region/locale (or GPS country, see Privacy below). Amounts are added and subtracted as typed, with no conversion.
   - **Whole units only — no cents, no decimals.** Every amount is an integer number of units of the book currency, in every currency: USD 4.99, EUR 0.50 or CNY 12.80 cannot be recorded (enter 5, 1, 13). This is a deliberate product limit, kept on purpose: a book without fractions adds up exactly, but any conversion between currencies has to round, which is where figures drift (see next point).
-  - **Changing the primary currency converts the whole book once** at the current rate. The user is asked to confirm first; the confirmation states the rounding rules below.
+  - **Changing the primary currency converts the whole book once** at the current rate. The user is asked to confirm first; the confirmation sheet (`CurrencyConvertSheet`) lists the conversion and rounding rules below as bullets, styled like the reconciliation guide.
     - Each converted amount is rounded to the nearest whole unit.
     - **A non-zero amount never becomes 0**: anything under 1 unit after conversion is rounded **up to 1 unit** (−1 for a negative balance), in every currency — e.g. 10,000 đ ≈ USD 0.39 is recorded as **1 USD**; 5 JPY ≈ USD 0.03 → 1 USD. Without this rule small entries would silently vanish from the book.
     - Because of rounding (and the 1-unit floor), converting back does **not** restore the original values: VND → USD → VND turns 10,000 đ into 1 USD and back into ~26,000 đ. Totals can therefore differ slightly from the original after a conversion; this is accepted. Users who switch currency often should expect it.
@@ -460,6 +465,14 @@ If user has saved 60M (Emergency Fund), they have 6 months of complete freedom.
 
 ### Investment Tracking (LV2 or VIP)
 - An investment position is a wallet of type investment, classified by an investment category (stocks, personal business, …)
+- **Name suggestions follow the user's region** (add-investment sheet), shown left to right as listed in
+  `InvestmentNameCatalog`: regions **VN**, **US / Global**, **KR**, **JP**, **CN**, one list per category, written
+  in that market's own language whatever the app language is.
+  - The region (`SuggestionRegion.resolve`) is, in order: the currency the user **chose** in Profile; otherwise the
+    **detected country** (GPS or device locale); otherwise the book currency. USD, EUR and any other country use
+    the US / Global list.
+  - The lists are a fixed editorial set for filling in a name quickly. They are **not** ranked by performance, not
+    updated with the market and **not investment advice**. Changing them requires an app release.
 - **Chi ra** records contributed capital; **Thu vào** records returns
 - **ROI** = total returns ÷ total contributed capital, across all positions
   - **Known limitation** (§2): there is no market value and no time weighting, and capital taken back out of a
