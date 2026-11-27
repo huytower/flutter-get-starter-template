@@ -9,7 +9,7 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/budget/budget_name_helper.dart';
-import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
+import '../../../guideline/presentation/widgets/prj_guideline_toggle_badge.dart';
 import '../../domain/entities/investment_direction.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
@@ -139,8 +139,6 @@ class _InvestmentFormState extends State<InvestmentForm> {
   ) {
     final guideline = getIt<GuidelineProvider>();
 
-    // Non-positioned badge: the Stack grows to hold its label, so the close
-    // button stays hit-testable (Clip.none paints outside, never hit-tests).
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -158,20 +156,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
                   TransactionTabKind.investment.index) {
             return const SizedBox.shrink();
           }
-          return Padding(
-            padding: EdgeInsets.only(
-              top: context.respDim(15),
-              right: context.respDim(50),
-            ),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: PrjGuidelineBadge(
-                size: context.respDim(6),
-                label: guideline.bannerDescription,
-                labelAbove: false,
-              ),
-            ),
-          );
+          return PrjGuidelineToggleBadge(label: guideline.bannerDescription);
         }),
       ],
     );

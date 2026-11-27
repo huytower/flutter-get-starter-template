@@ -10,6 +10,7 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/currency/money_formatter.dart';
 import '../../../../core/di/di.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 import 'report_daily_list_helpers.dart';
 import 'report_transaction_tile.dart';
 
@@ -175,6 +176,9 @@ class _ReportDailyGroupState extends State<ReportDailyGroup> {
               for (final tx in widget.transactions)
                 ReportTransactionTile(
                   transaction: tx,
+                  sourceName: walletController.wallets
+                      .firstWhereOrNull((w) => w.id == tx.investmentWalletId)
+                      ?.displayName(context),
                   hasEditMode: widget.hasEditMode,
                   reconciledUntil: widget.reconciledUntil,
                 ),

@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
+import '../../../guideline/presentation/widgets/prj_guideline_toggle_badge.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../../../transaction/presentation/widgets/form_amount_section.dart';
 import '../../../transaction/presentation/widgets/form_keypad_panel.dart';
@@ -164,8 +164,7 @@ class _BorrowFormState extends State<BorrowForm> {
         : null;
 
     return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
+      alignment: Alignment.topCenter,
       children: [
         BorrowDirectionToggle(
           value: controller.action.value,
@@ -183,16 +182,7 @@ class _BorrowFormState extends State<BorrowForm> {
                     TransactionTabKind.borrow.index) {
               return const SizedBox.shrink();
             }
-            return Positioned(
-              top: context.respDim(15),
-              right: context.respDim(50),
-              child: PrjGuidelineBadge(
-                size: context.respDim(6),
-                label: guideline.bannerDescription,
-                labelAbove: false,
-                growRight: false,
-              ),
-            );
+            return PrjGuidelineToggleBadge(label: guideline.bannerDescription);
           }),
       ],
     );

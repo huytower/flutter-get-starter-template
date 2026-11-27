@@ -454,10 +454,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               syncDataSource: gh<_i784.TransactionSyncDataSource>(),
               syncService: gh<_i857.FinancialDataSyncService>(),
             ));
-    gh.factory<_i430.WalletLedger>(() => _i430.WalletLedger(
-          gh<_i1027.TransactionRepository>(),
-          gh<_i195.CurrencyConversionService>(),
-        ));
     gh.lazySingleton<_i544.BudgetLimitRepository>(
         () => _i150.BudgetLimitRepositoryImpl(
               crashReporter: gh<_i54.CcCrashReporter>(),
@@ -682,6 +678,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i727.SessionContract>(),
               gh<_i483.NotificationService>(),
             ));
+    gh.factory<_i430.WalletLedger>(() => _i430.WalletLedger(
+          gh<_i1027.TransactionRepository>(),
+          gh<_i195.CurrencyConversionService>(),
+          gh<_i179.ReconciledPeriodLock>(),
+        ));
     gh.factory<_i455.DeleteTransactionUseCase>(
         () => _i455.DeleteTransactionUseCase(
               gh<_i1027.TransactionRepository>(),

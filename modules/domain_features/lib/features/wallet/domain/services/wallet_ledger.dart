@@ -1,8 +1,10 @@
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart';
+import 'package:domain_features/features/transaction/domain/services/reconciled_period_lock.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -14,10 +16,11 @@ export 'wallet_ledger_snapshot.dart';
 /// balances in the user's currency, and removing a wallet's transactions.
 @injectable
 class WalletLedger {
-  WalletLedger(this._transactions, this._conversion);
+  WalletLedger(this._transactions, this._conversion, this._periodLock);
 
   final TransactionRepository _transactions;
   final CurrencyConversionService _conversion;
+  final ReconciledPeriodLock _periodLock;
 
   /// Exposed for screens that still convert amounts through the wallet
   /// controller; new code injects [CurrencyConversionService] directly.
@@ -113,8 +116,46 @@ class WalletLedger {
   }
 
   /// Soft-deletes every transaction of [walletId] (before the wallet itself).
-  Future<Result<void, CcFailure>> removeTransactionsOf(String walletId) =>
-      _transactions.softDeleteByWallet(walletId);
+  ///
+  /// For an investment position that also means the legs living on a liquid
+  /// wallet (Chi ra out-leg, Thu vào), matched by `investmentWalletId`.
+  Future<Result<void, CcFailure>> removeTransactionsOf(String walletId) async {
+    await _logRemoval(walletId);
+    return _transactions.softDeleteByWallet(walletId);
+  }
+
+  /// Debug trace of what [removeTransactionsOf] is about to soft-delete, with
+  /// each transaction's reconciled state (`[DeleteWallet]` in the log).
+  Future<void> _logRemoval(String walletId) async {
+    const tag = 'DeleteWallet';
+    try {
+      final lockedUntil = await _periodLock.lockedUntil();
+      final all = (await _transactions.getListTransactions()).tryGetSuccess();
+      final targets = (all ?? const <TransactionEntity>[]).where(
+        (t) =>
+            !t.hasDeleted &&
+            (t.walletId == walletId || t.investmentWalletId == walletId),
+      );
+      final reconciled = targets.where(
+        (t) => ReconciledPeriodLock.hasLocked(t, lockedUntil),
+      );
+      '[DeleteWallet] wallet=$walletId will soft-delete ${targets.length} '
+              'transaction(s), ${reconciled.length} reconciled '
+              '(latest reconciliation: ${lockedUntil ?? 'none'})'
+          .Log(tag);
+      for (final t in targets) {
+        final leg = t.walletId == walletId ? 'own' : 'liquid:${t.walletId}';
+        final state = ReconciledPeriodLock.hasLocked(t, lockedUntil)
+            ? 'RECONCILED'
+            : 'open';
+        '[DeleteWallet]   ${t.id} ${t.type} amount=${t.amount} '
+                'date=${t.date.toIso8601String()} leg=$leg $state'
+            .Log(tag);
+      }
+    } catch (e) {
+      '[DeleteWallet] trace failed: $e'.Log(tag);
+    }
+  }
 
   /// Opening balance ± each transaction, converted to the wallet's currency.
   Future<int> _bookBalance(

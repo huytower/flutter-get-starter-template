@@ -9,6 +9,8 @@ import 'package:domain_features/features/wallet/domain/services/wallet_ledger.da
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../support/no_reconciliations.dart';
+
 class _FakeTransactions implements TransactionRepository {
   _FakeTransactions(this.transactions);
 
@@ -66,6 +68,7 @@ TransactionEntity _txn(
 WalletLedger _ledger(List<TransactionEntity> txns) => WalletLedger(
   _FakeTransactions(txns),
   CurrencyConversionService(_NoRates()),
+  noReconciliationLock(),
 );
 
 void main() {
@@ -142,6 +145,7 @@ void main() {
     final ledger = WalletLedger(
       transactions,
       CurrencyConversionService(_NoRates()),
+      noReconciliationLock(),
     );
 
     await ledger.removeTransactionsOf('bank');

@@ -21,6 +21,8 @@ import 'package:domain_features/features/wallet/domain/services/wallet_ledger.da
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../support/no_reconciliations.dart';
+
 // The app shows every amount in the user's primary currency; arithmetic must
 // be exact in it. Rate used by the app for VND: 1 USD = 25,982.5 đ.
 
@@ -177,7 +179,7 @@ void main() {
     liabilities = _Liabilities();
     budgets = _Budgets();
     conversion = CurrencyConversionService(rates);
-    ledger = WalletLedger(txns, conversion);
+    ledger = WalletLedger(txns, conversion, noReconciliationLock());
     aligner = BookCurrencyAligner(
       wallets,
       txns,

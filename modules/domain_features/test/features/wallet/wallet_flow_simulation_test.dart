@@ -26,6 +26,8 @@ import 'package:domain_features/features/wallet/presentation/get_x/wallet_contro
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../support/no_reconciliations.dart';
+
 // Simulates the wallet screens end to end on in-memory storage: load, add,
 // edit, guard rules, delete, and what other features are told. Only storage
 // and the cross-feature contracts are fakes; every wallet class is real.
@@ -200,7 +202,11 @@ void main() {
     controller = WalletController(
       wallets,
       LoadWalletOverviewUseCase(wallets, _Categories(), getSettings),
-      WalletLedger(transactions, CurrencyConversionService(_NoRates())),
+      WalletLedger(
+        transactions,
+        CurrencyConversionService(_NoRates()),
+        noReconciliationLock(),
+      ),
       EmergencyFundAccess(
         userLevel,
         getSettings,

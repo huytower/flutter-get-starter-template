@@ -80,9 +80,12 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
 
     return safeRequest(() async {
       await _local.deleteWallet(id);
+      '[DeleteWallet] local wallet deleted id=$id remoteId=${walletModel.remoteId}'
+          .Log('DeleteWallet');
       if (walletModel.remoteId != null) {
         try {
           await _sync.deleteWallet(walletModel.remoteId!);
+          '[DeleteWallet] cloud wallet deleted'.Log('DeleteWallet');
         } catch (e) {
           // Offline: queue it so the next online sync deletes it in the cloud
           // and the pull meanwhile can't bring the wallet back.

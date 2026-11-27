@@ -13,16 +13,22 @@ import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import 'delete_transaction_sheet.dart';
 import 'quick_edit_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';
+import 'report_source_chip.dart';
 
 class ReportTransactionTile extends StatelessWidget {
   const ReportTransactionTile({
     required this.transaction,
     required this.hasEditMode,
     this.reconciledUntil,
+    this.sourceName,
   });
 
   final TransactionEntity transaction;
   final bool hasEditMode;
+
+  /// Name shown in a chip beside the title (the investment position of an
+  /// investment entry). Null hides the chip.
+  final String? sourceName;
 
   /// Latest reconciliation; a transaction dated at or before it shows a lock
   /// instead of edit/delete.
@@ -74,18 +80,32 @@ class ReportTransactionTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CcText(
-                    BudgetNameHelper.getDisplayName(
-                      name: transaction.category,
-                      categoryNameKey: CategorySeed.categories
-                          .firstWhereOrNull(
-                            (c) => c.id == transaction.categoryId,
-                          )
-                          ?.nameKey,
-                    ),
-                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                  // A long chip moves below the title instead of squeezing it.
+                  Wrap(
+                    spacing: context.respDim(CcPaddingParams.SPACE_XS),
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      IntrinsicWidth(
+                        child: CcText(
+                          BudgetNameHelper.getDisplayName(
+                            name: transaction.category,
+                            categoryNameKey: CategorySeed.categories
+                                .firstWhereOrNull(
+                                  (c) => c.id == transaction.categoryId,
+                                )
+                                ?.nameKey,
+                          ),
+                          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      if (sourceName != null)
+                        ReportSourceChip(
+                          label: sourceName!,
+                          color: amountColor,
+                        ),
+                    ],
                   ),
                   if (transaction.note != null)
                     CcText(
