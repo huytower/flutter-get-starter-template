@@ -100,8 +100,10 @@ class QuickEditTransactionSheetController extends PrjGetController {
     noteController.text = tx.note ?? '';
 
     final tag = 'quick_edit_${tx.id}';
+    // The type argument is needed: put into a nullable field without it, GetX
+    // keys the form as `Type?`, so [onClose] could not delete it.
     if (hasInvestment) {
-      investmentController = Get.put(
+      investmentController = Get.put<InvestmentFormController>(
         getIt<InvestmentFormController>(),
         tag: tag,
       );
@@ -114,7 +116,10 @@ class QuickEditTransactionSheetController extends PrjGetController {
         });
       }
     } else if (hasBorrow) {
-      liabilityController = Get.put(getIt<BorrowFormController>(), tag: tag);
+      liabilityController = Get.put<BorrowFormController>(
+        getIt<BorrowFormController>(),
+        tag: tag,
+      );
       if (tx.liabilityId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (liabilityController != null) {
@@ -123,7 +128,10 @@ class QuickEditTransactionSheetController extends PrjGetController {
         });
       }
     } else if (hasLend) {
-      lendController = Get.put(getIt<LendFormController>(), tag: tag);
+      lendController = Get.put<LendFormController>(
+        getIt<LendFormController>(),
+        tag: tag,
+      );
       if (tx.liabilityId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (lendController != null) {
@@ -201,27 +209,10 @@ class QuickEditTransactionSheetController extends PrjGetController {
             selectedCat?.iconCode ?? transaction.categoryIconCode;
         categoryIconFamily =
             selectedCat?.iconFamily ?? transaction.categoryIconFamily;
-      } else if (hasBorrow && liabilityController != null) {
-        final selectedLiabilityId =
-            liabilityController!.selectedLiabilityId.value;
-        final balance = liabilityController!.mergedItems.firstWhereOrNull(
-          (b) => b.liability.id == selectedLiabilityId,
-        );
-        categoryId = balance?.liability.categoryId ?? transaction.categoryId;
-        categoryLabel = balance != null
-            ? BudgetNameHelper.getDisplayName(
-                name: balance.liability.categoryLabel,
-                categoryNameKey: balance.liability.categoryNameKey,
-              )
-            : transaction.category;
-        categoryIconCode =
-            balance?.liability.categoryIconCode ?? transaction.categoryIconCode;
-        categoryIconFamily =
-            balance?.liability.categoryIconFamily ??
-            transaction.categoryIconFamily;
-      } else if (hasLend && lendController != null) {
-        final selectedLiabilityId = lendController!.selectedLiabilityId.value;
-        final balance = lendController!.mergedItems.firstWhereOrNull(
+      } else if (liabilityController != null || lendController != null) {
+        final form = liabilityController ?? lendController!;
+        final selectedLiabilityId = form.selectedLiabilityId.value;
+        final balance = form.mergedItems.firstWhereOrNull(
           (b) => b.liability.id == selectedLiabilityId,
         );
         categoryId = balance?.liability.categoryId ?? transaction.categoryId;

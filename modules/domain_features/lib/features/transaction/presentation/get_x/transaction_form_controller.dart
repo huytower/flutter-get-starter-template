@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/get_x/followed_workers_mixin.dart';
 import '../../../../core/get_x/prj_get_controller.dart';
 import '../../../../core/presentation/helper/last_entry_wallet.dart';
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
@@ -19,7 +20,7 @@ import 'transaction_controller.dart';
 import 'wallet_selection_mixin.dart';
 
 abstract class TransactionFormController extends PrjGetController
-    with WalletSelectionMixin {
+    with WalletSelectionMixin, FollowedWorkersMixin {
   final RxString amountStr = '0'.obs;
   final TextEditingController noteController = TextEditingController();
   final ScrollController scrollController = ScrollController();
@@ -51,7 +52,7 @@ abstract class TransactionFormController extends PrjGetController
     super.onInit();
     _loadWallets();
     _loadCurrency();
-    ever(CurrencyConstants.onCurrencyChanged, (_) => _loadCurrency());
+    follow(CurrencyConstants.onCurrencyChanged, (_) => _loadCurrency());
     noteController.addListener(_updateNoteState);
     layoutStatus.value = CcLayoutStatus.success;
   }

@@ -220,11 +220,11 @@ class InvestmentFormController extends TransactionFormController {
     super.onInit();
     _loadAll();
     final parentController = Get.find<TransactionController>();
-    ever(parentController.wallets, (_) {
+    follow(parentController.wallets, (_) {
       _recomputeMergedItems();
     });
 
-    ever(CategorySettingsController.onCategoriesChanged, (_) {
+    follow(CategorySettingsController.onCategoriesChanged, (_) {
       _loadCategories();
       _recomputeMergedItems();
     });
@@ -235,7 +235,7 @@ class InvestmentFormController extends TransactionFormController {
       _revealSelectedAsset();
     });
     quickEntry.initQuickEntry();
-    ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
+    follow(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
   }
 
   /// Centers the selected asset card in the asset row.

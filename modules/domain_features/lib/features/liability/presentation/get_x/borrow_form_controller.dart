@@ -96,12 +96,12 @@ class BorrowFormController extends LiabilityBaseFormController {
   void onInit() {
     super.onInit();
     _loadAll();
-    ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
+    follow(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
 
     // Listen to liability list changes to sync with deletions from list page
     if (Get.isRegistered<LiabilityListController>()) {
       final listController = Get.find<LiabilityListController>();
-      ever(listController.liabilities, (_) {
+      follow(listController.liabilities, (_) {
         loadLiabilities();
       });
     }
@@ -124,7 +124,7 @@ class BorrowFormController extends LiabilityBaseFormController {
     await loadSuggestions();
     await loadLiabilities();
     hasLoadingMerged.value = false;
-    quickEntry.initQuickEntry();
+    if (!isClosed) quickEntry.initQuickEntry(); // closed meanwhile
   }
 
   Future<void> loadLiabilities() async {
