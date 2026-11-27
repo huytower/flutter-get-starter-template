@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../widgets/add_liquid_sheet.dart';
+import '../widgets/investment_delete_sheet.dart';
 import 'wallet_controller.dart';
 
 /// The add/edit and delete sheets of the wallet list screens.
@@ -51,21 +52,15 @@ extension WalletSheets on WalletController {
       }
     }
 
-    final confirmed = await CcConfirmSheet.show(
-      context,
-      icon: Icons.delete_outline_rounded,
-      title: el.tr(
-        hasInvestment
-            ? PrjLocaleKeys.wallet_investment_delete_title
-            : PrjLocaleKeys.wallet_delete_title,
-      ),
-      message: el.tr(
-        hasInvestment
-            ? PrjLocaleKeys.wallet_investment_delete_confirm
-            : PrjLocaleKeys.wallet_delete_confirm_msg,
-      ),
-      confirmLabel: el.tr(PrjLocaleKeys.common_delete),
-    );
+    final confirmed = hasInvestment
+        ? await InvestmentDeleteSheet.show(context)
+        : await CcConfirmSheet.show(
+            context,
+            icon: Icons.delete_outline_rounded,
+            title: el.tr(PrjLocaleKeys.wallet_delete_title),
+            message: el.tr(PrjLocaleKeys.wallet_delete_confirm_msg),
+            confirmLabel: el.tr(PrjLocaleKeys.common_delete),
+          );
     if (!confirmed) return;
     final outcome = await deleteWallet(wallet.id);
     if (!context.mounted) return;

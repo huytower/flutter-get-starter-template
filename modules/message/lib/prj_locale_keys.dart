@@ -202,8 +202,12 @@ class CodegenLoader extends AssetLoader {
       "investment_name_suggestions_bond": "Government bond|US Treasury bond|Corporate bond|BND|AGG",
       "investment_name_suggestions_business": "Coffee shop|Restaurant|Shopee shop|TikTok Shop|Grocery store|Stake with friend|Grab car|Nail/spa salon|Franchise|Startup",
       "investment_delete_title": "Delete Investment",
-      "investment_delete_confirm":
-          "Deleting an investment item is only possible when its total performance value is 0. All related transactions will be soft-deleted. Continue?",
+      "investment_delete_intro": "Deleting this investment:",
+      "investment_delete_entries": "Its **Contribute** and **Return** entries are deleted too.",
+      "investment_delete_refund": "**Money you contributed goes back** to the wallet it came from.",
+      "investment_delete_returns": "**Returns you collected are taken out** of the wallet that received them.",
+      "investment_delete_roi": "It **no longer counts in ROI**.",
+      "investment_delete_reconciled": "**Not possible** if any of those entries is reconciled. **Add an offsetting entry** instead.",
       "investment_edit_title": "Edit Investment",
       "add_title": "Add New Wallet",
       "edit_title": "Edit Wallet",
@@ -1128,8 +1132,12 @@ class CodegenLoader extends AssetLoader {
       "investment_name_suggestions_bond": "TP Chính phủ|TP kho bạc Mỹ|TP doanh nghiệp|BND|AGG",
       "investment_name_suggestions_business": "Quán cà phê|Quán ăn|Shop Shopee|TikTok Shop|Tạp hóa|Góp vốn bạn|Xe chạy Grab|Tiệm nail/spa|Nhượng quyền|Startup",
       "investment_delete_title": "Xoá khoản đầu tư",
-      "investment_delete_confirm":
-          "Chỉ có thể xoá khoản đầu tư khi tổng giá trị hiệu suất bằng 0. Mọi giao dịch liên quan sẽ bị xoá (soft-delete). Tiếp tục?",
+      "investment_delete_intro": "Khi xoá khoản đầu tư này:",
+      "investment_delete_entries": "Các giao dịch **Chi ra** và **Thu vào** của khoản này cũng bị xoá.",
+      "investment_delete_refund": "**Tiền đã đầu tư được hoàn lại** vào ví đã chi.",
+      "investment_delete_returns": "**Lợi nhuận đã thu về bị trừ** khỏi ví đã nhận.",
+      "investment_delete_roi": "Khoản này **không còn tính vào ROI**.",
+      "investment_delete_reconciled": "**Không thể xoá** nếu có giao dịch đã kiểm toán. Khi đó hãy **thêm giao dịch bù trừ**.",
       "investment_edit_title": "Sửa khoản đầu tư",
       "add_title": "Thêm ví mới",
       "edit_title": "Sửa ví",
@@ -2030,8 +2038,12 @@ class CodegenLoader extends AssetLoader {
       "investment_name": "투자 이름",
       "investment_name_hint": "예: BTC, Apple 주식...",
       "investment_delete_title": "투자 삭제",
-      "investment_delete_confirm":
-          "총 성과 가치가 0일 때만 투자 항목을 삭제할 수 있습니다. 관련 거래가 소프트 삭제됩니다. 계속하시겠습니까?",
+      "investment_delete_intro": "이 투자를 삭제하면:",
+      "investment_delete_entries": "이 항목의 **'출자'**와 **'회수'** 기록도 삭제됩니다.",
+      "investment_delete_refund": "**출자한 금액은 원래 지갑으로 돌아갑니다**.",
+      "investment_delete_returns": "**받은 회수 금액은 받은 지갑에서 차감됩니다**.",
+      "investment_delete_roi": "**ROI에 더 이상 포함되지 않습니다**.",
+      "investment_delete_reconciled": "대사 완료된 기록이 있으면 **삭제할 수 없습니다**. 대신 **상쇄하는 기록을 추가**하세요.",
       "investment_edit_title": "투자 편집",
       "add_title": "새 지갑 추가",
       "edit_title": "지갑 편집",
@@ -2878,8 +2890,12 @@ class CodegenLoader extends AssetLoader {
       "investment_name": "投資名",
       "investment_name_hint": "例: BTC、Apple株...",
       "investment_delete_title": "投資を削除",
-      "investment_delete_confirm":
-          "総パフォーマンス価値が0の場合のみ投資アイテムを削除できます。関連する取引はソフト削除されます。続行しますか？",
+      "investment_delete_intro": "この投資を削除すると：",
+      "investment_delete_entries": "この項目の**出資**と**回収**の記録も削除されます。",
+      "investment_delete_refund": "**出資した金額は元のウォレットに戻ります**。",
+      "investment_delete_returns": "**受け取った回収額は受取先のウォレットから差し引かれます**。",
+      "investment_delete_roi": "**ROIに含まれなくなります**。",
+      "investment_delete_reconciled": "照合済みの記録がある場合は**削除できません**。代わりに**相殺する記録を追加**してください。",
       "investment_edit_title": "投資を編集",
       "add_title": "新しいウォレットを追加",
       "edit_title": "ウォレットを編集",
@@ -3715,7 +3731,12 @@ class CodegenLoader extends AssetLoader {
       "investment_name": "投资名称",
       "investment_name_hint": "例如: BTC、Apple 股票...",
       "investment_delete_title": "删除投资",
-      "investment_delete_confirm": "只有当总绩效价值为 0 时才能删除投资项目。所有相关交易将被软删除。继续吗？",
+      "investment_delete_intro": "删除该投资后：",
+      "investment_delete_entries": "该项目的**出资**和**回收**记录也会删除。",
+      "investment_delete_refund": "**已出资的金额退回原钱包**。",
+      "investment_delete_returns": "**已收到的回收金额从收款钱包中扣除**。",
+      "investment_delete_roi": "**不再计入 ROI**。",
+      "investment_delete_reconciled": "如有已对账的记录则**无法删除**，请改为**添加一笔冲抵记录**。",
       "investment_edit_title": "编辑投资",
       "add_title": "添加新钱包",
       "edit_title": "编辑钱包",
@@ -4611,8 +4632,18 @@ class PrjLocaleKeys {
   static const wallet_delete_confirm_msg = 'wallet.delete_confirm_msg';
   static const wallet_investment_delete_title =
       'wallet.investment_delete_title';
-  static const wallet_investment_delete_confirm =
-      'wallet.investment_delete_confirm';
+  static const wallet_investment_delete_intro =
+      'wallet.investment_delete_intro';
+  static const wallet_investment_delete_entries =
+      'wallet.investment_delete_entries';
+  static const wallet_investment_delete_refund =
+      'wallet.investment_delete_refund';
+  static const wallet_investment_delete_returns =
+      'wallet.investment_delete_returns';
+  static const wallet_investment_delete_roi =
+      'wallet.investment_delete_roi';
+  static const wallet_investment_delete_reconciled =
+      'wallet.investment_delete_reconciled';
   static const wallet_delete_error_not_empty = 'wallet.delete_error_not_empty';
   static const wallet_delete_error_protected = 'wallet.delete_error_protected';
   static const wallet_delete_error_reconciled =

@@ -611,6 +611,9 @@ Profile badge, but does not change the level earned here. Turning VIP off return
     `investmentWalletId`). That is consistent everywhere, because every balance and stat is derived from the
     remaining transactions: the liquid wallet gets the *Chi ra* money **back** and loses the *Thu vào*
     amounts, and the position leaves ROI and the investment totals.
+  - **The delete confirmation lists these effects as bullets** (`InvestmentDeleteSheet`: linked entries deleted,
+    contributed money returned, collected returns taken back, ROI, and the reconciled block), styled like the
+    reconciliation guide (`HighlightedGuideRow`).
   - **Refused when any of those transactions is reconciled** (dated at or before the latest reconciliation):
     nothing is deleted and the user sees "Some of its transactions are already reconciled… Add a new
     transaction to offset it instead" (`wallet.delete_error_reconciled`, `WalletLedger.removeTransactionsOf`).

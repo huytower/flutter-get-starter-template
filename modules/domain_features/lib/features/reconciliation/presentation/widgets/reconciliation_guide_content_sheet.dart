@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
+import '../../../../core/presentation/widgets/highlighted_guide_row.dart';
 import '../../domain/entities/reconciliation_availability_entity.dart';
 import '../helper/audit_day_formatter.dart';
 
@@ -57,33 +58,30 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
     // The rows scroll when they do not fit; the title and OK stay in view.
     return CcPickerSheetFrame(
       title: tr(PrjLocaleKeys.reconciliation_title),
       hasScrollableBody: true,
-      body: _buildGuideList(context, scheme),
+      body: _buildGuideList(context),
       hasCancel: false,
       onConfirm: () => Navigator.of(context).pop(),
     );
   }
 
-  Widget _buildGuideList(BuildContext context, ColorScheme scheme) {
+  Widget _buildGuideList(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_MD)),
-      child: _buildItems(context, scheme),
+      child: _buildItems(context),
     );
   }
 
-  Widget _buildItems(BuildContext context, ColorScheme scheme) {
+  Widget _buildItems(BuildContext context) {
     final items = [
       for (final item in _items)
-        _buildGuideItem(context, scheme, item.icon, tr(item.textKey)),
-      _buildGuideItem(
-        context,
-        scheme,
-        Icons.event_repeat_rounded,
-        _cycleText(),
+        HighlightedGuideRow(icon: item.icon, text: tr(item.textKey)),
+      HighlightedGuideRow(
+        icon: Icons.event_repeat_rounded,
+        text: _cycleText(),
       ),
     ];
     // Small tablet and up (>= 600 dp window): two columns, so the sheet is
@@ -105,67 +103,6 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
           item,
         ],
       ],
-    );
-  }
-
-  Widget _buildGuideItem(
-    BuildContext context,
-    ColorScheme scheme,
-    IconData icon,
-    String text,
-  ) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(context.respDim(6)),
-          decoration: BoxDecoration(
-            color: scheme.primary.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            size: context.respIconSize(baseSize: 18),
-            color: scheme.primary,
-          ),
-        ),
-        const CcSpaceSM(),
-        Expanded(child: _buildHighlightedText(context, scheme, text)),
-      ],
-    );
-  }
-
-  /// Renders [text] with every `**keyword**` run emphasized in the primary
-  /// color and bold, so the key step or button name stands out. Plain parts
-  /// keep the muted body color. Plain `Text.rich` is used (not `CcText`, which
-  /// takes a single string and style).
-  Widget _buildHighlightedText(
-    BuildContext context,
-    ColorScheme scheme,
-    String text,
-  ) {
-    final baseStyle = context.ccTextTheme.bodyMedium?.copyWith(
-      color: scheme.onSurfaceVariant,
-      height: 1.4,
-    );
-    final keywordStyle = baseStyle?.copyWith(
-      color: scheme.primary,
-      fontWeight: CcTypographyParams.bold,
-    );
-
-    // Splitting on the marker alternates plain / keyword / plain / ...; an
-    // unmatched marker simply leaves the tail as a keyword, never throws.
-    final parts = text.split('**');
-    return Text.rich(
-      TextSpan(
-        style: baseStyle,
-        children: [
-          for (final (index, part) in parts.indexed)
-            if (part.isNotEmpty)
-              TextSpan(text: part, style: index.isOdd ? keywordStyle : null),
-        ],
-      ),
-      textAlign: TextAlign.start,
     );
   }
 }
