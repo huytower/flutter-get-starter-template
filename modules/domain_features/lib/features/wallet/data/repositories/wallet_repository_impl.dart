@@ -3,6 +3,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repositories/prj_base_repository.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
+import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/pending_cloud_deletes.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
@@ -20,13 +21,16 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
     required this.crashReporter,
     required WalletLocalDataSource local,
     required WalletSyncDataSource sync,
+    required FinancialDataSyncService syncService,
   }) : _local = local,
-       _sync = sync;
+       _sync = sync,
+       _syncService = syncService;
 
   @override
   final CcCrashReporter crashReporter;
   final WalletLocalDataSource _local;
   final WalletSyncDataSource _sync;
+  final FinancialDataSyncService _syncService;
 
   @override
   Future<Result<List<WalletEntity>, CcFailure>> getWallets() {
@@ -82,17 +86,11 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
       await _local.deleteWallet(id);
       '[DeleteWallet] local wallet deleted id=$id remoteId=${walletModel.remoteId}'
           .Log('DeleteWallet');
-      if (walletModel.remoteId != null) {
-        try {
-          await _sync.deleteWallet(walletModel.remoteId!);
-          '[DeleteWallet] cloud wallet deleted'.Log('DeleteWallet');
-        } catch (e) {
-          // Offline: queue it so the next online sync deletes it in the cloud
-          // and the pull meanwhile can't bring the wallet back.
-          'Remote delete deferred: $e'.Log('WalletRepository');
-          await PendingCloudDeletes.add('wallets', [id, walletModel.remoteId]);
-        }
-      }
+      // Queued, never awaited: offline, Firestore answers a write only once
+      // the server has it. syncAll() deletes the document when online, and
+      // until then the pull can't bring the wallet back.
+      await PendingCloudDeletes.add('wallets', [id, walletModel.remoteId]);
+      _syncService.syncAll();
     });
   }
 
@@ -137,16 +135,21 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
       if (wallet == null) return;
 
       final remoteId = await _sync.syncWallet(wallet);
-      if (remoteId != null) {
-        final updated = wallet.copyWithSyncMetadata(
-          wallet.syncMetadata.copyWith(
+      // Deleted while uploading: writing it back would bring it back.
+      final current = await _local.getWalletModel(id);
+      if (remoteId == null || current == null) return;
+      await _local.updateWalletModel(
+        current.copyWithSyncMetadata(
+          current.syncMetadata.copyWith(
             remoteId: remoteId,
-            status: SyncStatus.synced,
+            // Edited meanwhile: stays pending so the edit is uploaded too.
+            status: identical(current, wallet)
+                ? SyncStatus.synced
+                : SyncStatus.pending,
             lastSyncedAt: DateTime.now(),
           ),
-        );
-        await _local.updateWalletModel(updated);
-      }
+        ),
+      );
     } catch (e) {
       'Sync failed for wallet $id: $e'.Log('WalletRepository');
     }

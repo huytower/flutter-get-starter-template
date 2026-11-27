@@ -3,10 +3,10 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-/// Bottom sheet for choosing the app language: a two-column grid of flags and
-/// language names, then Cancel / OK. Returns the picked [Locale], or `null`
-/// when cancelled. The caller applies it (for example
-/// `EasyLocalization.of(context)!.setLocale(picked)`).
+/// Bottom sheet for choosing the app language: one tile per language (flag,
+/// code and name; two columns from a small tablet up), then Cancel / OK.
+/// Returns the picked [Locale], or `null` when cancelled. The caller applies it
+/// (for example `EasyLocalization.of(context)!.setLocale(picked)`).
 ///
 /// Names and flags are built in for en, vi, ko, ja and zh; any other locale
 /// shows its language code and a globe.
@@ -74,73 +74,44 @@ class _LanguagePickerSheetState extends State<LanguagePickerSheet> {
   Widget build(BuildContext context) {
     return CcPickerSheetFrame(
       title: el.tr(CcMfLocaleKeys.language_title),
-      body: _buildLanguageGrid(context),
+      body: _buildLanguageList(context),
       onConfirm: () => Navigator.of(context).pop(_selectedLocale),
     );
   }
 
-  Widget _buildLanguageGrid(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_MD)),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: context.respDim(50),
-          crossAxisSpacing: context.respDim(12),
-          mainAxisSpacing: context.respDim(12),
-        ),
-        itemCount: widget.locales.length,
-        itemBuilder: (context, index) =>
-            _buildLanguageChip(context, widget.locales[index]),
-      ),
+  Widget _buildLanguageList(BuildContext context) {
+    final tiles = [
+      for (final locale in widget.locales) _buildLanguageTile(context, locale),
+    ];
+    // The sheet is narrower than the window, so the window class decides.
+    final hasTwoColumns = context.windowSizeClass.hasAtLeast(
+      CcWindowSizeClass.medium,
+    );
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.PAGE_MD,
+      vertical: CcPaddingParams.SPACE_SM,
+      child: hasTwoColumns
+          ? CcMultiColumn(
+              columns: 2,
+              columnGap: context.respDim(8),
+              children: tiles,
+            )
+          : Column(mainAxisSize: MainAxisSize.min, children: tiles),
     );
   }
 
-  Widget _buildLanguageChip(BuildContext context, Locale locale) {
-    final scheme = context.ccColorScheme;
-    final hasSelected = locale.languageCode == _selectedLocale?.languageCode;
-    return CcBouncing(
-      onTap: () => setState(() => _selectedLocale = locale),
-      borderRadius: context.brMd,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: EdgeInsets.symmetric(horizontal: context.respDim(12)),
-        alignment: Alignment.centerLeft,
-        decoration: BoxDecoration(
-          color: hasSelected
-              ? scheme.primary.withValues(alpha: 0.1)
-              : scheme.surface,
-          borderRadius: context.brMd,
-          border: Border.all(
-            color: hasSelected
-                ? scheme.primary
-                : scheme.outline.withValues(alpha: 0.1),
-          ),
-        ),
-        child: Row(
-          children: [
-            CcText(
-              LanguagePickerSheet.flagOf(locale),
-              textStyle: context.ccTextTheme.titleMedium,
-            ),
-            const CcSpaceSM(),
-            Expanded(
-              child: CcText(
-                LanguagePickerSheet.nameOf(locale),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  fontWeight: hasSelected
-                      ? CcTypographyParams.bold
-                      : CcTypographyParams.medium,
-                  color: hasSelected ? scheme.primary : scheme.onSurface,
-                ),
-              ),
-            ),
-          ],
-        ),
+  Widget _buildLanguageTile(BuildContext context, Locale locale) {
+    final code = locale.languageCode;
+    // An unknown language already shows its code as the name.
+    final hasName = LanguagePickerSheet._nameKeys.containsKey(code);
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.respDim(8)),
+      child: CcOptionTile(
+        leading: Text(LanguagePickerSheet.flagOf(locale)),
+        overline: hasName ? code.toUpperCase() : null,
+        title: LanguagePickerSheet.nameOf(locale),
+        hasSelected: code == _selectedLocale?.languageCode,
+        onTap: () => setState(() => _selectedLocale = locale),
       ),
     );
   }

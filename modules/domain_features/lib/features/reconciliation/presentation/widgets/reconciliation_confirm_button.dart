@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../get_x/reconciliation_controller.dart';
+import 'reconciliation_success_sheet.dart';
 
 class ReconciliationConfirmButton extends StatelessWidget {
   const ReconciliationConfirmButton({super.key});
@@ -19,7 +20,7 @@ class ReconciliationConfirmButton extends StatelessWidget {
         text: el.tr(PrjLocaleKeys.reconciliation_confirm),
         hasSubmitting: busy,
         hasEnabled: controller.canReconcile,
-        onTap: () => controller.confirmReconciliation(context),
+        onTap: () => _confirm(context, controller),
         activeColor: context.ccColorScheme.primary,
         widthFactor: 0.5,
         height: context.respDim(40),
@@ -28,5 +29,28 @@ class ReconciliationConfirmButton extends StatelessWidget {
         leadingIconSize: 16,
       );
     });
+  }
+
+  Future<void> _confirm(
+    BuildContext context,
+    ReconciliationController controller,
+  ) async {
+    // Confirming closes the cycle, which takes this button off the page, so
+    // the sheets and the page pop go through the navigator.
+    final navigator = Navigator.of(context);
+    final error = await controller.performReconciliation();
+    if (!navigator.mounted) return;
+    if (error != null) {
+      CcSnackBarHelper.showErrorSnackBar(
+        context: navigator.context,
+        message: error,
+      );
+      return;
+    }
+    await showDialog<void>(
+      context: navigator.context,
+      barrierDismissible: false,
+      builder: (_) => ReconciliationSuccessSheet(onDismiss: navigator.pop),
+    );
   }
 }

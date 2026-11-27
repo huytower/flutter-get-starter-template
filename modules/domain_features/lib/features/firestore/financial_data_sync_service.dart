@@ -32,6 +32,7 @@ import '../../features/wallet/data/datasources/wallet_sync_datasource.dart';
 import '../../features/wallet/data/models/wallet_hive_model.dart';
 import 'pending_cloud_deletes.dart';
 import 'pending_record_counter.dart';
+import 'upload_write_back.dart';
 
 export 'enum/logout_block.dart';
 export 'enum/logout_result.dart';
@@ -788,14 +789,18 @@ class FinancialDataSyncService {
     required Box<dynamic> box,
     required T Function(T, String) updateFn,
   }) async {
-    if (!_hasAuthenticated) return;
+    final key = _getLocalId(model);
+    if (!_hasAuthenticated || key == null) return;
     try {
       final remoteId = await syncFn(model);
-      if (remoteId != null) {
-        final updated = updateFn(model, remoteId);
-        final key = _getLocalId(model);
-        if (key != null) await box.put(key, updated);
-      }
+      if (remoteId == null) return;
+      await UploadWriteBack.save<T>(
+        box,
+        key,
+        model,
+        mark: (current) => updateFn(current, remoteId),
+        keepPending: (marked) => _withSyncStatus(marked, SyncStatus.pending),
+      );
     } catch (e) {
       // Don't log expected authentication errors during logout
       if (e.toString().contains('User not authenticated')) return;
@@ -803,9 +808,9 @@ class FinancialDataSyncService {
 
       // Persist the failure. Without this the record stays `pending`
       // forever, `_countPending()` never drops to zero, and the guarded
-      // logout would lock the user out of their own account.
-      final key = _getLocalId(model);
-      if (key != null) {
+      // logout would lock the user out of their own account. A version
+      // changed meanwhile stays as it is.
+      if (identical(box.get(key), model)) {
         await box.put(key, _withSyncStatus(model, SyncStatus.failed));
       }
     }

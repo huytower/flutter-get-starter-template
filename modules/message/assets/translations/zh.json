@@ -492,9 +492,10 @@
     "review_transactions": "查看交易",
     "audit_shortcut": "审计",
     "locked_title": "本周期已对账",
-    "locked_done": "你已于{date}完成对账。",
-    "locked_next": "下次对账：{opens} 至 {due}",
-    "locked_reason": "每个7天周期只结账一次，这样每周的数据保持独立，连续记录也能正确计算。想提前对账，请在个人资料中更改对账日。",
+    "locked_done": "你已于**{date}**完成对账。",
+    "locked_next": "下次对账：**{opens}** 至 **{due}**",
+    "locked_reason": "每个**7天周期只结账一次**，这样每周的数据保持独立，连续记录也能正确计算。",
+    "locked_sooner": "想提前对账，请在**个人资料**中更改**对账日**。",
     "locked_got_it": "知道了",
     "locked_view_history": "查看记录",
     "locked_message": "本周期已对账。下次对账在对账日之后开放。"

@@ -461,9 +461,10 @@
     "undo_confirm": "Hoàn tác đối soát mới nhất và xóa các bút toán điều chỉnh?",
     "audit_shortcut": "Kiểm toán",
     "locked_title": "Chu kỳ này đã kiểm toán xong",
-    "locked_done": "Bạn đã kiểm toán vào {date}.",
-    "locked_next": "Lần kiểm toán tiếp theo: từ {opens} đến {due}.",
-    "locked_reason": "Mỗi chu kỳ 7 ngày chỉ chốt sổ một lần, để số liệu từng tuần tách bạch và chuỗi kiểm toán được tính đúng. Muốn kiểm toán sớm hơn, hãy đổi ngày kiểm tra hàng tuần trong Hồ sơ.",
+    "locked_done": "Bạn đã kiểm toán vào **{date}**.",
+    "locked_next": "Lần kiểm toán tiếp theo: từ **{opens}** đến **{due}**.",
+    "locked_reason": "Mỗi **chu kỳ 7 ngày chỉ chốt sổ một lần**, để số liệu từng tuần tách bạch và chuỗi kiểm toán được tính đúng.",
+    "locked_sooner": "Muốn kiểm toán sớm hơn, hãy đổi **ngày kiểm tra hàng tuần** trong **Hồ sơ**.",
     "locked_got_it": "Đã hiểu",
     "locked_view_history": "Xem lịch sử",
     "locked_message": "Chu kỳ này bạn đã kiểm toán. Lần tiếp theo mở sau ngày kiểm tra hàng tuần."

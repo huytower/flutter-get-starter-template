@@ -504,9 +504,10 @@
     "review_transactions": "Review transactions",
     "audit_shortcut": "Audit",
     "locked_title": "Already reconciled this cycle",
-    "locked_done": "You reconciled on {date}.",
-    "locked_next": "Next reconciliation: from {opens} to {due}.",
-    "locked_reason": "Books are closed once per 7-day cycle, so each week's figures stay separate and your streak counts correctly. To reconcile sooner, change your weekly audit day in Profile.",
+    "locked_done": "You reconciled on **{date}**.",
+    "locked_next": "Next reconciliation: from **{opens}** to **{due}**.",
+    "locked_reason": "Books are **closed once per 7-day cycle**, so each week's figures stay separate and your streak counts correctly.",
+    "locked_sooner": "To reconcile sooner, change your **weekly audit day** in **Profile**.",
     "locked_got_it": "Got it",
     "locked_view_history": "View history",
     "locked_message": "You have already reconciled this cycle. The next one opens after your audit day."

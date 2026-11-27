@@ -107,6 +107,32 @@ void main() {
       await tester.pumpAndSettle();
       expect(picked, const Locale('vi'));
     });
+
+    testWidgets('the bottom system bar adds no gap under the list', (
+      tester,
+    ) async {
+      Future<double> gapAbove(double inset) async {
+        tester.view.padding = FakeViewPadding(bottom: inset);
+        await _openSheet<Locale>(
+          tester,
+          (context) => LanguagePickerSheet.show(
+            context,
+            locales: const [Locale('en'), Locale('vi')],
+          ),
+        );
+        final lastItem = _text(CcMfLocaleKeys.language_vietnamese);
+        final gap =
+            tester.getTopLeft(_text('OK')).dy -
+            tester.getBottomLeft(lastItem).dy;
+        await tester.tap(_text('OK'));
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+        return gap;
+      }
+
+      final withoutInset = await gapAbove(0);
+      expect(await gapAbove(48), withoutInset);
+    });
   });
 
   group('ReviewFeedbackSection', () {

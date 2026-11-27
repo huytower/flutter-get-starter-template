@@ -13,7 +13,14 @@ import '../../domain/entities/reconciliation_entity.dart';
 class ReconciliationHistoryCard extends StatelessWidget {
   final ReconciliationEntity reconciliation;
 
-  const ReconciliationHistoryCard({super.key, required this.reconciliation});
+  /// Shows an undo button on the card; null for a record that can't be undone.
+  final VoidCallback? onUndo;
+
+  const ReconciliationHistoryCard({
+    super.key,
+    required this.reconciliation,
+    this.onUndo,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,29 +85,55 @@ class ReconciliationHistoryCard extends StatelessWidget {
               ),
             ),
             const CcSpaceXS(),
-            CcText(
-              balanced
-                  ? el.tr(PrjLocaleKeys.reconciliation_balanced)
-                  : el.tr(
-                      diff > 0
-                          ? PrjLocaleKeys.reconciliation_surplus
-                          : PrjLocaleKeys.reconciliation_deficit,
-                      namedArgs: {
-                        'amount': formatShortCurrencyWithSymbol(
-                          diff.abs(),
-                          currencyCode: currencyCode,
-                        ),
-                      },
+            Row(
+              children: [
+                Expanded(
+                  child: CcText(
+                    balanced
+                        ? el.tr(PrjLocaleKeys.reconciliation_balanced)
+                        : el.tr(
+                            diff > 0
+                                ? PrjLocaleKeys.reconciliation_surplus
+                                : PrjLocaleKeys.reconciliation_deficit,
+                            namedArgs: {
+                              'amount': formatShortCurrencyWithSymbol(
+                                diff.abs(),
+                                currencyCode: currencyCode,
+                              ),
+                            },
+                          ),
+                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                      color: balanced ? scheme.primary : scheme.error,
+                      fontWeight: CcTypographyParams.bold,
                     ),
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: balanced ? scheme.primary : scheme.error,
-                fontWeight: CcTypographyParams.bold,
-              ),
+                  ),
+                ),
+                if (onUndo != null) _undoButton(context),
+              ],
             ),
           ],
         ),
       );
     });
+  }
+
+  Widget _undoButton(BuildContext context) {
+    final color = context.ccColorScheme.error;
+    return TextButton.icon(
+      onPressed: onUndo,
+      icon: Icon(
+        Icons.undo_rounded,
+        size: context.respIconSize(baseSize: 18),
+        color: color,
+      ),
+      label: Text(
+        el.tr(PrjLocaleKeys.reconciliation_undo),
+        style: context.ccTextTheme.labelLarge?.copyWith(
+          color: color,
+          fontWeight: CcTypographyParams.bold,
+        ),
+      ),
+    );
   }
 
   Widget _row(BuildContext context, String label, String value) {

@@ -13,8 +13,9 @@ import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 import '../get_x/reconciliation_controller.dart';
+import '../widgets/reconciliation_closed_cycle_body.dart';
 import '../widgets/reconciliation_confirm_button.dart';
-import '../widgets/reconciliation_guide_sheet.dart';
+import '../widgets/reconciliation_description_banner.dart';
 import '../widgets/reconciliation_history_section.dart';
 import '../widgets/reconciliation_mismatch_warning.dart';
 import '../widgets/reconciliation_summary.dart';
@@ -69,15 +70,22 @@ class ReconcilePage extends PrjGetView<ReconciliationController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    // The keypad always sits under the content (never as an extra column), so
-    // the tablet keeps its two-column body; the keypad itself is compact on
-    // tablets (see CcNumericKeypad).
-    return Column(
-      children: [
-        Expanded(child: _buildScrollBody(context)),
-        _buildBottomSlot(context),
-      ],
-    );
+    return Obx(() {
+      // A closed cycle (reached through "View history", or just confirmed)
+      // must not offer another reconciliation.
+      if (controller.cycle.value?.hasReconciledThisCycle ?? false) {
+        return const ReconciliationClosedCycleBody();
+      }
+      // The keypad always sits under the content (never as an extra column),
+      // so the tablet keeps its two-column body; the keypad itself is compact
+      // on tablets (see CcNumericKeypad).
+      return Column(
+        children: [
+          Expanded(child: _buildScrollBody(context)),
+          _buildBottomSlot(context),
+        ],
+      );
+    });
   }
 
   Widget _buildKeypad(BuildContext context) {
@@ -117,7 +125,7 @@ class ReconcilePage extends PrjGetView<ReconciliationController> {
           children: CcTwoColumn.shouldUse(context)
               ? _buildTwoColumnChildren(context)
               : [
-                  _buildSeeMoreDescription(context),
+                  const ReconciliationDescriptionBanner(),
                   _buildInstructionText(context),
                   _buildWalletTiles(context),
                   const ReconciliationMismatchWarning(),
@@ -137,7 +145,7 @@ class ReconcilePage extends PrjGetView<ReconciliationController> {
   /// warning, confirm button and history fill the right.
   List<Widget> _buildTwoColumnChildren(BuildContext context) {
     return [
-      _buildSeeMoreDescription(context),
+      const ReconciliationDescriptionBanner(),
       // Own Row instead of CcTwoColumn: that widget forces a 1:1 split on small
       // tablets, but this page always wants 3.5:1.5 (flex 7:3).
       CcMaxWidth(
@@ -191,54 +199,6 @@ class ReconcilePage extends PrjGetView<ReconciliationController> {
       0,
       0,
       CcPaddingParams.SPACE_SM,
-    );
-  }
-
-  Widget _buildSeeMoreDescription(BuildContext context) {
-    // The one-line preview is plain text: drop the `**keyword**` markers that
-    // the guide sheet turns into emphasis.
-    final text = el
-        .tr(PrjLocaleKeys.reconciliation_description_line_1)
-        .replaceAll('**', '');
-    return CcBouncing(
-      onTap: () => ReconciliationGuideSheet.show(context),
-      borderRadius: context.brSm,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
-          vertical: context.respPadding(CcPaddingParams.SPACE_XS),
-        ),
-        decoration: BoxDecoration(
-          color: context.ccColorScheme.onSurface.withOpacity(0.05),
-          borderRadius: context.brSm,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: CcText(
-                text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant.withOpacity(
-                    0.5,
-                  ),
-                  fontSize: context.respFontSize(9),
-                ),
-              ),
-            ),
-            const CcSpaceXS(),
-            CcText(
-              el.tr(PrjLocaleKeys.wallet_see_all),
-              textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: context.ccColorScheme.primary,
-                fontSize: context.respFontSize(9),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 

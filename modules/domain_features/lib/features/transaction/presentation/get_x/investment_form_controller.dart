@@ -341,6 +341,13 @@ class InvestmentFormController extends TransactionFormController {
     final List<dynamic> items = [...deduped];
     mergedItems.assignAll(items);
 
+    // A deleted position must not stay selected: its card is gone and an
+    // entry for it is refused. An empty list is only a reload in progress.
+    final selectedId = selectedInvestmentWalletId.value;
+    final hasLostSelection =
+        selectedId != null && !uniqueAssets.containsKey(selectedId);
+    if (hasLostSelection && parentWallets.isNotEmpty) clearCategorySelection();
+
     if (selectedInvestmentWalletId.value == null &&
         selectedCategory.value == null &&
         mergedItems.isNotEmpty) {
@@ -353,9 +360,7 @@ class InvestmentFormController extends TransactionFormController {
       final wallet = mergedItems.whereType<WalletEntity>().firstWhereOrNull(
         (w) => w.id == selectedInvestmentWalletId.value,
       );
-      if (wallet != null) {
-        selectInvestmentWallet(wallet);
-      } else {}
+      if (wallet != null) selectInvestmentWallet(wallet);
     }
   }
 
@@ -378,25 +383,16 @@ class InvestmentFormController extends TransactionFormController {
       }
     }
 
-    if (matched != null) {
-      selectedCategory.value = matched;
-    } else {}
+    if (matched != null) selectedCategory.value = matched;
   }
 
   @override
   void selectInvestmentCategory(CategoryEntity category) {
     selectedCategory.value = category;
     selectedInvestmentWalletId.value = null;
-
-    if (quickEntry.hasVip.value) {
-      hasAddingNewItem.value = true;
-      newItemName.value = el.tr(category.nameKey);
-      newItemNameController.text = newItemName.value;
-    } else {
-      hasAddingNewItem.value = true;
-      newItemName.value = el.tr(category.nameKey);
-      newItemNameController.text = newItemName.value;
-    }
+    hasAddingNewItem.value = true;
+    newItemName.value = el.tr(category.nameKey);
+    newItemNameController.text = newItemName.value;
   }
 
   @override
@@ -417,9 +413,7 @@ class InvestmentFormController extends TransactionFormController {
         final firstAsset = mergedItems
             .whereType<WalletEntity>()
             .firstWhereOrNull((_) => true);
-        if (firstAsset != null) {
-          selectInvestmentWallet(firstAsset);
-        } else {}
+        if (firstAsset != null) selectInvestmentWallet(firstAsset);
       }
     }
   }

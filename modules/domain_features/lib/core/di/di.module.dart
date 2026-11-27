@@ -198,6 +198,8 @@ import 'package:domain_features/features/reconciliation/domain/usecases/perform_
     as _i804;
 import 'package:domain_features/features/reconciliation/domain/usecases/undo_reconciliation_usecase.dart'
     as _i196;
+import 'package:domain_features/features/reconciliation/presentation/actions/reconciliation_effects.dart'
+    as _i494;
 import 'package:domain_features/features/reconciliation/presentation/actions/reconciliation_entry_guard.dart'
     as _i592;
 import 'package:domain_features/features/reconciliation/presentation/actions/reconciliation_record_actions.dart'
@@ -698,14 +700,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i572.WalletRepository>(),
               gh<_i305.AiFallbackPreferenceDataSource>(),
             ));
-    gh.factory<_i384.ReconciliationRecordActions>(
-        () => _i384.ReconciliationRecordActions(
-              gh<_i804.PerformReconciliationUseCase>(),
-              gh<_i196.UndoReconciliationUseCase>(),
-              gh<_i446.GetReconciliationHistoryUseCase>(),
-              gh<_i29.GetReconciliationAvailabilityUseCase>(),
-              gh<_i340.CheckAuditReminderUseCase>(),
-            ));
+    gh.factory<_i494.ReconciliationEffects>(() => _i494.ReconciliationEffects(
+          gh<_i340.CheckAuditReminderUseCase>(),
+          gh<_i953.FinancialRefreshProvider>(),
+        ));
     gh.lazySingleton<_i756.UpdateTransactionUseCase>(
         () => _i756.UpdateTransactionUseCase(
               gh<_i1027.TransactionRepository>(),
@@ -713,12 +711,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i105.GetWalletBookBalanceUseCase>(),
               gh<_i195.CurrencyConversionService>(),
               gh<_i347.TransactionLegs>(),
-            ));
-    gh.factory<_i1051.ReconciliationController>(
-        () => _i1051.ReconciliationController(
-              gh<_i167.GetWalletBalancesUseCase>(),
-              gh<_i384.ReconciliationRecordActions>(),
-              gh<_i136.UserLevelProvider>(),
             ));
     gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(
         () => _i829.UpdateBudgetLimitUseCase(
@@ -784,6 +776,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1059.CategoryRepository>(),
               gh<_i544.BudgetLimitRepository>(),
             ));
+    gh.factory<_i384.ReconciliationRecordActions>(
+        () => _i384.ReconciliationRecordActions(
+              gh<_i804.PerformReconciliationUseCase>(),
+              gh<_i196.UndoReconciliationUseCase>(),
+              gh<_i446.GetReconciliationHistoryUseCase>(),
+              gh<_i29.GetReconciliationAvailabilityUseCase>(),
+              gh<_i494.ReconciliationEffects>(),
+            ));
     gh.factory<_i427.EmergencyFundAccess>(() => _i427.EmergencyFundAccess(
           gh<_i136.UserLevelProvider>(),
           gh<_i569.GetProfileSettingsUseCase>(),
@@ -847,6 +847,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1003.BudgetLimitController>(),
               gh<_i373.GuidelineProvider>(),
               gh<_i998.BudgetLimitEditPolicy>(),
+            ));
+    gh.factory<_i1051.ReconciliationController>(
+        () => _i1051.ReconciliationController(
+              gh<_i167.GetWalletBalancesUseCase>(),
+              gh<_i384.ReconciliationRecordActions>(),
+              gh<_i136.UserLevelProvider>(),
             ));
     gh.factory<_i1007.AddLiabilitySheetController>(
         () => _i1007.AddLiabilitySheetController(

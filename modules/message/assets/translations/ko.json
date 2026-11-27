@@ -492,9 +492,10 @@
     "review_transactions": "거래 검토",
     "audit_shortcut": "감사",
     "locked_title": "이번 주기는 이미 대조했어요",
-    "locked_done": "{date}에 대조했어요.",
-    "locked_next": "다음 대조: {opens}부터 {due}까지",
-    "locked_reason": "장부는 7일 주기마다 한 번만 마감해요. 주별 수치를 따로 관리하고 연속 기록을 정확히 세기 위해서예요. 더 일찍 대조하려면 프로필에서 대조일을 바꿔 주세요.",
+    "locked_done": "**{date}**에 대조했어요.",
+    "locked_next": "다음 대조: **{opens}**부터 **{due}**까지",
+    "locked_reason": "장부는 **7일 주기마다 한 번만 마감**해요. 주별 수치를 따로 관리하고 연속 기록을 정확히 세기 위해서예요.",
+    "locked_sooner": "더 일찍 대조하려면 **프로필**에서 **대조일**을 바꿔 주세요.",
     "locked_got_it": "확인",
     "locked_view_history": "기록 보기",
     "locked_message": "이번 주기는 이미 대조했어요. 다음 대조는 대조일 다음 날부터 가능해요."

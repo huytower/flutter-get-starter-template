@@ -492,9 +492,10 @@
     "review_transactions": "取引を確認",
     "audit_shortcut": "監査",
     "locked_title": "この期間の照合は完了しています",
-    "locked_done": "{date}に照合しました。",
-    "locked_next": "次回の照合：{opens}〜{due}",
-    "locked_reason": "帳簿の締めは7日間の期間ごとに1回です。週ごとの数字を分けて記録し、連続記録を正しく数えるためです。早めに照合したい場合は、プロフィールで照合日を変更してください。",
+    "locked_done": "**{date}**に照合しました。",
+    "locked_next": "次回の照合：**{opens}**〜**{due}**",
+    "locked_reason": "帳簿の締めは**7日間の期間ごとに1回**です。週ごとの数字を分けて記録し、連続記録を正しく数えるためです。",
+    "locked_sooner": "早めに照合したい場合は、**プロフィール**で**照合日**を変更してください。",
     "locked_got_it": "了解",
     "locked_view_history": "履歴を見る",
     "locked_message": "この期間はすでに照合済みです。次回は照合日の翌日から可能です。"

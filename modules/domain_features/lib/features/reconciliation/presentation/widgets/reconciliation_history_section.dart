@@ -6,9 +6,14 @@ import 'package:message/export_message.dart';
 
 import '../get_x/reconciliation_controller.dart';
 import 'reconciliation_history_card.dart';
+import 'reconciliation_undo_sheet.dart';
 
 class ReconciliationHistorySection extends StatelessWidget {
-  const ReconciliationHistorySection({super.key});
+  const ReconciliationHistorySection({super.key, this.hasUndo = false});
+
+  /// Offers undo on the latest record. Only for a closed cycle, where that
+  /// record belongs to the current cycle: older ones stay as they are.
+  final bool hasUndo;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +37,13 @@ class ReconciliationHistorySection extends StatelessWidget {
             ],
           ),
           const CcSpaceSM(),
-          ...controller.history.map(
-            (r) => ReconciliationHistoryCard(reconciliation: r),
-          ),
+          for (final (index, record) in controller.history.indexed)
+            ReconciliationHistoryCard(
+              reconciliation: record,
+              onUndo: hasUndo && index == 0 && !controller.hasSubmitting.value
+                  ? () => ReconciliationUndoSheet.show(context)
+                  : null,
+            ),
         ],
       );
     });

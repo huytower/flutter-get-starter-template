@@ -81,12 +81,11 @@ file-size modules/domain_features/lib/features/firestore/financial_data_sync_ser
 file-size modules/domain_features/lib/features/liability/presentation/get_x/borrow_form_controller.dart 183
 file-size modules/domain_features/lib/features/liability/presentation/get_x/lend_form_controller.dart 213
 file-size modules/domain_features/lib/features/liability/presentation/widgets/borrow_form.dart 22
-file-size modules/domain_features/lib/features/profile/presentation/get_x/profile_controller.dart 92
+file-size modules/domain_features/lib/features/profile/presentation/get_x/profile_controller.dart 87
 file-size modules/domain_features/lib/features/profile/presentation/pages/profile_page.dart 299
-file-size modules/domain_features/lib/features/profile/presentation/widgets/currency_selection_content_sheet.dart 187
+file-size modules/domain_features/lib/features/profile/presentation/widgets/currency_selection_content_sheet.dart 113
 file-size modules/domain_features/lib/features/profile/presentation/widgets/profile_info_card.dart 210
-file-size modules/domain_features/lib/features/reconciliation/presentation/get_x/reconciliation_controller.dart 59
-file-size modules/domain_features/lib/features/reconciliation/presentation/pages/reconcile_page.dart 9
+file-size modules/domain_features/lib/features/reconciliation/presentation/get_x/reconciliation_controller.dart 41
 file-size modules/domain_features/lib/features/report/domain/usecases/generate_ai_financial_advice_usecase.dart 168
 file-size modules/domain_features/lib/features/report/presentation/get_x/quick_edit_transaction_sheet_controller.dart 1
 file-size modules/domain_features/lib/features/report/presentation/get_x/report_controller.dart 195

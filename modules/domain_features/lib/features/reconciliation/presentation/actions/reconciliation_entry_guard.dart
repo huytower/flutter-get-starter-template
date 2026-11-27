@@ -12,7 +12,7 @@ import '../widgets/reconciliation_locked_sheet.dart';
 
 /// Opens the reconciliation page, unless the current audit cycle already has
 /// a reconciliation: then the user sees when the next one opens and why,
-/// and can still open the page to look at the history or undo.
+/// and can still open the page, which then shows only the history.
 @injectable
 class ReconciliationEntryGuard {
   ReconciliationEntryGuard(this._getAvailability);

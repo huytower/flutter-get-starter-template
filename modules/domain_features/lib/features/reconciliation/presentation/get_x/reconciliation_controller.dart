@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
@@ -14,7 +13,6 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/reconciliation_availability_entity.dart';
 import '../../domain/entities/reconciliation_entity.dart';
 import '../actions/reconciliation_record_actions.dart';
-import '../widgets/reconciliation_success_sheet.dart';
 
 @injectable
 class ReconciliationController extends PrjGetController {
@@ -262,22 +260,6 @@ class ReconciliationController extends PrjGetController {
     }
   }
 
-  Future<void> confirmReconciliation(BuildContext context) async {
-    final error = await performReconciliation();
-    if (!context.mounted) return;
-    if (error != null) {
-      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
-    } else {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => ReconciliationSuccessSheet(
-          onDismiss: () => Navigator.of(context).pop(),
-        ),
-      );
-    }
-  }
-
   /// Returns null on success, or an error message to surface.
   Future<String?> performReconciliation() async {
     if (hasSubmitting.value) return null;
@@ -345,13 +327,13 @@ class ReconciliationController extends PrjGetController {
     if (hasSubmitting.value) return null;
     hasSubmitting.value = true;
     try {
-      final result = await _records.undo();
-      return result.when<String?>((_) {
-        loadBalances(showLoading: false);
-        loadHistory();
-        _userLevel.refresh();
-        return null;
-      }, (error) => error.message);
+      final error = (await _records.undo()).tryGetError();
+      if (error != null) return error.message;
+      loadBalances(showLoading: false);
+      // Awaited: a stale undo button would undo the record before this one.
+      await loadHistory();
+      _userLevel.refresh();
+      return null;
     } finally {
       hasSubmitting.value = false;
     }

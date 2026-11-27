@@ -306,7 +306,7 @@ class CurrencySelectionContentSheet extends StatelessWidget {
   ) {
     final tiles = [
       for (final code in currencies)
-        _buildCurrencyTile(context, scheme, code, controller),
+        _buildCurrencyTile(context, code, controller),
     ];
     if (!_useGrid(context)) return Column(children: tiles);
     return CcMultiColumn(
@@ -318,7 +318,6 @@ class CurrencySelectionContentSheet extends StatelessWidget {
 
   Widget _buildCurrencyTile(
     BuildContext context,
-    ColorScheme scheme,
     String code,
     CurrencySelectionController controller,
   ) {
@@ -348,87 +347,14 @@ class CurrencySelectionContentSheet extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(bottom: context.respDim(8)),
-      child: CcBouncing(
-        onTap: () {
-          controller.setPrimaryCurrency(code);
-        },
-        borderRadius: context.brMd,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            const Positioned.fill(child: CcGlassyGradientBackground()),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              height: context.respDim(60),
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
-              ),
-              decoration: BoxDecoration(
-                color: hasSelected
-                    ? scheme.primary.withValues(alpha: 0.15)
-                    : scheme.primaryContainer.withValues(alpha: 0.1),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: context.respDim(32),
-                    height: context.respDim(32),
-                    decoration: BoxDecoration(
-                      color: scheme.primary.withOpacity(0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: CcText(
-                      getCurrencyFlag(code),
-                      textAlign: TextAlign.center,
-                      align: Alignment.center,
-                      textStyle: TextStyle(fontSize: context.respFontSize(16)),
-                    ),
-                  ),
-                  const CcSpaceSM(),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CcText(
-                          code,
-                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: scheme.onSurfaceVariant.withOpacity(0.7),
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        CcText(
-                          el.tr(definition.nameKey),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                            fontWeight: hasSelected
-                                ? CcTypographyParams.bold
-                                : CcTypographyParams.regular,
-                            color: hasSelected
-                                ? scheme.primary
-                                : scheme.onSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const CcSpaceSM(),
-                  CcText(
-                    displayAmount,
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: hasSelected ? scheme.primary : PrjColors.success,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      child: CcOptionTile(
+        leading: Text(getCurrencyFlag(code)),
+        overline: code,
+        title: el.tr(definition.nameKey),
+        trailingText: displayAmount,
+        trailingColor: PrjColors.success,
+        hasSelected: hasSelected,
+        onTap: () => controller.setPrimaryCurrency(code),
       ),
     );
   }
