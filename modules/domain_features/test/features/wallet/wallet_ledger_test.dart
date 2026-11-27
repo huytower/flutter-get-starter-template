@@ -7,6 +7,7 @@ import 'package:domain_features/features/transaction/domain/repositories/transac
 import 'package:domain_features/features/wallet/domain/entities/wallet_totals.dart';
 import 'package:domain_features/features/wallet/domain/services/wallet_ledger.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../support/no_reconciliations.dart';
@@ -151,6 +152,96 @@ void main() {
     await ledger.removeTransactionsOf('bank');
 
     expect(transactions.softDeleted, ['bank']);
+  });
+
+  group('removeTransactionsOf after a reconciliation (BR §4.B)', () {
+    final reconciledAt = DateTime(2026, 11, 15, 20);
+    final before = DateTime(2026, 11, 5);
+    final after = DateTime(2026, 11, 20);
+
+    // One position: Chi ra (out-leg on cash + in-leg on the position) and a
+    // Thu vào paid into cash.
+    List<TransactionEntity> position({required DateTime date}) => [
+      _txn(
+        TransactionType.investmentOut,
+        6000,
+        walletId: 'cash',
+        investmentWalletId: 'stock',
+        date: date,
+      ),
+      // The in-leg is a copy of the out-leg, so it carries investmentWalletId.
+      _txn(
+        TransactionType.investmentIn,
+        6000,
+        walletId: 'stock',
+        investmentWalletId: 'stock',
+        date: date,
+      ),
+      _txn(
+        TransactionType.investmentReturn,
+        500,
+        walletId: 'cash',
+        investmentWalletId: 'stock',
+        date: date,
+      ),
+    ];
+
+    test('refuses, deleting nothing, when a leg is reconciled', () async {
+      final transactions = _FakeTransactions(position(date: before));
+      final ledger = WalletLedger(
+        transactions,
+        CurrencyConversionService(_NoRates()),
+        reconciliationLockAt(reconciledAt),
+      );
+
+      final result = await ledger.removeTransactionsOf('stock');
+
+      expect(
+        result.tryGetError()?.message,
+        PrjLocaleKeys.wallet_delete_error_reconciled,
+      );
+      expect(transactions.softDeleted, isEmpty);
+    });
+
+    test('deletes when every leg is after the reconciliation', () async {
+      final transactions = _FakeTransactions(position(date: after));
+      final ledger = WalletLedger(
+        transactions,
+        CurrencyConversionService(_NoRates()),
+        reconciliationLockAt(reconciledAt),
+      );
+
+      final result = await ledger.removeTransactionsOf('stock');
+
+      expect(result.isSuccess(), isTrue);
+      expect(transactions.softDeleted, ['stock']);
+    });
+
+    test(
+      'an allowed delete gives the money back to cash and clears ROI',
+      () async {
+        final wallets = [
+          _wallet('cash', WalletType.cash, balance: 10000),
+          _wallet('stock', WalletType.investment),
+        ];
+
+        final withPosition = await _ledger(
+          position(date: after),
+        ).build(wallets, 'USD');
+        // The repository no longer returns soft-deleted transactions.
+        final afterDelete = await _ledger(const []).build(wallets, 'USD');
+
+        expect(withPosition.bookBalances['cash'], 10000 - 6000 + 500);
+        expect(withPosition.investmentStats['stock']?.contributed, 6000);
+        expect(
+          afterDelete.bookBalances['cash'],
+          10000,
+          reason: 'Chi ra refunded',
+        );
+        expect(afterDelete.investmentStats['stock']?.contributed ?? 0, 0);
+        expect(afterDelete.investmentStats['stock']?.returned ?? 0, 0);
+      },
+    );
   });
 
   test('WalletTotals sums by type and computes ROI', () {

@@ -137,24 +137,22 @@ class ReportTransactionTile extends StatelessWidget {
               ],
             ),
             if (hasEditMode &&
-                hasEditableTransaction(transaction) &&
-                !hasEditableTransaction(
-                  transaction,
-                  reconciledUntil: reconciledUntil,
-                )) ...[
-              // Reconciled: closed for edits; a tap explains how to correct it.
+                hasReconciledTransaction(transaction, reconciledUntil)) ...[
+              // Reconciled: no edit/delete; the info button explains why and
+              // how to correct it with an offsetting transaction.
               const CcSpaceXS(),
               CcIconButton.bouncing(
+                tooltip: el.tr(PrjLocaleKeys.transaction_reconciled_title),
                 icon: Icon(
-                  Icons.lock_outline_rounded,
+                  Icons.info_outline_rounded,
                   size: context.respIconSize(baseSize: 16),
-                  color: context.ccColorScheme.onSurfaceVariant,
+                  color: context.ccColorScheme.primary,
                 ),
-                onTap: () => CcSnackBarHelper.showSnackBar(
+                onTap: () => CcDialogHelper.showMessageBottomSheet(
                   context: context,
-                  message: el.tr(
-                    PrjLocaleKeys.transaction_validation_reconciled,
-                  ),
+                  title: el.tr(PrjLocaleKeys.transaction_reconciled_title),
+                  content: el.tr(PrjLocaleKeys.transaction_reconciled_info),
+                  hasOnlyConfirm: true,
                 ),
               ),
             ] else if (hasEditMode &&

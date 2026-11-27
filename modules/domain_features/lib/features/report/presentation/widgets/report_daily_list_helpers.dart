@@ -12,6 +12,17 @@ bool computeIsInflow(TransactionEntity transaction) {
       type == TransactionType.debtCollect;
 }
 
+/// Whether [transaction] is closed by a reconciliation (dated at or before
+/// [reconciledUntil]): the report shows an info button instead of edit/delete.
+/// Transfers and deleted rows never offer actions, so they are left out.
+bool hasReconciledTransaction(
+  TransactionEntity transaction,
+  DateTime? reconciledUntil,
+) =>
+    !transaction.hasDeleted &&
+    !transaction.hasTransfer &&
+    ReconciledPeriodLock.hasLocked(transaction, reconciledUntil);
+
 /// Whether the report may offer edit/delete for [transaction]: the type allows
 /// it, it is within the edit window, and it is not in a reconciled period
 /// (dated at or before [reconciledUntil], see `ReconciledPeriodLock`).

@@ -6,6 +6,7 @@ import 'package:domain_features/core/exchange_rates/currency_conversion_service.
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart';
 import 'package:domain_features/features/transaction/domain/services/reconciled_period_lock.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import 'wallet_ledger_snapshot.dart';
@@ -119,41 +120,58 @@ class WalletLedger {
   ///
   /// For an investment position that also means the legs living on a liquid
   /// wallet (Chi ra out-leg, Thu vào), matched by `investmentWalletId`.
+  /// Deleting them gives the Chi ra money back to that liquid wallet, removes
+  /// the Thu vào from it, and drops the position from ROI: every balance and
+  /// stat is derived from the remaining transactions, so they stay consistent.
+  ///
+  /// Refused, deleting nothing, when any of them is in a reconciled period
+  /// ([ReconciledPeriodLock]): that would change balances already confirmed
+  /// by a reconciliation. The user corrects with a new offsetting transaction.
   Future<Result<void, CcFailure>> removeTransactionsOf(String walletId) async {
-    await _logRemoval(walletId);
+    final lockedUntil = await _periodLock.lockedUntil();
+    final all = (await _transactions.getListTransactions()).tryGetSuccess();
+    final targets = (all ?? const <TransactionEntity>[])
+        .where(
+          (t) =>
+              !t.hasDeleted &&
+              (t.walletId == walletId || t.investmentWalletId == walletId),
+        )
+        .toList();
+    _logRemoval(walletId, targets, lockedUntil);
+    if (targets.any((t) => ReconciledPeriodLock.hasLocked(t, lockedUntil))) {
+      '[DeleteWallet] refused: reconciled transactions are immutable'.Log(
+        'DeleteWallet',
+      );
+      return const Error(
+        CcValidationFailure(PrjLocaleKeys.wallet_delete_error_reconciled),
+      );
+    }
     return _transactions.softDeleteByWallet(walletId);
   }
 
-  /// Debug trace of what [removeTransactionsOf] is about to soft-delete, with
-  /// each transaction's reconciled state (`[DeleteWallet]` in the log).
-  Future<void> _logRemoval(String walletId) async {
+  /// Debug trace of what [removeTransactionsOf] would soft-delete, with each
+  /// transaction's reconciled state (`[DeleteWallet]` in the log).
+  void _logRemoval(
+    String walletId,
+    List<TransactionEntity> targets,
+    DateTime? lockedUntil,
+  ) {
     const tag = 'DeleteWallet';
-    try {
-      final lockedUntil = await _periodLock.lockedUntil();
-      final all = (await _transactions.getListTransactions()).tryGetSuccess();
-      final targets = (all ?? const <TransactionEntity>[]).where(
-        (t) =>
-            !t.hasDeleted &&
-            (t.walletId == walletId || t.investmentWalletId == walletId),
-      );
-      final reconciled = targets.where(
-        (t) => ReconciledPeriodLock.hasLocked(t, lockedUntil),
-      );
-      '[DeleteWallet] wallet=$walletId will soft-delete ${targets.length} '
-              'transaction(s), ${reconciled.length} reconciled '
-              '(latest reconciliation: ${lockedUntil ?? 'none'})'
+    final reconciled = targets.where(
+      (t) => ReconciledPeriodLock.hasLocked(t, lockedUntil),
+    );
+    '[DeleteWallet] wallet=$walletId touches ${targets.length} '
+            'transaction(s), ${reconciled.length} reconciled '
+            '(latest reconciliation: ${lockedUntil ?? 'none'})'
+        .Log(tag);
+    for (final t in targets) {
+      final leg = t.walletId == walletId ? 'own' : 'liquid:${t.walletId}';
+      final state = ReconciledPeriodLock.hasLocked(t, lockedUntil)
+          ? 'RECONCILED'
+          : 'open';
+      '[DeleteWallet]   ${t.id} ${t.type} amount=${t.amount} '
+              'date=${t.date.toIso8601String()} leg=$leg $state'
           .Log(tag);
-      for (final t in targets) {
-        final leg = t.walletId == walletId ? 'own' : 'liquid:${t.walletId}';
-        final state = ReconciledPeriodLock.hasLocked(t, lockedUntil)
-            ? 'RECONCILED'
-            : 'open';
-        '[DeleteWallet]   ${t.id} ${t.type} amount=${t.amount} '
-                'date=${t.date.toIso8601String()} leg=$leg $state'
-            .Log(tag);
-      }
-    } catch (e) {
-      '[DeleteWallet] trace failed: $e'.Log(tag);
     }
   }
 

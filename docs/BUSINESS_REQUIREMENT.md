@@ -149,7 +149,7 @@ The Sổ Sách Xịn (Quản Lý Tài Chính) application is a modular personal 
     - **Debt/Loan (Vay/Nợ)**: Borrow, Lend, Repay, Collect — each tagged with its liability record.
     - **Emergency Fund**: not a transaction type. The Emergency Fund is a wallet; using it is an ordinary expense or transfer from that wallet.
 - **Correcting entries**: income, expense, debt/loan and investment entries can be edited only within **30 days** of their date. Transfers cannot be edited. Deletes are soft deletes.
-  - **Reconciled entries are closed.** A transaction dated at or before the latest reconciliation is part of the balances that reconciliation confirmed, so it can no longer be edited or deleted (the Report shows a lock instead of the edit/delete buttons, and the save/delete is refused too). Only unreconciled transactions — dated after the latest reconciliation — can be edited or deleted, still within the 30-day window.
+  - **Reconciled entries are closed.** A transaction dated at or before the latest reconciliation is part of the balances that reconciliation confirmed, so it can no longer be edited or deleted (in edit mode the Report shows an **info** button instead of the edit/delete buttons; tapping it opens a bottom sheet "Already reconciled" explaining why and suggesting an offsetting transaction — `transaction.reconciled_title` / `transaction.reconciled_info`; the save/delete is refused in the use cases too). Only unreconciled transactions — dated after the latest reconciliation — can be edited or deleted, still within the 30-day window.
   - **To correct a reconciled entry, add a new transaction** that offsets it, with a matching reason in its note (e.g. an income "Hoàn lại — nhập nhầm chi 50k ngày 20/11"). This does not conflict with the lock: the closed period stays as it was confirmed, and the correction is recorded, and later reconciled, in the open period.
   - **The lock follows the transaction's date, not when it was entered.** A new entry back-dated into a reconciled period is locked as soon as it is saved, so check it before saving; a later mistake in it is again corrected with another offsetting entry. Entries dated today (the default) stay editable.
   - Undoing the latest reconciliation (§4.C) re-opens its transactions for editing, back to the previous reconciliation. This is an **allowed** way to fix an entry in the last closed period: undo, edit, then reconcile again. It reaches only that one period, and it has a cost: if the cycle is already over, the new reconciliation falls in the current cycle, so the old cycle loses its reconciliation and the streak (§8) can break.
@@ -457,7 +457,10 @@ If user has saved 60M (Emergency Fund), they have 6 months of complete freedom.
   - **Known limitation** (§2): there is no market value and no time weighting, and capital taken back out of a
     position can only be recorded as *Thu vào*, so it counts as a return and inflates ROI. Treat ROI as a rough
     indicator. [Planned] a proper return (current value, capital withdrawals kept apart from profit).
-- Kept out of the runway and out of reconciliation
+- Kept out of the runway and out of reconciliation (the position itself is not counted; its *Chi ra* out-leg and
+  *Thu vào* sit on liquid wallets, which are)
+- **Deleting a position** refunds the *Chi ra* to the liquid wallet and removes the position from ROI; it is
+  refused once any of its transactions is reconciled — see §9 Functions
 - **Unlocks at LV2 or with VIP** (independent paths, §3): the Investment tab appears in the Transaction secondary
   card and the investment section on the Budget Allocation page. A non-VIP user creates positions from the
   Investment tab with the category's default name; a custom name and the Budget Allocation add sheet require VIP.
@@ -590,6 +593,27 @@ Profile badge, but does not change the level earned here. Turning VIP off return
 
 ### Functions
 - **Add / edit / delete wallet** with custom name and icon
+- **Deleting a wallet follows the closed-period rule (§4.B):** a reconciled period is immutable, so no delete
+  may change a balance a reconciliation has confirmed.
+  - **Liquid wallet** (cash, bank, e-wallet, emergency fund): can be deleted only while it has **no
+    transactions** ("not empty" otherwise); Cash and the default Bank are protected. With no transactions,
+    nothing else changes.
+  - **Investment position**: deleting it soft-deletes every linked transaction — its own *Chi ra* in-leg, and
+    the legs that live on a **liquid** wallet: the *Chi ra* out-leg and every *Thu vào* (matched by
+    `investmentWalletId`). That is consistent everywhere, because every balance and stat is derived from the
+    remaining transactions: the liquid wallet gets the *Chi ra* money **back** and loses the *Thu vào*
+    amounts, and the position leaves ROI and the investment totals.
+  - **Refused when any of those transactions is reconciled** (dated at or before the latest reconciliation):
+    nothing is deleted and the user sees "Some of its transactions are already reconciled… Add a new
+    transaction to offset it instead" (`wallet.delete_error_reconciled`, `WalletLedger.removeTransactionsOf`).
+    Deleting is still allowed when every linked transaction is after the latest reconciliation (e.g. a
+    position created by mistake this cycle).
+  - **To correct instead of deleting, the user adds a new offsetting transaction** in the open period, e.g. a
+    *Thu vào* for the money taken out of the position, or an income/expense with a note giving the reason.
+    The closed period stays as confirmed and the correction is reconciled next cycle.
+  - Debug trace: every step logs with the `[DeleteWallet]` prefix (request, linked transactions with their
+    `RECONCILED` / `open` state, refusal, soft delete, cloud delete, outcome).
+  - [Planned] archive a closed position (hide it, keep its history) instead of deleting it.
 - **Transfer** between wallets
 - **Ordering**: liquid wallets are grouped by type, then sorted by name
 - **Budget Allocation page sections**: liquid assets (hero banner + wallet strip) · investments (LV2 or VIP) · liabilities and lending (LV3 or VIP) · budget limits preview · insights

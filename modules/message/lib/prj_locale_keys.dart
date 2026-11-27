@@ -232,6 +232,7 @@ class CodegenLoader extends AssetLoader {
           "A wallet can only be deleted when it has no transactions. All transactions of the wallet will be soft-deleted. Continue?",
       "delete_error_not_empty": "Cannot delete: wallet has transactions",
       "delete_error_protected": "This wallet is required and cannot be deleted",
+      "delete_error_reconciled": "Some of its transactions are already reconciled, so it can't be deleted: that would change confirmed balances (your cash or bank balance, ROI). Add a new transaction to offset it instead.",
       "liquid_assets": "Liquid Assets",
       "liquid_assets_desc": "Cash + Bank + E-wallet · ready to spend",
       "investments": "Investments / Accumulation",
@@ -406,6 +407,8 @@ class CodegenLoader extends AssetLoader {
         "edit_window": "You can only edit transactions from the last 30 days",
       },
       "transfer_money": "Transfer money",
+      "reconciled_title": "Already reconciled",
+      "reconciled_info": "This transaction is in a reconciled period, so it can't be edited or deleted: that would change confirmed balances (your cash or bank balance, ROI). Add a new transaction to offset it instead.",
       "transfer_from": "From wallet",
       "transfer_to": "To wallet",
       "transfer_swap": "Swap wallets",
@@ -1155,6 +1158,7 @@ class CodegenLoader extends AssetLoader {
           "Chỉ có thể xóa ví khi không có giao dịch nào. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
       "delete_error_not_empty": "Không thể xóa: ví có giao dịch",
       "delete_error_protected": "Ví này là bắt buộc và không thể xóa",
+      "delete_error_reconciled": "Một số giao dịch của mục này đã được kiểm toán nên không thể xoá: xoá sẽ làm thay đổi số dư đã chốt (tiền mặt, ngân hàng, ROI). Hãy thêm giao dịch mới để bù trừ.",
       "liquid_assets": "Tổng tiền thanh khoản",
       "liquid_assets_desc":
           "Tiền mặt + Ngân hàng + Ví điện tử • sẵn sàng chi tiêu ngay",
@@ -1329,6 +1333,8 @@ class CodegenLoader extends AssetLoader {
         "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!",
       },
       "transfer_money": "Chuyển tiền",
+      "reconciled_title": "Đã kiểm toán",
+      "reconciled_info": "Giao dịch này đã được kiểm toán nên không thể sửa hoặc xoá: thay đổi sẽ làm sai số dư đã chốt (tiền mặt, ngân hàng, ROI). Hãy thêm giao dịch mới để bù trừ.",
       "transfer_from": "Ví nguồn",
       "transfer_to": "Ví nhận",
       "transfer_swap": "Đổi ví",
@@ -2052,6 +2058,7 @@ class CodegenLoader extends AssetLoader {
           "거래가 없는 지갑만 삭제할 수 있습니다. 지갑의 모든 거래가 소프트 삭제됩니다. 계속하시겠습니까?",
       "delete_error_not_empty": "삭제할 수 없음: 지갑에 거래가 있습니다",
       "delete_error_protected": "이 지갑은 필수이며 삭제할 수 없습니다",
+      "delete_error_reconciled": "일부 거래가 이미 대사 완료되어 삭제할 수 없습니다. 삭제하면 확정된 잔액(현금, 은행, ROI)이 바뀝니다. 대신 상쇄하는 새 거래를 추가하세요.",
       "liquid_assets": "유동 자산",
       "liquid_assets_desc": "현금 + 은행 + 전자지갑 · 즉시 사용 가능",
       "investments": "투자 / 축적",
@@ -2210,6 +2217,8 @@ class CodegenLoader extends AssetLoader {
         "edit_window": "최근 30일 이내의 거래만 편집할 수 있습니다",
       },
       "transfer_money": "송금",
+      "reconciled_title": "대사 완료",
+      "reconciled_info": "이 거래는 이미 대사가 완료되어 수정하거나 삭제할 수 없습니다. 변경하면 확정된 잔액(현금, 은행, ROI)이 바뀝니다. 대신 상쇄하는 새 거래를 추가하세요.",
       "transfer_from": "출금 지갑",
       "transfer_to": "입금 지갑",
       "transfer_swap": "지갑 바꾸기",
@@ -2896,6 +2905,7 @@ class CodegenLoader extends AssetLoader {
       "delete_confirm_msg": "取引がないウォレットのみ削除できます。ウォレットのすべての取引がソフト削除されます。続行しますか？",
       "delete_error_not_empty": "削除できません: ウォレットに取引があります",
       "delete_error_protected": "このウォレットは必須であり削除できません",
+      "delete_error_reconciled": "一部の取引はすでに照合済みのため削除できません。削除すると確定済みの残高（現金・銀行・ROI）が変わります。代わりに相殺する新しい取引を追加してください。",
       "liquid_assets": "流動資産",
       "liquid_assets_desc": "現金 + 銀行 + 電子ウォレット · 即座に使用可能",
       "investments": "投資 / 蓄積",
@@ -3053,6 +3063,8 @@ class CodegenLoader extends AssetLoader {
         "edit_window": "過去30日以内の取引のみ編集できます",
       },
       "transfer_money": "送金",
+      "reconciled_title": "照合済み",
+      "reconciled_info": "この取引は照合済みのため、編集・削除できません。変更すると確定済みの残高（現金・銀行・ROI）が変わります。代わりに相殺する新しい取引を追加してください。",
       "transfer_from": "送金元ウォレット",
       "transfer_to": "送金先ウォレット",
       "transfer_swap": "ウォレットを入れ替え",
@@ -3728,6 +3740,7 @@ class CodegenLoader extends AssetLoader {
       "delete_confirm_msg": "只有没有交易的钱包才能删除。钱包的所有交易将被软删除。继续吗？",
       "delete_error_not_empty": "无法删除: 钱包有交易",
       "delete_error_protected": "此钱包是必需的，无法删除",
+      "delete_error_reconciled": "部分交易已对账，无法删除：删除会改变已确认的余额（现金、银行、ROI）。请添加一笔新交易进行冲抵。",
       "liquid_assets": "流动资产",
       "liquid_assets_desc": "现金 + 银行 + 电子钱包 · 随时可花费",
       "investments": "投资 / 积累",
@@ -3883,6 +3896,8 @@ class CodegenLoader extends AssetLoader {
         "edit_window": "您只能编辑过去 30 天内的交易",
       },
       "transfer_money": "转账",
+      "reconciled_title": "已对账",
+      "reconciled_info": "此交易已对账，无法编辑或删除：更改会使已确认的余额（现金、银行、ROI）出错。请添加一笔新交易进行冲抵。",
       "transfer_from": "转出钱包",
       "transfer_to": "转入钱包",
       "transfer_swap": "交换钱包",
@@ -4600,6 +4615,8 @@ class PrjLocaleKeys {
       'wallet.investment_delete_confirm';
   static const wallet_delete_error_not_empty = 'wallet.delete_error_not_empty';
   static const wallet_delete_error_protected = 'wallet.delete_error_protected';
+  static const wallet_delete_error_reconciled =
+      'wallet.delete_error_reconciled';
   static const wallet_liquid_assets = 'wallet.liquid_assets';
   static const wallet_liquid_assets_desc = 'wallet.liquid_assets_desc';
   static const wallet_investments = 'wallet.investments';
@@ -4903,6 +4920,8 @@ class PrjLocaleKeys {
   static const transaction_validation_edit_window =
       'transaction.validation.edit_window';
   static const transaction_transfer_money = 'transaction.transfer_money';
+  static const transaction_reconciled_title = 'transaction.reconciled_title';
+  static const transaction_reconciled_info = 'transaction.reconciled_info';
   static const transaction_transfer_from = 'transaction.transfer_from';
   static const transaction_transfer_to = 'transaction.transfer_to';
   static const transaction_transfer_swap = 'transaction.transfer_swap';

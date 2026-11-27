@@ -347,7 +347,7 @@ class WalletController extends PrjGetController {
 
     final softDelete = await _ledger.removeTransactionsOf(id);
     if (softDelete.isError()) {
-      errorMessage.value = softDelete.tryGetError()!.message;
+      errorMessage.value = el.tr(softDelete.tryGetError()!.message);
       return WalletDeleteOutcome.error;
     }
     final result = await _repository.deleteWallet(id);

@@ -17,3 +17,32 @@ class NoReconciliations implements ReconciliationRepository {
 /// A [ReconciledPeriodLock] that locks nothing.
 ReconciledPeriodLock noReconciliationLock() =>
     ReconciledPeriodLock(NoReconciliations());
+
+/// A reconciliation history whose latest reconciliation was confirmed [at].
+class ReconciledAt implements ReconciliationRepository {
+  ReconciledAt(this.at);
+
+  final DateTime at;
+
+  @override
+  Future<Result<ReconciliationEntity?, CcFailure>> getLatest() async => Success(
+    ReconciliationEntity(
+      id: 'r-latest',
+      year: at.year,
+      week: 1,
+      systemTotal: 0,
+      actualTotal: 0,
+      difference: 0,
+      allocations: const [],
+      adjustmentTransactionIds: const [],
+      date: at,
+    ),
+  );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A [ReconciledPeriodLock] with the books closed up to [at].
+ReconciledPeriodLock reconciliationLockAt(DateTime at) =>
+    ReconciledPeriodLock(ReconciledAt(at));
