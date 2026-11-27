@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
@@ -40,10 +41,23 @@ class WalletChangeEffects {
     }
   }
 
-  /// A wallet was deleted: drop it from the transaction picker and refresh
-  /// the reconciliation totals.
+  /// A wallet was deleted: drop it from the transaction picker, then re-read
+  /// every screen that showed its transactions. Deleting an investment
+  /// position also deletes its entries and moves money on the liquid wallets,
+  /// and the screens (the Report included) outlive their pages, so they keep
+  /// the old records until told to reload.
   void removed(String walletId) {
     _refresh.removeWalletFromTransactions(walletId);
+    unawaited(_reloadAfterRemoval(walletId));
+  }
+
+  Future<void> _reloadAfterRemoval(String walletId) async {
+    '[DeleteWallet] reloading balances and report after $walletId'.Log(
+      'DeleteWallet',
+    );
+    await _refresh.refreshAllLoaded();
+    await _refresh.refreshReport(showLoading: false);
+    '[DeleteWallet] screens reloaded'.Log('DeleteWallet');
   }
 
   void deletionConfirmed() => _refresh.refreshReconciliationBalances();

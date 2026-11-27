@@ -43,7 +43,6 @@ class TransactionLocalDataSource {
   /// Marks every non-deleted transaction of [walletId] as soft-deleted.
   Future<void> softDeleteByWallet(String walletId, DateTime deletedAt) async {
     final box = await _box;
-    final iso = deletedAt.toIso8601String();
     // Also matches investmentWalletId so deleting an investment position
     // soft-deletes its Thu vào records too, even though those now live on a
     // liquid wallet's walletId rather than the position's.
@@ -54,11 +53,12 @@ class TransactionLocalDataSource {
               m.deletedAt == null,
         )
         .toList();
-    for (final model in targets) {
-      final id = model.id;
-      if (id == null) continue;
-      await box.put(id, model.copyWith(deletedAt: iso));
-    }
+    // Through softDeleteByIds so each one is flagged for sync; otherwise the
+    // next pull restores them from the cloud.
+    await softDeleteByIds([
+      for (final model in targets)
+        if (model.id != null) model.id!,
+    ], deletedAt);
     '[DeleteWallet] soft-deleted ${targets.length} transaction(s) of '
             'wallet=$walletId: ${targets.map((m) => '${m.id}(${m.type})').join(', ')}'
         .Log('DeleteWallet');

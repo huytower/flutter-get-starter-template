@@ -163,6 +163,13 @@ class _Refresh implements FinancialRefreshProvider {
       events.add('removed $walletId');
 
   @override
+  Future<void> refreshAllLoaded() async => events.add('reloaded all');
+
+  @override
+  Future<void> refreshReport({bool showLoading = true}) async =>
+      events.add('reloaded report');
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -350,7 +357,12 @@ void main() {
     expect(wallets.store.keys, ['cash']);
     expect(controller.wallets.map((w) => w.id), ['cash']);
     expect(controller.totalBalance.value, 100);
-    expect(refresh.events, ['removed ${bank.id}']);
+    await Future<void>.delayed(Duration.zero);
+    expect(refresh.events, [
+      'removed ${bank.id}',
+      'reloaded all',
+      'reloaded report',
+    ]);
   });
 
   test('an investment wallet with history can be deleted with it', () async {
@@ -361,6 +373,12 @@ void main() {
 
     expect(await controller.deleteWallet('fund'), WalletDeleteOutcome.success);
     expect(transactions.all, isEmpty, reason: 'its transactions go too');
+    await Future<void>.delayed(Duration.zero);
+    expect(
+      refresh.events,
+      contains('reloaded report'),
+      reason: 'the Report must drop the deleted entries',
+    );
   });
 
   test(
