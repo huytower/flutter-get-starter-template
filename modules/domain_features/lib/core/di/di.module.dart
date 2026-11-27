@@ -396,11 +396,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
       () => _i691.SimpleCubit(),
       dispose: (i) => i.close(),
     );
-    gh.lazySingleton<_i572.WalletRepository>(() => _i590.WalletRepositoryImpl(
-          crashReporter: gh<_i54.CcCrashReporter>(),
-          local: gh<_i1058.WalletLocalDataSource>(),
-          sync: gh<_i156.WalletSyncDataSource>(),
-        ));
     gh.lazySingleton<_i288.CrashLogRemote>(
         () => _i288.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
     gh.lazySingleton<_i259.AccountSettingsSync>(() => _i259.AccountSettingsSync(
@@ -463,6 +458,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               local: gh<_i896.ReconciliationLocalDataSource>(),
               syncService: gh<_i963.FinancialDataSyncService>(),
             ));
+    gh.lazySingleton<_i572.WalletRepository>(() => _i590.WalletRepositoryImpl(
+          crashReporter: gh<_i54.CcCrashReporter>(),
+          local: gh<_i1058.WalletLocalDataSource>(),
+          sync: gh<_i156.WalletSyncDataSource>(),
+          syncService: gh<_i963.FinancialDataSyncService>(),
+        ));
     gh.lazySingleton<_i1059.CategoryRepository>(
         () => _i658.CategoryRepositoryImpl(
               crashReporter: gh<_i54.CcCrashReporter>(),

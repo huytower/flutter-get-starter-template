@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/services/entry_date.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -148,7 +149,7 @@ class CreateTransactionUseCase {
       categoryIconFamily: params.categoryIconFamily,
       budgetId: params.budgetId,
       note: params.note,
-      date: params.date,
+      date: EntryDate.recordedAt(params.date),
       walletId: params.walletId,
       lat: params.lat,
       lng: params.lng,

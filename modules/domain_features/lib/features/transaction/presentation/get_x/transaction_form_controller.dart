@@ -26,6 +26,9 @@ abstract class TransactionFormController extends PrjGetController
   final GlobalKey amountFieldKey = GlobalKey();
 
   final Rx<DateTime> date = DateTime.now().obs;
+
+  /// Whether the user (or a quick entry) chose [date] since the last reset.
+  bool _hasChosenDate = false;
   final RxBool hasSubmitting = false.obs;
   final RxBool showKeypad = false.obs;
   final RxBool showMoreDetails = false.obs;
@@ -120,6 +123,7 @@ abstract class TransactionFormController extends PrjGetController
   Future<void> pickDate(BuildContext context) async {
     final picked = await TransactionFormHelpers.pickDate(context, date.value);
     if (picked == null) return;
+    _hasChosenDate = true;
     date.value = TransactionFormHelpers.updateDatePreserveTime(
       date.value,
       picked,
@@ -134,6 +138,7 @@ abstract class TransactionFormController extends PrjGetController
     if (!hasEditing) await LastEntryWallet.remember(selectedWalletId.value);
     amountStr.value = '0';
     noteController.clear();
+    _hasChosenDate = false;
     date.value = DateTime.now();
     showKeypad.value = false;
     _notifyParentKeypad(false);
@@ -142,7 +147,18 @@ abstract class TransactionFormController extends PrjGetController
 
   Future<void> onReset();
 
+  /// Moves an untouched date on to now: a form left open since an earlier day
+  /// would otherwise record the new entry on that day.
+  void followToday() {
+    if (!hasEditing && !_hasChosenDate) date.value = DateTime.now();
+  }
+
+  /// The date a quick entry read, or now when it mentions none.
+  void setParsedDate(DateTime? parsed) =>
+      parsed == null ? followToday() : setDate(parsed);
+
   void showKeypadAndScroll(BuildContext context, {GlobalKey? fieldKey}) {
+    followToday();
     FocusScope.of(context).unfocus();
     showKeypad.value = true;
     _notifyParentKeypad(true);
@@ -175,6 +191,7 @@ abstract class TransactionFormController extends PrjGetController
   }
 
   void setDate(DateTime newDate) {
+    _hasChosenDate = true;
     date.value = DateTime(
       newDate.year,
       newDate.month,

@@ -267,7 +267,7 @@ class QuickEntrySession with WidgetsBindingObserver {
     if (result.walletId != null) {
       host.setWalletId(result.walletId!);
     }
-    if (result.date != null) host.setDate(result.date!);
+    host.setParsedDate(result.date);
     if (result.note != null) host.noteController.text = result.note!;
     quickEntrySuggestion.value = null;
     quickEntryController.clear();

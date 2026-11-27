@@ -2,6 +2,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/services/entry_date.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -103,12 +104,13 @@ class CreateWalletTransferUseCase {
     }
 
     final transferId = DateTime.now().microsecondsSinceEpoch.toString();
+    final recordedAt = EntryDate.recordedAt(params.date);
     final sourceLeg = TransactionEntity(
       id: '${transferId}_out',
       type: TransactionType.transferOut,
       amount: sourceAmount,
       category: params.categoryLabel,
-      date: params.date,
+      date: recordedAt,
       walletId: source.id,
       transferId: transferId,
       currencyCode: source.currencyCode,
@@ -118,7 +120,7 @@ class CreateWalletTransferUseCase {
       type: TransactionType.transferIn,
       amount: destinationAmount,
       category: params.categoryLabel,
-      date: params.date,
+      date: recordedAt,
       walletId: destination.id,
       transferId: transferId,
       currencyCode: destination.currencyCode,

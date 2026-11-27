@@ -1,6 +1,7 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/services/entry_date.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -145,6 +146,7 @@ class CreateLiabilityUseCase {
       targetId = DateTime.now().microsecondsSinceEpoch.toString();
     }
 
+    final recordedAt = EntryDate.recordedAt(params.date);
     final liability = LiabilityEntity(
       id: targetId,
       direction: params.direction,
@@ -158,7 +160,7 @@ class CreateLiabilityUseCase {
       installments: params.installments,
       finalDueDate: params.finalDueDate,
       note: params.note,
-      createdAt: params.date,
+      createdAt: recordedAt,
       updatedAt: DateTime.now(),
       reminderBeforeDueDate: params.reminderBeforeDueDate,
       currencyCode: finalCurrency,
@@ -183,7 +185,7 @@ class CreateLiabilityUseCase {
         categoryIconCode: params.categoryIconCode,
         categoryIconFamily: params.categoryIconFamily,
         note: params.note,
-        date: params.date,
+        date: recordedAt,
         walletId: params.walletId,
         liabilityId: liability.id,
         currencyCode: finalCurrency,

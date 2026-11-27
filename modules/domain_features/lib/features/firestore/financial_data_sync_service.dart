@@ -805,11 +805,8 @@ class FinancialDataSyncService {
       // Don't log expected authentication errors during logout
       if (e.toString().contains('User not authenticated')) return;
       'Sync failed for entity: $e'.Log('FinancialDataSyncService');
-
-      // Persist the failure. Without this the record stays `pending`
-      // forever, `_countPending()` never drops to zero, and the guarded
-      // logout would lock the user out of their own account. A version
-      // changed meanwhile stays as it is.
+      // Persisted, or the record stays `pending` forever and blocks sign-out.
+      // A version changed meanwhile stays as it is.
       if (identical(box.get(key), model)) {
         await box.put(key, _withSyncStatus(model, SyncStatus.failed));
       }
@@ -867,13 +864,11 @@ class FinancialDataSyncService {
     return null;
   }
 
-  /// Returns [model] with its sync status replaced. Used to persist a
-  /// terminal `failed` so a record that can never upload stops spinning and
-  /// becomes discardable instead of blocking sign-out forever.
+  /// Returns [model] with its sync status replaced: `failed` for an upload
+  /// that threw, `pending` for a record changed while it was uploading.
   ///
-  /// The `errorMessage` is intentionally not persisted — none of the six Hive
-  /// models carry a field for it, and adding one to all of them is a schema
-  /// change out of proportion to its value. It is logged instead.
+  /// No `errorMessage` is persisted (the Hive models have no field for it);
+  /// the error is logged instead.
   T _withSyncStatus<T>(T model, SyncStatus status) {
     if (model is WalletHiveModel) {
       return model.copyWithSyncMetadata(

@@ -2,6 +2,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/services/entry_date.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/prj_locale_keys.dart';
@@ -165,7 +166,7 @@ class CreateInvestmentTransactionUseCase {
       categoryIconCode: params.categoryIconCode,
       categoryIconFamily: params.categoryIconFamily,
       note: params.note,
-      date: params.date,
+      date: EntryDate.recordedAt(params.date),
       walletId: liquidWalletId,
       transferId: linkId,
       investmentWalletId: investmentWallet.id,
@@ -229,7 +230,7 @@ class CreateInvestmentTransactionUseCase {
       categoryIconCode: params.categoryIconCode,
       categoryIconFamily: params.categoryIconFamily,
       note: params.note,
-      date: params.date,
+      date: EntryDate.recordedAt(params.date),
       walletId: liquidWalletId,
       investmentWalletId: investmentWallet.id,
       currencyCode: liquidWallet.currencyCode,

@@ -3,6 +3,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/services/entry_date.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
@@ -191,7 +192,7 @@ class RecordLiabilityPaymentUseCase {
       categoryIconCode: liability.categoryIconCode,
       categoryIconFamily: liability.categoryIconFamily,
       note: params.note,
-      date: params.date,
+      date: EntryDate.recordedAt(params.date),
       walletId: params.walletId,
       // An id made up for a synthetic group matches nothing; leaving it out
       // lets the transaction join its group by category label.
