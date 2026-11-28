@@ -69,13 +69,16 @@ class LiquidWalletListItem extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _buildIcon(context),
+          SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
           _buildName(context),
           const Spacer(),
           _buildBalance(context, showFullBalance: showFullBalance),
+          SizedBox(width: context.respPadding(CcPaddingParams.SPACE_XS)),
           CcIconButton.bouncing(
+            width: context.respIconSize(baseSize: 20),
             icon: Icon(
               Icons.swap_vert_rounded,
               color: scheme.primary,
@@ -111,6 +114,8 @@ class LiquidWalletListItem extends StatelessWidget {
     return Expanded(
       child: CcText(
         wallet.displayName(context),
+        align: Alignment.centerLeft,
+        textAlign: TextAlign.start,
         textStyle: context.ccTextTheme.titleSmall?.copyWith(
           fontWeight: CcTypographyParams.bold,
         ),
@@ -141,6 +146,8 @@ class LiquidWalletListItem extends StatelessWidget {
           child: CcText(
             label,
             maxLines: 1,
+            align: Alignment.centerRight,
+            textAlign: TextAlign.end,
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: balance >= 0 ? scheme.onSurface : scheme.error,
