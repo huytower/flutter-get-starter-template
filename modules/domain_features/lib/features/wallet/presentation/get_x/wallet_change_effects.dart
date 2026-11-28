@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';

@@ -503,6 +503,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i270.ProfileRepository>(),
               gh<_i944.ReconciliationRepository>(),
             ));
+    gh.lazySingleton<_i610.DeleteLiabilityUseCase>(
+        () => _i610.DeleteLiabilityUseCase(
+              gh<_i813.LiabilityRepository>(),
+              gh<_i1027.TransactionRepository>(),
+              gh<_i179.ReconciledPeriodLock>(),
+            ));
     gh.lazySingleton<_i340.CheckAuditReminderUseCase>(
         () => _i340.CheckAuditReminderUseCase(
               gh<_i270.ProfileRepository>(),
@@ -546,11 +552,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i196.UndoReconciliationUseCase>(
         () => _i196.UndoReconciliationUseCase(
               gh<_i944.ReconciliationRepository>(),
-              gh<_i1027.TransactionRepository>(),
-            ));
-    gh.lazySingleton<_i610.DeleteLiabilityUseCase>(
-        () => _i610.DeleteLiabilityUseCase(
-              gh<_i813.LiabilityRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
     gh.lazySingleton<_i569.GetProfileSettingsUseCase>(
