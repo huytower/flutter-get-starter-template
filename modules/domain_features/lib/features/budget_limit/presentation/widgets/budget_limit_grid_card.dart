@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -8,15 +6,16 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/budget/budget_name_helper.dart';
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
+import '../../../../core/presentation/widgets/prj_flip_card.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import 'budget_limit_grid_card_detail.dart';
 
-/// Grid card for a budget item — uses the exact same 3D flip card effect as [ProfilePageHeader]
-/// to reveal [BudgetLimitGridCardDetail].
+/// Grid card for a budget item — uses an up-down 3D flashcard flip via
+/// [PrjFlipCard] to reveal [BudgetLimitGridCardDetail].
 ///
 /// View mode: tapping flips between front summary and back detail layout; holding 300ms allows drag-to-reorder.
 /// Edit mode: shows red (−) delete and primary edit badges; drag handle and flip are disabled.
-class BudgetLimitGridCard extends StatefulWidget {
+class BudgetLimitGridCard extends StatelessWidget {
   final BudgetLimitStatsEntity stats;
   final bool hasEditMode;
   final bool hasDragging;
@@ -37,92 +36,24 @@ class BudgetLimitGridCard extends StatefulWidget {
   });
 
   @override
-  State<BudgetLimitGridCard> createState() => _BudgetLimitGridCardState();
-}
-
-class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
-  bool _hasFrontVisible = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _animation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _toggleFlip() {
-    if (widget.hasEditMode || !widget.hasFlippable || _controller.isAnimating) {
-      return;
-    }
-
-    if (_hasFrontVisible) {
-      _controller.forward();
-    } else {
-      _controller.reverse();
-    }
-    setState(() {
-      _hasFrontVisible = !_hasFrontVisible;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (!widget.hasFlippable) {
+    if (!hasFlippable) {
       return _buildFrontCard(context);
     }
 
-    return GestureDetector(
-      onTap: _toggleFlip,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) {
-          final angle = _animation.value * math.pi;
-          final hasUnder = angle > (math.pi / 2);
-
-          return Transform(
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001) // perspective
-              ..rotateY(angle),
-            alignment: Alignment.center,
-            child: hasUnder
-                ? Transform(
-                    transform: Matrix4.identity()..rotateY(math.pi),
-                    alignment: Alignment.center,
-                    child: BudgetLimitGridCardDetail(
-                      stats: widget.stats,
-                      hasEditMode: widget.hasEditMode,
-                      onEdit: widget.onEdit,
-                      onDelete: widget.onDelete,
-                    ),
-                  )
-                : _buildFrontCard(context),
-          );
-        },
+    return PrjFlipCard(
+      enabled: !hasEditMode,
+      front: _buildFrontCard(context),
+      back: BudgetLimitGridCardDetail(
+        stats: stats,
+        hasEditMode: hasEditMode,
+        onEdit: onEdit,
+        onDelete: onDelete,
       ),
     );
   }
 
   Widget _buildFrontCard(BuildContext context) {
-    final stats = widget.stats;
-    final hasEditMode = widget.hasEditMode;
-    final showDragHandle = widget.showDragHandle;
-
     final scheme = context.ccColorScheme;
     final iconColor = stats.color ?? scheme.primary;
     final accent = switch (stats.status) {
@@ -169,7 +100,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
       padding: EdgeInsets.all(context.respDim(12)),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: _cardBackgroundColor(context, widget.stats.color),
+        color: _cardBackgroundColor(context, stats.color),
         borderRadius: context.brLg,
         border: context.borderSubtle,
       ),
@@ -234,8 +165,8 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
                 ),
                 CcText(
                   TransactionFormHelpers.formatShortWithSymbol(
-                    widget.stats.budget.limit,
-                    currencyCode: widget.stats.budget.currencyCode,
+                    stats.budget.limit,
+                    currencyCode: stats.budget.currencyCode,
                   ),
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
                     color: scheme.onSurfaceVariant.withOpacity(0.6),
@@ -251,14 +182,14 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
 
   String _getDisplayName(BuildContext context) {
     return BudgetNameHelper.getDisplayName(
-      name: widget.stats.budget.name,
-      categoryNameKey: widget.stats.categoryNameKey,
+      name: stats.budget.name,
+      categoryNameKey: stats.categoryNameKey,
     );
   }
 
   Widget _buildFooter(BuildContext context, int pct, Color accent) {
     final scheme = context.ccColorScheme;
-    final inPenalty = widget.stats.penaltyTier != BudgetPenaltyTier.none;
+    final inPenalty = stats.penaltyTier != BudgetPenaltyTier.none;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -276,7 +207,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
           ),
         ),
         CcProgressPie(
-          progress: widget.stats.progress,
+          progress: stats.progress,
           color: accent,
           size: context.respDim(20),
         ),
@@ -298,19 +229,19 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (widget.stats.status != BudgetLimitStatus.safe) ...[
+          if (stats.status != BudgetLimitStatus.safe) ...[
             Icon(
-              widget.stats.status == BudgetLimitStatus.over
+              stats.status == BudgetLimitStatus.over
                   ? Icons.error_rounded
                   : Icons.warning_amber_rounded,
-              color: widget.stats.status == BudgetLimitStatus.over
+              color: stats.status == BudgetLimitStatus.over
                   ? context.ccColorScheme.error
                   : PrjColors.warning,
               size: context.respIconSize(baseSize: 14),
             ),
             const CcSpaceXS(),
           ],
-          if (widget.stats.budget.hasFixedPrice) ...[
+          if (stats.budget.hasFixedPrice) ...[
             Icon(
               Icons.bolt_rounded,
               color: context.ccColorScheme.primary,
@@ -339,7 +270,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
           icon: Icons.remove,
           color: scheme.error,
           foregroundColor: scheme.onError,
-          onTap: widget.onDelete,
+          onTap: onDelete,
         ),
       ),
       Positioned(
@@ -349,7 +280,7 @@ class _BudgetLimitGridCardState extends State<BudgetLimitGridCard>
           icon: Icons.edit,
           color: scheme.primary,
           foregroundColor: scheme.onPrimary,
-          onTap: widget.onEdit,
+          onTap: onEdit,
         ),
       ),
     ];

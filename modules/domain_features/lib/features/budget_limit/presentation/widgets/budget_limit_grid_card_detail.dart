@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/presentation/helper/transaction_form_helpers.dart';
+import '../../../../core/currency/money_formatter.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 
 /// Back-side detail widget for a budget limit item shown upon card flip.
@@ -76,86 +76,85 @@ class BudgetLimitGridCardDetail extends StatelessWidget {
   Widget _buildAmountSection(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return CcText(
-      TransactionFormHelpers.formatShortWithSymbol(
-        stats.remaining.abs(),
-        currencyCode: stats.budget.currencyCode,
-      ),
-      align: Alignment.center,
-      textAlign: TextAlign.center,
-      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-        fontWeight: CcTypographyParams.bold,
-        color: stats.remaining < 0 ? scheme.error : scheme.onSurface,
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.center,
+      child: CcText(
+        formatCurrencyWithSymbol(
+          stats.remaining.abs(),
+          currencyCode: stats.budget.currencyCode,
+        ),
+        maxLines: 1,
+        align: Alignment.center,
+        textAlign: TextAlign.center,
+        textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+          fontWeight: CcTypographyParams.bold,
+          color: stats.remaining < 0 ? scheme.error : scheme.onSurface,
+        ),
       ),
     );
   }
 
   Widget _buildSpentRow(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    return Row(
-      children: [
-        Image.asset(
-          'assets/icon/ic_repay.webp',
-          color: scheme.primary,
-          width: context.respIconSize(baseSize: 18),
-          height: context.respIconSize(baseSize: 18),
-        ),
-        const CcSpaceXS(),
-        RichText(
-          text: TextSpan(
-            style: context.ccTextTheme.labelSmall?.copyWith(
-              color: scheme.onSurface,
-            ),
-            children: [
-              TextSpan(text: '${el.tr(PrjLocaleKeys.budget_spent_prefix)}: '),
-              TextSpan(
-                text: TransactionFormHelpers.formatShortWithSymbol(
-                  stats.spent,
-                  currencyCode: stats.budget.currencyCode,
-                ),
-                style: context.ccTextTheme.labelSmall?.copyWith(
-                  color: scheme.onSurface,
-                  fontWeight: CcTypographyParams.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+    return _buildMetricRow(
+      context,
+      assetPath: 'assets/icon/ic_repay.webp',
+      prefix: el.tr(PrjLocaleKeys.budget_spent_prefix),
+      amount: stats.spent,
     );
   }
 
   Widget _buildLimitRow(BuildContext context) {
+    return _buildMetricRow(
+      context,
+      assetPath: 'assets/icon/ic_borrow.webp',
+      prefix: el.tr(PrjLocaleKeys.budget_limit_prefix),
+      amount: stats.budget.limit,
+    );
+  }
+
+  Widget _buildMetricRow(
+    BuildContext context, {
+    required String assetPath,
+    required String prefix,
+    required int amount,
+  }) {
     final scheme = context.ccColorScheme;
 
     return Row(
       children: [
         Image.asset(
-          'assets/icon/ic_borrow.webp',
+          assetPath,
           color: scheme.primary,
           width: context.respIconSize(baseSize: 18),
           height: context.respIconSize(baseSize: 18),
         ),
         const CcSpaceXS(),
-        RichText(
-          text: TextSpan(
-            style: context.ccTextTheme.labelSmall?.copyWith(
-              color: scheme.onSurface,
-            ),
-            children: [
-              TextSpan(text: '${el.tr(PrjLocaleKeys.budget_limit_prefix)}: '),
-              TextSpan(
-                text: TransactionFormHelpers.formatShortWithSymbol(
-                  stats.budget.limit,
-                  currencyCode: stats.budget.currencyCode,
-                ),
+        Expanded(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: RichText(
+              maxLines: 1,
+              text: TextSpan(
                 style: context.ccTextTheme.labelSmall?.copyWith(
                   color: scheme.onSurface,
-                  fontWeight: CcTypographyParams.bold,
                 ),
+                children: [
+                  TextSpan(text: '$prefix: '),
+                  TextSpan(
+                    text: formatCurrencyWithSymbol(
+                      amount,
+                      currencyCode: stats.budget.currencyCode,
+                    ),
+                    style: context.ccTextTheme.labelSmall?.copyWith(
+                      color: scheme.onSurface,
+                      fontWeight: CcTypographyParams.bold,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ],

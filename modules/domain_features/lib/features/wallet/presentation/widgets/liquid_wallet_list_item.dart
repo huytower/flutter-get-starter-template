@@ -4,11 +4,16 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/currency/money_formatter.dart';
 import '../../../../core/presentation/helper/transaction_form_helpers.dart';
+import '../../../../core/presentation/widgets/prj_flip_card.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_display_name.dart';
 
 /// Horizontal list card for liquid wallets shown on the Wallet list page.
+///
+/// Tapping the card flips it up-down (flashcard style) to toggle between
+/// compacted balance (e.g. `3.6M`) and full exact balance (e.g. `3,596,693 đ`).
 class LiquidWalletListItem extends StatelessWidget {
   final WalletEntity wallet;
   final bool hasEditMode;
@@ -33,18 +38,26 @@ class LiquidWalletListItem extends StatelessWidget {
       margin: EdgeInsets.only(
         bottom: context.respDim(CcPaddingParams.SPACE_MD),
       ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          const Positioned.fill(child: CcGlassyGradientBackground()),
-          _buildMainCard(context),
-          if (hasEditMode) ..._buildEditBadges(context),
-        ],
+      child: PrjFlipCard(
+        enabled: !hasEditMode,
+        front: _buildCardSide(context, showFullBalance: false),
+        back: _buildCardSide(context, showFullBalance: true),
       ),
     );
   }
 
-  Widget _buildMainCard(BuildContext context) {
+  Widget _buildCardSide(BuildContext context, {required bool showFullBalance}) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        const Positioned.fill(child: CcGlassyGradientBackground()),
+        _buildMainCard(context, showFullBalance: showFullBalance),
+        if (hasEditMode) ..._buildEditBadges(context),
+      ],
+    );
+  }
+
+  Widget _buildMainCard(BuildContext context, {required bool showFullBalance}) {
     final scheme = context.ccColorScheme;
 
     return Container(
@@ -55,12 +68,13 @@ class LiquidWalletListItem extends StatelessWidget {
         border: context.borderSubtle,
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildIcon(context),
-          const CcSpaceMD(),
           _buildName(context),
-          _buildBalance(context),
-          const CcSpaceSM(),
+          const Spacer(),
+          _buildBalance(context, showFullBalance: showFullBalance),
           CcIconButton.bouncing(
             icon: Icon(
               Icons.swap_vert_rounded,
@@ -104,23 +118,34 @@ class LiquidWalletListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildBalance(BuildContext context) {
+  Widget _buildBalance(BuildContext context, {required bool showFullBalance}) {
     final controller = Get.find<WalletController>();
     final scheme = context.ccColorScheme;
 
     return Obx(() {
       final balance = controller.displayBookBalanceOf(wallet.id);
       final visible = controller.hasBalanceVisible.value;
-      return CcText(
-        visible
-            ? TransactionFormHelpers.formatShortWithSymbol(
-                balance,
-                currencyCode: controller.currencyCode.value,
-              )
-            : '*****',
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: balance >= 0 ? scheme.onSurface : scheme.error,
+      final code = controller.currencyCode.value;
+      final label = !visible
+          ? '*****'
+          : showFullBalance
+          ? formatCurrencyWithSymbol(balance, currencyCode: code)
+          : TransactionFormHelpers.formatShortWithSymbol(
+              balance,
+              currencyCode: code,
+            );
+      return Flexible(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerRight,
+          child: CcText(
+            label,
+            maxLines: 1,
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: balance >= 0 ? scheme.onSurface : scheme.error,
+            ),
+          ),
         ),
       );
     });

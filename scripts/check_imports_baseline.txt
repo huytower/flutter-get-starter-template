@@ -74,7 +74,6 @@ file-size modules/domain_features/lib/core/quick_entry/quick_entry_alias_dataset
 file-size modules/domain_features/lib/core/quick_entry/quick_entry_parser_helper.dart 340
 file-size modules/domain_features/lib/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart 46
 file-size modules/domain_features/lib/features/budget_limit/presentation/widgets/add_budget_limit_sheet.dart 8
-file-size modules/domain_features/lib/features/budget_limit/presentation/widgets/budget_limit_grid_card.dart 61
 file-size modules/domain_features/lib/features/category/data/datasources/local/category_seed.dart 649
 file-size modules/domain_features/lib/features/category/presentation/pages/category_settings_page.dart 95
 file-size modules/domain_features/lib/features/firestore/financial_data_sync_service.dart 621
