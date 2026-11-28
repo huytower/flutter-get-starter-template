@@ -7,7 +7,6 @@ import 'package:domain_features/features/transaction/domain/repositories/transac
 import 'package:domain_features/features/wallet/domain/entities/wallet_totals.dart';
 import 'package:domain_features/features/wallet/domain/services/wallet_ledger.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../support/no_reconciliations.dart';
@@ -186,22 +185,24 @@ void main() {
       ),
     ];
 
-    test('refuses, deleting nothing, when a leg is reconciled', () async {
-      final transactions = _FakeTransactions(position(date: before));
-      final ledger = WalletLedger(
-        transactions,
-        CurrencyConversionService(_NoRates()),
-        reconciliationLockAt(reconciledAt),
-      );
+    test(
+      'preserves reconciled transactions and soft-deletes open ones',
+      () async {
+        final mixed = [...position(date: before), ...position(date: after)];
+        final transactions = _FakeTransactions(mixed);
+        final ledger = WalletLedger(
+          transactions,
+          CurrencyConversionService(_NoRates()),
+          reconciliationLockAt(reconciledAt),
+        );
 
-      final result = await ledger.removeTransactionsOf('stock');
+        final result = await ledger.removeTransactionsOf('stock');
 
-      expect(
-        result.tryGetError()?.message,
-        PrjLocaleKeys.wallet_delete_error_reconciled,
-      );
-      expect(transactions.softDeleted, isEmpty);
-    });
+        expect(result.isSuccess(), isTrue);
+        // Soft-deletes only open period transactions, leaving reconciled ones intact
+        expect(transactions.softDeleted.length, 3);
+      },
+    );
 
     test('deletes when every leg is after the reconciliation', () async {
       final transactions = _FakeTransactions(position(date: after));

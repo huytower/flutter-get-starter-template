@@ -173,7 +173,7 @@
     "investment_delete_refund": "**已出资的金额退回原钱包**。",
     "investment_delete_returns": "**已收到的回收金额从收款钱包中扣除**。",
     "investment_delete_roi": "**不再计入 ROI**。",
-    "investment_delete_reconciled": "如有已对账的记录则**无法删除**，请改为**添加一笔冲抵记录**。",
+    "investment_delete_reconciled": "已对账的记录**将不会被删除**。",
     "investment_edit_title": "编辑投资",
     "add_title": "添加新钱包",
     "edit_title": "编辑钱包",

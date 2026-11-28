@@ -626,18 +626,13 @@ Profile badge, but does not change the level earned here. Turning VIP off return
     remaining transactions: the liquid wallet gets the *Chi ra* money **back** and loses the *Thu vào*
     amounts, and the position leaves ROI and the investment totals.
   - **The delete confirmation lists these effects as bullets** (`InvestmentDeleteSheet`: linked entries deleted,
-    contributed money returned, collected returns taken back, ROI, and the reconciled block), styled like the
+    contributed money returned, collected returns taken back, ROI, and preserving reconciled entries), styled like the
     reconciliation guide (`HighlightedGuideRow`).
-  - **Refused when any of those transactions is reconciled** (dated at or before the latest reconciliation):
-    nothing is deleted and the user sees "Some of its transactions are already reconciled… Add a new
-    transaction to offset it instead" (`wallet.delete_error_reconciled`, `WalletLedger.removeTransactionsOf`).
-    Deleting is still allowed when every linked transaction is after the latest reconciliation (e.g. a
-    position created by mistake this cycle).
-  - **To correct instead of deleting, the user adds a new offsetting transaction** in the open period, e.g. a
-    *Thu vào* for the money taken out of the position, or an income/expense with a note giving the reason.
-    The closed period stays as confirmed and the correction is reconciled next cycle.
+  - **Reconciled transactions preserved when deleting an investment position**: open-period transactions (dated
+    after the latest reconciliation) are soft-deleted, while closed-period transactions (dated at or before the
+    latest reconciliation) are kept intact (`WalletLedger.removeTransactionsOf`).
   - Debug trace: every step logs with the `[DeleteWallet]` prefix (request, linked transactions with their
-    `RECONCILED` / `open` state, refusal, soft delete, cloud delete, outcome).
+    `RECONCILED (kept)` / `open (soft-deleting)` state, soft delete, cloud delete, outcome).
   - [Planned] archive a closed position (hide it, keep its history) instead of deleting it.
 - **Transfer** between wallets
 - **Ordering**: liquid wallets are grouped by type, then sorted by name

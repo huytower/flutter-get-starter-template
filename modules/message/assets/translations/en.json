@@ -177,7 +177,7 @@
     "investment_delete_refund": "**Money you contributed goes back** to the wallet it came from.",
     "investment_delete_returns": "**Returns you collected are taken out** of the wallet that received them.",
     "investment_delete_roi": "It **no longer counts in ROI**.",
-    "investment_delete_reconciled": "**Not possible** if any of those entries is reconciled. **Add an offsetting entry** instead.",
+    "investment_delete_reconciled": "Reconciled entries **will not be deleted**.",
     "investment_edit_title": "Edit Investment",
     "add_title": "Add New Wallet",
     "edit_title": "Edit Wallet",

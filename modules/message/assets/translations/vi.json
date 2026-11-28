@@ -177,7 +177,7 @@
     "investment_delete_refund": "**Tiền đã đầu tư được hoàn lại** vào ví đã chi.",
     "investment_delete_returns": "**Lợi nhuận đã thu về bị trừ** khỏi ví đã nhận.",
     "investment_delete_roi": "Khoản này **không còn tính vào ROI**.",
-    "investment_delete_reconciled": "**Không thể xoá** nếu có giao dịch đã kiểm toán. Khi đó hãy **thêm giao dịch bù trừ**.",
+    "investment_delete_reconciled": "Sẽ **không xoá** những giao dịch đã kiểm toán.",
     "investment_edit_title": "Sửa khoản đầu tư",
     "add_title": "Thêm ví mới",
     "edit_title": "Sửa ví",

@@ -173,7 +173,7 @@
     "investment_delete_refund": "**출자한 금액은 원래 지갑으로 돌아갑니다**.",
     "investment_delete_returns": "**받은 회수 금액은 받은 지갑에서 차감됩니다**.",
     "investment_delete_roi": "**ROI에 더 이상 포함되지 않습니다**.",
-    "investment_delete_reconciled": "대사 완료된 기록이 있으면 **삭제할 수 없습니다**. 대신 **상쇄하는 기록을 추가**하세요.",
+    "investment_delete_reconciled": "대사 완료된 기록은 **삭제되지 않습니다**.",
     "investment_edit_title": "투자 편집",
     "add_title": "새 지갑 추가",
     "edit_title": "지갑 편집",

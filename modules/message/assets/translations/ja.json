@@ -173,7 +173,7 @@
     "investment_delete_refund": "**出資した金額は元のウォレットに戻ります**。",
     "investment_delete_returns": "**受け取った回収額は受取先のウォレットから差し引かれます**。",
     "investment_delete_roi": "**ROIに含まれなくなります**。",
-    "investment_delete_reconciled": "照合済みの記録がある場合は**削除できません**。代わりに**相殺する記録を追加**してください。",
+    "investment_delete_reconciled": "照合済みの記録は**削除されません**。",
     "investment_edit_title": "投資を編集",
     "add_title": "新しいウォレットを追加",
     "edit_title": "ウォレットを編集",

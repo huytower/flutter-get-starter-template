@@ -186,20 +186,28 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "Liquid wallets",
       "see_all": "See all",
       "empty": "No wallets yet.\nTap + to add one.",
-      "not_found": "This wallet no longer exists. Please choose another wallet.",
+      "not_found":
+          "This wallet no longer exists. Please choose another wallet.",
       "investment_empty": "No investment wallets yet\nTap + to add ",
       "investment_name": "Investment Name",
       "investment_name_hint": "e.g. BTC, Apple Stock...",
-      "name_suggestions_bank": "TCB 1234|VCB salary|MB spending|BIDV 5678|VPB 2468|ACB family|Vietin 1357|TPB 9012|Cake|Timo",
-      "name_suggestions_ewallet": "MoMo|ZaloPay|ShopeePay|VNPAY|Viettel Money|VNPT Money|MobiFone Money|Payoo|SmartPay|PayPal",
-      "name_suggestions_emergency_fund": "Emergency fund|6-month fund|Medical fund|Job-loss fund|Car repair fund|Home repair fund|Weddings & funerals|Tet fund|Tuition fund|Parents fund",
+      "name_suggestions_bank":
+          "TCB 1234|VCB salary|MB spending|BIDV 5678|VPB 2468|ACB family|Vietin 1357|TPB 9012|Cake|Timo",
+      "name_suggestions_ewallet":
+          "MoMo|ZaloPay|ShopeePay|VNPAY|Viettel Money|VNPT Money|MobiFone Money|Payoo|SmartPay|PayPal",
+      "name_suggestions_emergency_fund":
+          "Emergency fund|6-month fund|Medical fund|Job-loss fund|Car repair fund|Home repair fund|Weddings & funerals|Tet fund|Tuition fund|Parents fund",
       "investment_delete_title": "Delete Investment",
       "investment_delete_intro": "Deleting this investment:",
-      "investment_delete_entries": "Its **Contribute** and **Return** entries are deleted too.",
-      "investment_delete_refund": "**Money you contributed goes back** to the wallet it came from.",
-      "investment_delete_returns": "**Returns you collected are taken out** of the wallet that received them.",
+      "investment_delete_entries":
+          "Its **Contribute** and **Return** entries are deleted too.",
+      "investment_delete_refund":
+          "**Money you contributed goes back** to the wallet it came from.",
+      "investment_delete_returns":
+          "**Returns you collected are taken out** of the wallet that received them.",
       "investment_delete_roi": "It **no longer counts in ROI**.",
-      "investment_delete_reconciled": "**Not possible** if any of those entries is reconciled. **Add an offsetting entry** instead.",
+      "investment_delete_reconciled":
+          "Reconciled entries **will not be deleted**.",
       "investment_edit_title": "Edit Investment",
       "add_title": "Add New Wallet",
       "edit_title": "Edit Wallet",
@@ -228,7 +236,8 @@ class CodegenLoader extends AssetLoader {
           "A wallet can only be deleted when it has no transactions. All transactions of the wallet will be soft-deleted. Continue?",
       "delete_error_not_empty": "Cannot delete: wallet has transactions",
       "delete_error_protected": "This wallet is required and cannot be deleted",
-      "delete_error_reconciled": "Some of its transactions are already reconciled, so it can't be deleted: that would change confirmed balances (your cash or bank balance, ROI). Add a new transaction to offset it instead.",
+      "delete_error_reconciled":
+          "Some of its transactions are already reconciled, so it can't be deleted: that would change confirmed balances (your cash or bank balance, ROI). Add a new transaction to offset it instead.",
       "liquid_assets": "Liquid Assets",
       "liquid_assets_desc": "Cash + Bank + E-wallet · ready to spend",
       "investments": "Investments / Accumulation",
@@ -271,8 +280,10 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "Delete transaction",
       "delete_confirm_desc": "This action cannot be undone.",
       "liability_payment_saved": "Payment of {amount} recorded!",
-      "liability_not_found": "This debt record no longer exists. Pick another one and try again.",
-      "liability_exceeds_outstanding": "This is more than what is still owed. Enter at most the remaining balance.",
+      "liability_not_found":
+          "This debt record no longer exists. Pick another one and try again.",
+      "liability_exceeds_outstanding":
+          "This is more than what is still owed. Enter at most the remaining balance.",
       "source_income": "Source of Income",
       "reason_income": "Reason for Income",
       "recipient": "Recipient",
@@ -288,14 +299,22 @@ class CodegenLoader extends AssetLoader {
       "liability_direction_lend": "Lend",
       "liability_name_label": "Liability name",
       "liability_name_hint": "e.g. Laptop purchase, Bank loan...",
-      "liability_name_suggestions_personal": "Loan from Mom|Loan from Dad|Loan from friend|Loan from brother|Loan from sister|Loan from sibling|Loan from relative|Loan from coworker|Loan from boss|Loan from neighbor",
-      "liability_name_suggestions_bank": "VPB car loan|TPB car loan|VPB personal loan|TCB personal loan|VCB consumer loan|Agribank business|MB student loan|FE car loan|Home Credit loan|Shinhan personal",
-      "liability_name_suggestions_mortgage": "BIDV mortgage|VCB mortgage|TCB mortgage|VPB mortgage|MB mortgage|Vietin mortgage|Agribank mortgage|Social housing loan|Land loan|Home repair loan",
-      "liability_name_suggestions_credit_card": "TCB Visa 1234|VPB Master 5678|VIB Plus 2468|TPB EVO 1357|HSBC Visa 4321|UOB Visa 7777|VCB Visa 8888|STB JCB 9012|ACB Visa 3456|MB Visa 6789",
-      "liability_name_suggestions_installment": "iPhone 16 plan|SH scooter plan|MacBook plan|SPayLater|TCB card 0% plan|Home Credit plan|TGDD plan|FPT Shop plan|Fridge plan|Air-con plan",
-      "liability_name_suggestions_other": "Hui (savings circle)|Salary advance|Rent owed|Utility bills owed|Owed to a shop|Owed to a partner|Owed for goods|Tuition owed|Building fees owed|Hospital bills owed",
-      "liability_name_suggestions_lend_personal": "Lent to Mom|Lent to Dad|Lent to friend|Lent to brother|Lent to sister|Lent to sibling|Lent to relative|Lent to coworker|Lent to partner|Lent to neighbor",
-      "liability_name_suggestions_lend_other": "Rental deposit|Purchase deposit|Unfinished hui|Paid on behalf|Covered a meal|Customer owes goods|Pending COD|Staff advance|Business capital|Pending refund",
+      "liability_name_suggestions_personal":
+          "Loan from Mom|Loan from Dad|Loan from friend|Loan from brother|Loan from sister|Loan from sibling|Loan from relative|Loan from coworker|Loan from boss|Loan from neighbor",
+      "liability_name_suggestions_bank":
+          "VPB car loan|TPB car loan|VPB personal loan|TCB personal loan|VCB consumer loan|Agribank business|MB student loan|FE car loan|Home Credit loan|Shinhan personal",
+      "liability_name_suggestions_mortgage":
+          "BIDV mortgage|VCB mortgage|TCB mortgage|VPB mortgage|MB mortgage|Vietin mortgage|Agribank mortgage|Social housing loan|Land loan|Home repair loan",
+      "liability_name_suggestions_credit_card":
+          "TCB Visa 1234|VPB Master 5678|VIB Plus 2468|TPB EVO 1357|HSBC Visa 4321|UOB Visa 7777|VCB Visa 8888|STB JCB 9012|ACB Visa 3456|MB Visa 6789",
+      "liability_name_suggestions_installment":
+          "iPhone 16 plan|SH scooter plan|MacBook plan|SPayLater|TCB card 0% plan|Home Credit plan|TGDD plan|FPT Shop plan|Fridge plan|Air-con plan",
+      "liability_name_suggestions_other":
+          "Hui (savings circle)|Salary advance|Rent owed|Utility bills owed|Owed to a shop|Owed to a partner|Owed for goods|Tuition owed|Building fees owed|Hospital bills owed",
+      "liability_name_suggestions_lend_personal":
+          "Lent to Mom|Lent to Dad|Lent to friend|Lent to brother|Lent to sister|Lent to sibling|Lent to relative|Lent to coworker|Lent to partner|Lent to neighbor",
+      "liability_name_suggestions_lend_other":
+          "Rental deposit|Purchase deposit|Unfinished hui|Paid on behalf|Covered a meal|Customer owes goods|Pending COD|Staff advance|Business capital|Pending refund",
       "record_liability": "Record Liability",
       "liability_amount_borrow_label": "Liability amount",
       "liability_amount_lend_label": "Lending amount",
@@ -399,14 +418,18 @@ class CodegenLoader extends AssetLoader {
         "amount_exceeds_outstanding": "Amount exceeds remaining balance",
         "liability_settled": "This liability is already settled",
         "not_editable": "This transaction can't be edited",
-        "reconciled": "This transaction is in a reconciled period. Add a new transaction to offset it instead.",
+        "reconciled":
+            "This transaction is in a reconciled period. Add a new transaction to offset it instead.",
         "edit_window": "You can only edit transactions from the last 30 days",
       },
       "transfer_money": "Transfer money",
       "reconciled_title": "Already reconciled",
-      "reconciled_info_closed": "This transaction **is reconciled**, so it **cannot be edited or deleted**.",
-      "reconciled_info_balances": "A change would **break confirmed balances**: cash, bank, ROI.",
-      "reconciled_info_offset": "To correct it, **add a new offsetting transaction**.",
+      "reconciled_info_closed":
+          "This transaction **is reconciled**, so it **cannot be edited or deleted**.",
+      "reconciled_info_balances":
+          "A change would **break confirmed balances**: cash, bank, ROI.",
+      "reconciled_info_offset":
+          "To correct it, **add a new offsetting transaction**.",
       "transfer_from": "From wallet",
       "transfer_to": "To wallet",
       "transfer_swap": "Swap wallets",
@@ -543,8 +566,10 @@ class CodegenLoader extends AssetLoader {
       "book": "Book",
       "actual": "Actual",
       "book_balance": "Book: {amount}",
-      "cycle_subtitle": "**Reconcile once per 7-day cycle**, ending on the weekly audit day you pick in Profile. Any day of the cycle works.",
-      "cycle_current": "**Reconcile once per 7-day cycle**, ending on **{day}** (your weekly audit day). Any day of the cycle works. Current cycle: {start} – {end}.",
+      "cycle_subtitle":
+          "**Reconcile once per 7-day cycle**, ending on the weekly audit day you pick in Profile. Any day of the cycle works.",
+      "cycle_current":
+          "**Reconcile once per 7-day cycle**, ending on **{day}** (your weekly audit day). Any day of the cycle works. Current cycle: {start} – {end}.",
       "description_line_1":
           "Reconciliation helps you **match actual balances with the app** to ensure all financial records are always accurate and transparent.",
       "description_line_2":
@@ -568,11 +593,14 @@ class CodegenLoader extends AssetLoader {
       "locked_title": "Already reconciled this cycle",
       "locked_done": "You reconciled on **{date}**.",
       "locked_next": "Next reconciliation: from **{opens}** to **{due}**.",
-      "locked_reason": "Books are **closed once per 7-day cycle**, so each week's figures stay separate and your streak counts correctly.",
-      "locked_sooner": "To reconcile sooner, change your **weekly audit day** in **Profile**.",
+      "locked_reason":
+          "Books are **closed once per 7-day cycle**, so each week's figures stay separate and your streak counts correctly.",
+      "locked_sooner":
+          "To reconcile sooner, change your **weekly audit day** in **Profile**.",
       "locked_got_it": "Got it",
       "locked_view_history": "View history",
-      "locked_message": "You have already reconciled this cycle. The next one opens after your audit day.",
+      "locked_message":
+          "You have already reconciled this cycle. The next one opens after your audit day.",
     },
     "report": {
       "title": "Report",
@@ -795,8 +823,10 @@ class CodegenLoader extends AssetLoader {
       "birth_year_hint":
           "Choose your actual birth year, it affects your daily income and expense calculations",
       "sign_in_reminder_title": "Sign in to protect your data",
-      "sign_in_reminder_body": "You can use the app without signing in, but your data will be lost if you change or reset your device.",
-      "sign_in_reminder_commitment": "Sign in when you start managing your finances seriously and thoughtfully.",
+      "sign_in_reminder_body":
+          "You can use the app without signing in, but your data will be lost if you change or reset your device.",
+      "sign_in_reminder_commitment":
+          "Sign in when you start managing your finances seriously and thoughtfully.",
       "birth_year_task_desc": "Task: set up your birth year",
       "weekly_audit": "Weekly audit",
       "days_left": "{count} days left",
@@ -824,11 +854,15 @@ class CodegenLoader extends AssetLoader {
       "currency": "Currency unit",
       "currency_subtitle": "Change your primary currency unit",
       "currency_convert_title": "Switch to {to}?",
-      "currency_convert_converted": "All **balances, transactions, budgets and debts** are converted from **{from} to {to}** at the current rate.",
-      "currency_convert_recorded": "From then on every amount is **recorded in {to}**.",
-      "currency_convert_rounded": "Only **whole units** are kept (no cents): each amount is **rounded**.",
+      "currency_convert_converted":
+          "All **balances, transactions, budgets and debts** are converted from **{from} to {to}** at the current rate.",
+      "currency_convert_recorded":
+          "From then on every amount is **recorded in {to}**.",
+      "currency_convert_rounded":
+          "Only **whole units** are kept (no cents): each amount is **rounded**.",
       "currency_convert_minimum": "An amount under 1 {to} becomes **1 {to}**.",
-      "currency_convert_irreversible": "Switching back **does not restore** the original figures.",
+      "currency_convert_irreversible":
+          "Switching back **does not restore** the original figures.",
       "currency_dong": "Dong",
       "currency_vnd": "Vietnamese Dong",
       "currency_usd": "United States Dollar",
@@ -848,12 +882,14 @@ class CodegenLoader extends AssetLoader {
       "default_account_name": "My account",
       "apple_private_email": "Hidden Apple email",
       "ai_consent_title": "Share data with AI",
-      "ai_consent_body": "Quick entry, receipt scan and financial advice send data to Google Gemini: what you type, receipt photos, and monthly totals with category and wallet names. Your name, email and phone number are not sent. You can turn this off anytime in Profile.",
+      "ai_consent_body":
+          "Quick entry, receipt scan and financial advice send data to Google Gemini: what you type, receipt photos, and monthly totals with category and wallet names. Your name, email and phone number are not sent. You can turn this off anytime in Profile.",
       "ai_consent_terms": "View Privacy Policy",
       "ai_consent_allow": "Allow",
       "ai_consent_decline": "Don't allow",
       "ai_sharing": "Share data with AI",
-      "ai_sharing_subtitle": "Sends data to Google Gemini for quick entry, receipt scan and advice",
+      "ai_sharing_subtitle":
+          "Sends data to Google Gemini for quick entry, receipt scan and advice",
       "delete_account": "Delete account",
       "delete_success": "Your account has been deleted.",
       "delete_confirm_desc":
@@ -1119,16 +1155,23 @@ class CodegenLoader extends AssetLoader {
       "investment_empty": "Chưa có danh mục đầu tư nào\nNhấn + để thêm ",
       "investment_name": "Tên khoản đầu tư",
       "investment_name_hint": "Ví dụ: BTC, Cổ phiếu Apple...",
-      "name_suggestions_bank": "TCB 1234|VCB lương|MB chi tiêu|BIDV 5678|VPB 2468|ACB gia đình|Vietin 1357|TPB 9012|Cake|Timo",
-      "name_suggestions_ewallet": "MoMo|ZaloPay|ShopeePay|VNPAY|Viettel Money|VNPT Money|MobiFone Money|Payoo|SmartPay|PayPal",
-      "name_suggestions_emergency_fund": "Quỹ khẩn cấp|Quỹ 6 tháng sống|Quỹ y tế|Quỹ mất việc|Quỹ sửa xe|Quỹ sửa nhà|Quỹ hiếu hỷ|Quỹ Tết|Quỹ học phí|Quỹ bố mẹ",
+      "name_suggestions_bank":
+          "TCB 1234|VCB lương|MB chi tiêu|BIDV 5678|VPB 2468|ACB gia đình|Vietin 1357|TPB 9012|Cake|Timo",
+      "name_suggestions_ewallet":
+          "MoMo|ZaloPay|ShopeePay|VNPAY|Viettel Money|VNPT Money|MobiFone Money|Payoo|SmartPay|PayPal",
+      "name_suggestions_emergency_fund":
+          "Quỹ khẩn cấp|Quỹ 6 tháng sống|Quỹ y tế|Quỹ mất việc|Quỹ sửa xe|Quỹ sửa nhà|Quỹ hiếu hỷ|Quỹ Tết|Quỹ học phí|Quỹ bố mẹ",
       "investment_delete_title": "Xoá khoản đầu tư",
       "investment_delete_intro": "Khi xoá khoản đầu tư này:",
-      "investment_delete_entries": "Các giao dịch **Chi ra** và **Thu vào** của khoản này cũng bị xoá.",
-      "investment_delete_refund": "**Tiền đã đầu tư được hoàn lại** vào ví đã chi.",
-      "investment_delete_returns": "**Lợi nhuận đã thu về bị trừ** khỏi ví đã nhận.",
+      "investment_delete_entries":
+          "Các giao dịch **Chi ra** và **Thu vào** của khoản này cũng bị xoá.",
+      "investment_delete_refund":
+          "**Tiền đã đầu tư được hoàn lại** vào ví đã chi.",
+      "investment_delete_returns":
+          "**Lợi nhuận đã thu về bị trừ** khỏi ví đã nhận.",
       "investment_delete_roi": "Khoản này **không còn tính vào ROI**.",
-      "investment_delete_reconciled": "**Không thể xoá** nếu có giao dịch đã kiểm toán. Khi đó hãy **thêm giao dịch bù trừ**.",
+      "investment_delete_reconciled":
+          "Sẽ **không xoá** những giao dịch đã kiểm toán.",
       "investment_edit_title": "Sửa khoản đầu tư",
       "add_title": "Thêm ví mới",
       "edit_title": "Sửa ví",
@@ -1157,7 +1200,8 @@ class CodegenLoader extends AssetLoader {
           "Chỉ có thể xóa ví khi không có giao dịch nào. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
       "delete_error_not_empty": "Không thể xóa: ví có giao dịch",
       "delete_error_protected": "Ví này là bắt buộc và không thể xóa",
-      "delete_error_reconciled": "Một số giao dịch của mục này đã được kiểm toán nên không thể xoá: xoá sẽ làm thay đổi số dư đã chốt (tiền mặt, ngân hàng, ROI). Hãy thêm giao dịch mới để bù trừ.",
+      "delete_error_reconciled":
+          "Một số giao dịch của mục này đã được kiểm toán nên không thể xoá: xoá sẽ làm thay đổi số dư đã chốt (tiền mặt, ngân hàng, ROI). Hãy thêm giao dịch mới để bù trừ.",
       "liquid_assets": "Tổng tiền thanh khoản",
       "liquid_assets_desc":
           "Tiền mặt + Ngân hàng + Ví điện tử • sẵn sàng chi tiêu ngay",
@@ -1216,14 +1260,22 @@ class CodegenLoader extends AssetLoader {
       "liability_direction_lend": "Cho mượn",
       "liability_name_label": "Tên khoản nợ/vay",
       "liability_name_hint": "VD: Mua laptop, Vay ngân hàng...",
-      "liability_name_suggestions_personal": "Mượn Mẹ|Mượn Bố|Mượn bạn|Mượn anh|Mượn chị|Mượn em|Mượn họ hàng|Mượn đồng nghiệp|Mượn sếp|Mượn hàng xóm",
-      "liability_name_suggestions_bank": "Vay xe VPB|Vay xe TPB|Tín chấp VPB|Tín chấp TCB|Vay tiêu dùng VCB|Vay KD Agribank|Vay học MB|FE vay xe|Home Credit vay|Shinhan tín chấp",
-      "liability_name_suggestions_mortgage": "Vay nhà BIDV|Vay nhà VCB|Vay nhà TCB|Vay nhà VPB|Vay nhà MB|Vay nhà Vietin|Vay nhà Agribank|Vay nhà ở XH|Vay mua đất|Vay sửa nhà",
-      "liability_name_suggestions_credit_card": "TCB Visa 1234|VPB Master 5678|VIB Plus 2468|TPB EVO 1357|HSBC Visa 4321|UOB Visa 7777|VCB Visa 8888|STB JCB 9012|ACB Visa 3456|MB Visa 6789",
-      "liability_name_suggestions_installment": "Góp iPhone 16|Góp xe SH|Góp MacBook|SPayLater|Thẻ TCB góp 0%|Home Credit góp|Góp TGDĐ|Góp FPT Shop|Góp tủ lạnh|Góp điều hòa",
-      "liability_name_suggestions_other": "Hụi|Ứng lương|Nợ tiền nhà|Nợ điện nước|Nợ cửa hàng|Nợ đối tác|Nợ tiền hàng|Nợ học phí|Nợ phí chung cư|Nợ viện phí",
-      "liability_name_suggestions_lend_personal": "Cho Mẹ mượn|Cho Bố mượn|Cho bạn mượn|Cho anh mượn|Cho chị mượn|Cho em mượn|Cho họ hàng mượn|Cho đồng nghiệp mượn|Cho người yêu mượn|Cho hàng xóm mượn",
-      "liability_name_suggestions_lend_other": "Cọc thuê nhà|Đặt cọc mua hàng|Hụi chưa hốt|Chi hộ|Trả hộ tiền ăn|Khách nợ tiền hàng|COD chưa nhận|Ứng lương NV|Góp vốn KD|Tiền hoàn chờ về",
+      "liability_name_suggestions_personal":
+          "Mượn Mẹ|Mượn Bố|Mượn bạn|Mượn anh|Mượn chị|Mượn em|Mượn họ hàng|Mượn đồng nghiệp|Mượn sếp|Mượn hàng xóm",
+      "liability_name_suggestions_bank":
+          "Vay xe VPB|Vay xe TPB|Tín chấp VPB|Tín chấp TCB|Vay tiêu dùng VCB|Vay KD Agribank|Vay học MB|FE vay xe|Home Credit vay|Shinhan tín chấp",
+      "liability_name_suggestions_mortgage":
+          "Vay nhà BIDV|Vay nhà VCB|Vay nhà TCB|Vay nhà VPB|Vay nhà MB|Vay nhà Vietin|Vay nhà Agribank|Vay nhà ở XH|Vay mua đất|Vay sửa nhà",
+      "liability_name_suggestions_credit_card":
+          "TCB Visa 1234|VPB Master 5678|VIB Plus 2468|TPB EVO 1357|HSBC Visa 4321|UOB Visa 7777|VCB Visa 8888|STB JCB 9012|ACB Visa 3456|MB Visa 6789",
+      "liability_name_suggestions_installment":
+          "Góp iPhone 16|Góp xe SH|Góp MacBook|SPayLater|Thẻ TCB góp 0%|Home Credit góp|Góp TGDĐ|Góp FPT Shop|Góp tủ lạnh|Góp điều hòa",
+      "liability_name_suggestions_other":
+          "Hụi|Ứng lương|Nợ tiền nhà|Nợ điện nước|Nợ cửa hàng|Nợ đối tác|Nợ tiền hàng|Nợ học phí|Nợ phí chung cư|Nợ viện phí",
+      "liability_name_suggestions_lend_personal":
+          "Cho Mẹ mượn|Cho Bố mượn|Cho bạn mượn|Cho anh mượn|Cho chị mượn|Cho em mượn|Cho họ hàng mượn|Cho đồng nghiệp mượn|Cho người yêu mượn|Cho hàng xóm mượn",
+      "liability_name_suggestions_lend_other":
+          "Cọc thuê nhà|Đặt cọc mua hàng|Hụi chưa hốt|Chi hộ|Trả hộ tiền ăn|Khách nợ tiền hàng|COD chưa nhận|Ứng lương NV|Góp vốn KD|Tiền hoàn chờ về",
       "liability_amount_borrow_label": "Số tiền vay",
       "liability_amount_lend_label": "Số tiền cho mượn",
       "liability_wallet_borrow_label": "Ví nhận tiền",
@@ -1231,8 +1283,10 @@ class CodegenLoader extends AssetLoader {
       "liability_saved": "Đã ghi nhận khoản nợ/vay {amount}!",
       "liability_name_duplicate_error": "Tên khoản nợ/vay này đã tồn tại",
       "liability_payment_saved": "Đã ghi nhận thanh toán {amount}!",
-      "liability_not_found": "Khoản nợ này không còn tồn tại. Hãy chọn khoản khác và thử lại.",
-      "liability_exceeds_outstanding": "Số tiền vượt quá dư nợ còn lại. Hãy nhập tối đa bằng số còn lại.",
+      "liability_not_found":
+          "Khoản nợ này không còn tồn tại. Hãy chọn khoản khác và thử lại.",
+      "liability_exceeds_outstanding":
+          "Số tiền vượt quá dư nợ còn lại. Hãy nhập tối đa bằng số còn lại.",
       "liability_category_borrow_label": "Hình thức vay",
       "liability_category_lend_label": "Hình thức cho mượn",
       "liability_borrower_label": "Tên khoản vay",
@@ -1328,14 +1382,18 @@ class CodegenLoader extends AssetLoader {
         "amount_exceeds_outstanding": "Số tiền vượt quá số dư còn lại!",
         "liability_settled": "Khoản nợ/vay này đã tất toán!",
         "not_editable": "Không thể sửa giao dịch này!",
-        "reconciled": "Giao dịch thuộc kỳ đã kiểm toán. Hãy thêm giao dịch mới để bù trừ.",
+        "reconciled":
+            "Giao dịch thuộc kỳ đã kiểm toán. Hãy thêm giao dịch mới để bù trừ.",
         "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!",
       },
       "transfer_money": "Chuyển tiền",
       "reconciled_title": "Đã kiểm toán",
-      "reconciled_info_closed": "Giao dịch này **đã được kiểm toán** nên **không thể sửa hoặc xoá**.",
-      "reconciled_info_balances": "Thay đổi sẽ làm **sai số dư đã chốt**: tiền mặt, ngân hàng, ROI.",
-      "reconciled_info_offset": "Cần điều chỉnh, hãy **thêm giao dịch mới để bù trừ**.",
+      "reconciled_info_closed":
+          "Giao dịch này **đã được kiểm toán** nên **không thể sửa hoặc xoá**.",
+      "reconciled_info_balances":
+          "Thay đổi sẽ làm **sai số dư đã chốt**: tiền mặt, ngân hàng, ROI.",
+      "reconciled_info_offset":
+          "Cần điều chỉnh, hãy **thêm giao dịch mới để bù trừ**.",
       "transfer_from": "Ví nguồn",
       "transfer_to": "Ví nhận",
       "transfer_swap": "Đổi ví",
@@ -1405,8 +1463,10 @@ class CodegenLoader extends AssetLoader {
       "book": "Sổ sách",
       "actual": "Thực tế",
       "book_balance": "Sổ sách: {amount}",
-      "cycle_subtitle": "**Mỗi chu kỳ 7 ngày kiểm toán một lần**, kết thúc vào ngày kiểm tra hàng tuần bạn chọn trong Hồ sơ. Có thể làm vào bất kỳ ngày nào trong chu kỳ.",
-      "cycle_current": "**Mỗi chu kỳ 7 ngày kiểm toán một lần**, kết thúc vào **{day}** (ngày kiểm tra hàng tuần). Có thể làm vào bất kỳ ngày nào trong chu kỳ. Chu kỳ hiện tại: {start} – {end}.",
+      "cycle_subtitle":
+          "**Mỗi chu kỳ 7 ngày kiểm toán một lần**, kết thúc vào ngày kiểm tra hàng tuần bạn chọn trong Hồ sơ. Có thể làm vào bất kỳ ngày nào trong chu kỳ.",
+      "cycle_current":
+          "**Mỗi chu kỳ 7 ngày kiểm toán một lần**, kết thúc vào **{day}** (ngày kiểm tra hàng tuần). Có thể làm vào bất kỳ ngày nào trong chu kỳ. Chu kỳ hiện tại: {start} – {end}.",
       "description_line_1":
           "Đối soát giúp bạn **khớp số dư thực tế với ứng dụng** để đảm bảo mọi ghi chép tài chính luôn chính xác và minh bạch.",
       "description_line_2":
@@ -1429,11 +1489,14 @@ class CodegenLoader extends AssetLoader {
       "locked_title": "Chu kỳ này đã kiểm toán xong",
       "locked_done": "Bạn đã kiểm toán vào **{date}**.",
       "locked_next": "Lần kiểm toán tiếp theo: từ **{opens}** đến **{due}**.",
-      "locked_reason": "Mỗi **chu kỳ 7 ngày chỉ chốt sổ một lần**, để số liệu từng tuần tách bạch và chuỗi kiểm toán được tính đúng.",
-      "locked_sooner": "Muốn kiểm toán sớm hơn, hãy đổi **ngày kiểm tra hàng tuần** trong **Hồ sơ**.",
+      "locked_reason":
+          "Mỗi **chu kỳ 7 ngày chỉ chốt sổ một lần**, để số liệu từng tuần tách bạch và chuỗi kiểm toán được tính đúng.",
+      "locked_sooner":
+          "Muốn kiểm toán sớm hơn, hãy đổi **ngày kiểm tra hàng tuần** trong **Hồ sơ**.",
       "locked_got_it": "Đã hiểu",
       "locked_view_history": "Xem lịch sử",
-      "locked_message": "Chu kỳ này bạn đã kiểm toán. Lần tiếp theo mở sau ngày kiểm tra hàng tuần.",
+      "locked_message":
+          "Chu kỳ này bạn đã kiểm toán. Lần tiếp theo mở sau ngày kiểm tra hàng tuần.",
       "empty": "Không có ví nào để đối soát.",
       "instruction": "Nhập số dư thực tế kiểm đếm cho mỗi ví:",
       "book_total": "Tổng sổ sách",
@@ -1572,8 +1635,10 @@ class CodegenLoader extends AssetLoader {
       "birth_year_hint":
           "Chọn năm sinh thực tế của bạn, nó ảnh hưởng đến tính toán thu nhập và chi tiêu hàng ngày",
       "sign_in_reminder_title": "Đăng nhập để bảo vệ dữ liệu",
-      "sign_in_reminder_body": "Bạn vẫn dùng được ứng dụng khi chưa đăng nhập, nhưng dữ liệu sẽ mất nếu bạn đổi hoặc đặt lại thiết bị.",
-      "sign_in_reminder_commitment": "Hãy đăng nhập khi bạn bắt đầu nghiêm túc quản lý tài chính có tư duy.",
+      "sign_in_reminder_body":
+          "Bạn vẫn dùng được ứng dụng khi chưa đăng nhập, nhưng dữ liệu sẽ mất nếu bạn đổi hoặc đặt lại thiết bị.",
+      "sign_in_reminder_commitment":
+          "Hãy đăng nhập khi bạn bắt đầu nghiêm túc quản lý tài chính có tư duy.",
       "birth_year_task_desc": "Nhiệm vụ: thiết lập năm sinh",
       "weekly_audit": "Kiểm tra hàng tuần",
       "days_left": "Còn {count} ngày",
@@ -1601,11 +1666,15 @@ class CodegenLoader extends AssetLoader {
       "currency": "Đơn vị tiền tệ",
       "currency_subtitle": "Thay đổi đơn vị tiền tệ chính",
       "currency_convert_title": "Chuyển sang {to}?",
-      "currency_convert_converted": "Toàn bộ **số dư, giao dịch, ngân sách và khoản nợ** được quy đổi từ **{from} sang {to}** theo tỷ giá hiện tại.",
+      "currency_convert_converted":
+          "Toàn bộ **số dư, giao dịch, ngân sách và khoản nợ** được quy đổi từ **{from} sang {to}** theo tỷ giá hiện tại.",
       "currency_convert_recorded": "Từ đó mọi số tiền được **ghi bằng {to}**.",
-      "currency_convert_rounded": "Chỉ lưu **số nguyên** (không có số lẻ, xu): mỗi khoản được **làm tròn**.",
-      "currency_convert_minimum": "Khoản dưới 1 {to} được tính thành **1 {to}**.",
-      "currency_convert_irreversible": "Chuyển ngược lại **không khôi phục** số liệu cũ.",
+      "currency_convert_rounded":
+          "Chỉ lưu **số nguyên** (không có số lẻ, xu): mỗi khoản được **làm tròn**.",
+      "currency_convert_minimum":
+          "Khoản dưới 1 {to} được tính thành **1 {to}**.",
+      "currency_convert_irreversible":
+          "Chuyển ngược lại **không khôi phục** số liệu cũ.",
       "currency_dong": "Đồng",
       "currency_vnd": "Đồng Việt Nam",
       "currency_usd": "Đô la Mỹ",
@@ -1619,19 +1688,20 @@ class CodegenLoader extends AssetLoader {
       "privacy_policy": "Chính sách quyền riêng tư",
       "privacy_policy_subtitle":
           "Dữ liệu chúng tôi thu thập, ai nhận và cách xóa",
-      "terms_subtitle":
-          "Đọc điều khoản dịch vụ của chúng tôi",
+      "terms_subtitle": "Đọc điều khoản dịch vụ của chúng tôi",
       "about": "Về ứng dụng",
       "about_subtitle": "Thông tin ứng dụng và nhật ký phát triển",
       "default_account_name": "Tài khoản của tôi",
       "apple_private_email": "Email ẩn của Apple",
       "ai_consent_title": "Chia sẻ dữ liệu với AI",
-      "ai_consent_body": "Nhập nhanh, quét hóa đơn và gợi ý tài chính gửi dữ liệu tới Google Gemini: nội dung bạn nhập, ảnh hóa đơn, số liệu thu chi tổng hợp theo tháng cùng tên danh mục và ví. Không gửi tên, email, số điện thoại. Bạn có thể tắt bất cứ lúc nào trong Hồ sơ.",
+      "ai_consent_body":
+          "Nhập nhanh, quét hóa đơn và gợi ý tài chính gửi dữ liệu tới Google Gemini: nội dung bạn nhập, ảnh hóa đơn, số liệu thu chi tổng hợp theo tháng cùng tên danh mục và ví. Không gửi tên, email, số điện thoại. Bạn có thể tắt bất cứ lúc nào trong Hồ sơ.",
       "ai_consent_terms": "Xem Chính sách quyền riêng tư",
       "ai_consent_allow": "Đồng ý",
       "ai_consent_decline": "Không đồng ý",
       "ai_sharing": "Chia sẻ dữ liệu với AI",
-      "ai_sharing_subtitle": "Gửi dữ liệu tới Google Gemini cho nhập nhanh, quét hóa đơn, gợi ý",
+      "ai_sharing_subtitle":
+          "Gửi dữ liệu tới Google Gemini cho nhập nhanh, quét hóa đơn, gợi ý",
       "delete_account": "Xóa tài khoản",
       "delete_success": "Tài khoản của bạn đã được xóa.",
       "delete_confirm_desc":
@@ -2041,7 +2111,7 @@ class CodegenLoader extends AssetLoader {
       "investment_delete_refund": "**출자한 금액은 원래 지갑으로 돌아갑니다**.",
       "investment_delete_returns": "**받은 회수 금액은 받은 지갑에서 차감됩니다**.",
       "investment_delete_roi": "**ROI에 더 이상 포함되지 않습니다**.",
-      "investment_delete_reconciled": "대사 완료된 기록이 있으면 **삭제할 수 없습니다**. 대신 **상쇄하는 기록을 추가**하세요.",
+      "investment_delete_reconciled": "대사 완료된 기록은 **삭제되지 않습니다**.",
       "investment_edit_title": "투자 편집",
       "add_title": "새 지갑 추가",
       "edit_title": "지갑 편집",
@@ -2068,7 +2138,8 @@ class CodegenLoader extends AssetLoader {
           "거래가 없는 지갑만 삭제할 수 있습니다. 지갑의 모든 거래가 소프트 삭제됩니다. 계속하시겠습니까?",
       "delete_error_not_empty": "삭제할 수 없음: 지갑에 거래가 있습니다",
       "delete_error_protected": "이 지갑은 필수이며 삭제할 수 없습니다",
-      "delete_error_reconciled": "일부 거래가 이미 대사 완료되어 삭제할 수 없습니다. 삭제하면 확정된 잔액(현금, 은행, ROI)이 바뀝니다. 대신 상쇄하는 새 거래를 추가하세요.",
+      "delete_error_reconciled":
+          "일부 거래가 이미 대사 완료되어 삭제할 수 없습니다. 삭제하면 확정된 잔액(현금, 은행, ROI)이 바뀝니다. 대신 상쇄하는 새 거래를 추가하세요.",
       "liquid_assets": "유동 자산",
       "liquid_assets_desc": "현금 + 은행 + 전자지갑 · 즉시 사용 가능",
       "investments": "투자 / 축적",
@@ -2290,7 +2361,8 @@ class CodegenLoader extends AssetLoader {
       "edit_limit": "한도 편집",
       "edit_title": "예산 편집",
       "limit_locked": "한도는 월초 7일 동안만 변경할 수 있습니다.",
-      "limit_locked_has_spending": "이번 달에 지출이 기록되어 한도를 변경할 수 없습니다. 예산을 삭제하고 다시 만들 수 있습니다.",
+      "limit_locked_has_spending":
+          "이번 달에 지출이 기록되어 한도를 변경할 수 없습니다. 예산을 삭제하고 다시 만들 수 있습니다.",
       "delete_title": "예산 삭제",
       "delete_confirm": "\"{name}\"을(를) 삭제하시겠습니까?",
       "reset_period": "기간 재설정",
@@ -2355,8 +2427,10 @@ class CodegenLoader extends AssetLoader {
       "book": "장부",
       "actual": "실제",
       "book_balance": "장부: {amount}",
-      "cycle_subtitle": "**7일 주기마다 한 번 대조해요**. 주기는 프로필에서 고른 대조일에 끝나요. 주기 안이라면 언제든 대조할 수 있어요.",
-      "cycle_current": "**7일 주기마다 한 번 대조해요**. 주기는 **{day}**(대조일)에 끝나요. 주기 안이라면 언제든 대조할 수 있어요. 현재 주기: {start} – {end}",
+      "cycle_subtitle":
+          "**7일 주기마다 한 번 대조해요**. 주기는 프로필에서 고른 대조일에 끝나요. 주기 안이라면 언제든 대조할 수 있어요.",
+      "cycle_current":
+          "**7일 주기마다 한 번 대조해요**. 주기는 **{day}**(대조일)에 끝나요. 주기 안이라면 언제든 대조할 수 있어요. 현재 주기: {start} – {end}",
       "description_line_1":
           "조정은 **실제 잔액을 앱과 일치**시켜 모든 재무 기록이 항상 정확하고 투명하게 유지되도록 돕습니다.",
       "description_line_2":
@@ -2379,7 +2453,8 @@ class CodegenLoader extends AssetLoader {
       "locked_title": "이번 주기는 이미 대조했어요",
       "locked_done": "**{date}**에 대조했어요.",
       "locked_next": "다음 대조: **{opens}**부터 **{due}**까지",
-      "locked_reason": "장부는 **7일 주기마다 한 번만 마감**해요. 주별 수치를 따로 관리하고 연속 기록을 정확히 세기 위해서예요.",
+      "locked_reason":
+          "장부는 **7일 주기마다 한 번만 마감**해요. 주별 수치를 따로 관리하고 연속 기록을 정확히 세기 위해서예요.",
       "locked_sooner": "더 일찍 대조하려면 **프로필**에서 **대조일**을 바꿔 주세요.",
       "locked_got_it": "확인",
       "locked_view_history": "기록 보기",
@@ -2593,7 +2668,8 @@ class CodegenLoader extends AssetLoader {
       "birth_year_subtitle": "적절한 카테고리를 제안하는 데 사용",
       "birth_year_hint": "실제 출생 연도를 선택하세요. 일일 수입 및 지출 계산에 영향을 미칩니다",
       "sign_in_reminder_title": "로그인하여 데이터를 보호하세요",
-      "sign_in_reminder_body": "로그인하지 않아도 앱을 사용할 수 있지만, 기기를 교체하거나 초기화하면 데이터가 사라집니다.",
+      "sign_in_reminder_body":
+          "로그인하지 않아도 앱을 사용할 수 있지만, 기기를 교체하거나 초기화하면 데이터가 사라집니다.",
       "sign_in_reminder_commitment": "재무 관리를 진지하고 신중하게 시작할 때 로그인하세요.",
       "birth_year_task_desc": "작업: 출생 연도 설정",
       "weekly_audit": "주간 감사",
@@ -2604,8 +2680,7 @@ class CodegenLoader extends AssetLoader {
       "vip": "VIP",
       "vip_subtitle": "투자 항목 / 대출 기록의 무료 계층 한도를 해제합니다 (로컬 토글, 실제 결제 없음)",
       "force_full_access": "투자·부채·AI 잠금 해제 (실험)",
-      "force_full_access_subtitle":
-          "체험용 기능 — 전문적으로 알아보려는 분을 위한 고급 버전",
+      "force_full_access_subtitle": "체험용 기능 — 전문적으로 알아보려는 분을 위한 고급 버전",
       "gemini_ai": "Gemini AI 기능",
       "gemini_ai_subtitle":
           "디버그/QA — 켜짐: 텍스트, 음성 및 영수증 항목이 Gemini에 의해 먼저 구문 분석됨(로컬 대체). 꺼짐: Gemini에 아무것도 전송되지 않고 로컬 구문 분석만 실행",
@@ -2620,9 +2695,11 @@ class CodegenLoader extends AssetLoader {
       "currency": "통화 단위",
       "currency_subtitle": "기본 통화 단위 변경",
       "currency_convert_title": "{to}(으)로 전환할까요?",
-      "currency_convert_converted": "모든 **잔액, 거래, 예산, 부채**가 현재 환율로 **{from}에서 {to}**(으)로 환산됩니다.",
+      "currency_convert_converted":
+          "모든 **잔액, 거래, 예산, 부채**가 현재 환율로 **{from}에서 {to}**(으)로 환산됩니다.",
       "currency_convert_recorded": "이후 모든 금액은 **{to}(으)로 기록**됩니다.",
-      "currency_convert_rounded": "**정수 단위**만 저장됩니다(센트 등 소수 없음). 각 금액은 **반올림**됩니다.",
+      "currency_convert_rounded":
+          "**정수 단위**만 저장됩니다(센트 등 소수 없음). 각 금액은 **반올림**됩니다.",
       "currency_convert_minimum": "1 {to} 미만의 금액은 **1 {to}**로 처리됩니다.",
       "currency_convert_irreversible": "다시 전환해도 **원래 수치로 돌아가지 않습니다**.",
       "currency_dong": "동",
@@ -2636,15 +2713,15 @@ class CodegenLoader extends AssetLoader {
       "view_tutorial_subtitle": "앱을 효과적으로 사용하는 방법 배우기",
       "terms": "이용 약관",
       "privacy_policy": "개인정보 처리방침",
-      "privacy_policy_subtitle":
-          "수집하는 데이터, 제공받는 곳, 삭제 방법",
+      "privacy_policy_subtitle": "수집하는 데이터, 제공받는 곳, 삭제 방법",
       "terms_subtitle": "서비스 약관 읽기",
       "about": "앱 정보",
       "about_subtitle": "앱 정보 및 개발자 로그",
       "default_account_name": "내 계정",
       "apple_private_email": "Apple 비공개 이메일",
       "ai_consent_title": "AI와 데이터 공유",
-      "ai_consent_body": "빠른 입력, 영수증 스캔, 재무 조언은 Google Gemini로 데이터를 보냅니다: 입력한 내용, 영수증 사진, 월간 수입·지출 합계와 카테고리·지갑 이름. 이름, 이메일, 전화번호는 보내지 않습니다. 프로필에서 언제든 끌 수 있습니다.",
+      "ai_consent_body":
+          "빠른 입력, 영수증 스캔, 재무 조언은 Google Gemini로 데이터를 보냅니다: 입력한 내용, 영수증 사진, 월간 수입·지출 합계와 카테고리·지갑 이름. 이름, 이메일, 전화번호는 보내지 않습니다. 프로필에서 언제든 끌 수 있습니다.",
       "ai_consent_terms": "개인정보 처리방침 보기",
       "ai_consent_allow": "동의",
       "ai_consent_decline": "동의 안 함",
@@ -2900,7 +2977,7 @@ class CodegenLoader extends AssetLoader {
       "investment_delete_refund": "**出資した金額は元のウォレットに戻ります**。",
       "investment_delete_returns": "**受け取った回収額は受取先のウォレットから差し引かれます**。",
       "investment_delete_roi": "**ROIに含まれなくなります**。",
-      "investment_delete_reconciled": "照合済みの記録がある場合は**削除できません**。代わりに**相殺する記録を追加**してください。",
+      "investment_delete_reconciled": "照合済みの記録は**削除されません**。",
       "investment_edit_title": "投資を編集",
       "add_title": "新しいウォレットを追加",
       "edit_title": "ウォレットを編集",
@@ -2926,7 +3003,8 @@ class CodegenLoader extends AssetLoader {
       "delete_confirm_msg": "取引がないウォレットのみ削除できます。ウォレットのすべての取引がソフト削除されます。続行しますか？",
       "delete_error_not_empty": "削除できません: ウォレットに取引があります",
       "delete_error_protected": "このウォレットは必須であり削除できません",
-      "delete_error_reconciled": "一部の取引はすでに照合済みのため削除できません。削除すると確定済みの残高（現金・銀行・ROI）が変わります。代わりに相殺する新しい取引を追加してください。",
+      "delete_error_reconciled":
+          "一部の取引はすでに照合済みのため削除できません。削除すると確定済みの残高（現金・銀行・ROI）が変わります。代わりに相殺する新しい取引を追加してください。",
       "liquid_assets": "流動資産",
       "liquid_assets_desc": "現金 + 銀行 + 電子ウォレット · 即座に使用可能",
       "investments": "投資 / 蓄積",
@@ -3145,7 +3223,8 @@ class CodegenLoader extends AssetLoader {
       "edit_limit": "上限を編集",
       "edit_title": "予算を編集",
       "limit_locked": "上限は月の最初の7日間のみ変更できます。",
-      "limit_locked_has_spending": "今月すでに支出が記録されているため、上限は変更できません。予算を削除して作り直すことはできます。",
+      "limit_locked_has_spending":
+          "今月すでに支出が記録されているため、上限は変更できません。予算を削除して作り直すことはできます。",
       "delete_title": "予算を削除",
       "delete_confirm": "\"{name}\"を削除しますか？",
       "reset_period": "期間をリセット",
@@ -3208,9 +3287,12 @@ class CodegenLoader extends AssetLoader {
       "book": "帳簿",
       "actual": "実際",
       "book_balance": "帳簿: {amount}",
-      "cycle_subtitle": "**照合は7日間の期間ごとに1回**。期間はプロフィールで選んだ照合日に終わります。期間中ならいつでも照合できます。",
-      "cycle_current": "**照合は7日間の期間ごとに1回**。期間は**{day}**（照合日）に終わります。期間中ならいつでも照合できます。現在の期間：{start} – {end}",
-      "description_line_1": "調整は**実際の残高をアプリと一致**させ、すべての財務記録が常に正確で透明であることを保証します。",
+      "cycle_subtitle":
+          "**照合は7日間の期間ごとに1回**。期間はプロフィールで選んだ照合日に終わります。期間中ならいつでも照合できます。",
+      "cycle_current":
+          "**照合は7日間の期間ごとに1回**。期間は**{day}**（照合日）に終わります。期間中ならいつでも照合できます。現在の期間：{start} – {end}",
+      "description_line_1":
+          "調整は**実際の残高をアプリと一致**させ、すべての財務記録が常に正確で透明であることを保証します。",
       "description_line_2":
           "見落とした取引を確認する必要なく、実際と一致するように帳簿残高を調整する**調整エントリを自動的に生成**します。",
       "guide_count":
@@ -3454,8 +3536,7 @@ class CodegenLoader extends AssetLoader {
       "vip": "VIP",
       "vip_subtitle": "投資アイテム / ローン記録の無料階層制限を解除します（ローカルトグル、実際の支払いなし）",
       "force_full_access": "投資・負債・AIをロック解除（試験版）",
-      "force_full_access_subtitle":
-          "試験的な機能 — 専門的に学びたい方向けの上級版",
+      "force_full_access_subtitle": "試験的な機能 — 専門的に学びたい方向けの上級版",
       "gemini_ai": "Gemini AI機能",
       "gemini_ai_subtitle":
           "デバッグ/QA — オン: テキスト、音声、レシートエントリがGeminiによって最初に解析されます（ローカルフォールバック）。オフ: Geminiには何も送信されず、ローカル解析のみ実行",
@@ -3470,9 +3551,11 @@ class CodegenLoader extends AssetLoader {
       "currency": "通貨単位",
       "currency_subtitle": "主な通貨単位を変更",
       "currency_convert_title": "{to}に切り替えますか？",
-      "currency_convert_converted": "すべての**残高・取引・予算・借入**が現在のレートで**{from}から{to}**に換算されます。",
+      "currency_convert_converted":
+          "すべての**残高・取引・予算・借入**が現在のレートで**{from}から{to}**に換算されます。",
       "currency_convert_recorded": "以後、すべての金額は**{to}で記録**されます。",
-      "currency_convert_rounded": "**整数単位**のみ保存されます（セントなどの端数なし）。各金額は**四捨五入**されます。",
+      "currency_convert_rounded":
+          "**整数単位**のみ保存されます（セントなどの端数なし）。各金額は**四捨五入**されます。",
       "currency_convert_minimum": "1 {to}未満の金額は**1 {to}**になります。",
       "currency_convert_irreversible": "元に戻しても**元の数値には戻りません**。",
       "currency_dong": "ドン",
@@ -3486,15 +3569,15 @@ class CodegenLoader extends AssetLoader {
       "view_tutorial_subtitle": "アプリを効果的に使用する方法を学ぶ",
       "terms": "利用規約",
       "privacy_policy": "プライバシーポリシー",
-      "privacy_policy_subtitle":
-          "収集するデータ、提供先、削除方法",
+      "privacy_policy_subtitle": "収集するデータ、提供先、削除方法",
       "terms_subtitle": "サービス規約を読む",
       "about": "アプリについて",
       "about_subtitle": "アプリ情報と開発者ログ",
       "default_account_name": "マイアカウント",
       "apple_private_email": "Appleの非公開メール",
       "ai_consent_title": "AIとのデータ共有",
-      "ai_consent_body": "クイック入力、レシートスキャン、家計アドバイスでは、Google Geminiにデータを送信します：入力内容、レシート画像、月間の収支合計とカテゴリ・ウォレット名。氏名、メール、電話番号は送信しません。プロフィールからいつでも無効にできます。",
+      "ai_consent_body":
+          "クイック入力、レシートスキャン、家計アドバイスでは、Google Geminiにデータを送信します：入力内容、レシート画像、月間の収支合計とカテゴリ・ウォレット名。氏名、メール、電話番号は送信しません。プロフィールからいつでも無効にできます。",
       "ai_consent_terms": "プライバシーポリシーを見る",
       "ai_consent_allow": "同意する",
       "ai_consent_decline": "同意しない",
@@ -3748,7 +3831,7 @@ class CodegenLoader extends AssetLoader {
       "investment_delete_refund": "**已出资的金额退回原钱包**。",
       "investment_delete_returns": "**已收到的回收金额从收款钱包中扣除**。",
       "investment_delete_roi": "**不再计入 ROI**。",
-      "investment_delete_reconciled": "如有已对账的记录则**无法删除**，请改为**添加一笔冲抵记录**。",
+      "investment_delete_reconciled": "已对账的记录**将不会被删除**。",
       "investment_edit_title": "编辑投资",
       "add_title": "添加新钱包",
       "edit_title": "编辑钱包",
@@ -3773,7 +3856,8 @@ class CodegenLoader extends AssetLoader {
       "delete_confirm_msg": "只有没有交易的钱包才能删除。钱包的所有交易将被软删除。继续吗？",
       "delete_error_not_empty": "无法删除: 钱包有交易",
       "delete_error_protected": "此钱包是必需的，无法删除",
-      "delete_error_reconciled": "部分交易已对账，无法删除：删除会改变已确认的余额（现金、银行、ROI）。请添加一笔新交易进行冲抵。",
+      "delete_error_reconciled":
+          "部分交易已对账，无法删除：删除会改变已确认的余额（现金、银行、ROI）。请添加一笔新交易进行冲抵。",
       "liquid_assets": "流动资产",
       "liquid_assets_desc": "现金 + 银行 + 电子钱包 · 随时可花费",
       "investments": "投资 / 积累",
@@ -4052,11 +4136,11 @@ class CodegenLoader extends AssetLoader {
       "actual": "实际",
       "book_balance": "账面: {amount}",
       "cycle_subtitle": "**每7天周期对账一次**，周期在你于个人资料中选择的对账日结束。周期内任意一天都可以对账。",
-      "cycle_current": "**每7天周期对账一次**，周期在**{day}**（对账日）结束。周期内任意一天都可以对账。当前周期：{start} – {end}",
+      "cycle_current":
+          "**每7天周期对账一次**，周期在**{day}**（对账日）结束。周期内任意一天都可以对账。当前周期：{start} – {end}",
       "description_line_1": "对账帮助您**将实际余额与应用匹配**，确保所有财务记录始终准确透明。",
       "description_line_2": "**自动生成调整条目**以使应用余额与现实匹配，而无需查看遗漏的交易。",
-      "guide_count":
-          "**第 1 步 - 清点：**核对现金以及每个银行账户、电子钱包的实际余额，然后填入该钱包的**“实际”**栏。",
+      "guide_count": "**第 1 步 - 清点：**核对现金以及每个银行账户、电子钱包的实际余额，然后填入该钱包的**“实际”**栏。",
       "guide_compare":
           "**第 2 步 - 比对：**应用会将每个钱包的实际金额与账面余额进行比较。相符的钱包标记为**“已匹配”**，其余显示差额。",
       "guide_record":
@@ -4309,7 +4393,8 @@ class CodegenLoader extends AssetLoader {
       "currency": "货币单位",
       "currency_subtitle": "更改您的主要货币单位",
       "currency_convert_title": "切换到{to}？",
-      "currency_convert_converted": "所有**余额、交易、预算和债务**将按当前汇率从**{from}换算为{to}**。",
+      "currency_convert_converted":
+          "所有**余额、交易、预算和债务**将按当前汇率从**{from}换算为{to}**。",
       "currency_convert_recorded": "此后所有金额都**以{to}记录**。",
       "currency_convert_rounded": "仅保存**整数单位**（无分等小数）：每笔金额**四舍五入**。",
       "currency_convert_minimum": "不足 1 {to} 的金额按 **1 {to}** 计。",
@@ -4325,15 +4410,15 @@ class CodegenLoader extends AssetLoader {
       "view_tutorial_subtitle": "学习如何有效使用应用",
       "terms": "使用条款",
       "privacy_policy": "隐私政策",
-      "privacy_policy_subtitle":
-          "我们收集哪些数据、谁会收到以及如何删除",
+      "privacy_policy_subtitle": "我们收集哪些数据、谁会收到以及如何删除",
       "terms_subtitle": "阅读我们的服务条款",
       "about": "关于应用",
       "about_subtitle": "应用信息和开发者日志",
       "default_account_name": "我的账户",
       "apple_private_email": "Apple 隐藏邮箱",
       "ai_consent_title": "与 AI 共享数据",
-      "ai_consent_body": "快速录入、扫描小票和理财建议会将数据发送给 Google Gemini：您输入的内容、小票照片、月度收支汇总及类别和钱包名称。不会发送您的姓名、邮箱和手机号。您可随时在“个人资料”中关闭。",
+      "ai_consent_body":
+          "快速录入、扫描小票和理财建议会将数据发送给 Google Gemini：您输入的内容、小票照片、月度收支汇总及类别和钱包名称。不会发送您的姓名、邮箱和手机号。您可随时在“个人资料”中关闭。",
       "ai_consent_terms": "查看隐私政策",
       "ai_consent_allow": "同意",
       "ai_consent_decline": "不同意",
@@ -4459,8 +4544,7 @@ class PrjLocaleKeys {
   static const common_ok = 'common.ok';
   static const common_cancel = 'common.cancel';
   static const common_save = 'common.save';
-  static const common_name_suggestion_hint =
-      'common.name_suggestion_hint';
+  static const common_name_suggestion_hint = 'common.name_suggestion_hint';
   static const common_delete = 'common.delete';
   static const common_edit = 'common.edit';
   static const common_back = 'common.back';
@@ -4604,8 +4688,7 @@ class PrjLocaleKeys {
   static const wallet_investment_empty = 'wallet.investment_empty';
   static const wallet_investment_name = 'wallet.investment_name';
   static const wallet_investment_name_hint = 'wallet.investment_name_hint';
-  static const wallet_name_suggestions_bank =
-      'wallet.name_suggestions_bank';
+  static const wallet_name_suggestions_bank = 'wallet.name_suggestions_bank';
   static const wallet_name_suggestions_ewallet =
       'wallet.name_suggestions_ewallet';
   static const wallet_name_suggestions_emergency_fund =
@@ -4644,8 +4727,7 @@ class PrjLocaleKeys {
       'wallet.investment_delete_refund';
   static const wallet_investment_delete_returns =
       'wallet.investment_delete_returns';
-  static const wallet_investment_delete_roi =
-      'wallet.investment_delete_roi';
+  static const wallet_investment_delete_roi = 'wallet.investment_delete_roi';
   static const wallet_investment_delete_reconciled =
       'wallet.investment_delete_reconciled';
   static const wallet_delete_error_not_empty = 'wallet.delete_error_not_empty';
@@ -5091,8 +5173,7 @@ class PrjLocaleKeys {
   static const reconciliation_actual = 'reconciliation.actual';
   static const reconciliation_book_balance = 'reconciliation.book_balance';
   static const reconciliation_cycle_subtitle = 'reconciliation.cycle_subtitle';
-  static const reconciliation_cycle_current =
-      'reconciliation.cycle_current';
+  static const reconciliation_cycle_current = 'reconciliation.cycle_current';
   static const reconciliation_description_line_1 =
       'reconciliation.description_line_1';
   static const reconciliation_description_line_2 =
@@ -5119,7 +5200,8 @@ class PrjLocaleKeys {
   static const reconciliation_locked_reason = 'reconciliation.locked_reason';
   static const reconciliation_locked_sooner = 'reconciliation.locked_sooner';
   static const reconciliation_locked_got_it = 'reconciliation.locked_got_it';
-  static const reconciliation_locked_view_history = 'reconciliation.locked_view_history';
+  static const reconciliation_locked_view_history =
+      'reconciliation.locked_view_history';
   static const reconciliation_locked_message = 'reconciliation.locked_message';
   static const reconciliation_review_transactions =
       'reconciliation.review_transactions';

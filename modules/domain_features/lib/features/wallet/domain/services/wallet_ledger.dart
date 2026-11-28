@@ -116,17 +116,15 @@ class WalletLedger {
     return Map.fromEntries(entries);
   }
 
-  /// Soft-deletes every transaction of [walletId] (before the wallet itself).
+  /// Soft-deletes transactions of [walletId] in the open period.
   ///
   /// For an investment position that also means the legs living on a liquid
   /// wallet (Chi ra out-leg, Thu vào), matched by `investmentWalletId`.
-  /// Deleting them gives the Chi ra money back to that liquid wallet, removes
-  /// the Thu vào from it, and drops the position from ROI: every balance and
-  /// stat is derived from the remaining transactions, so they stay consistent.
+  /// Deleting open legs gives the Chi ra money back to that liquid wallet,
+  /// removes open Thu vào from it, and updates ROI accordingly.
   ///
-  /// Refused, deleting nothing, when any of them is in a reconciled period
-  /// ([ReconciledPeriodLock]): that would change balances already confirmed
-  /// by a reconciliation. The user corrects with a new offsetting transaction.
+  /// Transactions in a reconciled period ([ReconciledPeriodLock]) are preserved
+  /// (not deleted) to protect closed historical balances.
   Future<Result<void, CcFailure>> removeTransactionsOf(String walletId) async {
     final lockedUntil = await _periodLock.lockedUntil();
     final all = (await _transactions.getListTransactions()).tryGetSuccess();
@@ -138,15 +136,18 @@ class WalletLedger {
         )
         .toList();
     _logRemoval(walletId, targets, lockedUntil);
-    if (targets.any((t) => ReconciledPeriodLock.hasLocked(t, lockedUntil))) {
-      '[DeleteWallet] refused: reconciled transactions are immutable'.Log(
-        'DeleteWallet',
-      );
-      return const Error(
-        CcValidationFailure(PrjLocaleKeys.wallet_delete_error_reconciled),
-      );
+
+    final openTargets = targets
+        .where((t) => !ReconciledPeriodLock.hasLocked(t, lockedUntil))
+        .toList();
+
+    if (openTargets.isNotEmpty) {
+      final ids = openTargets.map((t) => t.id).toList();
+      final result = await _transactions.softDeleteByIds(ids);
+      if (result.isError()) return result;
     }
-    return _transactions.softDeleteByWallet(walletId);
+
+    return const Success(null);
   }
 
   /// Debug trace of what [removeTransactionsOf] would soft-delete, with each
@@ -160,15 +161,19 @@ class WalletLedger {
     final reconciled = targets.where(
       (t) => ReconciledPeriodLock.hasLocked(t, lockedUntil),
     );
+    final open = targets.where(
+      (t) => !ReconciledPeriodLock.hasLocked(t, lockedUntil),
+    );
     '[DeleteWallet] wallet=$walletId touches ${targets.length} '
-            'transaction(s), ${reconciled.length} reconciled '
+            'transaction(s), ${reconciled.length} reconciled (kept), '
+            '${open.length} open (soft-deleting) '
             '(latest reconciliation: ${lockedUntil ?? 'none'})'
         .Log(tag);
     for (final t in targets) {
       final leg = t.walletId == walletId ? 'own' : 'liquid:${t.walletId}';
       final state = ReconciledPeriodLock.hasLocked(t, lockedUntil)
-          ? 'RECONCILED'
-          : 'open';
+          ? 'RECONCILED (kept)'
+          : 'open (soft-deleting)';
       '[DeleteWallet]   ${t.id} ${t.type} amount=${t.amount} '
               'date=${t.date.toIso8601String()} leg=$leg $state'
           .Log(tag);
