@@ -84,8 +84,6 @@ class WalletRepositoryImpl with PrjBaseRepository implements WalletRepository {
 
     return safeRequest(() async {
       await _local.deleteWallet(id);
-      '[DeleteWallet] local wallet deleted id=$id remoteId=${walletModel.remoteId}'
-          .Log('DeleteWallet');
       // Queued, never awaited: offline, Firestore answers a write only once
       // the server has it. syncAll() deletes the document when online, and
       // until then the pull can't bring the wallet back.

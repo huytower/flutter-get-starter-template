@@ -1,5 +1,4 @@
 import 'package:app_config/data/datasources/local/box/prj_hive_box.dart';
-import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
@@ -59,9 +58,6 @@ class TransactionLocalDataSource {
       for (final model in targets)
         if (model.id != null) model.id!,
     ], deletedAt);
-    '[DeleteWallet] soft-deleted ${targets.length} transaction(s) of '
-            'wallet=$walletId: ${targets.map((m) => '${m.id}(${m.type})').join(', ')}'
-        .Log('DeleteWallet');
   }
 
   /// Marks the non-deleted transactions with the given [ids] as soft-deleted

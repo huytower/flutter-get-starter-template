@@ -23,6 +23,7 @@ export 'presentation/widgets/lend_asset_selector.dart';
 export 'presentation/widgets/lend_direction_toggle.dart';
 export 'presentation/widgets/lend_form.dart';
 export 'presentation/widgets/lend_wallet_list_item.dart';
+export 'presentation/widgets/liability_delete_sheet.dart';
 export 'presentation/widgets/liability_final_due_date_section.dart';
 export 'presentation/widgets/liability_installment_schedule_editor.dart';
 export 'presentation/widgets/liability_installment_schedule_section.dart';

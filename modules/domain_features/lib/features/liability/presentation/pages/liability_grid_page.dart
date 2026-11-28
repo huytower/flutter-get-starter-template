@@ -10,6 +10,7 @@ import 'package:message/export_message.dart';
 import '../../../../core/get_x/prj_get_view.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
+import '../widgets/liability_delete_sheet.dart';
 import '../widgets/liability_wallet_grid_card.dart';
 
 @RoutePage()
@@ -189,13 +190,7 @@ class _LiabilityGridView extends PrjGetView<LiabilityListController> {
       _openAddLiabilitySheet(context, controller);
 
   Future<void> _confirmDelete(BuildContext context, String id) async {
-    final confirmed = await CcConfirmSheet.show(
-      context,
-      icon: Icons.delete_outline_rounded,
-      title: el.tr(PrjLocaleKeys.liability_delete_title),
-      message: el.tr(PrjLocaleKeys.liability_delete_confirm_msg),
-      confirmLabel: el.tr(PrjLocaleKeys.common_delete),
-    );
+    final confirmed = await LiabilityDeleteSheet.show(context);
     if (!confirmed || !context.mounted) return;
     await controller.deleteLiability(context, id);
   }

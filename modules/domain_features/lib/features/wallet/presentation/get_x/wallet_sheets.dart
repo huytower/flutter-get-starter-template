@@ -35,18 +35,9 @@ extension WalletSheets on WalletController {
   /// Deletes an untouched investment wallet at once; otherwise asks first.
   Future<void> confirmDelete(BuildContext context, WalletEntity wallet) async {
     final hasInvestment = wallet.type == WalletType.investment;
-    '[DeleteWallet] requested id=${wallet.id} type=${wallet.type} '
-            'name=${wallet.name}'
-        .Log('DeleteWallet');
     if (hasInvestment) {
       final stats = investmentStatsOf(wallet.id);
-      '[DeleteWallet] investment stats contributed=${stats.contributed} '
-              'returned=${stats.returned}'
-          .Log('DeleteWallet');
       if (stats.contributed == 0 && stats.returned == 0) {
-        '[DeleteWallet] untouched position: deleting without confirmation'.Log(
-          'DeleteWallet',
-        );
         _showOutcome(null, await deleteWallet(wallet.id));
         return;
       }
@@ -68,7 +59,6 @@ extension WalletSheets on WalletController {
   }
 
   void _showOutcome(BuildContext? context, WalletDeleteOutcome outcome) {
-    '[DeleteWallet] outcome=$outcome'.Log('DeleteWallet');
     final activeContext = (context != null && context.mounted)
         ? context
         : Get.context;

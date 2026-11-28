@@ -195,13 +195,7 @@ class _LendListView extends PrjGetView<LiabilityListController> {
       _openAddLendSheet(context, controller);
 
   Future<void> _confirmDelete(BuildContext context, String id) async {
-    final confirmed = await CcConfirmSheet.show(
-      context,
-      icon: Icons.delete_outline_rounded,
-      title: el.tr(PrjLocaleKeys.liability_delete_title),
-      message: el.tr(PrjLocaleKeys.liability_delete_confirm_msg),
-      confirmLabel: el.tr(PrjLocaleKeys.common_delete),
-    );
+    final confirmed = await LiabilityDeleteSheet.show(context);
     if (!confirmed || !context.mounted) return;
     await controller.deleteLiability(context, id);
   }

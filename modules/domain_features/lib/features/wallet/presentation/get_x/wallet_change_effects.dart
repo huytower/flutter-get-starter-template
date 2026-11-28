@@ -52,12 +52,8 @@ class WalletChangeEffects {
   }
 
   Future<void> _reloadAfterRemoval(String walletId) async {
-    '[DeleteWallet] reloading balances and report after $walletId'.Log(
-      'DeleteWallet',
-    );
     await _refresh.refreshAllLoaded();
     await _refresh.refreshReport(showLoading: false);
-    '[DeleteWallet] screens reloaded'.Log('DeleteWallet');
   }
 
   void deletionConfirmed() => _refresh.refreshReconciliationBalances();

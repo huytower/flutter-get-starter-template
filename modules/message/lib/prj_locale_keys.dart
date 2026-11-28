@@ -449,6 +449,12 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "Delete Liability",
       "delete_confirm_msg":
           "Deleting this also deletes all of its related transactions, so the balances of the wallets involved will change. This action cannot be undone.",
+      "delete_entries":
+          "Its **Borrow**, **Repay**, **Lend** and **Collect** entries are deleted too.",
+      "delete_balances":
+          "**Balances of linked wallets will change** to reflect deleted entries.",
+      "delete_totals": "It **no longer counts toward total debt**.",
+      "delete_reconciled": "Reconciled entries **will not be deleted**.",
       "borrow": "Borrowed from",
       "lend": "Lend",
       "borrow_type_personal": "Personal",
@@ -1586,9 +1592,15 @@ class CodegenLoader extends AssetLoader {
       "empty_state_v2": "Chưa có khoản nợ/vay nào\nNhấn + để thêm vào.",
       "history_title": "Lịch sử giao dịch",
       "no_history": "Chưa có thanh toán/thu hồi nào",
-      "delete_title": "Xóa khoản nợ",
+      "delete_title": "Xoá khoản nợ",
       "delete_confirm_msg":
           "Xóa khoản này cũng sẽ xóa mọi giao dịch liên quan, nên số dư các ví liên quan sẽ thay đổi. Hành động này không thể hoàn tác.",
+      "delete_entries":
+          "Các giao dịch **Đi vay**, **Trả nợ**, **Cho vay** và **Thu nợ** của khoản này cũng bị xoá.",
+      "delete_balances":
+          "**Số dư các ví liên quan sẽ thay đổi** tương ứng với các giao dịch bị xoá.",
+      "delete_totals": "Khoản này **không còn tính vào tổng nợ**.",
+      "delete_reconciled": "Sẽ **không xoá** những giao dịch đã kiểm toán.",
       "borrow": "Đi vay từ",
       "lend": "Cho mượn",
       "borrow_type_personal": "Cá nhân",
@@ -2321,6 +2333,10 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "부채 삭제",
       "delete_confirm_msg":
           "삭제하면 관련된 모든 거래도 함께 삭제되어 관련 지갑의 잔액이 변경됩니다. 이 작업은 취소할 수 없습니다.",
+      "delete_entries": "이 항목의 **차입**, **상환**, **대출**, **회수** 기록도 삭제됩니다.",
+      "delete_balances": "**삭제된 기록에 따라 관련 지갑 잔액이 변경됩니다**.",
+      "delete_totals": "**총 부채에 더 이상 포함되지 않습니다**.",
+      "delete_reconciled": "대사 완료된 기록은 **삭제되지 않습니다**.",
       "borrow": "차용",
       "lend": "대여",
       "borrow_type_personal": "개인",
@@ -3185,6 +3201,10 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "負債を削除",
       "delete_confirm_msg":
           "削除すると関連するすべての取引も削除され、関連するウォレットの残高が変わります。この操作は取り消せません。",
+      "delete_entries": "この項目の**借入**・**返済**・**貸付**・**回収**の記録も削除されます。",
+      "delete_balances": "削除された記録に応じて**関連ウォレットの残高が更新されます**。",
+      "delete_totals": "**負債合計に含まれなくなります**。",
+      "delete_reconciled": "照合済みの記録は**削除されません**。",
       "borrow": "借り入れ",
       "lend": "貸付",
       "borrow_type_personal": "個人",
@@ -4035,6 +4055,10 @@ class CodegenLoader extends AssetLoader {
       "no_history": "还没有还款/收款记录",
       "delete_title": "删除负债",
       "delete_confirm_msg": "删除后其所有相关交易也会一并删除，相关钱包的余额将随之变化。此操作无法撤销。",
+      "delete_entries": "该项目的**借入**、**还款**、**出借**和**回收**记录也会删除。",
+      "delete_balances": "**相关钱包余额将根据删除的记录进行更新**。",
+      "delete_totals": "**不再计入总债务**。",
+      "delete_reconciled": "已对账的记录**将不会被删除**。",
       "borrow": "借入",
       "lend": "借出",
       "borrow_type_personal": "个人",
@@ -5062,6 +5086,10 @@ class PrjLocaleKeys {
   static const liability_no_history = 'liability.no_history';
   static const liability_delete_title = 'liability.delete_title';
   static const liability_delete_confirm_msg = 'liability.delete_confirm_msg';
+  static const liability_delete_entries = 'liability.delete_entries';
+  static const liability_delete_balances = 'liability.delete_balances';
+  static const liability_delete_totals = 'liability.delete_totals';
+  static const liability_delete_reconciled = 'liability.delete_reconciled';
   static const liability_borrow = 'liability.borrow';
   static const liability_lend = 'liability.lend';
   static const liability_borrow_type_personal =

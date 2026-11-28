@@ -5,25 +5,25 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../transaction/domain/services/reconciled_period_lock.dart';
 import '../repositories/liability_repository.dart';
 
-/// Deletes a liability together with the debt transactions that belong to it.
+/// Deletes a liability together with the debt transactions in the open period that
+/// belong to it.
 ///
-/// A liability's balance is derived from its transactions (see
-/// `GetLiabilityBalancesUseCase`), and any debt transaction without a matching
-/// liability record is rebuilt into a synthetic liability. Removing only the
-/// record would therefore make the same liability reappear, so its borrow /
-/// repay (or lend / collect) transactions are soft-deleted first — which also
-/// reverts their effect on wallet balances.
+/// Transactions in a reconciled period ([ReconciledPeriodLock]) are preserved
+/// (not deleted) to protect closed historical balances.
 @lazySingleton
 class DeleteLiabilityUseCase {
   DeleteLiabilityUseCase(
     this._liabilityRepository,
     this._transactionRepository,
+    this._periodLock,
   );
 
   final LiabilityRepository _liabilityRepository;
   final TransactionRepository _transactionRepository;
+  final ReconciledPeriodLock _periodLock;
 
   /// [target] is the liability as listed (its id may belong to a synthetic
   /// liability that has transactions but no stored record).
@@ -38,6 +38,7 @@ class DeleteLiabilityUseCase {
       return Error(transactionsResult.tryGetError()!);
     }
 
+    final lockedUntil = await _periodLock.lockedUntil();
     final liabilities = liabilitiesResult.tryGetSuccess()!;
     final transactions = transactionsResult.tryGetSuccess()!;
 
@@ -64,9 +65,11 @@ class DeleteLiabilityUseCase {
 
     final label = _norm(target.categoryLabel);
     final hasBorrow = target.hasBorrow;
-    final transactionIds = transactions
+    final openTransactionIds = transactions
         .where((t) {
           if (!t.hasDebtActivity || t.hasDeleted) return false;
+          if (ReconciledPeriodLock.hasLocked(t, lockedUntil)) return false;
+
           final matchesDirection = hasBorrow
               ? t.type == TransactionType.debtBorrow ||
                     t.type == TransactionType.debtRepay
@@ -85,9 +88,9 @@ class DeleteLiabilityUseCase {
         .map((t) => t.id)
         .toList();
 
-    if (transactionIds.isNotEmpty) {
+    if (openTransactionIds.isNotEmpty) {
       final softDeleted = await _transactionRepository.softDeleteByIds(
-        transactionIds,
+        openTransactionIds,
       );
       if (softDeleted.isError()) return softDeleted;
     }

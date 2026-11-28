@@ -6,7 +6,6 @@ import 'package:domain_features/core/exchange_rates/currency_conversion_service.
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart';
 import 'package:domain_features/features/transaction/domain/services/reconciled_period_lock.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/prj_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import 'wallet_ledger_snapshot.dart';
@@ -135,7 +134,6 @@ class WalletLedger {
               (t.walletId == walletId || t.investmentWalletId == walletId),
         )
         .toList();
-    _logRemoval(walletId, targets, lockedUntil);
 
     final openTargets = targets
         .where((t) => !ReconciledPeriodLock.hasLocked(t, lockedUntil))
@@ -150,35 +148,6 @@ class WalletLedger {
     return const Success(null);
   }
 
-  /// Debug trace of what [removeTransactionsOf] would soft-delete, with each
-  /// transaction's reconciled state (`[DeleteWallet]` in the log).
-  void _logRemoval(
-    String walletId,
-    List<TransactionEntity> targets,
-    DateTime? lockedUntil,
-  ) {
-    const tag = 'DeleteWallet';
-    final reconciled = targets.where(
-      (t) => ReconciledPeriodLock.hasLocked(t, lockedUntil),
-    );
-    final open = targets.where(
-      (t) => !ReconciledPeriodLock.hasLocked(t, lockedUntil),
-    );
-    '[DeleteWallet] wallet=$walletId touches ${targets.length} '
-            'transaction(s), ${reconciled.length} reconciled (kept), '
-            '${open.length} open (soft-deleting) '
-            '(latest reconciliation: ${lockedUntil ?? 'none'})'
-        .Log(tag);
-    for (final t in targets) {
-      final leg = t.walletId == walletId ? 'own' : 'liquid:${t.walletId}';
-      final state = ReconciledPeriodLock.hasLocked(t, lockedUntil)
-          ? 'RECONCILED (kept)'
-          : 'open (soft-deleting)';
-      '[DeleteWallet]   ${t.id} ${t.type} amount=${t.amount} '
-              'date=${t.date.toIso8601String()} leg=$leg $state'
-          .Log(tag);
-    }
-  }
 
   /// Opening balance ± each transaction, converted to the wallet's currency.
   Future<int> _bookBalance(
