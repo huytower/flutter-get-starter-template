@@ -69,7 +69,7 @@ class LiquidWalletListItem extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildIcon(context),
           SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
@@ -139,20 +139,14 @@ class LiquidWalletListItem extends StatelessWidget {
               balance,
               currencyCode: code,
             );
-      return Flexible(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.centerRight,
-          child: CcText(
-            label,
-            maxLines: 1,
-            align: Alignment.centerRight,
-            textAlign: TextAlign.end,
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: balance >= 0 ? scheme.onSurface : scheme.error,
-            ),
-          ),
+      return CcText(
+        label,
+        maxLines: 1,
+        align: Alignment.centerRight,
+        textAlign: TextAlign.end,
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: balance >= 0 ? scheme.onSurface : scheme.error,
         ),
       );
     });
